@@ -37,6 +37,7 @@ import type { AnalyticsContext } from '../analytics.js';
 import { spawnEnvForAgent } from '../agents.js';
 import { agentCliEnvForAgent, readAppConfig } from '../app-config.js';
 import type { AuthorizeProjectRequest } from '../collab/project-request-authority.js';
+import { routeImageVisionRequest } from '../image-vision-router.js';
 import {
   workspaceResourceContextFromRequest,
   type BoundWorkspaceResourceMutationGate,
@@ -400,6 +401,37 @@ function activeRunBlockingDesignSystemEnrichment(
   const active = runs
     .list({ conversationId: input.conversationId, status: 'active' })
     .filter((run) => run.id !== input.excludeRunId);
+  return active[0] ?? null;
+}
+
+/**
+ * Image/vision runs are sequential per project: only one run whose agent is
+ * the project's designated image agent may be active at a time. A second
+ * image request while one is streaming returns a retryable error instead of
+ * piling onto the same project (text/coding runs on the main agent stay
+ * parallel). This mirrors `activeRunBlockingDesignSystemEnrichment`.
+ *
+ * Returns the active image-agent run for the project, or null when the
+ * request may proceed.
+ */
+function activeImageAgentRunForProject(
+  runs: Pick<ChatRunService, 'list'>,
+  input: {
+    projectId: unknown;
+    imageAgentId: string | null;
+    /** The optimistically created run for this request; it never blocks itself. */
+    excludeRunId?: string | null;
+  },
+): ChatRun | null {
+  if (!input.imageAgentId) return null;
+  if (typeof input.projectId !== 'string' || !input.projectId) return null;
+  const active = runs
+    .list({ projectId: input.projectId, status: 'active' })
+    .filter(
+      (run) =>
+        run.id !== input.excludeRunId
+        && run.agentId === input.imageAgentId,
+    );
   return active[0] ?? null;
 }
 
@@ -2202,6 +2234,39 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
     if (runProject?.metadata) {
       meta.projectMetadata = runProject.metadata;
     }
+    // Image/vision routing: when the request is image-generation or
+    // vision-review work and the project designated an image agent (any
+    // detected CLI), route the run to that agent. The composer's explicit
+    // agent pick always wins: when `requestBody.agentId` is set the user
+    // chose that agent for this run, and the router keeps it. Otherwise the
+    // router may re-point image/vision work at the project's image agent.
+    // See image-vision-router.ts.
+    if (!clarificationTask && (runProject?.metadata || typeof meta.projectId === 'string')) {
+      const imageAgentId: string | null =
+        runProject?.metadata && typeof runProject.metadata.imageAgentId === 'string'
+          ? runProject.metadata.imageAgentId
+          : null;
+      const messageText =
+        typeof meta.message === 'string' ? meta.message : '';
+      const hasImageAttachments =
+        (Array.isArray(requestBody.imagePaths) && requestBody.imagePaths.length > 0)
+        || (Array.isArray(requestBody.attachments) && requestBody.attachments.length > 0);
+      const routed = routeImageVisionRequest({
+        text: messageText,
+        hasImageAttachments,
+        referencesProjectImages: false,
+        currentAgentId: typeof meta.agentId === 'string' ? meta.agentId : null,
+        explicitAgentId:
+          typeof requestBody.agentId === 'string' && requestBody.agentId
+            ? requestBody.agentId
+            : null,
+        projectImageAgentId: imageAgentId,
+        detectedAgents: undefined,
+      });
+      if (routed.kind === 'route-to-image-agent' && getAgentDef(routed.agentId)) {
+        meta.agentId = routed.agentId;
+      }
+    }
     const requestAnalyticsHints =
       meta.analyticsHints
       && typeof meta.analyticsHints === 'object'
@@ -2902,6 +2967,40 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
             },
           },
         );
+      }
+      // Sequential image-agent runs per project: when THIS run is routed to
+      // the project's image agent (image/vision work), reject if another
+      // image-agent run is already active for the project. The client shows a
+      // clear retryable error rather than silently overlapping.
+      const projectImageAgentId =
+        typeof meta.projectMetadata === 'object'
+        && meta.projectMetadata !== null
+        && typeof (meta.projectMetadata as { imageAgentId?: unknown }).imageAgentId === 'string'
+          ? (meta.projectMetadata as { imageAgentId: string }).imageAgentId
+          : null;
+      if (projectImageAgentId && meta.agentId === projectImageAgentId) {
+        const blockingImageRun = activeImageAgentRunForProject(design.runs, {
+          projectId: meta.projectId,
+          imageAgentId: projectImageAgentId,
+          excludeRunId: preparedRun.run.id,
+        });
+        if (blockingImageRun) {
+          design.runs.drop(preparedRun.run);
+          return sendApiError(
+            res,
+            409,
+            'IMAGE_TASK_IN_PROGRESS',
+            'another image/vision task is already running for this project. Wait for it to finish, then send again.',
+            {
+              retryable: true,
+              details: {
+                kind: 'image_task_in_progress',
+                runId: blockingImageRun.id,
+                projectId: blockingImageRun.projectId ?? '',
+              },
+            },
+          );
+        }
       }
     }
     const run = preparedRun.run;
@@ -3737,6 +3836,40 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
             },
           },
         );
+      }
+      // Sequential image-agent runs per project: when THIS run is routed to
+      // the project's image agent (image/vision work), reject if another
+      // image-agent run is already active for the project. The client shows a
+      // clear retryable error rather than silently overlapping.
+      const projectImageAgentId =
+        typeof meta.projectMetadata === 'object'
+        && meta.projectMetadata !== null
+        && typeof (meta.projectMetadata as { imageAgentId?: unknown }).imageAgentId === 'string'
+          ? (meta.projectMetadata as { imageAgentId: string }).imageAgentId
+          : null;
+      if (projectImageAgentId && meta.agentId === projectImageAgentId) {
+        const blockingImageRun = activeImageAgentRunForProject(design.runs, {
+          projectId: meta.projectId,
+          imageAgentId: projectImageAgentId,
+          excludeRunId: preparedRun.run.id,
+        });
+        if (blockingImageRun) {
+          design.runs.drop(preparedRun.run);
+          return sendApiError(
+            res,
+            409,
+            'IMAGE_TASK_IN_PROGRESS',
+            'another image/vision task is already running for this project. Wait for it to finish, then send again.',
+            {
+              retryable: true,
+              details: {
+                kind: 'image_task_in_progress',
+                runId: blockingImageRun.id,
+                projectId: blockingImageRun.projectId ?? '',
+              },
+            },
+          );
+        }
       }
     }
     const run = preparedRun.run;

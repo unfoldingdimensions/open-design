@@ -2783,6 +2783,12 @@ export interface Dict {
 
   // Project view / chat pane / composer
   'project.backToProjects': string;
+  'project.imageAgentTooltip': string;
+  'project.imageAgentSection': string;
+  'project.imageAgentAuto': string;
+  'project.imageAgentAutoHint': string;
+  'project.imageAgentInstalled': string;
+  'project.imageAgentNotInstalled': string;
   'project.brandReadyTitle': string;
   'project.brandReadyTitleGeneric': string;
   'project.brandReadyCta': string;

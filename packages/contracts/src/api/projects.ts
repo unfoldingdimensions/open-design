@@ -266,6 +266,12 @@ export interface ProjectMetadata {
   imageModel?: string;
   imageAspect?: MediaAspect;
   imageStyle?: string;
+  // The chat-agent CLI (from the detected runtime registry) that this project
+  // routes vision-review + image-generation work to. Distinct from imageModel
+  // (which picks the *media-provider* model for `od media generate`); this
+  // picks the *agent* that reasons about images. When unset, image/vision
+  // requests stay on the project's normal chat agent (today's behavior).
+  imageAgentId?: string;
   videoModel?: string;
   videoLength?: number;
   videoAspect?: MediaAspect;

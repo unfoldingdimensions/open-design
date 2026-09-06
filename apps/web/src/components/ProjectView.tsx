@@ -254,6 +254,7 @@ import {
 import { historyWithApiAttachmentContext } from '../api-attachment-context';
 import { filterImplicitProducedFiles } from '../produced-files';
 import { AvatarMenu } from './AvatarMenu';
+import { ImageAgentPicker } from './ImageAgentPicker';
 import { Icon } from './Icon';
 import { useWorkspaceTabsDockRef } from './workspaceTabsDock';
 import { localizePluginTitle } from './plugins-home/localization';
@@ -11384,6 +11385,21 @@ export function ProjectView({
   // resulting SSE stream.
   const critiqueTheaterEnabled = useCritiqueTheaterEnabled();
 
+  // Persist the project's designated image/vision agent (metadata.imageAgentId).
+  // Mirrors persistDesignSystemReviewEntry: optimistic onProjectChange +
+  // daemon PATCH. `currentProject` is the reconciled record; patch uses its id.
+  const handleImageAgentChange = useCallback((imageAgentId: string | null) => {
+    const base: ProjectMetadata = {
+      kind: currentProject.metadata?.kind ?? 'other',
+      ...currentProject.metadata,
+    };
+    const metadata: ProjectMetadata = { ...base };
+    if (imageAgentId) metadata.imageAgentId = imageAgentId;
+    else delete metadata.imageAgentId;
+    onProjectChange({ ...currentProject, metadata });
+    void patchProject(currentProject.id, { metadata }, projectRunWorkspaceContext);
+  }, [currentProject, onProjectChange, projectRunWorkspaceContext]);
+
   // CLI / agent selector lives below the chat conversation (composer footer),
   // not in the top-right header.
   const executionControls = (
@@ -11436,6 +11452,13 @@ export function ProjectView({
         onRefreshAgents={onRefreshAgents}
         placement="up"
         projectWorkspaceScope={projectWorkspaceScopeState}
+      />
+      <ImageAgentPicker
+        value={currentProject.metadata?.imageAgentId ?? null}
+        agents={agents}
+        disabled={projectMutationReadOnly}
+        onSelect={handleImageAgentChange}
+        placement="up"
       />
     </>
   );

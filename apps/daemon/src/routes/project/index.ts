@@ -4966,6 +4966,34 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
         const existing = getProject(db, req.params.id);
         const existingMeta = existing?.metadata;
         if (
+          'imageAgentId' in patch.metadata
+          && patch.metadata.imageAgentId !== existingMeta?.imageAgentId
+        ) {
+          const imageAgentId = patch.metadata.imageAgentId;
+          if (
+            imageAgentId != null
+            && (typeof imageAgentId !== 'string' || !imageAgentId.trim())
+          ) {
+            return sendApiError(
+              res,
+              400,
+              'BAD_REQUEST',
+              'imageAgentId must be a non-empty string or null',
+            );
+          }
+          if (
+            typeof imageAgentId === 'string'
+            && !ctx.agents?.getAgentDef?.(imageAgentId)
+          ) {
+            return sendApiError(
+              res,
+              400,
+              'UNKNOWN_IMAGE_AGENT',
+              `imageAgentId "${imageAgentId}" is not a known agent. Pick from the detected agents list (see /api/agents).`,
+            );
+          }
+        }
+        if (
           'localCatalogScopes' in patch.metadata
           && !sameLocalCatalogScopes(
             patch.metadata.localCatalogScopes,

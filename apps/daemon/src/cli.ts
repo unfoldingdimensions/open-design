@@ -7013,6 +7013,10 @@ async function runProject(args) {
   od project handoff <id> --conversation <id> --api-key <key> --model <model>
                     [--base-url <url>] [--max-tokens <n>]
                     Synthesize a resume-conversation handoff prompt.
+  od project image-agent <id> [get|set <agentId>|unset]
+                    View or set the project's designated image/vision agent.
+                    Image-generation + vision-review requests route to it.
+                    <agentId> is any detected agent (agy, claude, codex, …).
 
 Common options:
   --daemon-url <url>   OpenDesign daemon HTTP base.
@@ -7362,6 +7366,77 @@ Common options:
       }
       if (flags.json) return process.stdout.write(JSON.stringify(data, null, 2) + '\n');
       console.log(`[project] opened ${id} in ${editor} (${data.path ?? ''})`);
+      return;
+    }
+    case 'image-agent': {
+      // od project image-agent <id> [get|set <agentId>|unset]
+      // View or change the project's designated image/vision chat agent
+      // (metadata.imageAgentId). The daemon routes image-generation and
+      // vision-review requests to this agent; set <agentId> to any detected
+      // agent (e.g. agy, claude, codex).
+      const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
+      if (!id) {
+        console.error('Usage: od project image-agent <id> [get|set <agentId>|unset]');
+        process.exit(2);
+      }
+      const action = rest.find((a) => !a.startsWith('-') && a !== id) ?? 'get';
+      const getResp = await fetch(`${base}/api/projects/${encodeURIComponent(id)}`, {
+        headers: workspaceHeaders,
+      });
+      if (!getResp.ok) return structuredHttpFailure(getResp, 'project-not-found');
+      const projectData = await getResp.json();
+      const project = projectData?.project ?? projectData;
+      const current =
+        project?.metadata && typeof project.metadata.imageAgentId === 'string'
+          ? project.metadata.imageAgentId
+          : null;
+      if (action === 'get') {
+        if (flags.json) return process.stdout.write(JSON.stringify({ projectId: id, imageAgentId: current }, null, 2) + '\n');
+        if (current) console.log(current);
+        else console.log('(none — image/vision work stays on the project\'s main chat agent)');
+        return;
+      }
+      if (action === 'unset') {
+        const patchBody = { metadata: { ...(project?.metadata ?? {}), imageAgentId: null } };
+        const resp = await fetch(`${base}/api/projects/${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json', ...workspaceHeaders },
+          body: JSON.stringify(patchBody),
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+          if (flags.json) process.stdout.write(JSON.stringify(data, null, 2) + '\n');
+          else console.error(`PATCH /api/projects/${id} (unset image-agent) failed: ${resp.status} ${JSON.stringify(data)}`);
+          process.exit(1);
+        }
+        if (flags.json) return process.stdout.write(JSON.stringify({ projectId: id, imageAgentId: null }, null, 2) + '\n');
+        console.log('[project] image/vision agent cleared');
+        return;
+      }
+      if (action === 'set') {
+        const agentId = rest[rest.indexOf('set') + 1];
+        if (!agentId || agentId.startsWith('-')) {
+          console.error('Usage: od project image-agent <id> set <agentId>  (agentId from `od agent list`)');
+          process.exit(2);
+        }
+        const patchBody = { metadata: { ...(project?.metadata ?? {}), imageAgentId: agentId } };
+        const resp = await fetch(`${base}/api/projects/${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json', ...workspaceHeaders },
+          body: JSON.stringify(patchBody),
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+          if (flags.json) process.stdout.write(JSON.stringify(data, null, 2) + '\n');
+          else console.error(`PATCH /api/projects/${id} (set image-agent) failed: ${resp.status} ${JSON.stringify(data)}`);
+          process.exit(1);
+        }
+        if (flags.json) return process.stdout.write(JSON.stringify({ projectId: id, imageAgentId: agentId }, null, 2) + '\n');
+        console.log(`[project] image/vision agent set to ${agentId}`);
+        return;
+      }
+      console.error(`unknown image-agent action: ${action} (use get, set <agentId>, or unset)`);
+      process.exit(2);
       return;
     }
     default:

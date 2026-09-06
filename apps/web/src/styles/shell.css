@@ -1783,6 +1783,148 @@ body:has(.artifact-version-panel) .ws-tabs-file-actions-before {
 
 /* -------- Avatar menu (replaces in-topbar agent picker) ------------- */
 .avatar-menu { position: relative; }
+/* Per-project image/vision agent picker — sibling to the chat model picker.
+   Chip + inline popover. Styled to sit beside .avatar-agent-trigger so the
+   two read as one control cluster. */
+.image-agent-picker { position: relative; }
+.image-agent-trigger {
+  height: 32px;
+  max-width: 180px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  color: var(--text);
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: border-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    background 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.image-agent-trigger:hover:not(:disabled) {
+  border-color: var(--border-strong, var(--border));
+}
+.image-agent-trigger:disabled { opacity: 0.6; cursor: progress; }
+.image-agent-trigger__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+  flex-shrink: 0;
+}
+.image-agent-trigger__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.image-agent-trigger > svg:last-child {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.image-agent-popover {
+  min-width: 280px;
+  max-width: min(320px, calc(100vw - 32px));
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-lg, 0 12px 40px rgba(0, 0, 0, 0.24));
+}
+.image-agent-popover__title {
+  padding: 6px 10px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+/* Settings "Default image & vision agent" row — sits under the installed-CLI
+   grid in the execution section. */
+.settings-image-agent-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-subtle);
+}
+.settings-image-agent-row__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.settings-image-agent-row__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.settings-image-agent-row__hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+.settings-image-agent-row .image-agent-picker {
+  flex-shrink: 0;
+}
+.image-agent-popover__divider {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--border);
+}
+.image-agent-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+.image-agent-option:hover { background: var(--bg-subtle); }
+.image-agent-option.is-disabled,
+.image-agent-option.is-disabled:hover {
+  background: transparent;
+  cursor: default;
+  opacity: 0.55;
+}
+.image-agent-option.is-disabled .image-agent-option__name,
+.image-agent-option.is-disabled .image-agent-option__desc {
+  color: var(--text-muted);
+}
+.image-agent-option.is-selected { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.image-agent-option__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+  flex-shrink: 0;
+}
+.image-agent-option.is-selected .image-agent-option__icon { color: var(--accent-strong); }
+.image-agent-option__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.image-agent-option__name { font-size: 13px; font-weight: 500; color: var(--text); }
+.image-agent-option__desc { font-size: 11px; color: var(--text-muted); }
+.image-agent-option > svg { color: var(--accent-strong); flex-shrink: 0; }
 .avatar-agent-trigger {
   width: 58px;
   height: 32px;
