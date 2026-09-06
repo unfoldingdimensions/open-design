@@ -485,6 +485,8 @@ export const ar: Dict = {
   'settings.agentInstall.stepSelect': 'اختر بطاقة الوكيل عندما يظهر كأنه مثبت.',
   'settings.noAgentsDetected': 'لم يتم اكتشاف أي وكلاء بعد. قم بتثبيت Claude Code أو Codex أو Devin أو OpenCode أو Cursor Agent أو Qwen أو GitHub Copilot CLI، ثم اضغط على إعادة المسح.',
   'settings.agentInstalledGroup': 'واجهات CLI لديك ({count})',
+  'settings.imageAgentDefaultLabel': 'وكيل الصور والرؤية الافتراضي',
+  'settings.imageAgentDefaultHint': 'يُستخدم لتوليد الصور ومراجعة الرؤية عندما لا يحدد المشروع وكيله الخاص',
   'settings.agentInstallGroup': 'متاحة للتثبيت ({count})',
   'settings.agentAuthRequired': 'المصادقة مطلوبة',
   'settings.agentAuthUnknown': 'حالة المصادقة غير معروفة',

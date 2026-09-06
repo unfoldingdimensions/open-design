@@ -483,6 +483,8 @@ export const zhTW: Dict = {
   "settings.noAgentsDetected":
     "尚未偵測到任何代理。請安裝 Claude Code、Codex、OpenCode、Cursor Agent 或 Qwen 其中之一，然後點擊「重新掃描」。",
   "settings.agentInstalledGroup": "你的 CLI（{count}）",
+  "settings.imageAgentDefaultLabel": "預設圖像與視覺代理",
+  "settings.imageAgentDefaultHint": "當專案未自行設定時，用於圖像生成和視覺審閱",
   "settings.agentInstallGroup": "可安裝（{count}）",
   "settings.agentAuthRequired": "需要認證",
   "settings.agentAuthUnknown": "認證狀態未知",

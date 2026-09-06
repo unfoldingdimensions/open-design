@@ -485,6 +485,8 @@ export const id: Dict = {
   'settings.agentInstall.stepSelect': 'Pilih kartu agen setelah statusnya terpasang.',
   'settings.noAgentsDetected': 'Belum ada agent terdeteksi. Pasang salah satu dari Claude Code, Codex, Devin for Terminal, OpenCode, Cursor Agent, Qwen, atau GitHub Copilot CLI, lalu klik pindai ulang.',
   'settings.agentInstalledGroup': 'CLI Anda ({count})',
+  'settings.imageAgentDefaultLabel': 'Agen gambar & visi bawaan',
+  'settings.imageAgentDefaultHint': 'Dipakai untuk pembuatan gambar & tinjauan visual saat proyek belum menetapkan sendiri',
   'settings.agentInstallGroup': 'Tersedia untuk dipasang ({count})',
   'settings.agentAuthRequired': 'Autentikasi diperlukan',
   'settings.agentAuthUnknown': 'Status autentikasi tidak diketahui',

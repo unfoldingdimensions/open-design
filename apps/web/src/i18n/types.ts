@@ -424,6 +424,8 @@ export interface Dict {
   'settings.agentInstall.stepSelect': string;
   'settings.noAgentsDetected': string;
   'settings.agentInstalledGroup': string;
+  'settings.imageAgentDefaultLabel': string;
+  'settings.imageAgentDefaultHint': string;
   'settings.agentInstallGroup': string;
   'settings.agentAuthRequired': string;
   'settings.agentAuthUnknown': string;

@@ -485,6 +485,8 @@ export const tr: Dict = {
   'settings.agentInstall.stepSelect': 'Ajan yüklü olarak göründüğünde kartını seç.',
   'settings.noAgentsDetected': 'Hiçbir ajan tespit edilemedi. Claude Code, Codex, Devin for Terminal, OpenCode, Cursor Agent, Qwen, veya GitHub Copilot CLI’lardan birini kurun ve yeniden tarayın.',
   'settings.agentInstalledGroup': 'CLI\'larınız ({count})',
+  'settings.imageAgentDefaultLabel': 'Varsayılan görsel ve vizyon ajanı',
+  'settings.imageAgentDefaultHint': 'Proje kendine ait bir ajan ayarlamadığında görsel üretimi ve vizyon incelemesi için kullanılır',
   'settings.agentInstallGroup': 'Kurulabilir ({count})',
   'settings.agentAuthRequired': 'Kimlik doğrulama gerekli',
   'settings.agentAuthUnknown': 'Kimlik doğrulama durumu bilinmiyor',

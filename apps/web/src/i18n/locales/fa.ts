@@ -485,6 +485,8 @@ export const fa: Dict = {
   'settings.agentInstall.stepSelect': 'وقتی عامل به‌صورت نصب‌شده نمایش داده شد، کارت آن را انتخاب کنید.',
   'settings.noAgentsDetected': 'هنوز هیچ عاملی شناسایی نشده. یکی از Claude Code، Codex، OpenCode، Cursor Agent، Qwen یا GitHub Copilot CLI را نصب کنید، سپس روی اسکن مجدد کلیک کنید.',
   'settings.agentInstalledGroup': 'CLIهای شما ({count})',
+  'settings.imageAgentDefaultLabel': 'عامل تصویر و دید پیش‌فرض',
+  'settings.imageAgentDefaultHint': 'برای تولید تصویر و بررسی دید هنگام عدم تعیین عامل توسط پروژه استفاده می‌شود',
   'settings.agentInstallGroup': 'آماده نصب ({count})',
   'settings.agentAuthRequired': 'احراز هویت لازم است',
   'settings.agentAuthUnknown': 'وضعیت احراز هویت نامشخص است',

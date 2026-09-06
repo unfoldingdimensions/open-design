@@ -42,6 +42,10 @@ export interface ProjectLocationPrefs {
 export interface AppConfigPrefs {
   onboardingCompleted?: boolean;
   agentId?: string | null;
+  // Global default image/vision agent (any detected CLI: agy, claude, …).
+  // Projects override per-project via metadata.imageAgentId; when a project
+  // has none, image/vision work routes to this default.
+  imageAgentId?: string | null;
   agentModels?: Record<string, AgentModelPrefs>;
   agentCliEnv?: AgentCliEnvPrefs;
   agentCliEnvIntent?: AgentCliEnvIntentPrefs;

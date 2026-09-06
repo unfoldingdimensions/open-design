@@ -42,6 +42,7 @@ import { LOCALE_LABEL, LOCALES, useI18n } from '../i18n';
 import type { Locale } from '../i18n';
 import type { Dict } from '../i18n/types';
 import { AgentIcon } from './AgentIcon';
+import { ImageAgentPicker } from './ImageAgentPicker';
 import { AgentDiagnosticRow } from './AgentDiagnosticRow';
 import { DeepSeekHarnessSetupDialog } from './DeepSeekHarnessSetupDialog';
 import { AmrLoginPill } from './AmrLoginPill';
@@ -5201,6 +5202,30 @@ export function SettingsDialog({
                       </div>
                     )}
                   </div>
+                  {/* Default image & vision agent — the chat-agent CLI that
+                      image-generation + vision-review requests route to when a
+                      project has not set its own image agent (see
+                      metadata.imageAgentId / image-vision-router.ts). */}
+                  {installedAgents.length > 0 ? (
+                    <div className="settings-image-agent-row">
+                      <div className="settings-image-agent-row__copy">
+                        <span className="settings-image-agent-row__label">
+                          {t('settings.imageAgentDefaultLabel')}
+                        </span>
+                        <span className="settings-image-agent-row__hint">
+                          {t('settings.imageAgentDefaultHint')}
+                        </span>
+                      </div>
+                      <ImageAgentPicker
+                        value={cfg.imageAgentId ?? null}
+                        agents={agents}
+                        onSelect={(imageAgentId) =>
+                          setCfg((c) => ({ ...c, imageAgentId }))
+                        }
+                        placement="down"
+                      />
+                    </div>
+                  ) : null}
                   {unavailableAgents.length > 0 ? (
                     <details
                       className="agent-install-collapse"

@@ -485,6 +485,8 @@ export const pl: Dict = {
   'settings.agentInstall.stepSelect': 'Wybierz kartę agenta, gdy pojawi się jako zainstalowany.',
   'settings.noAgentsDetected': 'Nie wykryto jeszcze żadnych agentów. Zainstaluj Claude Code, Codex, Devin for Terminal, OpenCode, Cursor Agent, Qwen lub GitHub Copilot CLI, a następnie kliknij Ponów skanowanie.',
   'settings.agentInstalledGroup': 'Twoje CLI ({count})',
+  'settings.imageAgentDefaultLabel': 'Domyślny agent obrazu i wizji',
+  'settings.imageAgentDefaultHint': 'Używany do generowania obrazów i przeglądu wizualnego, gdy projekt nie ma własnego',
   'settings.agentInstallGroup': 'Dostępne do instalacji ({count})',
   'settings.agentAuthRequired': 'Wymagane uwierzytelnienie',
   'settings.agentAuthUnknown': 'Stan uwierzytelnienia nieznany',

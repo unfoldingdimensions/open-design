@@ -482,6 +482,8 @@ export const zhCN: Dict = {
   "settings.noAgentsDetected":
     "尚未检测到任何代理。请安装 Claude Code、Codex、OpenCode、Cursor Agent、Qwen 或 GitHub Copilot CLI 中的一个，然后点击「重新扫描」。",
   "settings.agentInstalledGroup": "你的 CLI（{count}）",
+  "settings.imageAgentDefaultLabel": "默认图像与视觉代理",
+  "settings.imageAgentDefaultHint": "当项目未自行设置时，用于图像生成和视觉审阅",
   "settings.agentInstallGroup": "可安装（{count}）",
   "settings.agentAuthRequired": "需要认证",
   "settings.agentAuthUnknown": "认证状态未知",

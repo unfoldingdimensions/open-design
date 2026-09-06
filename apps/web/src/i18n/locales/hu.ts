@@ -485,6 +485,8 @@ export const hu: Dict = {
   'settings.agentInstall.stepSelect': 'Válaszd ki az ügynök kártyáját, amint telepítettként jelenik meg.',
   'settings.noAgentsDetected': 'Még nincs észlelt ügynök. Telepítsd a Claude Code, Codex, Devin for Terminal, OpenCode, Cursor Agent, Qwen vagy GitHub Copilot CLI valamelyikét, majd kattints az Újraellenőrzésre.',
   'settings.agentInstalledGroup': 'Saját CLI-k ({count})',
+  'settings.imageAgentDefaultLabel': 'Alapértelmezett kép- és vizuális ügynök',
+  'settings.imageAgentDefaultHint': 'Képgeneráláshoz és vizuális ellenőrzéshez, ha a projekt nem állított be sajátot',
   'settings.agentInstallGroup': 'Telepíthető ({count})',
   'settings.agentAuthRequired': 'Hitelesítés szükséges',
   'settings.agentAuthUnknown': 'A hitelesítési állapot ismeretlen',

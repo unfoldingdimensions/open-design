@@ -485,6 +485,8 @@ export const ko: Dict = {
   'settings.agentInstall.stepSelect': '설치됨으로 표시되면 해당 에이전트 카드를 선택하세요.',
   'settings.noAgentsDetected': '에이전트가 감지되지 않았습니다. Claude Code, Codex, Devin for Terminal, OpenCode, Cursor Agent, Qwen 또는 GitHub Copilot CLI 중 하나를 설치한 후 다시 스캔을 클릭하세요.',
   'settings.agentInstalledGroup': '내 CLI ({count})',
+  'settings.imageAgentDefaultLabel': '기본 이미지·비전 에이전트',
+  'settings.imageAgentDefaultHint': '프로젝트가 자체 설정하지 않은 경우 이미지 생성·비전 검토에 사용',
   'settings.agentInstallGroup': '설치 가능 ({count})',
   'settings.agentAuthRequired': '인증 필요',
   'settings.agentAuthUnknown': '인증 상태를 알 수 없음',

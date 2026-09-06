@@ -485,6 +485,8 @@ export const th: Dict = {
   'settings.agentInstall.stepSelect': 'เลือกการ์ดเอเจนต์เมื่อแสดงว่าได้ติดตั้งแล้ว',
   'settings.noAgentsDetected': 'ยังไม่พบเอเจนต์ โปรดติดตั้งอย่างใดอย่างหนึ่ง: Claude Code, Codex, Devin for Terminal, OpenCode, Cursor Agent, Qwen หรือ GitHub Copilot CLI แล้วคลิกสแกนใหม่',
   'settings.agentInstalledGroup': 'CLI ของคุณ ({count})',
+  'settings.imageAgentDefaultLabel': 'เอเจนต์ภาพและวิทัศน์เริ่มต้น',
+  'settings.imageAgentDefaultHint': 'ใช้สำหรับสร้างภาพและตรวจวิทัศน์เมื่อโปรเจกต์ไม่ได้ตั้งค่าเอง',
   'settings.agentInstallGroup': 'พร้อมให้ติดตั้ง ({count})',
   'settings.agentAuthRequired': 'ต้องยืนยันตัวตน',
   'settings.agentAuthUnknown': 'ไม่ทราบสถานะการยืนยันตัวตน',

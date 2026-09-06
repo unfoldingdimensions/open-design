@@ -485,6 +485,8 @@ export const ptBR: Dict = {
   'settings.agentInstall.stepSelect': 'Selecione o cartão do agente quando ele aparecer como instalado.',
   'settings.noAgentsDetected': 'Nenhum agente detectado ainda. Instale Claude Code, Codex, Devin for Terminal, OpenCode, Cursor Agent, Qwen ou GitHub Copilot CLI e clique em Reescanear.',
   'settings.agentInstalledGroup': 'Suas CLIs ({count})',
+  'settings.imageAgentDefaultLabel': 'Agente de imagem e visão padrão',
+  'settings.imageAgentDefaultHint': 'Usado para geração de imagem e revisão visual quando um projeto não definiu o seu',
   'settings.agentInstallGroup': 'Disponíveis para instalar ({count})',
   'settings.agentAuthRequired': 'Autenticação necessária',
   'settings.agentAuthUnknown': 'Status de autenticação desconhecido',

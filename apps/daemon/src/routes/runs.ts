@@ -2239,13 +2239,24 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
     // detected CLI), route the run to that agent. The composer's explicit
     // agent pick always wins: when `requestBody.agentId` is set the user
     // chose that agent for this run, and the router keeps it. Otherwise the
-    // router may re-point image/vision work at the project's image agent.
-    // See image-vision-router.ts.
+    // router may re-point image/vision work at the project's image agent —
+    // falling back to the app-config global default image agent when the
+    // project has not set its own. See image-vision-router.ts.
     if (!clarificationTask && (runProject?.metadata || typeof meta.projectId === 'string')) {
-      const imageAgentId: string | null =
+      let imageAgentId: string | null =
         runProject?.metadata && typeof runProject.metadata.imageAgentId === 'string'
           ? runProject.metadata.imageAgentId
           : null;
+      if (!imageAgentId) {
+        try {
+          const appCfgForImage = await readAppConfig(RUNTIME_DATA_DIR);
+          if (typeof appCfgForImage.imageAgentId === 'string' && appCfgForImage.imageAgentId) {
+            imageAgentId = appCfgForImage.imageAgentId;
+          }
+        } catch {
+          // Non-fatal: no global default → image work stays on the main agent.
+        }
+      }
       const messageText =
         typeof meta.message === 'string' ? meta.message : '';
       const hasImageAttachments =

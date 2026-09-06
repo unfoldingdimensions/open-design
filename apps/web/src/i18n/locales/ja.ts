@@ -485,6 +485,8 @@ export const ja: Dict = {
   'settings.agentInstall.stepSelect': 'インストール済みとして表示されたらエージェントカードを選択します。',
   'settings.noAgentsDetected': 'エージェントが検出されませんでした。Claude Code、Codex、OpenCode、Cursor Agent、Qwen、または GitHub Copilot CLI のいずれかをインストールして、再スキャンをクリックしてください。',
   'settings.agentInstalledGroup': 'あなたの CLI（{count}）',
+  'settings.imageAgentDefaultLabel': '既定の画像・ビジョンエージェント',
+  'settings.imageAgentDefaultHint': 'プロジェクトが独自に設定していない場合の画像生成・ビジョンレビューに使用',
   'settings.agentInstallGroup': 'インストール可能（{count}）',
   'settings.agentAuthRequired': '認証が必要です',
   'settings.agentAuthUnknown': '認証状態は不明です',

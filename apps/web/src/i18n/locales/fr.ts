@@ -485,6 +485,8 @@ export const fr: Dict = {
   'settings.agentInstall.stepSelect': 'Sélectionnez la carte de l\'agent une fois qu\'elle apparaît comme installée.',
   'settings.noAgentsDetected': 'Aucun agent détecté pour l’instant. Installez Claude Code, Codex, Devin for Terminal, OpenCode, Cursor Agent, Qwen, GitHub Copilot CLI, Qoder CLI, Hermes, Kimi CLI, Pi, Kiro CLI, Kilo, Mistral Vibe CLI ou DeepSeek TUI, puis cliquez sur Réanalyser.',
   'settings.agentInstalledGroup': 'Vos CLI ({count})',
+  'settings.imageAgentDefaultLabel': 'Agent image & vision par défaut',
+  'settings.imageAgentDefaultHint': 'Utilisé pour la génération d\'images et la revue visuelle quand un projet n\'a pas défini le sien',
   'settings.agentInstallGroup': 'Disponibles à installer ({count})',
   'settings.agentAuthRequired': 'Authentification requise',
   'settings.agentAuthUnknown': 'Statut d’authentification inconnu',

@@ -485,6 +485,8 @@ export const ru: Dict = {
   'settings.agentInstall.stepSelect': 'Выберите карточку агента, когда он появится как установленный.',
   'settings.noAgentsDetected': 'Агенты ещё не обнаружены. Установите один из следующих инструментов: Claude Code, Codex, Devin for Terminal, OpenCode, Cursor Agent, Qwen или GitHub Copilot CLI, затем нажмите «Пересканировать».',
   'settings.agentInstalledGroup': 'Ваши CLI ({count})',
+  'settings.imageAgentDefaultLabel': 'Агент изображений и зрения по умолчанию',
+  'settings.imageAgentDefaultHint': 'Используется для генерации изображений и визуальной проверки, если у проекта нет своего',
   'settings.agentInstallGroup': 'Доступно для установки ({count})',
   'settings.agentAuthRequired': 'Требуется аутентификация',
   'settings.agentAuthUnknown': 'Статус аутентификации неизвестен',

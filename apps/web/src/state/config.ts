@@ -1271,6 +1271,7 @@ export async function syncConfigToDaemon(
         ? { onboardingCompleted: false }
         : {}),
     agentId: config.agentId,
+    imageAgentId: config.imageAgentId ?? null,
     agentModels: config.agentModels,
     agentCliEnv: config.agentCliEnv,
     agentCliEnvIntent: config.agentCliEnvIntent,

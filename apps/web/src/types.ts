@@ -412,6 +412,11 @@ export interface AppConfig {
   /** Base URL of the selected known provider; cleared once the user customizes provider fields. */
   apiProviderBaseUrl?: string | null;
   agentId: string | null;
+  // Global default image/vision agent (any detected CLI: agy, claude, …).
+  // Projects can override per-project via metadata.imageAgentId; when a
+  // project has no explicit image agent, image/vision requests route to this
+  // default (see daemon image-vision-router.ts).
+  imageAgentId?: string | null;
   skillId: string | null;
   designSystemId: string | null;
   theme?: AppTheme;
