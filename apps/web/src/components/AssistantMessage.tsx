@@ -914,111 +914,211 @@ function AssistantMessageImpl({
         </div>
       ) : null}
       <div className="assistant-flow">
-        {taskActivity ? (
-          <TaskActivityCard
-            entries={taskActivity.entries}
-            trailingThinking={taskActivity.trailingThinking}
-            hasConclusion={hasConclusion}
-            runStreaming={streaming}
-            runSucceeded={runSucceeded}
-            terminalRunSucceeded={message.runStatus === "succeeded"}
-            runCanceled={message.runStatus === "canceled"}
-            runFailed={
-              !streaming &&
-              (message.runStatus === "failed" ||
-                message.runStatus === "canceled" ||
-                hasResultDeliveryFailure)
+        {/* Live turn WITH prose already streaming: render the raw
+            chronological block stream inline, so a fresh round of
+            thinking/actions lands BELOW whatever prose the model already
+            emitted — the order the user actually watches (thinking → text →
+            thinking → action → text). A turn that has not produced prose yet
+            keeps the compact single-current-row card below. The settled path
+            hoists activity into one audit card. */}
+        {streaming && !!isLast && hasConclusion ? (
+          blocks.map((b, i) => {
+            if (b.kind === "text")
+              return (
+                <ProseBlock
+                  key={i}
+                  text={b.text}
+                  hideRecoveredHtmlFallback={false}
+                  assistantMessageId={message.id}
+                  isLastAssistant
+                  streaming
+                  showStreamCursor={i === lastTextBlockIndex}
+                  nextUserContent={nextUserContent}
+                  suppressDirectionForms={suppressDirectionForms}
+                  onSubmitQuestionForm={onSubmitQuestionForm}
+                  questionFormSubmitDisabled={
+                    questionFormSubmitDisabled || strategyBlockedNotice !== null
+                  }
+                  strategyBlockedNotice={strategyBlockedNotice}
+                  visualStyleContext={visualStyleContextForProjectKind(projectKind)}
+                  projectId={projectId}
+                  conversationId={conversationId}
+                  runId={message.runId ?? null}
+                  projectFileNames={projectFileNames}
+                  projectResolvedDir={projectResolvedDir}
+                  onRequestOpenFile={onRequestOpenFile}
+                  onBrandBrowserAssistConfirm={onBrandBrowserAssistConfirm}
+                />
+              );
+            if (b.kind === "thinking")
+              return (
+                <ThinkingBlock
+                  key={i}
+                  text={b.text}
+                  streaming={i === blocks.length - 1}
+                  autoExpand={i === blocks.length - 1}
+                  onLinkClick={thinkingLinkClick}
+                />
+              );
+            if (b.kind === "tool-group")
+              return (
+                <ToolGroupCard
+                  key={i}
+                  items={b.items}
+                  runStreaming
+                  runSucceeded={false}
+                  projectFileNames={projectFileNames}
+                  onRequestOpenFile={onRequestOpenFile}
+                />
+              );
+            if (b.kind === "live-tool")
+              return <LiveCodeBox key={b.id} name={b.name} raw={b.raw} />;
+            if (b.kind === "status") {
+              if (b.label === "error" && message.id === errorCardOwnerId) return null;
+              if (b.label === "initializing") return null;
+              return <StatusPill key={i} label={b.label} detail={b.detail} />;
             }
-            startedAt={message.startedAt}
-            endedAt={message.endedAt}
-            durationMs={usage?.durationMs}
-            projectFileNames={projectFileNames}
-            onRequestOpenFile={onRequestOpenFile}
-            onThinkingLinkClick={thinkingLinkClick}
-          />
-        ) : null}
-        {contentBlocks.map((b, i) => {
-          if (b.kind === "text")
-            return (
-              <ProseBlock
-                key={i}
-                text={b.text}
-                hideRecoveredHtmlFallback={(message.agentId === "grok-build" || message.agentId === "claude") && !streaming}
-                assistantMessageId={message.id}
-                isLastAssistant={!!isLast}
-                streaming={streaming}
-                showStreamCursor={streaming && i === lastTextBlockIndex}
-                nextUserContent={nextUserContent}
-                suppressDirectionForms={suppressDirectionForms}
-                onSubmitQuestionForm={onSubmitQuestionForm}
-                questionFormSubmitDisabled={
-                  questionFormSubmitDisabled || strategyBlockedNotice !== null
-                }
-                strategyBlockedNotice={strategyBlockedNotice}
-                visualStyleContext={visualStyleContextForProjectKind(projectKind)}
-                projectId={projectId}
-                conversationId={conversationId}
-                runId={message.runId ?? null}
-                projectFileNames={projectFileNames}
-                projectResolvedDir={projectResolvedDir}
-                onRequestOpenFile={onRequestOpenFile}
-                onBrandBrowserAssistConfirm={onBrandBrowserAssistConfirm}
-              />
-            );
-          if (b.kind === "thinking")
-            // Thinking is only "in progress" while this is the trailing block.
-            // Once any block (prose / tools) lands after it, the model has
-            // moved past thinking, so the block flips to its finished state.
-            return (
-              <ThinkingBlock
-                key={i}
-                text={b.text}
-                streaming={streaming && i === contentBlocks.length - 1}
-                onLinkClick={thinkingLinkClick}
-              />
-            );
-          if (b.kind === "tool-group") {
-            return (
-              <ToolGroupCard
-                key={i}
-                items={b.items}
+            if (b.kind === "plugin-candidate")
+              return (
+                <SkillPluginCandidateCard
+                  key={i}
+                  block={b}
+                  projectId={projectId}
+                  onRequestOpenFile={onRequestOpenFile}
+                />
+              );
+            return null;
+          })
+        ) : (
+          <>
+            {taskActivity ? (
+              <TaskActivityCard
+                entries={taskActivity.entries}
+                trailingThinking={taskActivity.trailingThinking}
+                hasConclusion={hasConclusion}
                 runStreaming={streaming}
                 runSucceeded={runSucceeded}
+                terminalRunSucceeded={message.runStatus === "succeeded"}
+                runCanceled={message.runStatus === "canceled"}
+                runFailed={
+                  !streaming &&
+                  (message.runStatus === "failed" ||
+                    message.runStatus === "canceled" ||
+                    hasResultDeliveryFailure)
+                }
+                startedAt={message.startedAt}
+                endedAt={message.endedAt}
+                durationMs={usage?.durationMs}
                 projectFileNames={projectFileNames}
                 onRequestOpenFile={onRequestOpenFile}
+                onThinkingLinkClick={thinkingLinkClick}
               />
-            );
-          }
-          if (b.kind === "live-tool") {
-            // splitTaskActivity moves live code into the same execution
-            // disclosure as settled tools. Keep this branch defensive in
-            // case a future block type opts out of that collection.
-            return null;
-          }
-          if (b.kind === "plugin-candidate") {
-            return (
-              <SkillPluginCandidateCard
-                key={i}
-                block={b}
-                projectId={projectId}
-                onRequestOpenFile={onRequestOpenFile}
-              />
-            );
-          }
-          if (b.kind === "status") {
-            // Suppress this message's gray error pill ONLY when ChatPane is
-            // rendering the top-level error card for it (the last failed run).
-            // Other failed turns — older history, or once a follow-up makes
-            // this no longer the last assistant message — keep their pill so
-            // the error detail still survives reload / history review.
-            if (b.label === "error" && message.id === errorCardOwnerId) return null;
-            // The pre-output "initializing" status is surfaced by the footer's
-            // shimmering "Preparing…" label instead of its own pill.
-            if (b.label === "initializing") return null;
-            return <StatusPill key={i} label={b.label} detail={b.detail} />;
-          }
-          return null;
-        })}
+            ) : null}
+            {contentBlocks.map((b, i) => {
+              if (b.kind === "text")
+                return (
+                  <ProseBlock
+                    key={i}
+                    text={b.text}
+                    hideRecoveredHtmlFallback={(message.agentId === "grok-build" || message.agentId === "claude") && !streaming}
+                    assistantMessageId={message.id}
+                    isLastAssistant={!!isLast}
+                    streaming={streaming}
+                    showStreamCursor={streaming && i === lastTextBlockIndex}
+                    nextUserContent={nextUserContent}
+                    suppressDirectionForms={suppressDirectionForms}
+                    onSubmitQuestionForm={onSubmitQuestionForm}
+                    questionFormSubmitDisabled={
+                      questionFormSubmitDisabled || strategyBlockedNotice !== null
+                    }
+                    strategyBlockedNotice={strategyBlockedNotice}
+                    visualStyleContext={visualStyleContextForProjectKind(projectKind)}
+                    projectId={projectId}
+                    conversationId={conversationId}
+                    runId={message.runId ?? null}
+                    projectFileNames={projectFileNames}
+                    projectResolvedDir={projectResolvedDir}
+                    onRequestOpenFile={onRequestOpenFile}
+                    onBrandBrowserAssistConfirm={onBrandBrowserAssistConfirm}
+                  />
+                );
+              if (b.kind === "status") {
+                // Suppress this message's gray error pill ONLY when ChatPane is
+                // rendering the top-level error card for it (the last failed run).
+                // Other failed turns — older history, or once a follow-up makes
+                // this no longer the last assistant message — keep their pill so
+                // the error detail still survives reload / history review.
+                if (b.label === "error" && message.id === errorCardOwnerId) return null;
+                // The pre-output "initializing" status is surfaced by the footer's
+                // shimmering "Preparing…" label instead of its own pill.
+                if (b.label === "initializing") return null;
+                return <StatusPill key={i} label={b.label} detail={b.detail} />;
+              }
+              if (b.kind === "thinking")
+                // Thinking is only "in progress" while this is the trailing block.
+                // Once any block (prose / tools) lands after it, the model has
+                // moved past thinking, so the block flips to its finished state.
+                return (
+                  <ThinkingBlock
+                    key={i}
+                    text={b.text}
+                    streaming={streaming && i === contentBlocks.length - 1}
+                    onLinkClick={thinkingLinkClick}
+                  />
+                );
+              if (b.kind === "tool-group") {
+                return (
+                  <ToolGroupCard
+                    key={i}
+                    items={b.items}
+                    runStreaming={streaming}
+                    runSucceeded={runSucceeded}
+                    projectFileNames={projectFileNames}
+                    onRequestOpenFile={onRequestOpenFile}
+                  />
+                );
+              }
+              if (b.kind === "live-tool") {
+                // splitTaskActivity moves live code into the same execution
+                // disclosure as settled tools. Keep this branch defensive in
+                // case a future block type opts out of that collection.
+                return null;
+              }
+              if (b.kind === "plugin-candidate") {
+                return (
+                  <SkillPluginCandidateCard
+                    key={i}
+                    block={b}
+                    projectId={projectId}
+                    onRequestOpenFile={onRequestOpenFile}
+                  />
+                );
+              }
+              return null;
+            })}
+          </>
+        )}
+        {/* Live "what is the agent doing" strip. Rendered only on the last
+            streaming assistant message, under the prose it is currently
+            producing — the exact spot where a long, silent model call reads
+            as a hung caret. The phase is derived from the event tail and the
+            elapsed clock ticks from the last real event, so a quiet-but-
+            alive agent shows "Working… 34s" rather than an ambiguous frozen
+            cursor (see `deriveLiveRunPhase`). Must be a sibling AFTER the
+            content-block map — an entry inside the map would replace the
+            final prose block it sits on. Only when the last content block is
+            prose (the case where a visible caret would otherwise blink over
+            a silent gap). */}
+        {streaming &&
+        !!isLast &&
+        contentBlocks.length > 0 &&
+        contentBlocks[contentBlocks.length - 1]!.kind === "text" ? (
+          <LiveRunStatusStrip
+            phase={livePhase}
+            lastActivityAt={lastActivityAt}
+            thinkingOpen={livePhase === "thinking"}
+          />
+        ) : null}
         {brandBrowserAssistFallbackCard ? (
           <OdCardView
             card={brandBrowserAssistFallbackCard}
@@ -3503,14 +3603,25 @@ function ThinkingBlock({
   text,
   streaming,
   onLinkClick,
+  autoExpand = false,
 }: {
   text: string;
   streaming?: boolean;
   onLinkClick?: MarkdownLinkClickHandler;
+  autoExpand?: boolean;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const isThinking = streaming === true;
+  // Post-prose live thinking (autoExpand) keeps its body open while it is the
+  // current activity, so the reasoning the user is waiting on is visible in
+  // place below the message text. Pre-prose / settled rows stay collapsed and
+  // expand on click (incident recvqgLmAkUM6G) — auto-expanding those would
+  // push content around for every thinking turn.
+  const [userToggled, setUserToggled] = useState(false);
+  useEffect(() => {
+    if (!userToggled) setOpen(isThinking && autoExpand);
+  }, [isThinking, autoExpand, userToggled]);
   // Thinking events carry no server timestamps, so the "用时 X 秒" duration is
   // measured client-side: stamp the start when streaming begins and freeze the
   // elapsed once it ends. Blocks restored from history never stream, so they
@@ -3533,7 +3644,13 @@ function ThinkingBlock({
       : t("assistant.thought");
   return (
     <div className="thinking-block">
-      <button className="thinking-toggle" onClick={() => setOpen((o) => !o)}>
+      <button
+        className="thinking-toggle"
+        onClick={() => {
+          setUserToggled(true);
+          setOpen((o) => !o);
+        }}
+      >
         <span className={`thinking-status${isThinking ? ' op-status-running' : open ? ' thinking-status-active' : ''}`} aria-hidden>
           {isThinking
             ? <Icon name="spinner" size={14} />
