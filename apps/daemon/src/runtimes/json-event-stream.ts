@@ -454,6 +454,110 @@ function handleKimiEvent(obj: unknown, onEvent: StreamEventHandler): boolean {
   return false;
 }
 
+/**
+ * Command Code (`command-code -p --output-format json`) NDJSON.
+ *
+ * Envelope: `{type:"event"|"result", event:{type,...}}`. Thinking and text
+ * arrive as `thinking_delta`/`text_delta` deltas; `message_update` replays
+ * the full accumulated content on every delta and is swallowed so the web
+ * doesn't render duplicates. Tool lifecycle is
+ * `tool_queued` → `tool_running` → `tool_completed`; usage rides on
+ * `model_request_end`, `turn_end`, `run_end`, and the final `result` line.
+ */
+function handleCommandCodeEvent(obj: unknown, onEvent: StreamEventHandler): boolean {
+  if (!isRecord(obj)) return false;
+  const event = isRecord(obj.event) ? obj.event : null;
+  if (obj.type === 'result') {
+    const usage = commandCodeUsage(isRecord(obj.usage) ? obj.usage : null);
+    if (usage) onEvent({ type: 'usage', usage });
+    return true;
+  }
+  if (obj.type !== 'event' || !event || typeof event.type !== 'string') return false;
+
+  switch (event.type) {
+    case 'run_start':
+    case 'turn_start':
+      onEvent({ type: 'status', label: 'running' });
+      return true;
+    case 'thinking_start':
+    case 'model_request_start':
+      onEvent({ type: 'status', label: 'thinking' });
+      return true;
+    case 'thinking_delta':
+      if (typeof event.delta === 'string' && event.delta.length > 0) {
+        onEvent({ type: 'thinking_delta', delta: event.delta });
+      }
+      return true;
+    case 'thinking_end':
+    case 'message_start':
+    case 'message_end':
+    case 'model_trace':
+    case 'message_update':
+    case 'tool_running':
+      // Full-content replay / lifecycle noise with no web-visible content.
+      return true;
+    case 'text_delta':
+      if (typeof event.delta === 'string' && event.delta.length > 0) {
+        onEvent({ type: 'text_delta', delta: event.delta });
+      }
+      return true;
+    case 'tool_queued': {
+      const id = typeof event.toolCallId === 'string' && event.toolCallId.trim()
+        ? event.toolCallId.trim()
+        : null;
+      const name = typeof event.toolName === 'string' && event.toolName.trim()
+        ? event.toolName.trim()
+        : null;
+      if (!id || !name) return true;
+      onEvent({ type: 'tool_use', id, name, input: isRecord(event.input) ? event.input : null });
+      return true;
+    }
+    case 'tool_completed': {
+      const id = typeof event.toolCallId === 'string' && event.toolCallId.trim()
+        ? event.toolCallId.trim()
+        : null;
+      if (!id) return true;
+      onEvent({
+        type: 'tool_result',
+        toolUseId: id,
+        content: commandCodeToolOutput(event.result),
+        isError: false,
+      });
+      return true;
+    }
+    case 'model_request_end':
+    case 'turn_end':
+    case 'run_end': {
+      const usage = commandCodeUsage(isRecord(event.usage) ? event.usage : null)
+        ?? commandCodeUsage(isRecord(event.result) && isRecord(event.result.usage) ? event.result.usage : null);
+      if (usage) onEvent({ type: 'usage', usage });
+      return true;
+    }
+    default:
+      return false;
+  }
+}
+
+function commandCodeUsage(usage: Record<string, unknown> | null): Usage | null {
+  if (!usage) return null;
+  const out: Usage = {};
+  if (typeof usage.inputTokens === 'number') out.input_tokens = usage.inputTokens;
+  if (typeof usage.outputTokens === 'number') out.output_tokens = usage.outputTokens;
+  if (typeof usage.cacheReadTokens === 'number') out.cached_read_tokens = usage.cacheReadTokens;
+  if (typeof usage.cacheWriteTokens === 'number') out.cached_write_tokens = usage.cacheWriteTokens;
+  return out.input_tokens != null || out.output_tokens != null ? out : null;
+}
+
+function commandCodeToolOutput(result: unknown): string {
+  if (Array.isArray(result)) {
+    const texts = result
+      .filter((block): block is { type: 'text'; text: string } => isRecord(block) && block.type === 'text' && typeof block.text === 'string')
+      .map((block) => block.text);
+    if (texts.length > 0) return texts.join('\n');
+  }
+  return stringifyContent(result);
+}
+
 function extractCursorText(message: unknown): string {
   const content = isRecord(message) ? message.content : undefined;
   const blocks = Array.isArray(content) ? content : [];
@@ -971,6 +1075,7 @@ export function createJsonEventStreamHandler(
     if (kind === 'kimi' && handleKimiEvent(obj, onEvent)) return;
     if (kind === 'cursor-agent' && handleCursorEvent(obj, onEvent, state)) return;
     if (kind === 'codex' && handleCodexEvent(obj, onEvent, state)) return;
+    if (kind === 'command-code' && handleCommandCodeEvent(obj, onEvent)) return;
 
     onEvent({ type: 'raw', line });
   }

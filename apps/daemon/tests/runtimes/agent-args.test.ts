@@ -1,8 +1,9 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'vitest';
 import {
-  AGENT_DEFS, aider, antigravity, assert, claude, codex, copilot, cursorAgent, deepseek, devin, detectAgents, grokBuild, join, kilo, kimi, kiro, mkdtempSync, opencode, pi, qoder, qwen, rmSync, spawnEnvForAgent, tmpdir, vibe, writeFileSync, chmodSync,
+  AGENT_DEFS, aider, antigravity, assert, claude, codex, commandCode, copilot, cursorAgent, deepseek, devin, detectAgents, grokBuild, join, kilo, kimi, kiro, mkdtempSync, opencode, pi, qoder, qwen, rmSync, spawnEnvForAgent, tmpdir, vibe, writeFileSync, chmodSync,
 } from './helpers/test-helpers.js';
+import { parseCommandCodeModels } from '../../src/runtimes/defs/command-code.js';
 import { writeAntigravityModelSelection } from '../../src/runtimes/defs/antigravity.js';
 import { parseOpenCodeModels } from '../../src/runtimes/defs/opencode.js';
 import { agentCapabilities } from '../../src/runtimes/capabilities.js';
@@ -645,6 +646,84 @@ test('qwen args check promptViaStdin, base args, model args and exclude `-` sent
 
   assert.deepEqual(withModel, ['--yolo', '--model', 'qwen3-coder-plus']);
   assert.equal(withModel.includes('-'), false);
+});
+
+// Command Code ships as `command-code` with `cmdc` as the short alias —
+// never bare `cmd` (Windows cmd.exe collision). Headless runs need
+// `--yolo`: without it `-p` mode refuses writes with no TTY to approve
+// them. Prompt travels via stdin (bare `-p`), verified live on v1.49.1.
+test('command-code args use stdin prompt, --yolo, json stream and model/effort flags', () => {
+  assert.equal(commandCode.bin, 'command-code');
+  assert.deepEqual(commandCode.fallbackBins, ['cmdc']);
+  assert.equal(commandCode.promptViaStdin, true);
+  assert.equal(commandCode.streamFormat, 'json-event-stream');
+  assert.equal(commandCode.eventParser, 'command-code');
+
+  const baseArgs = commandCode.buildArgs('', [], [], {}, { cwd: '/tmp/od-project' });
+  assert.deepEqual(baseArgs, [
+    '-p',
+    '--output-format',
+    'json',
+    '--max-turns',
+    '100',
+    '--skip-onboarding',
+    '--yolo',
+  ]);
+
+  const withModel = commandCode.buildArgs(
+    '',
+    [],
+    [],
+    { model: 'qwen/qwen3.8-flash', reasoning: 'high' },
+    { cwd: '/tmp/od-project' },
+  );
+  assert.deepEqual(withModel, [
+    '-p',
+    '--output-format',
+    'json',
+    '--max-turns',
+    '100',
+    '--skip-onboarding',
+    '--yolo',
+    '--model',
+    'qwen/qwen3.8-flash',
+    '--effort',
+    'high',
+  ]);
+
+  const resumed = commandCode.buildArgs('', [], [], {}, {
+    cwd: '/tmp/od-project',
+    resumeSessionId: '1bc59bff-8412-440a-8f8a-2c44def827d0',
+  });
+  assert.ok(resumed.includes('--session'));
+  assert.ok(resumed.includes('1bc59bff-8412-440a-8f8a-2c44def827d0'));
+});
+
+test('parseCommandCodeModels skips headers and keeps provider/name ids', () => {
+  const parsed = parseCommandCodeModels(
+    'Available models  ·  68 models\n' +
+    '\n' +
+    'Open Source\n' +
+    '\n' +
+    'deepseek/deepseek-v4-pro               hybrid-attention long-context reasoning\n' +
+    'deepseek/deepseek-v4-flash             fast hybrid-attention reasoning (default)\n' +
+    'z-ai/glm-5.3-flash                     fast, affordable GLM coding with 1M context\n',
+  );
+  assert.ok(parsed);
+  assert.equal(parsed[0]?.id, 'default');
+  assert.deepEqual(
+    parsed.slice(1).map((m) => m.id),
+    [
+      'deepseek/deepseek-v4-pro',
+      'deepseek/deepseek-v4-flash',
+      'z-ai/glm-5.3-flash',
+    ],
+  );
+});
+
+test('parseCommandCodeModels returns null when no model rows exist', () => {
+  assert.equal(parseCommandCodeModels('Available models  ·  0 models\n\nOpen Source\n'), null);
+  assert.equal(parseCommandCodeModels(''), null);
 });
 
 // `agy` exposes `-p` (print mode, alias for `--print`) plus `-` as

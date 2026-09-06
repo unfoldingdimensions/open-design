@@ -1922,3 +1922,92 @@ test('codex json stream does not downgrade non-reconnect errors that mention rec
     },
   ]);
 });
+
+test('command-code stream surfaces thinking, text, tool lifecycle and usage (live v1.49.1 shapes)', () => {
+  const { events, handler } = collectEvents('command-code');
+
+  handler.feed(
+    JSON.stringify({ type: 'event', event: { type: 'run_start', sessionId: 'ses-1' } }) + '\n' +
+    JSON.stringify({ type: 'event', event: { type: 'turn_start', turnNumber: 1 } }) + '\n' +
+    JSON.stringify({ type: 'event', event: { type: 'thinking_start' } }) + '\n' +
+    JSON.stringify({ type: 'event', event: { type: 'thinking_delta', delta: 'The' } }) + '\n' +
+    JSON.stringify({ type: 'event', event: { type: 'thinking_delta', delta: ' plan' } }) + '\n' +
+    JSON.stringify({ type: 'event', event: { type: 'thinking_end', text: 'The plan' } }) + '\n' +
+    JSON.stringify({ type: 'event', event: { type: 'text_delta', delta: 'HE' } }) + '\n' +
+    // Full-content replays carry no new information — swallowed, not doubled.
+    JSON.stringify({
+      type: 'event',
+      event: {
+        type: 'message_update',
+        content: [
+          { type: 'thinking', thinking: 'The plan', signature: '' },
+          { type: 'text', text: 'HE' },
+        ],
+      },
+    }) + '\n' +
+    JSON.stringify({ type: 'event', event: { type: 'text_delta', delta: 'LLO' } }) + '\n' +
+    JSON.stringify({
+      type: 'event',
+      event: { type: 'tool_queued', toolCallId: 'call_1', toolName: 'read_directory', input: { path: '/tmp/x' } },
+    }) + '\n' +
+    JSON.stringify({
+      type: 'event',
+      event: { type: 'tool_running', toolCallId: 'call_1', toolName: 'read_directory', description: null },
+    }) + '\n' +
+    JSON.stringify({
+      type: 'event',
+      event: {
+        type: 'tool_completed',
+        toolCallId: 'call_1',
+        toolName: 'read_directory',
+        result: [{ type: 'text', text: 'Found 1 items' }],
+        deferred: false,
+      },
+    }) + '\n' +
+    JSON.stringify({
+      type: 'event',
+      event: {
+        type: 'turn_end',
+        turnNumber: 1,
+        hadToolCalls: true,
+        usage: { inputTokens: 100, outputTokens: 20, cacheReadTokens: 5, cacheWriteTokens: 0 },
+      },
+    }) + '\n' +
+    JSON.stringify({
+      type: 'result',
+      subtype: 'success',
+      sessionId: 'ses-1',
+      stopReason: 'end_turn',
+      usage: { inputTokens: 100, outputTokens: 20, cacheReadTokens: 5, cacheWriteTokens: 0 },
+      durationMs: 1000,
+      finalText: 'HELLO',
+    }) + '\n',
+  );
+
+  assert.deepEqual(events, [
+    { type: 'status', label: 'running' },
+    { type: 'status', label: 'running' },
+    { type: 'status', label: 'thinking' },
+    { type: 'thinking_delta', delta: 'The' },
+    { type: 'thinking_delta', delta: ' plan' },
+    { type: 'text_delta', delta: 'HE' },
+    { type: 'text_delta', delta: 'LLO' },
+    { type: 'tool_use', id: 'call_1', name: 'read_directory', input: { path: '/tmp/x' } },
+    { type: 'tool_result', toolUseId: 'call_1', content: 'Found 1 items', isError: false },
+    {
+      type: 'usage',
+      usage: { input_tokens: 100, output_tokens: 20, cached_read_tokens: 5, cached_write_tokens: 0 },
+    },
+    {
+      type: 'usage',
+      usage: { input_tokens: 100, output_tokens: 20, cached_read_tokens: 5, cached_write_tokens: 0 },
+    },
+  ]);
+});
+
+test('command-code stream ignores unknown event types as raw passthrough', () => {
+  const { events, handler } = collectEvents('command-code');
+  const line = JSON.stringify({ type: 'event', event: { type: 'future_cmdc_thing', foo: 1 } });
+  handler.feed(line + '\n');
+  assert.deepEqual(events, [{ type: 'raw', line }]);
+});
