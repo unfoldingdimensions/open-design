@@ -14,6 +14,14 @@ describe('agentIdToTracking', () => {
     expect(agentIdToTracking('amr')).toBe('amr');
   });
 
+  it('maps the Command Code runtime to its own provider id', () => {
+    // Regression: daemon agentId is `command-code`
+    // (apps/daemon/src/runtimes/defs/command-code.ts), but the mapping had
+    // no `command-code` case, so every Command Code run landed in the `other`
+    // catch-all. It must report `command_code`, not `other`.
+    expect(agentIdToTracking('command-code')).toBe('command_code');
+  });
+
   it('keeps mapping known CLI agents and falls back to other for unknowns', () => {
     expect(agentIdToTracking('claude')).toBe('claude_code');
     expect(agentIdToTracking('opencode')).toBe('opencode');
