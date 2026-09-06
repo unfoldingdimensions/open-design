@@ -1805,3 +1805,58 @@
 @media (prefers-reduced-motion: reduce) {
   .live-code-caret { animation: none; opacity: 1; }
 }
+/* Live "what is the agent doing" strip under the streaming last message.
+   Sits below the prose the agent is currently producing so a long, silent
+   model call reads as "alive, Working… 34s ago" instead of an ambiguous
+   frozen caret. The phase dot + shimmering label mirror the footer/thinking
+   language; the idle clock is the honest no-new-output signal. */
+.live-run-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  padding: 4px 10px 4px 8px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--bg-subtle) 60%, transparent);
+  width: fit-content;
+  max-width: 100%;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--text-muted);
+  transition: opacity 200ms var(--ease-out), border-color 200ms var(--ease-out);
+}
+.live-run-status[data-phase="thinking"] {
+  border-color: color-mix(in srgb, var(--purple) 32%, var(--border-soft));
+}
+.live-run-status[data-phase="running-tool"] {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border-soft));
+}
+.live-run-status-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-strong);
+  flex-shrink: 0;
+}
+.live-run-status[data-phase="thinking"] .live-run-status-dot {
+  color: var(--purple);
+}
+.live-run-status[data-phase="running-tool"] .live-run-status-dot {
+  color: var(--accent-strong);
+}
+.live-run-status-dot svg { display: block; }
+.live-run-status-label {
+  font-weight: 600;
+  color: var(--text-strong);
+  white-space: nowrap;
+}
+.live-run-status-idle {
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-run-status { transition: none; }
+  .live-run-status-label { animation: none; -webkit-text-fill-color: var(--text-strong); }
+}

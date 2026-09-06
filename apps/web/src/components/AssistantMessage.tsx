@@ -574,6 +574,18 @@ function AssistantMessageImpl({
         ? ([{ kind: "text", text: message.content }] satisfies AgentEvent[])
         : [];
   const displayEvents = useMemo(() => dedupeToolUsesById(events), [events]);
+  // Live phase + last-activity heartbeat for the streaming turn. The daemon
+  // only forwards substantive events (text/thinking/tool deltas) — there is
+  // no per-second tick — so a long model call between two events is silent on
+  // the wire. The footer's blinking caret alone cannot tell "working" from
+  // "hung", so the last message shows what the agent is doing right now
+  // (derived from the event tail) plus a client-side seconds-since-last-event
+  // clock. See `deriveLiveRunPhase` below for the phase grammar.
+  const { livePhase, lastActivityAt } = useMemo(
+    () => deriveLiveRunPhase(displayEvents, message.startedAt),
+    [displayEvents, message.startedAt],
+  );
+
   // ChatPane renders the canonical TodoWrite card above the composer, so the
   // per-message flow must not render the same task list again.
   const settledUseIds = useMemo(
@@ -1611,6 +1623,47 @@ function assistantFeedbackModelId(message: ChatMessage): string | null {
 function appendRoleModel(label: string, model: string | null): string {
   if (!model || label.includes(" · ")) return label;
   return `${label} · ${model}`;
+}
+
+function LiveRunStatusStrip({
+  phase,
+  lastActivityAt,
+  thinkingOpen,
+}: {
+  phase: LiveRunPhase;
+  lastActivityAt: number | undefined;
+  thinkingOpen?: boolean;
+}) {
+  const t = useT();
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  const phaseLabel =
+    phase === "thinking"
+      ? t("assistant.statusThinking")
+      : phase === "running-tool"
+        ? t("assistant.statusRunningTool")
+        : t("assistant.statusWorking");
+  // Seconds since the last real event. While the phase is derived from the
+  // event tail (which does not tick), the idle clock is the honest
+  // "this long with no new output" signal for a quiet model call.
+  const idleSec =
+    lastActivityAt !== undefined
+      ? Math.max(0, Math.round((now - lastActivityAt) / 1000))
+      : 0;
+  const idleLabel =
+    idleSec < 1 ? t("assistant.activityJustNow") : t("assistant.activitySecondsAgo", { s: idleSec });
+  return (
+    <div className="live-run-status" data-phase={phase}>
+      <span className={`live-run-status-dot${thinkingOpen ? " is-thinking" : ""}`} aria-hidden>
+        <Icon name={thinkingOpen ? "spinner" : "sparkles"} size={12} />
+      </span>
+      <span className="live-run-status-label shimmer-text">{phaseLabel}</span>
+      <span className="live-run-status-idle">{idleLabel}</span>
+    </div>
+  );
 }
 
 interface AssistantFooterProps {
@@ -4379,6 +4432,59 @@ function splitSystemReminders(input: string): ProseSegment[] {
         : seg
     )
     .filter((seg) => seg.kind === "reminder" || seg.text.trim().length > 0);
+}
+
+export type LiveRunPhase =
+  | "thinking"
+  | "working"
+  | "running-tool";
+
+/**
+ * Derive what the streaming agent is doing right now from the event tail, plus
+ * the wall-clock time of the most recent event.
+ *
+ * Grammar (events arrive in wire order, `displayEvents` is deduped):
+ * - An unresolved `tool_use` (no matching `tool_result` yet) at/near the tail
+ *   means the agent is executing a tool right now → `running-tool`. This is
+ *   the phase where the rail's per-tool cards spin.
+ * - A trailing `thinking` block (the model is streaming reasoning, or just
+ *   started a model call after text/tools) → `thinking`. Command Code emits
+ *   `thinking_delta`s when reasoning and goes quiet between a finished
+ *   sentence and the next tool while the next model call warms up; the tail
+ *   still reads as "thinking" because no tool is open.
+ * - Otherwise, with content already on screen, the agent is assembling the
+ *   next step (mid model call after prose) → `working`.
+ *
+ * The caller renders a seconds-since-`lastActivityAt` clock so a multi-minute
+ * model call (large context, off-peak provider) reads as "alive, working for
+ * 42s" instead of an ambiguous frozen caret. Falls back to `startedAt` when
+ * the message has no events yet (still in the pre-output window).
+ */
+export function deriveLiveRunPhase(
+  events: readonly AgentEvent[],
+  startedAt: number | undefined,
+): { livePhase: LiveRunPhase; lastActivityAt: number | undefined } {
+  const now = Date.now();
+  if (!events || events.length === 0) {
+    return { livePhase: "working", lastActivityAt: startedAt };
+  }
+  const last = events[events.length - 1];
+  if (!last) return { livePhase: "working", lastActivityAt: startedAt };
+  // Walk backwards from the tail to find the last substantive "doing" marker.
+  // Status bookkeeping (starting/running/usage) does not count as activity a
+  // user can observe, so skip it when looking for the latest real step.
+  const substantive = [...events].reverse().find(
+    (e) =>
+      e.kind === "tool_use" ||
+      e.kind === "tool_result" ||
+      e.kind === "thinking" ||
+      e.kind === "text" ||
+      (e.kind === "status" && e.label !== "starting" && e.label !== "running"),
+  );
+  const anchor = substantive ?? last;
+  if (anchor.kind === "tool_use") return { livePhase: "running-tool", lastActivityAt: now };
+  if (anchor.kind === "thinking") return { livePhase: "thinking", lastActivityAt: now };
+  return { livePhase: "working", lastActivityAt: now };
 }
 
 function useLiveElapsed(

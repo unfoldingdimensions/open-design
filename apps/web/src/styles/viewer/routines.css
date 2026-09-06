@@ -1672,6 +1672,10 @@
 .app .msg.assistant .assistant-flow {
   gap: 14px;
 }
+.app .msg.assistant .live-run-status {
+  margin-top: 2px;
+  align-self: flex-start;
+}
 .app .msg.assistant .prose-block {
   max-width: 68ch;
   color: var(--text);

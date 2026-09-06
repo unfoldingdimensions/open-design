@@ -3695,6 +3695,10 @@ export const zhTW: Dict = {
   "assistant.statusStarting": "啟動中",
   "assistant.statusRequesting": "正在傳送請求",
   "assistant.statusThinking": "思考中",
+  "assistant.statusWorking": "工作中",
+  "assistant.statusRunningTool": "正在執行工具",
+  "assistant.activityJustNow": "剛剛",
+  "assistant.activitySecondsAgo": "{s}秒前",
   "assistant.statusStreaming": "串流輸出中",
   "assistant.slowHint":
     "耗時比平時更久。一般 5–10 秒內會出現表單，可以「停止」後重新表達。",

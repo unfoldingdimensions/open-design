@@ -4367,6 +4367,10 @@ export interface Dict {
   'assistant.statusStarting': string;
   'assistant.statusRequesting': string;
   'assistant.statusThinking': string;
+  'assistant.statusWorking': string;
+  'assistant.statusRunningTool': string;
+  'assistant.activityJustNow': string;
+  'assistant.activitySecondsAgo': string;
   'assistant.statusStreaming': string;
   'assistant.slowHint': string;
   'assistant.verbEditing': string;

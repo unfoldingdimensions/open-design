@@ -74,4 +74,22 @@ describe('assistantRoleLabel', () => {
 
     expect(assistantRoleLabel(message, t)).toBe('Claude · claude-sonnet-4-6');
   });
+
+  it('labels Command Code by its display name and brand id', () => {
+    const byId: ChatMessage = {
+      id: 'message-cc-1',
+      role: 'assistant',
+      content: '',
+      agentId: 'command-code',
+    };
+    expect(assistantRoleLabel(byId, t)).toBe('Command Code');
+
+    const byName: ChatMessage = {
+      id: 'message-cc-2',
+      role: 'assistant',
+      content: '',
+      agentName: 'Command Code · deepseek/deepseek-v4-flash',
+    };
+    expect(assistantRoleLabel(byName, t)).toBe('Command Code · deepseek/deepseek-v4-flash');
+  });
 });

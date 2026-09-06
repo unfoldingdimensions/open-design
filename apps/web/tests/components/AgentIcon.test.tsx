@@ -105,6 +105,26 @@ describe('AgentIcon', () => {
     expect(markup).not.toContain('<img src="/agent-icons/cursor-agent.svg"');
   });
 
+  it('renders Command Code as a bundled mono SVG mark (not the fallback initial)', () => {
+    // command-code.svg ships a baked dark silhouette (official 4-pane plus
+    // grid from the VSCode extension), so AgentIcon must mask it with the
+    // theme color instead of showing the generic letter `C` fallback.
+    const svg = readFileSync(
+      new URL('../../public/agent-icons/command-code.svg', import.meta.url),
+      'utf8',
+    );
+    // Asset may carry a leading HTML comment header (like grok-build.svg);
+    // the SVG element itself must still be present and valid.
+    expect(svg).toContain('<svg xmlns=');
+    // Baked dark silhouette fill (matches the mono family convention).
+    expect(svg).toContain('fill="#1c1b1a"');
+
+    const markup = renderToStaticMarkup(<AgentIcon id="command-code" size={24} />);
+    expect(markup).toContain('class="agent-icon agent-icon-mono"');
+    expect(markup).toContain('mask-image:url(&quot;/agent-icons/command-code.svg&quot;)');
+    expect(markup).not.toContain('agent-icon-fallback');
+  });
+
   it('falls back to an initial-letter pill for unknown agents', () => {
     const markup = renderToStaticMarkup(<AgentIcon id="unknown-agent" size={24} />);
 

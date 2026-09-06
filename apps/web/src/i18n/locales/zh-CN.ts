@@ -3685,6 +3685,10 @@ export const zhCN: Dict = {
   "assistant.statusStarting": "启动中",
   "assistant.statusRequesting": "正在发送请求",
   "assistant.statusThinking": "思考中",
+  "assistant.statusWorking": "工作中",
+  "assistant.statusRunningTool": "正在运行工具",
+  "assistant.activityJustNow": "刚刚",
+  "assistant.activitySecondsAgo": "{s}秒前",
   "assistant.statusStreaming": "流式输出中",
   "assistant.slowHint":
     "耗时比平时更久。一般 5–10 秒内会出现表单，可以「停止」后重新表述。",
