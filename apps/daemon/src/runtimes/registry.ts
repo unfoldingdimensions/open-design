@@ -6,6 +6,7 @@ import { opencodeAgentDef } from './defs/opencode.js';
 import { byokOpenCodeAgentDef } from './defs/byok-opencode.js';
 import { hermesAgentDef } from './defs/hermes.js';
 import { traeCliAgentDef } from './defs/trae-cli.js';
+import { zcodeAgentDef } from './defs/zcode.js';
 import { grokBuildAgentDef } from './defs/grok-build.js';
 import { kimiAgentDef } from './defs/kimi.js';
 import { cursorAgentDef } from './defs/cursor-agent.js';
@@ -67,6 +68,7 @@ export const SHIPPED_AGENT_DEFS: RuntimeAgentDef[] = [
   mimoAgentDef,
   atomcodeAgentDef,
   commandCodeAgentDef,
+  zcodeAgentDef,
 ];
 
 export function readLocalAgentProfileDefs(

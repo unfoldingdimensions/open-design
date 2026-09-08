@@ -145,7 +145,7 @@ definitions currently group by transport as follows:
 | `acp-json-rpc` | `amr` (Vela), `devin`, `hermes`, `kimi`, `kiro`, `kilo`, `reasonix`, `trae-cli`, `vibe` |
 | `pi-rpc` | `pi` |
 | `dsh-profile-jsonl` | `deepseek-harness` |
-| `plain` | `aider`, `antigravity`, `atomcode`, `deepseek`, `grok-build`, `qwen` |
+| `plain` | `aider`, `antigravity`, `atomcode`, `deepseek`, `grok-build`, `qwen`, `zcode` |
 
 `byok-opencode` is the API-backed OpenCode-compatible profile rather than an
 additional local executable. User-defined local profiles may extend the base
@@ -435,6 +435,31 @@ At run completion, the daemon scans the captured plain stdout for `<artifact>` b
 | `text/markdown`, `text/x-markdown`, `markdown`, or `md` | `<identifier>.md` |
 
 The identifier is slugged before use, collisions receive `-2`, `-3`, etc., and outputs without a supported `<artifact>` block are left unchanged. This daemon-side extraction keeps headless runs and web-attached runs aligned: the project file exists even when no browser is present to parse the chat stream.
+
+### 5.14 ZCode
+
+- ZCode ships its agent runtime inside the desktop app
+  (`resources/glm/zcode.cjs`); OD drives the `zcode` binary from
+  `npm install -g zcode-app-cli@latest`, with `ZCODE_BIN` as the override
+  for custom installs (same convention as `DSH_BIN`).
+- Invocation is `zcode --prompt <text> --mode yolo --no-color` with
+  `--resume <sessionId>` (`sess_...`) for follow-ups and repeatable
+  `--attach <file>` for image paths. The prompt travels as an argv value
+  (no verified stdin sentinel), so the def declares `maxPromptArgBytes`
+  and oversized prompts fail as typed `AGENT_PROMPT_TOO_LARGE`.
+- Streaming is `plain` until an authenticated run shows what `--json`
+  emits for `--prompt` turns; file artifacts still land through the §5.13
+  handoff. There is no headless `--model` flag (the bundle string is
+  TUI-scoped), so turns use the CLI config's `model.main` and the picker
+  offers Default only — switch models via the CLI (`/model`) or
+  `~/.zcode/cli/config.json`.
+- **Gotcha — root `--help` overpromises.** It lists `--max-turns`,
+  `--settings`, and `--model`, but the v0.16.5 parser rejects all three;
+  only acceptance-tested flags belong in `buildArgs`.
+- **Gotcha — no proactive auth probe.** Detection reports binary
+  availability, but the CLI needs its own model access (`zcode login` /
+  Coding Plan API key / inline provider `apiKey`). Run failures surface
+  instead of triggering a daemon login flow.
 
 ## 6. Runtime metadata and UI
 

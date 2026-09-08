@@ -26,6 +26,7 @@ const ICON_EXT: Record<string, 'svg' | 'png'> = {
   mimo: 'svg',
   hermes: 'svg',
   'command-code': 'svg',
+  glm: 'svg',
   'grok-build': 'svg',
   kimi: 'svg',
   pi: 'svg',
@@ -42,6 +43,7 @@ const ICON_EXT: Record<string, 'svg' | 'png'> = {
 // instead of duplicating identical SVG files under transport-specific ids.
 const ICON_ASSET_ID: Record<string, string> = {
   'deepseek-harness': 'deepseek',
+  zcode: 'glm',
 };
 
 // SVG marks that are single-color silhouettes (no baked brand colors).
@@ -57,6 +59,7 @@ const MONO_ICONS = new Set([
   'opencode',
   'hermes',
   'command-code',
+  'glm',
   'mimo',
   'kilo',
   'grok-build',

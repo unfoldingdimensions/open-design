@@ -37,6 +37,7 @@ const AGENT_BIN_ENV_KEYS = new Map<string, string>([
   ['reasonix', 'REASONIX_BIN'],
   ['trae-cli', 'TRAE_CLI_BIN'],
   ['vibe', 'VIBE_BIN'],
+  ['zcode', 'ZCODE_BIN'],
 ]);
 
 const TOOLCHAIN_DIR_CACHE_TTL_MS = 5000;

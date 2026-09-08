@@ -233,6 +233,8 @@ export function agentIdToTracking(agentId: string | null | undefined): TrackingC
       return 'atomcode';
     case 'command-code':
       return 'command_code';
+    case 'zcode':
+      return 'zcode';
     case 'byok-opencode':
       return 'byok_opencode';
     case 'deepseek':

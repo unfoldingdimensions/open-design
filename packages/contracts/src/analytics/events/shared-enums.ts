@@ -210,6 +210,7 @@ export type TrackingCliProviderId =
   | 'mimo'
   | 'atomcode'
   | 'command_code'
+  | 'zcode'
   | 'deepseek'
   | 'deepseek_harness'
   | 'amr'

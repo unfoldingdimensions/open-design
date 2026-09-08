@@ -22,6 +22,13 @@ describe('agentIdToTracking', () => {
     expect(agentIdToTracking('command-code')).toBe('command_code');
   });
 
+  it('maps the ZCode runtime to its own provider id', () => {
+    // Daemon agentId is `zcode`
+    // (apps/daemon/src/runtimes/defs/zcode.ts); it must report `zcode`,
+    // not the `other` catch-all.
+    expect(agentIdToTracking('zcode')).toBe('zcode');
+  });
+
   it('keeps mapping known CLI agents and falls back to other for unknowns', () => {
     expect(agentIdToTracking('claude')).toBe('claude_code');
     expect(agentIdToTracking('opencode')).toBe('opencode');

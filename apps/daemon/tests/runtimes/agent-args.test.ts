@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'vitest';
 import {
-  AGENT_DEFS, aider, antigravity, assert, claude, codex, commandCode, copilot, cursorAgent, deepseek, devin, detectAgents, grokBuild, join, kilo, kimi, kiro, mkdtempSync, opencode, pi, qoder, qwen, rmSync, spawnEnvForAgent, tmpdir, vibe, writeFileSync, chmodSync,
+  AGENT_DEFS, aider, antigravity, assert, claude, codex, commandCode, copilot, cursorAgent, deepseek, devin, detectAgents, grokBuild, join, kilo, kimi, kiro, mkdtempSync, opencode, pi, qoder, qwen, rmSync, spawnEnvForAgent, tmpdir, vibe, writeFileSync, zcode, chmodSync,
 } from './helpers/test-helpers.js';
 import { parseCommandCodeModels } from '../../src/runtimes/defs/command-code.js';
 import { writeAntigravityModelSelection } from '../../src/runtimes/defs/antigravity.js';
@@ -1347,4 +1347,38 @@ test('promptInputFormat is a string property (or undefined) on every promptViaSt
       `${name}.promptInputFormat must equal ${JSON.stringify(expected)}`,
     );
   }
+});
+
+// ZCode ships its runtime inside the desktop app; OD drives the `zcode`
+// binary (npm `zcode-app-cli`, `ZCODE_BIN` override). Headless turns run
+// `zcode --prompt <text> --mode yolo --no-color` with `--resume` for
+// follow-ups — every flag acceptance-tested against v0.16.5 (its root
+// --help advertises flags the parser rejects, e.g. --max-turns and
+// --model, so neither is passed). No headless model flag exists: turns
+// use the CLI config's model.main, so there are no reasoning options.
+test('zcode args use --prompt argv, yolo mode, no-color and --resume', () => {
+  assert.equal(zcode.bin, 'zcode');
+  assert.equal(zcode.streamFormat, 'plain');
+  assert.equal(zcode.maxPromptArgBytes, 30_000);
+
+  const baseArgs = zcode.buildArgs('do the thing', [], [], {}, { cwd: '/tmp/od-project' });
+  assert.deepEqual(baseArgs, ['--prompt', 'do the thing', '--mode', 'yolo', '--no-color']);
+
+  const withImages = zcode.buildArgs('look', ['/tmp/shot.png'], [], {}, { cwd: '/tmp/od-project' });
+  assert.deepEqual(withImages, [
+    '--prompt',
+    'look',
+    '--mode',
+    'yolo',
+    '--no-color',
+    '--attach',
+    '/tmp/shot.png',
+  ]);
+
+  const resumed = zcode.buildArgs('again', [], [], {}, {
+    cwd: '/tmp/od-project',
+    resumeSessionId: 'sess_abc123',
+  });
+  assert.ok(resumed.includes('--resume'));
+  assert.ok(resumed.includes('sess_abc123'));
 });
