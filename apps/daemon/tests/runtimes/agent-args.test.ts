@@ -1350,13 +1350,14 @@ test('promptInputFormat is a string property (or undefined) on every promptViaSt
 });
 
 // ZCode ships its runtime inside the desktop app; OD drives the `zcode`
-// binary (npm `zcode-app-cli`, `ZCODE_BIN` override). Headless turns run
-// `zcode --prompt <text> --mode yolo --no-color` with `--resume` for
-// follow-ups — every flag acceptance-tested against v0.16.5 (its root
-// --help advertises flags the parser rejects, e.g. --max-turns and
-// --model, so neither is passed). No headless model flag exists: turns
-// use the CLI config's model.main, so there are no reasoning options.
-test('zcode args use --prompt argv, yolo mode, no-color and --resume', () => {
+// binary (Windows shim or npm `zcode-app-cli`, `ZCODE_BIN` override).
+// Headless turns run `zcode --prompt <text> --mode yolo --no-color` —
+// every flag acceptance-tested against runtime v0.16.5 (root --help
+// advertises flags the parser rejects, e.g. --max-turns and --model,
+// so neither is passed). No headless model flag exists: turns use the
+// CLI config's model.main. Plain turns never emit a session id, so
+// follow-ups are fresh sessions (no resume wiring).
+test('zcode args use --prompt argv, yolo mode, no-color and fresh sessions', () => {
   assert.equal(zcode.bin, 'zcode');
   assert.equal(zcode.streamFormat, 'plain');
   assert.equal(zcode.maxPromptArgBytes, 30_000);
@@ -1379,6 +1380,9 @@ test('zcode args use --prompt argv, yolo mode, no-color and --resume', () => {
     cwd: '/tmp/od-project',
     resumeSessionId: 'sess_abc123',
   });
-  assert.ok(resumed.includes('--resume'));
-  assert.ok(resumed.includes('sess_abc123'));
+  // Plain --prompt turns never emit a session id, so there is nothing to
+  // resume: follow-ups are fresh sessions, never --resume/--continue.
+  assert.ok(!resumed.includes('--resume'));
+  assert.ok(!resumed.includes('-c'));
+  assert.ok(!resumed.includes('sess_abc123'));
 });

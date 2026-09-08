@@ -16,7 +16,11 @@ import type { RuntimeAgentDef } from '../types.js';
 // - `--prompt <text>` runs one headless turn; `-p` is the positional twin.
 // - `--mode yolo` is the documented default for `--prompt` and is passed
 //   explicitly so headless runs never block on an approval prompt.
-// - `--resume <sessionId>` continues a persisted session (`sess_...`).
+// - Plain `--prompt` turns print only the response text (stderr empty)
+//   and never emit a session id, so there is nothing to resume: every
+//   turn is a fresh session. `--resume`/`-c` are deliberately NOT wired —
+//   `-c` resumes the latest session for the whole cwd, which is the wrong
+//   granularity when several OD conversations share one project.
 // - `--no-color` keeps the plain-text stream free of ANSI escapes.
 // - There is NO `--model` flag for headless runs (bundle string is
 //   TUI-scoped): the turn always uses the CLI config's `model.main`.
@@ -27,8 +31,7 @@ import type { RuntimeAgentDef } from '../types.js';
 // - Auth is CLI-owned (`zcode login` / Coding Plan API key / inline
 //   provider apiKey); detection proves only that the binary runs.
 // - `--attach <file>` (repeatable) attaches local files to `--prompt`;
-//   image paths ride it. Marked provisional until a live image run is
-//   observed (see the docs note).
+//   image paths ride it (verified live: attached PNG described correctly).
 export const zcodeAgentDef = {
   id: 'zcode',
   name: 'ZCode',
@@ -41,24 +44,18 @@ export const zcodeAgentDef = {
   maxPromptArgBytes: 30_000,
   fallbackModels: [DEFAULT_MODEL_OPTION],
   // No headless model/effort flags exist, so no reasoning options.
-  buildArgs: (prompt, imagePaths, _extra, _options = {}, runtimeContext = {}) => {
+  buildArgs: (prompt, imagePaths, _extra, _options = {}, _runtimeContext = {}) => {
     const args = ['--prompt', prompt, '--mode', 'yolo', '--no-color'];
     for (const imagePath of imagePaths) {
       args.push('--attach', imagePath);
     }
-    if (
-      typeof runtimeContext.resumeSessionId === 'string' &&
-      runtimeContext.resumeSessionId.length > 0
-    ) {
-      args.push('--resume', runtimeContext.resumeSessionId);
-    }
     return args;
   },
   promptViaStdin: false,
-  // Provisional floor: unconfigured-CLI runs emit plain text. Whether
-  // `--json` yields a structured stream for `--prompt` turns is unknown
-  // until an authenticated run is observed — upgrade to a structured
-  // streamFormat then, not before.
+  // Plain text, verified live: response lines stream progressively on
+  // stdout. `--json` was observed and rejected — one trailing batch
+  // object per turn, which would freeze the chat UI (same gotcha as the
+  // deepseek def documents). No usage/cost events in this mode.
   streamFormat: 'plain',
   supportsImagePaths: true,
 } satisfies RuntimeAgentDef;

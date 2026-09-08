@@ -446,13 +446,19 @@ The identifier is slugged before use, collisions receive `-2`, `-3`, etc., and o
   from `npm install -g zcode-app-cli@latest`. `ZCODE_BIN` overrides
   either for custom installs (same convention as `DSH_BIN`).
 - Invocation is `zcode --prompt <text> --mode yolo --no-color` with
-  `--resume <sessionId>` (`sess_...`) for follow-ups and repeatable
-  `--attach <file>` for image paths. The prompt travels as an argv value
-  (no verified stdin sentinel), so the def declares `maxPromptArgBytes`
-  and oversized prompts fail as typed `AGENT_PROMPT_TOO_LARGE`.
-- Streaming is `plain` until an authenticated run shows what `--json`
-  emits for `--prompt` turns; file artifacts still land through the §5.13
-  handoff. There is no headless `--model` flag (the bundle string is
+  repeatable `--attach <file>` for image paths. The prompt travels as an
+  argv value (no verified stdin sentinel), so the def declares
+  `maxPromptArgBytes` and oversized prompts fail as typed
+  `AGENT_PROMPT_TOO_LARGE`. Plain `--prompt` turns print only the
+  response text on stdout (verified streaming line-by-line) and never
+  emit a session id — every turn is a fresh session. `--json` yields one
+  trailing batch object (session id, response, usage), so it must not
+  back a streaming run; usage/cost coverage is therefore unavailable
+  for this adapter until a streaming structured format exists.
+- Streaming is `plain` (verified live: lines arrive progressively).
+  `--json` was observed and rejected: it emits one trailing batch object
+  after the turn, which would freeze the chat UI. File artifacts still
+  land through the §5.13 handoff. There is no headless `--model` flag (the bundle string is
   TUI-scoped), so turns use the CLI config's `model.main` and the picker
   offers Default only — switch models via the CLI (`/model`) or
   `~/.zcode/cli/config.json`.
