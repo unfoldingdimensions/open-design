@@ -157,6 +157,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   border-color: var(--text);
   box-shadow: 0 0 0 3px rgba(28, 27, 26, 0.08);
 }
+/* The quiet panel keeps its halo-only focus (status quo): the global blue
+   :focus-visible ring above would make the panel louder than the orange
+   "Create" CTA it is designed around. The 3px halo remains the indicator. */
+.entry-side input:focus-visible,
+.entry-side textarea:focus-visible,
+.entry-side select:focus-visible {
+  outline: none;
+}
 /* Native <select> on macOS uses its own intrinsic min-height that ends up
    shorter than <input> at the same `padding: 7px 10px` rule above, so any
    form that flex-aligns an input next to a select (e.g. the memory editor's

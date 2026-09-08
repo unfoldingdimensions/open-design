@@ -24,12 +24,14 @@ describe('workspace new-tab touch target', () => {
     expect(blockValue(button, 'height')).toBe('30px');
   });
 
-  it('expands the hit area to 44px through an invisible halo', () => {
+  it('expands the hit area horizontally through an invisible halo', () => {
     const halo = cssBlock('.workspace-tabs-new-btn::after');
     expect(blockValue(halo, 'content')).toBe("''");
     expect(blockValue(halo, 'position')).toBe('absolute');
-    // 30px + 2 × 7px = 44px shared touch target.
-    expect(blockValue(halo, 'inset')).toBe('-7px');
+    // 30px + 2 × 7px = 44px wide. Inline axis only: the strip clips
+    // vertical overflow, so block-axis halo would be dead geometry.
+    expect(blockValue(halo, 'inset-inline')).toBe('-7px');
+    expect(blockValue(halo, 'inset-block')).toBe('0');
   });
 });
 

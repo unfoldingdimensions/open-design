@@ -1778,11 +1778,17 @@ function RunTotalTimer({
 // Whole-second "42s" / "1m 02s" formatting for live-ticking chips. Deliberately
 // distinct from formatElapsedMs (which shows tenths under 10s for the footer's
 // Working/Done clock) — a ticking step counter reads better in whole seconds.
-function formatWholeSeconds(ms: number): string {
+export function formatWholeSeconds(ms: number): string {
   const s = ms / 1000;
   if (s < 60) return `${Math.max(0, Math.round(s))}s`;
-  const m = Math.floor(s / 60);
-  const rem = Math.round(s - m * 60);
+  let m = Math.floor(s / 60);
+  let rem = Math.round(s - m * 60);
+  // Math.round can push the remainder to a full minute (e.g. 119.6s ->
+  // m=1, rem=60): roll over instead of rendering "1m 60s".
+  if (rem === 60) {
+    m += 1;
+    rem = 0;
+  }
   return rem > 0 ? `${m}m ${rem.toString().padStart(2, "0")}s` : `${m}m`;
 }
 

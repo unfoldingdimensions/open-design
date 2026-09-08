@@ -112,7 +112,7 @@ describe('CollabDemoView', () => {
       fireEvent.click(screen.getByText('Publish'));
     });
     expect(screen.getByTestId('collab-demo-action-status').textContent).toMatch(
-      /Publish requested/,
+      /Publish dispatched/,
     );
   });
 
@@ -139,6 +139,8 @@ describe('CollabDemoView', () => {
     expect(screen.getByTestId('collab-demo-action-status').textContent).toMatch(
       /failed/i,
     );
+    // Failures take the error tone and an assertive live region.
+    expect(screen.getByTestId('collab-demo-action-status')).toHaveAttribute('role', 'alert');
   });
 
   it('surfaces a pull prompt when the published head advances past the pulled version', async () => {

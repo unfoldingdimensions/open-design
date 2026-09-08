@@ -112,14 +112,17 @@
   -webkit-app-region: no-drag;
   transition: background 100ms var(--ease-out), color 100ms var(--ease-out);
 }
-/* 44px touch target on a 30px visual: an invisible ::after halo extends the
-   hit area without changing the strip's geometry (position: relative above
-   anchors it; the sticky overflow rule below keeps working because it only
-   overrides position). */
+/* 44px-wide touch target on a 30px visual: an invisible ::after halo extends
+   the hit area without changing the strip's geometry (position: relative
+   above anchors it; the sticky overflow rule below keeps working because it
+   only overrides position). Inline axis only: the strip clips vertical
+   overflow, so a block-axis halo would be dead geometry — tabs sit
+   side-by-side, and horizontal reach is what wins the tap. */
 .workspace-tabs-new-btn::after {
   content: '';
   position: absolute;
-  inset: -7px;
+  inset-inline: -7px;
+  inset-block: 0;
 }
 .workspace-tabs-strip.is-overflowing .workspace-tabs-new-btn {
   position: sticky;

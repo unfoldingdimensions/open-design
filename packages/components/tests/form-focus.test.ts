@@ -20,4 +20,10 @@ describe('form control focus visibility', () => {
       expect(block).not.toMatch(/outline:\s*none/);
     },
   );
+
+  it('keeps the entry sidebar halo-only (quiet panel exemption)', () => {
+    const block = /\.entry-side input:focus-visible[^{]*\{([^}]*)\}/.exec(css)?.[1];
+    expect(block, '.entry-side focus-visible block').toBeDefined();
+    expect(block).toMatch(/outline:\s*none/);
+  });
 });
