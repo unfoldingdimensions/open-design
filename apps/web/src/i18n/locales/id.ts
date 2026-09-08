@@ -2085,6 +2085,8 @@ export const id: Dict = {
   'project.resizeChatPanel': 'Ubah ukuran panel chat',
   'project.instructionsActive': 'Aktif — disertakan di setiap pesan',
   'project.missing': 'This project has been deleted or no longer exists.',
+  'project.routeDaemonUnavailable': 'The local service is unreachable. Restart the app and try again.',
+  'project.routeMaterializationFailed': 'This project could not be loaded. Retry to try again.',
   'chat.tabChat': 'Chat',
   'chat.tabComments': 'Komentar',
   'chat.commentsSoon': 'Komentar - segera hadir',

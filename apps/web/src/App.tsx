@@ -210,6 +210,7 @@ import {
   resolvedWorkspaceContextForWrite,
 } from './state/projects';
 import { useModalWindowDragGuard } from './hooks/useModalWindowDragGuard';
+import { useProjectRunActivity } from './hooks/useProjectRunActivity';
 import { resumeThumbnailLoads, suspendThumbnailLoads } from './lib/thumbnail-load-gate';
 import type {
   PluginShareAction,
@@ -732,6 +733,33 @@ export function projectRouteSurfaceState(input: {
   return 'resolving-deep-link';
 }
 
+export type ProjectRouteErrorAction = 'back' | 'retry';
+
+/**
+ * Maps a terminal project-route state to the message and action the
+ * error surface renders. Each terminal state gets its own copy so the
+ * user can tell "the service is down" from "this project is gone"
+ * from "loading failed midway" — and the action matches what can
+ * actually help (retry only re-runs resolution, so only
+ * materialization failures offer it).
+ */
+export function projectRouteErrorContent(state: ProjectRouteSurfaceState): {
+  messageKey: 'project.missing' | 'project.routeDaemonUnavailable' | 'project.routeMaterializationFailed';
+  action: ProjectRouteErrorAction;
+} {
+  switch (state) {
+    case 'materialization-failed':
+      return { messageKey: 'project.routeMaterializationFailed', action: 'retry' };
+    case 'daemon-unavailable':
+      return { messageKey: 'project.routeDaemonUnavailable', action: 'back' };
+    case 'missing':
+    default:
+      // Loading states never reach the error surface (an earlier branch
+      // renders the loader), so they fall through to the safe default.
+      return { messageKey: 'project.missing', action: 'back' };
+  }
+}
+
 /**
  * Resolves a project a member has just deep-linked to but has no local
  * record of yet. Bounded-retries `getProject` + `pullTeamSharedProjectIfAvailable`
@@ -1209,16 +1237,7 @@ function AppInner() {
     queued: [],
     recent: [],
   });
-  const [projectRunActivity, setProjectRunActivity] = useState<{
-    projectId: string | null;
-    active: boolean;
-  }>({ projectId: null, active: false });
-  const handleProjectRunActivityChange = useCallback(
-    (projectId: string, active: boolean) => {
-      setProjectRunActivity({ projectId, active });
-    },
-    [],
-  );
+  const { projectRunActivity, handleProjectRunActivityChange } = useProjectRunActivity();
   const pendingLocalProjectIdsRef = useRef<Set<string>>(new Set());
   const currentProjectListScope = projectListScopeKey(workspaceContext);
   const currentPendingLocalProjectScope = [
@@ -5172,23 +5191,21 @@ function AppInner() {
         </div>
       );
     } else if (routeSurfaceState !== 'ready') {
-      const canRetry = routeSurfaceState === 'materialization-failed';
+      const routeError = projectRouteErrorContent(routeSurfaceState);
       appMain = (
         <div className="entry-shell entry-shell--no-header">
           <div className="centered-loader">
             <span role="alert">
-              {routeSurfaceState === 'missing'
-                ? t('project.missing')
-                : t('connectors.unavailable')}
+              {t(routeError.messageKey)}
             </span>
             <Button
               onClick={
-                canRetry
+                routeError.action === 'retry'
                   ? () => setDeepLinkRetryRevision((current) => current + 1)
                   : handleBack
               }
             >
-              {canRetry
+              {routeError.action === 'retry'
                 ? t('promptTemplates.retry')
                 : t('project.backToProjects')}
             </Button>

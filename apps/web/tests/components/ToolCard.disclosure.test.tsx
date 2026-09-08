@@ -159,4 +159,32 @@ describe('ToolCard secondary result disclosures', () => {
     expect(container.textContent).toContain('pnpm typecheck');
     expect(container.textContent).toContain('Done');
   });
+
+  it('shows a settled duration chip when the tool has start and end stamps', () => {
+    const start = 1_700_000_000_000;
+    const { container } = renderTool(
+      {
+        kind: 'tool_use',
+        id: 'bash-2',
+        name: 'Bash',
+        input: { command: 'pnpm guard', description: 'Run guard' },
+        startedAt: start,
+      },
+      { kind: 'tool_result', toolUseId: 'bash-2', content: 'ok', isError: false, completedAt: start + 42_000 },
+    );
+
+    const duration = container.querySelector('.tool-duration');
+    expect(duration).not.toBeNull();
+    expect(duration?.textContent).toBe('42s');
+    expect(duration?.getAttribute('data-live')).toBeNull();
+  });
+
+  it('omits the duration chip when stamps are absent (legacy events)', () => {
+    const { container } = renderTool(
+      { kind: 'tool_use', id: 'bash-3', name: 'Bash', input: { command: 'echo hi' } },
+      { kind: 'tool_result', toolUseId: 'bash-3', content: 'hi', isError: false },
+    );
+
+    expect(container.querySelector('.tool-duration')).toBeNull();
+  });
 });

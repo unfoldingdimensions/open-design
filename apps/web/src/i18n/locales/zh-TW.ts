@@ -2183,6 +2183,8 @@ export const zhTW: Dict = {
   "project.resizeChatPanel": "調整聊天面板大小",
   "project.instructionsActive": "已生效 — 每則訊息都會附帶",
   "project.missing": "該專案已刪除或不存在。",
+  "project.routeDaemonUnavailable": "The local service is unreachable. Restart the app and try again.",
+  "project.routeMaterializationFailed": "This project could not be loaded. Retry to try again.",
   "chat.tabChat": "對話",
   "chat.tabComments": "評論",
   "chat.commentsSoon": "評論 — 即將上線",

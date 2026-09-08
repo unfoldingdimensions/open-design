@@ -2085,6 +2085,8 @@ export const ko: Dict = {
   'project.resizeChatPanel': '채팅 패널 크기 조절',
   'project.instructionsActive': '활성 — 모든 메시지에 포함됨',
   'project.missing': 'This project has been deleted or no longer exists.',
+  'project.routeDaemonUnavailable': 'The local service is unreachable. Restart the app and try again.',
+  'project.routeMaterializationFailed': 'This project could not be loaded. Retry to try again.',
   'chat.tabChat': '채팅',
   'chat.tabComments': '댓글',
   'chat.commentsSoon': '댓글 — 곧 지원될 예정입니다.',

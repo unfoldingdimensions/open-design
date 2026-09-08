@@ -108,8 +108,18 @@
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
+  position: relative;
   -webkit-app-region: no-drag;
   transition: background 100ms var(--ease-out), color 100ms var(--ease-out);
+}
+/* 44px touch target on a 30px visual: an invisible ::after halo extends the
+   hit area without changing the strip's geometry (position: relative above
+   anchors it; the sticky overflow rule below keeps working because it only
+   overrides position). */
+.workspace-tabs-new-btn::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
 }
 .workspace-tabs-strip.is-overflowing .workspace-tabs-new-btn {
   position: sticky;

@@ -33,6 +33,33 @@
   border-color: transparent;
   background: var(--bg-panel);
 }
+/* Tool cards with a duration chip: the icon stays in its 24px box and the
+   elapsed label ("42s") rides beside it as a compact timecode. */
+.op-status.has-duration {
+  width: auto;
+  gap: 4px;
+  padding: 0 6px 0 0;
+  border-color: var(--border-soft);
+}
+.op-status-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tool-duration {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  line-height: 1;
+}
+.tool-duration[data-live="true"] {
+  color: var(--purple);
+}
 .op-toggle {
   font-size: 12px;
   padding: 2px 8px;

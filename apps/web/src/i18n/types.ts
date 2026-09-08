@@ -2812,6 +2812,8 @@ export interface Dict {
   'project.customInstructionsPlaceholder': string;
   'project.instructionsActive': string;
   'project.missing': string;
+  'project.routeDaemonUnavailable': string;
+  'project.routeMaterializationFailed': string;
   'project.resizeChatPanel': string;
   'chat.tabChat': string;
   'chat.amrCard.switchTitle': string;

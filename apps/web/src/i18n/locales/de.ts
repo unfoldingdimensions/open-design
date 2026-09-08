@@ -2085,6 +2085,8 @@ export const de: Dict = {
   'project.resizeChatPanel': 'Größe des Chat-Bereichs ändern',
   'project.instructionsActive': 'Aktiv – in jeder Nachricht enthalten',
   'project.missing': 'This project has been deleted or no longer exists.',
+  'project.routeDaemonUnavailable': 'The local service is unreachable. Restart the app and try again.',
+  'project.routeMaterializationFailed': 'This project could not be loaded. Retry to try again.',
   'chat.tabChat': 'Chat',
   'chat.tabComments': 'Kommentare',
   'chat.commentsSoon': 'Kommentare — demnächst',

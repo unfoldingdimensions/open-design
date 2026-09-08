@@ -2175,6 +2175,8 @@ export const zhCN: Dict = {
   "project.resizeChatPanel": "调整聊天面板大小",
   "project.instructionsActive": "已生效 — 每条消息都会附带",
   "project.missing": "该项目已删除或不存在。",
+  "project.routeDaemonUnavailable": "The local service is unreachable. Restart the app and try again.",
+  "project.routeMaterializationFailed": "This project could not be loaded. Retry to try again.",
   "chat.tabChat": "对话",
   "chat.tabComments": "评论",
   "chat.commentsSoon": "评论 — 即将上线",

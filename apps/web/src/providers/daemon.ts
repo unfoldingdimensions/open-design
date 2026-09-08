@@ -1832,7 +1832,15 @@ function translateAgentEvent(data: DaemonAgentPayload): AgentEvent | null {
     };
   }
   if (t === 'tool_use' && typeof data.id === 'string' && typeof data.name === 'string') {
-    return { kind: 'tool_use', id: data.id, name: data.name, input: normalizeToolInput(data.input) };
+    return {
+      kind: 'tool_use',
+      id: data.id,
+      name: data.name,
+      input: normalizeToolInput(data.input),
+      ...(typeof data.startedAt === 'number' && Number.isFinite(data.startedAt)
+        ? { startedAt: data.startedAt }
+        : {}),
+    };
   }
   if (t === 'tool_result' && typeof data.toolUseId === 'string') {
     return {
@@ -1840,6 +1848,9 @@ function translateAgentEvent(data: DaemonAgentPayload): AgentEvent | null {
       toolUseId: data.toolUseId,
       content: String(data.content ?? ''),
       isError: Boolean(data.isError),
+      ...(typeof data.completedAt === 'number' && Number.isFinite(data.completedAt)
+        ? { completedAt: data.completedAt }
+        : {}),
     };
   }
   if (t === 'usage') {

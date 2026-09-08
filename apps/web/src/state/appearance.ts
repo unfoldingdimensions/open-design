@@ -49,11 +49,12 @@ function accentVars(accentColor: string): Record<(typeof ACCENT_VARS)[number], s
  * Product removed the theme setting: the workspace surfaces have no dark
  * tokens, so a dark app is a broken app. `data-theme` is therefore a constant
  * rather than a preference — and it must always be PRESENT, not merely
- * non-dark. Every dark rule in the app is gated on the attribute being absent
- * (`html:not([data-theme])` in CSS) or falls back to `prefers-color-scheme`
- * when the attribute is missing (`shiki`, `ConnectorLogo`, `SketchEditor`,
- * `TerminalViewer`, `connectorBrandColor`, `MentionNode`). Stamping it
- * unconditionally is what keeps a dark OS from leaking through.
+ * non-dark. No app-shell stylesheet carries dark overrides anymore (see the
+ * theme contract in `styles/tokens.css`); embedded surfaces (`shiki`,
+ * `ConnectorLogo`, `SketchEditor`, `TerminalViewer`, `connectorBrandColor`,
+ * `MentionNode`) still fall back to `prefers-color-scheme` for content that
+ * follows the OS. Stamping the attribute unconditionally is what keeps a
+ * dark OS from leaking through.
  */
 export const FORCED_APP_THEME = 'light' as const;
 

@@ -196,13 +196,26 @@ function appendPendingMessageEvent(
   event: PersistedAgentEvent,
 ): void {
   const last = pending.events[pending.events.length - 1];
+  // A contiguous run of thinking deltas is one phase: stamp its start on the
+  // first delta and close it (completedAt) the moment a non-thinking event
+  // follows, so the persisted block carries a real server-side duration that
+  // survives reload (the live view measures client-side while streaming).
+  if (event.kind !== 'thinking' && last?.kind === 'thinking') {
+    if (typeof last.completedAt !== 'number') {
+      pending.events[pending.events.length - 1] = { ...last, completedAt: Date.now() };
+    }
+  }
   if (
     (event.kind === 'text' || event.kind === 'thinking') &&
     last?.kind === event.kind
   ) {
     last.text += event.text;
   } else {
-    pending.events.push(event);
+    if (event.kind === 'thinking' && typeof event.startedAt !== 'number') {
+      pending.events.push({ ...event, startedAt: Date.now() });
+    } else {
+      pending.events.push(event);
+    }
   }
   pending.chars += event.kind === 'text' || event.kind === 'thinking'
     ? event.text.length
@@ -215,6 +228,12 @@ export function flushRunMessageEvents(run: ChatRunMessageState): void {
   pendingMessageEvents.delete(run);
   if (pending.timer) clearTimeout(pending.timer);
   if (pending.events.length === 0) return;
+  // Close a still-open trailing thinking phase so the persisted block has a
+  // completedAt even when the run ended mid-thought.
+  const tail = pending.events[pending.events.length - 1];
+  if (tail?.kind === 'thinking' && typeof tail.completedAt !== 'number') {
+    pending.events[pending.events.length - 1] = { ...tail, completedAt: Date.now() };
+  }
   const telemetry = ensureRunMessageEventPersistenceTelemetry(run);
   telemetry.flushCount += 1;
   telemetry.batchEventCount += pending.events.length;
@@ -450,6 +469,13 @@ export function daemonAgentPayloadToPersistedAgentEvent(data: unknown): Persiste
       toolUseId: data.toolUseId,
       content: String(data.content ?? ''),
       isError: Boolean(data.isError),
+      // Wall-clock completion stamp. Runtimes that already emit a real end
+      // time (ACP stamps completedAt at terminal emit) keep it; anything
+      // else gets the daemon's receipt time as a best-effort end so the UI
+      // can show per-tool durations from tool_use.startedAt → completedAt.
+      ...(typeof data.completedAt === 'number' && Number.isFinite(data.completedAt)
+        ? { completedAt: data.completedAt }
+        : { completedAt: Date.now() }),
     };
   }
   if (type === 'usage') {

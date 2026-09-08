@@ -162,18 +162,10 @@
   /* Pure black (per product), one step past `--text-strong`'s #202020. A
      literal rather than a change to that token: the rest of the app's
      strongest text reads the same token and is not meant to move with the
-     headline. Dark mode keeps the token — #000 on a dark ground is
-     unreadable — via the two overrides below. */
+     headline. Light-only: no dark override exists (see the theme contract
+     in `styles/tokens.css`). */
   color: #000;
   text-align: center;
-}
-[data-theme="dark"] .home-hero__title {
-  color: var(--text-strong);
-}
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme]) .home-hero__title {
-    color: var(--text-strong);
-  }
 }
 /* Optical centring for headlines that end in full-width punctuation (per
    product: 以输入框为中心对齐). That last glyph draws in the left ~0.45em of a
@@ -2668,22 +2660,6 @@
 }
 .home-hero__model-option-icon--custom {
   color: var(--text-muted);
-}
-[data-theme="dark"] .home-hero__model-option-icon--openai img,
-[data-theme="dark"] .home-hero__model-option-icon--dalle img,
-[data-theme="dark"] .home-hero__model-option-icon--grok img,
-[data-theme="dark"] .home-hero__model-option-icon--elevenlabs img,
-[data-theme="dark"] .home-hero__model-option-icon--suno img {
-  filter: invert(1) brightness(1.2);
-}
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) .home-hero__model-option-icon--openai img,
-  html:not([data-theme="light"]) .home-hero__model-option-icon--dalle img,
-  html:not([data-theme="light"]) .home-hero__model-option-icon--grok img,
-  html:not([data-theme="light"]) .home-hero__model-option-icon--elevenlabs img,
-  html:not([data-theme="light"]) .home-hero__model-option-icon--suno img {
-    filter: invert(1) brightness(1.2);
-  }
 }
 .home-hero__ratio-option-icon {
   width: 26px;

@@ -2085,6 +2085,8 @@ export const ar: Dict = {
   'project.resizeChatPanel': 'تغيير حجم لوحة الدردشة',
   'project.instructionsActive': 'نشط — مُضمَّن في كل رسالة',
   'project.missing': 'This project has been deleted or no longer exists.',
+  'project.routeDaemonUnavailable': 'The local service is unreachable. Restart the app and try again.',
+  'project.routeMaterializationFailed': 'This project could not be loaded. Retry to try again.',
   'chat.tabChat': 'دردشة',
   'chat.tabComments': 'تعليقات',
   'chat.commentsSoon': 'التعليقات - قريباً',

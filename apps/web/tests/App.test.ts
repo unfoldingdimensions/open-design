@@ -7,6 +7,7 @@ import {
   mergeAgentModelChoice,
   persistComposioConfigChange,
   projectViewAuthorizationLifetimeKey,
+  projectRouteErrorContent,
   projectRouteSurfaceState,
   resolveDeepLinkedTeamSharedProject,
   resolveSettingsCloseConfig,
@@ -58,6 +59,29 @@ describe('projectRouteSurfaceState', () => {
       daemonLive: true,
       resolutionFailure: 'missing',
     })).toBe('ready');
+  });
+});
+
+describe('projectRouteErrorContent', () => {
+  it('names the daemon outage instead of a generic unavailable message', () => {
+    expect(projectRouteErrorContent('daemon-unavailable')).toEqual({
+      messageKey: 'project.routeDaemonUnavailable',
+      action: 'back',
+    });
+  });
+
+  it('offers retry with its own message for a failed materialization', () => {
+    expect(projectRouteErrorContent('materialization-failed')).toEqual({
+      messageKey: 'project.routeMaterializationFailed',
+      action: 'retry',
+    });
+  });
+
+  it('keeps missing projects on the back-to-projects path', () => {
+    expect(projectRouteErrorContent('missing')).toEqual({
+      messageKey: 'project.missing',
+      action: 'back',
+    });
   });
 });
 

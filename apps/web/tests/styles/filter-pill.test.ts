@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { readExpandedIndexCss } from '../helpers/read-expanded-css';
 
-const indexCss = readExpandedIndexCss();
+// Stylesheets check out with CRLF on Windows working copies; CSS semantics
+// do not depend on line-ending style, so normalize before matching.
+const indexCss = readExpandedIndexCss().split(String.fromCharCode(13)).join('');
 
 function cssBlock(selector: string): string {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -20,16 +22,6 @@ function ruleValue(block: string, property: string): string {
   const match = new RegExp(`(?:^|;)\\s*${property}:\\s*([^;]+);`).exec(block);
   if (!match) throw new Error(`Missing CSS property ${property}`);
   return match[1]!.trim();
-}
-
-function resolveVar(value: string, variables: Record<string, string>): string {
-  const match = /^var\((--[^)]+)\)$/.exec(value);
-  if (!match) return value;
-  const key = match[1];
-  if (!key) throw new Error(`Invalid CSS variable reference ${value}`);
-  const resolved = variables[key];
-  if (!resolved) throw new Error(`Missing resolved value for ${match[1]}`);
-  return resolved;
 }
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -60,15 +52,21 @@ function contrastRatio(foreground: string, background: string): number {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
+function resolveVar(value: string, variables: Record<string, string>): string {
+  const match = /^var\((--[^)]+)\)$/.exec(value);
+  if (!match) return value;
+  const key = match[1];
+  if (!key) throw new Error(`Invalid CSS variable reference ${value}`);
+  const resolved = variables[key];
+  if (!resolved) throw new Error(`Missing resolved value for ${match[1]}`);
+  return resolved;
+}
+
 describe('filter pill hover contrast', () => {
-  it('keeps hover labels readable in light and dark themes', () => {
+  it('keeps hover labels readable in the light-only theme', () => {
     const rootVars = {
       '--bg-muted': cssVar(cssBlock(':root'), '--bg-muted'),
       '--text': cssVar(cssBlock(':root'), '--text'),
-    };
-    const darkVars = {
-      '--bg-muted': cssVar(cssBlock('[data-theme="dark"]'), '--bg-muted'),
-      '--text': cssVar(cssBlock('[data-theme="dark"]'), '--text'),
     };
     const hover = cssBlock('button.filter-pill:hover:not(:disabled)');
     const activeHover = cssBlock('button.filter-pill.active:hover:not(:disabled)');
@@ -80,10 +78,6 @@ describe('filter pill hover contrast', () => {
       expect(contrastRatio(
         resolveVar(ruleValue(block, 'color'), rootVars),
         resolveVar(ruleValue(block, 'background'), rootVars),
-      )).toBeGreaterThanOrEqual(4.5);
-      expect(contrastRatio(
-        resolveVar(ruleValue(block, 'color'), darkVars),
-        resolveVar(ruleValue(block, 'background'), darkVars),
       )).toBeGreaterThanOrEqual(4.5);
     }
 

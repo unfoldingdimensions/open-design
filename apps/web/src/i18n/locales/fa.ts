@@ -2085,6 +2085,8 @@ export const fa: Dict = {
   'project.resizeChatPanel': 'تغییر اندازه پنل چت',
   'project.instructionsActive': 'فعال — در هر پیام گنجانده می‌شود',
   'project.missing': 'This project has been deleted or no longer exists.',
+  'project.routeDaemonUnavailable': 'The local service is unreachable. Restart the app and try again.',
+  'project.routeMaterializationFailed': 'This project could not be loaded. Retry to try again.',
   'chat.tabChat': 'چت',
   'chat.tabComments': 'نظرات',
   'chat.commentsSoon': 'نظرات — به زودی',

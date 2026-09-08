@@ -89,16 +89,6 @@
      the topbar toggle's fade-out and caused a flash on expand. */
   pointer-events: none;
 }
-/* Dark mode keeps a derived alpha: over the dark panel a mix off --text
-   (#ededed) lands where it should. Only the light theme pins a literal. */
-[data-theme="dark"] .entry-nav-rail {
-  --rail-ink-quiet: color-mix(in srgb, var(--text) 52%, transparent);
-}
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme]) .entry-nav-rail {
-    --rail-ink-quiet: color-mix(in srgb, var(--text) 52%, transparent);
-  }
-}
 /* The whole sidebar reads as one floating layer: the content sits in a panel
    inset from the grid-track edges (margin) with rounded corners + elevation,
    instead of a flush docked column separated by divider lines. */
@@ -596,17 +586,6 @@
 .entry-rail-account-recovery__text {
   min-width: 0;
   overflow-wrap: anywhere;
-}
-[data-theme="dark"] .entry-rail-account-skeleton__avatar,
-[data-theme="dark"] .entry-rail-account-skeleton__name {
-  background:
-    linear-gradient(
-      110deg,
-      transparent 28%,
-      color-mix(in srgb, #fff 13%, transparent) 50%,
-      transparent 72%
-    ) 0 0 / 200% 100%,
-    color-mix(in srgb, var(--bg-elevated) 68%, var(--bg-muted));
 }
 .entry-rail-account-skeleton__avatar {
   /* Mirrors `.entry-nav-rail__account-avatar`'s 24×25 box. That box's own
@@ -5813,19 +5792,6 @@
     ) 0 0 / 200% 100%,
     color-mix(in srgb, var(--bg-muted) 82%, var(--bg-panel));
   animation: onboarding-skeleton-sheen 1.55s ease-in-out infinite;
-}
-
-[data-theme="dark"] .onboarding-view__skeleton-line,
-[data-theme="dark"] .onboarding-view__skeleton-model-label,
-[data-theme="dark"] .onboarding-view__skeleton-model-bar {
-  background:
-    linear-gradient(
-      110deg,
-      transparent 28%,
-      color-mix(in srgb, #fff 12%, transparent) 50%,
-      transparent 72%
-    ) 0 0 / 200% 100%,
-    color-mix(in srgb, var(--bg-elevated) 70%, var(--bg-muted));
 }
 
 /* Version meta placeholder (sits where "AMR v0.1.0" renders). */

@@ -881,7 +881,16 @@ export type PersistedAgentEvent =
     }
   | { kind: 'text'; text: string }
   | { kind: 'conversation_title'; title: string }
-  | { kind: 'thinking'; text: string }
+  | {
+      kind: 'thinking';
+      text: string;
+      /** Wall-clock ms when this thinking phase began (daemon-stamped).
+       *  Absent on legacy events; the client falls back to measuring live. */
+      startedAt?: number;
+      /** Wall-clock ms when this thinking phase ended. When present with
+       *  startedAt, duration = completedAt - startedAt. */
+      completedAt?: number;
+    }
   | {
       kind: 'live_artifact';
       action: 'created' | 'updated' | 'deleted';
@@ -908,7 +917,16 @@ export type PersistedAgentEvent =
       /** Optional wall-clock ms when the tool first started (e.g. ACP first frame). */
       startedAt?: number;
     }
-  | { kind: 'tool_result'; toolUseId: string; content: string; isError: boolean }
+  | {
+      kind: 'tool_result';
+      toolUseId: string;
+      content: string;
+      isError: boolean;
+      /** Optional wall-clock ms when the tool completed (daemon-stamped at
+       *  emit). Together with tool_use.startedAt this yields the tool's real
+       *  execution duration. */
+      completedAt?: number;
+    }
   | {
       kind: 'diagnostic';
       name: string;

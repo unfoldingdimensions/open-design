@@ -2085,6 +2085,8 @@ export const tr: Dict = {
   'project.resizeChatPanel': 'Sohbet panelini yeniden boyutlandır',
   'project.instructionsActive': 'Etkin — her mesaja eklenir',
   'project.missing': 'This project has been deleted or no longer exists.',
+  'project.routeDaemonUnavailable': 'The local service is unreachable. Restart the app and try again.',
+  'project.routeMaterializationFailed': 'This project could not be loaded. Retry to try again.',
   'chat.tabChat': 'Sohbet',
   'chat.tabComments': 'Yorumlar',
   'chat.commentsSoon': 'Yorumlar — yakında',

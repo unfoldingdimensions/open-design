@@ -102,6 +102,45 @@ describe('CollabDemoView', () => {
     );
   });
 
+  it('confirms author actions with a visible status line', async () => {
+    installFetchStub([], null);
+    render(<CollabDemoView projectId="p1" />);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByText('Publish'));
+    });
+    expect(screen.getByTestId('collab-demo-action-status').textContent).toMatch(
+      /Publish requested/,
+    );
+  });
+
+  it('reports a failed team share instead of failing silently', async () => {
+    installFetchStub([], null);
+    const baseFetch = globalThis.fetch;
+    vi.stubGlobal(
+      'fetch',
+      (async (input: RequestInfo | URL, init?: RequestInit) => {
+        if (String(input).endsWith('/collab/sync-intent')) {
+          return { ok: false, status: 500, json: async () => ({}) } as unknown as Response;
+        }
+        return baseFetch(input, init);
+      }) as typeof fetch,
+    );
+    render(<CollabDemoView projectId="p1" />);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByText('Share to team'));
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(screen.getByTestId('collab-demo-action-status').textContent).toMatch(
+      /failed/i,
+    );
+  });
+
   it('surfaces a pull prompt when the published head advances past the pulled version', async () => {
     const stub = installFetchStub([], 3);
     render(<CollabDemoView projectId="p1" />);

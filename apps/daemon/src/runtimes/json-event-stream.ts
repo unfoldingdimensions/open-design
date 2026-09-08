@@ -509,7 +509,7 @@ function handleCommandCodeEvent(obj: unknown, onEvent: StreamEventHandler): bool
         ? event.toolName.trim()
         : null;
       if (!id || !name) return true;
-      onEvent({ type: 'tool_use', id, name, input: isRecord(event.input) ? event.input : null });
+      onEvent({ type: 'tool_use', id, name, input: isRecord(event.input) ? event.input : null, startedAt: Date.now() });
       return true;
     }
     case 'tool_completed': {
@@ -522,6 +522,7 @@ function handleCommandCodeEvent(obj: unknown, onEvent: StreamEventHandler): bool
         toolUseId: id,
         content: commandCodeToolOutput(event.result),
         isError: false,
+        completedAt: Date.now(),
       });
       return true;
     }

@@ -48,23 +48,6 @@
    at ≤0.14 alpha on the unchanged app black so dark translucency has
    something to show without tinting the workspace. Veil tokens derive from
    --bg/--bg-panel and flip with the theme on their own. */
-[data-theme='dark'] {
-  --wash-base: #202020;
-  --wash-blue: rgba(96, 126, 178, 0.14);
-  --wash-pink: rgba(168, 110, 142, 0.1);
-  --wash-peach: rgba(178, 142, 100, 0.09);
-  --wash-mist: rgba(100, 130, 172, 0.09);
-}
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme]) {
-    --wash-base: #202020;
-    --wash-blue: rgba(96, 126, 178, 0.14);
-    --wash-pink: rgba(168, 110, 142, 0.1);
-    --wash-peach: rgba(178, 142, 100, 0.09);
-    --wash-mist: rgba(100, 130, 172, 0.09);
-  }
-}
-
 /* The wash layer itself. body keeps painting var(--bg-app) (base.css) as the
    canvas base; this fixed pseudo paints above it and below all content.
    Never repaints on scroll; no will-change, no animation. */
@@ -123,9 +106,8 @@ html:has(.workspace-shell--desktop[data-host-platform='darwin']) body {
   backdrop-filter: none;
 }
 
-/* Token-level degradation, mirroring material.css: the html:root selector
-   (0,1,1) matches the dark-mode html:not([data-theme]) specificity and wins
-   by source order, so every consumer degrades together. */
+/* Token-level degradation, mirroring material.css: every consumer degrades
+   together. */
 @media (prefers-reduced-transparency: reduce) {
   html:root {
     --app-wash: none;

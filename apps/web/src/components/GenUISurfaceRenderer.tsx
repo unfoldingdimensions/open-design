@@ -70,6 +70,15 @@ function sanitizePluginComponentPath(path: string): string | null {
   return sanitized;
 }
 
+// Accessible name for a GenUI dialog. The contract carries no title —
+// the prompt is the only human-readable label, so it names the dialog.
+// Falls back to the same copy the body renders, never the opaque
+// surface id (which is a stable identifier, not a name).
+function genuiDialogLabel(prompt: string | undefined, fallback: string): string {
+  const text = prompt?.trim();
+  return text ? text : fallback;
+}
+
 export function GenUISurfaceRenderer(props: Props) {
   const t = useT();
   const { surface } = props.pending;
@@ -90,7 +99,7 @@ export function GenUISurfaceRenderer(props: Props) {
 
   if (surface.kind === 'confirmation') {
     return (
-      <div className="genui-surface genui-surface--confirmation" role="dialog" aria-label={surface.id}>
+      <div className="genui-surface genui-surface--confirmation" role="dialog" aria-label={genuiDialogLabel(surface.prompt, 'The plugin needs your confirmation to continue.')}>
         <div className="genui-surface__prompt">
           {surface.prompt ?? 'The plugin needs your confirmation to continue.'}
         </div>
@@ -114,7 +123,7 @@ export function GenUISurfaceRenderer(props: Props) {
             {t('common.cancel')}
           </button>
         </div>
-        {error ? <div className="genui-surface__error">{error}</div> : null}
+        {error ? <div className="genui-surface__error" role="alert">{error}</div> : null}
       </div>
     );
   }
@@ -220,7 +229,7 @@ export function GenUISurfaceRenderer(props: Props) {
 
   if (surface.kind === 'oauth-prompt') {
     return (
-      <div className="genui-surface genui-surface--oauth" role="dialog" aria-label={surface.id}>
+      <div className="genui-surface genui-surface--oauth" role="dialog" aria-label={genuiDialogLabel(surface.prompt, 'Authorize this connection')}>
         <div className="genui-surface__prompt">
           {surface.prompt ?? `Authorize ${surface.oauth?.connectorId ?? surface.oauth?.mcpServerId ?? 'the connector'}`}
         </div>
@@ -260,7 +269,7 @@ export function GenUISurfaceRenderer(props: Props) {
             </button>
           ) : null}
         </div>
-        {error ? <div className="genui-surface__error">{error}</div> : null}
+        {error ? <div className="genui-surface__error" role="alert">{error}</div> : null}
       </div>
     );
   }
@@ -293,7 +302,7 @@ export function GenUISurfaceRenderer(props: Props) {
   // Anything else (multi-property choices without enums, free-form
   // `form` without schema, unknown kinds) drops to the JSON textarea.
   return (
-    <div className="genui-surface genui-surface--fallback" role="dialog" aria-label={surface.id}>
+    <div className="genui-surface genui-surface--fallback" role="dialog" aria-label={genuiDialogLabel(surface.prompt, 'Plugin input needed')}>
       <div className="genui-surface__prompt">
         {surface.prompt ?? `Plugin needs ${surface.kind} input.`}
       </div>
@@ -304,7 +313,7 @@ export function GenUISurfaceRenderer(props: Props) {
         </details>
       ) : null}
       <FreeFormJsonForm onSubmit={submit} disabled={submitting} />
-      {error ? <div className="genui-surface__error">{error}</div> : null}
+      {error ? <div className="genui-surface__error" role="alert">{error}</div> : null}
     </div>
   );
 }
@@ -377,7 +386,7 @@ function DiffReviewChoiceSurface(props: {
   };
 
   return (
-    <div className="genui-surface genui-surface--diff-review" role="dialog" aria-label={props.surface.id}>
+    <div className="genui-surface genui-surface--diff-review" role="dialog" aria-label={genuiDialogLabel(props.surface.prompt, 'Review the diff and choose how to proceed.')}>
       <div className="genui-surface__prompt">
         {props.surface.prompt ?? 'Review the diff and choose how to proceed.'}
       </div>
@@ -475,7 +484,7 @@ function DiffReviewChoiceSurface(props: {
         onChange={(e) => setReason(e.target.value)}
         data-testid="genui-diff-reason"
       />
-      {props.error ? <div className="genui-surface__error">{props.error}</div> : null}
+      {props.error ? <div className="genui-surface__error" role="alert">{props.error}</div> : null}
     </div>
   );
 }
@@ -496,7 +505,7 @@ function GenericChoiceSurface(props: {
 }) {
   const t = useT();
   return (
-    <div className="genui-surface genui-surface--choice" role="dialog" aria-label={props.surface.id}>
+    <div className="genui-surface genui-surface--choice" role="dialog" aria-label={genuiDialogLabel(props.surface.prompt, 'Make a choice to continue')}>
       <div className="genui-surface__prompt">
         {props.surface.prompt ?? `Plugin needs ${props.primary.key} input.`}
       </div>
@@ -524,7 +533,7 @@ function GenericChoiceSurface(props: {
           </button>
         ) : null}
       </div>
-      {props.error ? <div className="genui-surface__error">{props.error}</div> : null}
+      {props.error ? <div className="genui-surface__error" role="alert">{props.error}</div> : null}
     </div>
   );
 }
@@ -736,7 +745,7 @@ function JsonSchemaFormSurface(props: {
     <form
       className={`genui-surface genui-surface--${props.surface.kind}`}
       role="dialog"
-      aria-label={props.surface.id}
+      aria-label={genuiDialogLabel(props.surface.prompt, 'Complete the form to continue')}
       onSubmit={submit}
     >
       <div className="genui-surface__prompt">
@@ -756,8 +765,8 @@ function JsonSchemaFormSurface(props: {
           </label>
         ))}
       </div>
-      {localError ? <div className="genui-surface__error">{localError}</div> : null}
-      {props.error ? <div className="genui-surface__error">{props.error}</div> : null}
+      {localError ? <div className="genui-surface__error" role="alert">{localError}</div> : null}
+      {props.error ? <div className="genui-surface__error" role="alert">{props.error}</div> : null}
       <div className="genui-surface__actions">
         <button
           type="submit"

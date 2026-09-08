@@ -111,4 +111,55 @@ describe('AssistantMessage live run status strip', () => {
     expect(thinking?.querySelector('.accordion-collapsible')?.classList.contains('open')).toBe(true);
     expect(container.querySelector('.task-activity-current, .task-activity-toggle')).toBeNull();
   });
+
+  it('shows a live total-run timer in the role row while streaming and freezes it when settled', () => {
+    const startedAt = 1_700_000_000_000;
+    const { container, rerender } = render(
+      <AssistantMessage
+        projectKind="prototype"
+        conversationId="conv-1"
+        message={{
+          id: 'assistant-timer-1',
+          role: 'assistant',
+          content: '',
+          events: [{ kind: 'text', text: 'Working on it.' }],
+          startedAt,
+          endedAt: undefined,
+          runStatus: 'running',
+        }}
+        streaming
+        isLast
+        projectId="project-1"
+      />,
+    );
+
+    const timer = container.querySelector('.run-total-timer');
+    expect(timer).not.toBeNull();
+    expect(timer?.getAttribute('data-live')).toBe('true');
+    expect(timer?.textContent).toMatch(/\d+s/);
+
+    // Settle: freeze at the endedAt bound.
+    rerender(
+      <AssistantMessage
+        projectKind="prototype"
+        conversationId="conv-1"
+        message={{
+          id: 'assistant-timer-1',
+          role: 'assistant',
+          content: 'Working on it.',
+          events: [{ kind: 'text', text: 'Working on it.' }],
+          startedAt,
+          endedAt: startedAt + 95_000,
+          runStatus: 'succeeded',
+        }}
+        streaming={false}
+        projectId="project-1"
+      />,
+    );
+
+    const settledTimer = container.querySelector('.run-total-timer');
+    expect(settledTimer).not.toBeNull();
+    expect(settledTimer?.getAttribute('data-live')).toBeNull();
+    expect(settledTimer?.textContent).toContain('1m');
+  });
 });

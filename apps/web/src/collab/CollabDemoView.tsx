@@ -69,17 +69,29 @@ export function CollabDemoView({ projectId }: { projectId: string | null }) {
     enabled: Boolean(activeProjectId),
   });
 
+  // Last author-action outcome, shown inline so demo controls never fail
+  // (or succeed) silently. reportChange/requestPublish are fire-and-forget
+  // by design, so their confirmation only means the request was dispatched;
+  // shareToTeam awaits the round trip and reports the real outcome.
+  const [actionStatus, setActionStatus] = useState<string | null>(null);
+
   const shareToTeam = async () => {
     if (!activeProjectId || !workspaceContext) return;
     const requestContext = workspaceContext;
-    await fetch(`/api/projects/${encodeURIComponent(activeProjectId)}/collab/sync-intent`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        ...workspaceProjectHeaders(requestContext),
-      },
-      body: JSON.stringify({ event: 'project_team_share_requested', projectId: activeProjectId }),
-    });
+    try {
+      const response = await fetch(`/api/projects/${encodeURIComponent(activeProjectId)}/collab/sync-intent`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          ...workspaceProjectHeaders(requestContext),
+        },
+        body: JSON.stringify({ event: 'project_team_share_requested', projectId: activeProjectId }),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      setActionStatus('Team share requested.');
+    } catch (err) {
+      setActionStatus(`Team share failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
   };
 
   // Track the version this tab has "pulled" so we can surface an out-of-date
@@ -176,16 +188,21 @@ export function CollabDemoView({ projectId }: { projectId: string | null }) {
 
           <div className={styles.actions}>
             <span className={styles.label}>Author</span>
-            <button type="button" onClick={() => reportChange()}>
+            <button type="button" onClick={() => { reportChange(); setActionStatus('Change report sent.'); }}>
               Report change
             </button>
-            <button type="button" onClick={() => requestPublish()}>
+            <button type="button" onClick={() => { requestPublish(); setActionStatus('Publish requested.'); }}>
               Publish
             </button>
             <button type="button" onClick={() => void shareToTeam()}>
               Share to team 
             </button>
           </div>
+          {actionStatus ? (
+            <div className={styles.actionStatus} role="status" data-testid="collab-demo-action-status">
+              {actionStatus}
+            </div>
+          ) : null}
         </div>
       )}
 

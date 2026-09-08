@@ -136,9 +136,14 @@ input, textarea, select {
 }
 input::placeholder, textarea::placeholder { color: var(--text-faint); }
 input:focus, textarea:focus, select:focus {
-  outline: none;
   border-color: var(--selected);
-  box-shadow: none;
+}
+/* Keyboard focus matches the button treatment above: a real outline, not
+   just a border-color shift. Mouse/touch focus keeps the quieter
+   border-only state; `:focus-visible` fires for keyboard entry. */
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: var(--stroke-thin, 1px) solid var(--blue);
+  outline-offset: 2px;
 }
 /* Entry sidebar form fields keep a quieter, neutral focus so the orange
    "Create" CTA stays the loudest thing in the panel. A low-opacity black
@@ -158,8 +163,7 @@ input:focus, textarea:focus, select:focus {
    Title + Type row) renders with mismatched heights. Stripping the native
    chrome lets the shared padding and inherited line-height compute the
    same box dimensions as the input, then we paint our own chevron via a
-   background SVG. The chevron color is a per-theme override so it stays
-   readable against the panel in both light and dark. */
+   background SVG (light-only: no dark chevron variant exists). */
 select {
   padding-right: 32px;
   appearance: none;
@@ -170,20 +174,6 @@ select {
   background-size: 12px 12px;
 }
 select::-ms-expand { display: none; }
-[data-theme='dark'] select {
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%239a9690' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 5 6 8 9 5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 12px 12px;
-}
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme]) select {
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%239a9690' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 5 6 8 9 5'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 12px 12px;
-  }
-}
 textarea { resize: vertical; font-family: inherit; }
 
 .od-select {

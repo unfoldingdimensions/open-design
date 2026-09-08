@@ -8,7 +8,7 @@
  *      Edit / Read / Bash / Glob / Grep / WebFetch / WebSearch)
  *   3. generic command/output fallback
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useT } from '../i18n';
 import { isTodoWriteToolName, parseTodoWriteInput } from '../runtime/todos';
 import { getToolRenderer, toRenderProps } from '../runtime/tool-renderers';
@@ -105,17 +105,17 @@ export function ToolCard({
   const ctx: FileToolCtx = { projectFileNames, onRequestOpenFile };
   if (category === 'todo') return <TodoCard input={use.input} runStreaming={isStreaming} runSucceeded={isSucceeded} />;
   if (category === 'write')
-    return <FileWriteCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} ctx={ctx} />;
+    return <FileWriteCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} ctx={ctx} startedAt={use.startedAt} />;
   if (category === 'edit')
-    return <FileEditCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} ctx={ctx} />;
+    return <FileEditCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} ctx={ctx} startedAt={use.startedAt} />;
   if (category === 'read')
-    return <FileReadCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} ctx={ctx} />;
-  if (category === 'run') return <BashCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} />;
-  if (category === 'search') return <SearchCard toolName={name} input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} />;
-  if (category === 'fetch') return <WebFetchCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} />;
+    return <FileReadCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} ctx={ctx} startedAt={use.startedAt} />;
+  if (category === 'run') return <BashCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} startedAt={use.startedAt} />;
+  if (category === 'search') return <SearchCard toolName={name} input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} startedAt={use.startedAt} />;
+  if (category === 'fetch') return <WebFetchCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} startedAt={use.startedAt} />;
   if (category === 'ask')
-    return <LegacyAskUserQuestionCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} />;
-  return <GenericCard name={name} category={category} input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} />;
+    return <LegacyAskUserQuestionCard input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} startedAt={use.startedAt} />;
+  return <GenericCard name={name} category={category} input={use.input} result={result} runStreaming={isStreaming} runSucceeded={isSucceeded} startedAt={use.startedAt} />;
 }
 
 // The interactive `AskUserQuestion` mechanism was retired in favor of the
@@ -192,17 +192,19 @@ function LegacyAskUserQuestionCard({
   result,
   runStreaming,
   runSucceeded,
+  startedAt,
 }: {
   input: unknown;
   result?: Props['result'];
   runStreaming: boolean;
   runSucceeded: boolean;
+  startedAt?: number;
 }) {
   const questions = parseLegacyAskUserQuestion(input);
   const first = questions[0];
   // Unparseable payload → defer to the generic card rather than inventing UI.
   if (!first)
-    return <GenericCard name="AskUserQuestion" category="ask" input={input} result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} />;
+    return <GenericCard name="AskUserQuestion" category="ask" input={input} result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} startedAt={startedAt} />;
   // Title + summary are model-authored text (already in the user's locale), so
   // no new i18n keys are needed for this historical-only surface.
   const title = first.header ?? truncate(first.question, 60);
@@ -219,7 +221,7 @@ function LegacyAskUserQuestionCard({
   return (
     <div className="op-card op-generic">
       <div className="op-card-head">
-        <ResultBadge category="ask" result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} />
+        <ResultBadge category="ask" result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} startedAt={startedAt} />
         <span className="op-title">{title}</span>
         {summary ? <span className="op-meta">{truncate(summary, 240)}</span> : null}
       </div>
@@ -362,12 +364,14 @@ function FileWriteCard({
   runStreaming,
   runSucceeded,
   ctx,
+  startedAt,
 }: {
   input: unknown;
   result?: Props['result'];
   runStreaming: boolean;
   runSucceeded: boolean;
   ctx: FileToolCtx;
+  startedAt?: number;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -379,7 +383,7 @@ function FileWriteCard({
   return (
     <div className="op-card op-file">
       <button type="button" className="op-card-head" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <ResultBadge category="write" result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} />
+        <ResultBadge category="write" result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} startedAt={startedAt} />
         <span className={`op-title${isRunning ? ' shimmer-text' : ''}`}>{t('tool.write')}</span>
         <span className="op-meta">{baseName}{lines !== null ? ` · ${t('tool.lines', { n: lines })}` : ''}</span>
         <span className="op-expand-chev" aria-hidden>
@@ -404,12 +408,14 @@ function FileEditCard({
   runStreaming,
   runSucceeded,
   ctx,
+  startedAt,
 }: {
   input: unknown;
   result?: Props['result'];
   runStreaming: boolean;
   runSucceeded: boolean;
   ctx: FileToolCtx;
+  startedAt?: number;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -428,7 +434,7 @@ function FileEditCard({
   return (
     <div className="op-card op-file">
       <button type="button" className="op-card-head" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <ResultBadge category="edit" result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} />
+        <ResultBadge category="edit" result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} startedAt={startedAt} />
         <span className={`op-title${isRunning ? ' shimmer-text' : ''}`}>{t('tool.edit')}</span>
         <span className="op-meta">{baseName} · {editCount} {editCount === 1 ? t('tool.changeSingular') : t('tool.changePlural')}</span>
         <span className="op-expand-chev" aria-hidden>
@@ -453,12 +459,14 @@ function FileReadCard({
   runStreaming,
   runSucceeded,
   ctx,
+  startedAt,
 }: {
   input: unknown;
   result?: Props['result'];
   runStreaming: boolean;
   runSucceeded: boolean;
   ctx: FileToolCtx;
+  startedAt?: number;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -469,7 +477,7 @@ function FileReadCard({
   return (
     <div className="op-card op-file">
       <button type="button" className="op-card-head" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <ResultBadge category="read" result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} />
+        <ResultBadge category="read" result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} startedAt={startedAt} />
         <span className={`op-title${isRunning ? ' shimmer-text' : ''}`}>{t('tool.read')}</span>
         <span className="op-meta">{baseName}</span>
         <span className="op-expand-chev" aria-hidden>
@@ -493,7 +501,7 @@ function FileReadCard({
   );
 }
 
-function BashCard({ input, result, runStreaming, runSucceeded }: { input: unknown; result?: Props['result']; runStreaming: boolean; runSucceeded: boolean }) {
+function BashCard({ input, result, runStreaming, runSucceeded, startedAt }: { input: unknown; result?: Props['result']; runStreaming: boolean; runSucceeded: boolean; startedAt?: number }) {
   const t = useT();
   const obj = (input ?? {}) as { command?: string; description?: string };
   const command = obj.command ?? '';
@@ -504,7 +512,7 @@ function BashCard({ input, result, runStreaming, runSucceeded }: { input: unknow
   return (
     <div className="op-card op-bash">
       <button type="button" className="op-card-head" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <ResultBadge category="run" result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} />
+        <ResultBadge category="run" result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} startedAt={startedAt} />
         <span className={`op-title${isRunning ? ' shimmer-text' : ''}`}>
           {mediaSummary ? 'media generate' : t('tool.bash')}
         </span>
@@ -538,7 +546,7 @@ function mediaGenerateCommandSummary(command: string): string | undefined {
     .join(' · ') || undefined;
 }
 
-function SearchCard({ toolName, input, result, runStreaming, runSucceeded }: { toolName: string; input: unknown; result?: Props['result']; runStreaming: boolean; runSucceeded: boolean }) {
+function SearchCard({ toolName, input, result, runStreaming, runSucceeded, startedAt }: { toolName: string; input: unknown; result?: Props['result']; runStreaming: boolean; runSucceeded: boolean; startedAt?: number }) {
   const t = useT();
   const obj = (input ?? {}) as { query?: string; pattern?: string; glob?: string; path?: string };
   const query = obj.query ?? obj.pattern ?? obj.glob ?? '*';
@@ -552,11 +560,12 @@ function SearchCard({ toolName, input, result, runStreaming, runSucceeded }: { t
       result={result}
       runStreaming={runStreaming}
       runSucceeded={runSucceeded}
+      startedAt={startedAt}
     />
   );
 }
 
-function WebFetchCard({ input, result, runStreaming, runSucceeded }: { input: unknown; result?: Props['result']; runStreaming: boolean; runSucceeded: boolean }) {
+function WebFetchCard({ input, result, runStreaming, runSucceeded, startedAt }: { input: unknown; result?: Props['result']; runStreaming: boolean; runSucceeded: boolean; startedAt?: number }) {
   const t = useT();
   const obj = (input ?? {}) as { url?: string };
   return (
@@ -568,6 +577,7 @@ function WebFetchCard({ input, result, runStreaming, runSucceeded }: { input: un
       result={result}
       runStreaming={runStreaming}
       runSucceeded={runSucceeded}
+      startedAt={startedAt}
     />
   );
 }
@@ -580,6 +590,7 @@ function CompactResultCard({
   result,
   runStreaming,
   runSucceeded,
+  startedAt,
 }: {
   className: string;
   category: ToolCategory;
@@ -588,12 +599,13 @@ function CompactResultCard({
   result?: Props['result'];
   runStreaming: boolean;
   runSucceeded: boolean;
+  startedAt?: number;
 }) {
   const [open, setOpen] = useState(false);
   const hasOutput = !!result?.content.trim() && !result.isError;
   const head = (
     <>
-      <ResultBadge category={category} result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} />
+      <ResultBadge category={category} result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} startedAt={startedAt} />
       <span className="op-title">{title}</span>
       {summary ? <span className="op-meta">{summary}</span> : null}
       {hasOutput ? (
@@ -637,6 +649,7 @@ function GenericCard({
   result,
   runStreaming,
   runSucceeded,
+  startedAt,
 }: {
   name: string;
   category: ToolCategory;
@@ -644,12 +657,13 @@ function GenericCard({
   result?: Props['result'];
   runStreaming: boolean;
   runSucceeded: boolean;
+  startedAt?: number;
 }) {
   const summary = describeInput(input);
   return (
     <div className="op-card op-generic">
       <div className="op-card-head">
-        <ResultBadge category={category} result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} />
+        <ResultBadge category={category} result={result} runStreaming={runStreaming} runSucceeded={runSucceeded} startedAt={startedAt} />
         <span className="op-title">{name}</span>
         {summary ? <span className="op-meta">{truncate(summary, 200)}</span> : null}
       </div>
@@ -662,11 +676,15 @@ function ResultBadge({
   result,
   runStreaming,
   runSucceeded,
+  startedAt,
 }: {
   category: ToolCategory;
   result?: Props['result'];
   runStreaming: boolean;
   runSucceeded: boolean;
+  /** Wall-clock ms when the tool_use began (tool_use.startedAt). Paired with
+   *  result.completedAt to show the tool's real duration. */
+  startedAt?: number;
 }) {
   const t = useT();
   const failed = result?.isError || (!result && !runStreaming && !runSucceeded);
@@ -679,14 +697,56 @@ function ResultBadge({
       : t('tool.running');
   return (
     <span
-      className="op-status op-status-category"
+      className={`op-status op-status-category${startedAt != null ? ' has-duration' : ''}`}
       data-tool-category={category}
       data-tool-state={state}
       title={title}
     >
-      <Icon name={TOOL_CATEGORY_ICON[category]} size={14} />
+      <span className="op-status-icon" aria-hidden>
+        <Icon name={TOOL_CATEGORY_ICON[category]} size={14} />
+      </span>
+      <ToolDuration startedAt={startedAt} completedAt={result?.completedAt} />
     </span>
   );
+}
+
+function ToolDuration({
+  startedAt,
+  completedAt,
+}: {
+  startedAt?: number;
+  completedAt?: number;
+}) {
+  const [now, setNow] = useState(() => Date.now());
+  const started = typeof startedAt === 'number' && Number.isFinite(startedAt) ? startedAt : null;
+  const ended = typeof completedAt === 'number' && Number.isFinite(completedAt) ? completedAt : null;
+  // While the tool is still running (started but no end yet), tick a live
+  // elapsed counter so the row reads as "in progress 12s". Once settled the
+  // duration freezes at completedAt - startedAt.
+  const live = started != null && ended == null;
+  useEffect(() => {
+    if (!live) return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [live]);
+  if (started == null) return null;
+  const endMs = ended ?? now;
+  const ms = Math.max(0, endMs - started);
+  if (ms < 1000) return null; // sub-second steps are noise
+  const label = formatToolDurationMs(ms);
+  return (
+    <span className="tool-duration" data-live={live ? 'true' : undefined}>
+      {label}
+    </span>
+  );
+}
+
+function formatToolDurationMs(ms: number): string {
+  const s = ms / 1000;
+  if (s < 60) return `${Math.round(s)}s`;
+  const m = Math.floor(s / 60);
+  const rem = Math.round(s - m * 60);
+  return rem > 0 ? `${m}m ${rem.toString().padStart(2, '0')}s` : `${m}m`;
 }
 
 function describeInput(input: unknown): string {

@@ -149,6 +149,53 @@ describe('daemonAgentPayloadToPersistedAgentEvent — transient ACP status label
   });
 });
 
+describe('daemonAgentPayloadToPersistedAgentEvent — step duration stamps', () => {
+  it('keeps an ACP-provided completedAt on tool_result', () => {
+    const persisted = daemonAgentPayloadToPersistedAgentEvent({
+      type: 'tool_result',
+      toolUseId: 'tool-1',
+      content: 'ok',
+      isError: false,
+      completedAt: 1_700_000_123_456,
+    }) as Record<string, unknown> | null;
+    expect(persisted).toMatchObject({
+      kind: 'tool_result',
+      toolUseId: 'tool-1',
+      completedAt: 1_700_000_123_456,
+    });
+  });
+
+  it('stamps a best-effort completedAt when the runtime sends none', () => {
+    const before = Date.now();
+    const persisted = daemonAgentPayloadToPersistedAgentEvent({
+      type: 'tool_result',
+      toolUseId: 'tool-2',
+      content: 'done',
+      isError: false,
+    }) as Record<string, unknown> | null;
+    const after = Date.now();
+    expect(persisted?.kind).toBe('tool_result');
+    expect(typeof persisted?.completedAt).toBe('number');
+    expect((persisted?.completedAt as number) >= before).toBe(true);
+    expect((persisted?.completedAt as number) <= after).toBe(true);
+  });
+
+  it('keeps startedAt on tool_use', () => {
+    const persisted = daemonAgentPayloadToPersistedAgentEvent({
+      type: 'tool_use',
+      id: 'tool-1',
+      name: 'Bash',
+      input: { command: 'pnpm guard' },
+      startedAt: 1_700_000_000_000,
+    }) as Record<string, unknown> | null;
+    expect(persisted).toMatchObject({
+      kind: 'tool_use',
+      id: 'tool-1',
+      startedAt: 1_700_000_000_000,
+    });
+  });
+});
+
 describe('filesystem empty-answer fallback helpers', () => {
   it('extracts written file names from filesystem tool events', () => {
     const names = __forTestFilesystemWriteFileNamesFromRunEvents([

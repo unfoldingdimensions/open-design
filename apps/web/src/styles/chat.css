@@ -1451,16 +1451,6 @@
   caret-color: var(--accent);
   -webkit-user-modify: read-write-plaintext-only; /* paste-as-plain-text guard */
 }
-[data-theme="dark"] .composer-input-editor [contenteditable='true'],
-[data-theme="dark"] .composer-input-editor .composer-editable {
-  color: var(--text);
-}
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme]) .composer-input-editor [contenteditable='true'],
-  html:not([data-theme]) .composer-input-editor .composer-editable {
-    color: var(--text);
-  }
-}
 .chat-composer-fixed-layer .composer-input-editor [contenteditable='true'],
 .chat-composer-fixed-layer .composer-input-editor .composer-editable {
   font-size: 13px;

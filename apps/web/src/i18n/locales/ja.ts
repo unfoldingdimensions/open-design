@@ -2085,6 +2085,8 @@ export const ja: Dict = {
   'project.resizeChatPanel': 'チャットパネルのサイズを変更',
   'project.instructionsActive': '有効 — すべてのメッセージに含まれます',
   'project.missing': 'This project has been deleted or no longer exists.',
+  'project.routeDaemonUnavailable': 'The local service is unreachable. Restart the app and try again.',
+  'project.routeMaterializationFailed': 'This project could not be loaded. Retry to try again.',
   'chat.tabChat': 'チャット',
   'chat.tabComments': 'コメント',
   'chat.commentsSoon': 'コメント — 近日公開',

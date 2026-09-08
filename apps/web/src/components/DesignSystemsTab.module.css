@@ -465,17 +465,6 @@
   animation: designSystemsSkeletonSheen 1.55s cubic-bezier(0.23, 1, 0.32, 1) infinite;
 }
 
-[data-theme="dark"] .skeletonBlock {
-  background:
-    linear-gradient(
-      110deg,
-      transparent 28%,
-      color-mix(in srgb, #fff 13%, transparent) 50%,
-      transparent 72%
-    ) 0 0 / 200% 100%,
-    color-mix(in srgb, var(--bg-elevated) 68%, var(--bg-muted));
-}
-
 .skeletonCreateButton {
   width: 104px;
   height: 36px;

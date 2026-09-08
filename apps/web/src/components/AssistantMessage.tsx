@@ -911,6 +911,12 @@ function AssistantMessageImpl({
         <div className="role">
           <AgentIcon id={roleIconId} size={20} className="role-agent-icon" />
           <span className="role-name">{roleName}</span>
+          <RunTotalTimer
+            startedAt={message.startedAt}
+            endedAt={message.endedAt}
+            durationMs={usage?.durationMs}
+            streaming={streaming}
+          />
         </div>
       ) : null}
       <div className="assistant-flow">
@@ -955,6 +961,8 @@ function AssistantMessageImpl({
                 <ThinkingBlock
                   key={i}
                   text={b.text}
+                  startedAt={b.startedAt}
+                  completedAt={b.completedAt}
                   streaming={i === blocks.length - 1}
                   autoExpand={i === blocks.length - 1}
                   onLinkClick={thinkingLinkClick}
@@ -1062,6 +1070,8 @@ function AssistantMessageImpl({
                   <ThinkingBlock
                     key={i}
                     text={b.text}
+                    startedAt={b.startedAt}
+                    completedAt={b.completedAt}
                     streaming={streaming && i === contentBlocks.length - 1}
                     onLinkClick={thinkingLinkClick}
                   />
@@ -1723,6 +1733,57 @@ function assistantFeedbackModelId(message: ChatMessage): string | null {
 function appendRoleModel(label: string, model: string | null): string {
   if (!model || label.includes(" · ")) return label;
   return `${label} · ${model}`;
+}
+
+// Total-run elapsed chip shown at the very start of an assistant response
+// (in the role row). Ticks from `startedAt` while the run is live and freezes
+// at `endedAt` / `usage.durationMs` once settled, so the user always sees how
+// long this answer has taken — during the run and after it.
+function RunTotalTimer({
+  startedAt,
+  endedAt,
+  durationMs,
+  streaming,
+}: {
+  startedAt: number | undefined;
+  endedAt: number | undefined;
+  durationMs: number | undefined;
+  streaming: boolean;
+}) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!streaming) return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [streaming]);
+  if (typeof startedAt !== "number" || !Number.isFinite(startedAt)) return null;
+  const end = streaming
+    ? now
+    : typeof endedAt === "number" && Number.isFinite(endedAt)
+      ? endedAt
+      : typeof durationMs === "number" && Number.isFinite(durationMs)
+        ? startedAt + durationMs
+        : endedAt;
+  if (end === undefined) return null;
+  const ms = Math.max(0, end - startedAt);
+  if (!streaming && ms < 1000) return null;
+  return (
+    <span className="run-total-timer" data-live={streaming ? "true" : undefined}>
+      <Icon name="clock" size={12} />
+      {formatWholeSeconds(ms)}
+    </span>
+  );
+}
+
+// Whole-second "42s" / "1m 02s" formatting for live-ticking chips. Deliberately
+// distinct from formatElapsedMs (which shows tenths under 10s for the footer's
+// Working/Done clock) — a ticking step counter reads better in whole seconds.
+function formatWholeSeconds(ms: number): string {
+  const s = ms / 1000;
+  if (s < 60) return `${Math.max(0, Math.round(s))}s`;
+  const m = Math.floor(s / 60);
+  const rem = Math.round(s - m * 60);
+  return rem > 0 ? `${m}m ${rem.toString().padStart(2, "0")}s` : `${m}m`;
 }
 
 function LiveRunStatusStrip({
@@ -3604,14 +3665,21 @@ function ThinkingBlock({
   streaming,
   onLinkClick,
   autoExpand = false,
+  startedAt,
+  completedAt,
 }: {
   text: string;
   streaming?: boolean;
   onLinkClick?: MarkdownLinkClickHandler;
   autoExpand?: boolean;
+  /** Server-side wall-clock stamps from the daemon (persisted history).
+   *  When present, the duration is exact and survives reload. */
+  startedAt?: number;
+  completedAt?: number;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
   const isThinking = streaming === true;
   // Post-prose live thinking (autoExpand) keeps its body open while it is the
   // current activity, so the reasoning the user is waiting on is visible in
@@ -3622,26 +3690,42 @@ function ThinkingBlock({
   useEffect(() => {
     if (!userToggled) setOpen(isThinking && autoExpand);
   }, [isThinking, autoExpand, userToggled]);
-  // Thinking events carry no server timestamps, so the "用时 X 秒" duration is
-  // measured client-side: stamp the start when streaming begins and freeze the
-  // elapsed once it ends. Blocks restored from history never stream, so they
-  // fall back to the plain "已深度思考" label with no seconds.
+  // Duration: prefer the daemon's server stamps (exact, survive reload);
+  // fall back to client-side measurement while a block streams live. Tick a
+  // seconds clock while thinking so the row reads "Thinking 12s", then freeze
+  // it once the phase ends.
+  const serverStarted =
+    typeof startedAt === "number" && Number.isFinite(startedAt) ? startedAt : null;
+  const serverEnded =
+    typeof completedAt === "number" && Number.isFinite(completedAt) ? completedAt : null;
   const startRef = useRef<number | null>(null);
-  const [elapsedSec, setElapsedSec] = useState<number | null>(null);
+  useEffect(() => {
+    if (!isThinking) return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [isThinking]);
   useEffect(() => {
     if (isThinking) {
       if (startRef.current === null) startRef.current = Date.now();
-      setElapsedSec(null);
-    } else if (startRef.current !== null) {
-      setElapsedSec(Math.max(1, Math.round((Date.now() - startRef.current) / 1000)));
+    } else {
       startRef.current = null;
     }
   }, [isThinking]);
+  const phaseStartedMs = serverStarted ?? startRef.current;
+  const phaseEndedMs = serverEnded ?? (isThinking ? now : null);
+  const elapsedSec =
+    phaseStartedMs != null && phaseEndedMs != null
+      ? Math.max(1, Math.round((phaseEndedMs - phaseStartedMs) / 1000))
+      : null;
   const label = isThinking
-    ? t("assistant.thinking")
+    ? elapsedSec != null
+      ? `${t("assistant.thinking")} ${formatWholeSeconds(elapsedSec * 1000)}`
+      : t("assistant.thinking")
     : elapsedSec != null
       ? t("assistant.thoughtFor", { s: elapsedSec })
-      : t("assistant.thought");
+      : serverStarted != null && serverEnded != null
+        ? t("assistant.thoughtFor", { s: Math.max(1, Math.round((serverEnded - serverStarted) / 1000)) })
+        : t("assistant.thought");
   return (
     <div className="thinking-block">
       <button
@@ -4144,6 +4228,8 @@ function TaskActivityCard({
                   <ThinkingBlock
                     key={`thinking-${index}`}
                     text={entry.text}
+                    startedAt={entry.startedAt}
+                    completedAt={entry.completedAt}
                     streaming={runStreaming && trailingThinking && index === visibleEntries.length - 1}
                     onLinkClick={onThinkingLinkClick}
                   />
@@ -4198,6 +4284,8 @@ function CurrentTaskActivityRow({
     return (
       <ThinkingBlock
         text={entry.text}
+        startedAt={entry.startedAt}
+        completedAt={entry.completedAt}
         streaming
         onLinkClick={onThinkingLinkClick}
       />
@@ -4310,7 +4398,7 @@ function lastStateLabel(verbs: string[], t: (k: keyof Dict) => string): string {
 
 type Block =
   | { kind: "text"; text: string }
-  | { kind: "thinking"; text: string }
+  | { kind: "thinking"; text: string; startedAt?: number; completedAt?: number }
   | { kind: "tool-group"; items: ToolItem[] }
   | { kind: "live-tool"; id: string; name: string; raw: string }
   | {
@@ -4435,8 +4523,24 @@ function buildBlocks(events: AgentEvent[]): Block[] {
     }
     if (ev.kind === "thinking") {
       const last = out[out.length - 1];
-      if (last && last.kind === "thinking") last.text += ev.text;
-      else out.push({ kind: "thinking", text: ev.text });
+      if (last && last.kind === "thinking") {
+        last.text += ev.text;
+        // Union server stamps across the merged deltas: the daemon stamps
+        // startedAt on the phase's first delta and completedAt on its close.
+        if (typeof ev.startedAt === "number" && typeof last.startedAt !== "number") {
+          last.startedAt = ev.startedAt;
+        }
+        if (typeof ev.completedAt === "number" && typeof last.completedAt !== "number") {
+          last.completedAt = ev.completedAt;
+        }
+      } else {
+        out.push({
+          kind: "thinking",
+          text: ev.text,
+          ...(typeof ev.startedAt === "number" ? { startedAt: ev.startedAt } : {}),
+          ...(typeof ev.completedAt === "number" ? { completedAt: ev.completedAt } : {}),
+        });
+      }
       continue;
     }
     if (ev.kind === "tool_use") {

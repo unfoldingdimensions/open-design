@@ -24,9 +24,6 @@ function declarations(selector: string): string {
 describe('entry rail — 最近浏览过 rows', () => {
   it('pins the shared quiet ink the heading and rows carry', () => {
     expect(declarations('.entry-nav-rail')).toMatch(/--rail-ink-quiet:\s*#5c5c5c/);
-    expect(declarations('[data-theme="dark"] .entry-nav-rail')).toMatch(
-      /--rail-ink-quiet:\s*color-mix\(in srgb, var\(--text\) 52%, transparent\)/,
-    );
   });
 
   it('gives the section the destinations\' geometry: 16px above, 38px rows, 12px corners', () => {

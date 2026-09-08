@@ -1,4 +1,5 @@
 import {
+  useRef,
   useEffect,
   type ComponentPropsWithoutRef,
   type FormEventHandler,
@@ -56,6 +57,61 @@ export function Dialog({
   onSubmit,
   ...dataAttributes
 }: DialogProps) {
+  const panelRef = useRef<HTMLElement | null>(null);
+  const setPanelRef = (node: HTMLElement | null) => {
+    panelRef.current = node;
+  };
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    const backdrop = panel?.parentElement;
+    if (!panel || !backdrop || typeof document === 'undefined') return;
+
+    const previouslyFocused =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const addedInert = Array.from(document.body.children).filter(
+      (element) => element !== backdrop && !element.hasAttribute('inert'),
+    );
+    for (const element of addedInert) element.setAttribute('inert', '');
+
+    const focusable = () => Array.from(panel.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )).filter((element) => (
+      !element.hasAttribute('hidden')
+      && element.getAttribute('aria-hidden') !== 'true'
+    ));
+
+    panel.tabIndex = -1;
+    (focusable()[0] ?? panel).focus({ preventScroll: true });
+
+    const handleTab = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const elements = focusable();
+      if (elements.length === 0) {
+        event.preventDefault();
+        panel.focus({ preventScroll: true });
+        return;
+      }
+      const first = elements[0]!;
+      const last = elements[elements.length - 1]!;
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || !panel.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (active === last || !panel.contains(active))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', handleTab);
+
+    return () => {
+      document.removeEventListener('keydown', handleTab);
+      for (const element of addedInert) element.removeAttribute('inert');
+      if (previouslyFocused?.isConnected) previouslyFocused.focus();
+    };
+  }, []);
+
   useEffect(() => {
     if (!onClose || !closeOnEscape) return;
 
@@ -86,6 +142,11 @@ export function Dialog({
     ...dataAttributes,
   };
 
+  // Callback refs with per-element casts: the shared base above stays
+  // ref-free so the same object spreads onto both <div> and <form>.
+  const divRef = setPanelRef as unknown as (node: HTMLDivElement | null) => void;
+  const formRef = setPanelRef as unknown as (node: HTMLFormElement | null) => void;
+
   return (
     <div
       className={joinClassNames(
@@ -97,11 +158,11 @@ export function Dialog({
       role="presentation"
     >
       {as === 'form' ? (
-        <form {...sharedProps} onSubmit={onSubmit}>
+        <form {...sharedProps} ref={formRef} onSubmit={onSubmit}>
           {children}
         </form>
       ) : (
-        <div {...sharedProps}>{children}</div>
+        <div {...sharedProps} ref={divRef}>{children}</div>
       )}
     </div>
   );

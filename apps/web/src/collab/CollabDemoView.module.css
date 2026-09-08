@@ -129,6 +129,15 @@
   color: var(--color-muted, #6b7280);
 }
 
+/* Last author-action outcome. Always rendered (never hover-gated) so a
+   dispatched request or a failed share is visible without interaction. */
+.actionStatus {
+  margin: 4px 0 0 120px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-muted, #6b7280);
+}
+
 .badge {
   display: inline-flex;
   align-items: center;

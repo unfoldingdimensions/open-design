@@ -2085,6 +2085,8 @@ export const th: Dict = {
   'project.resizeChatPanel': 'ปรับขนาดแผงแชท',
   'project.instructionsActive': 'ใช้งานอยู่ — รวมอยู่ในทุกข้อความ',
   'project.missing': 'This project has been deleted or no longer exists.',
+  'project.routeDaemonUnavailable': 'The local service is unreachable. Restart the app and try again.',
+  'project.routeMaterializationFailed': 'This project could not be loaded. Retry to try again.',
   'chat.tabChat': 'แชท',
   'chat.tabComments': 'ความคิดเห็น',
   'chat.commentsSoon': 'ความคิดเห็น — เร็วๆ นี้',

@@ -124,8 +124,8 @@ describe('AssistantMessage unfinished todo state', () => {
     expect(screen.queryByRole('button', { name: 'Continue remaining tasks' })).toBeNull();
   });
 
-  it('hides answer-footer duration, token, and cost statistics', () => {
-    render(
+  it('shows the role-row total timer while footer token/cost stats stay hidden', () => {
+    const { container } = render(
       <AssistantMessage
         message={{
           id: 'assistant-usage',
@@ -141,7 +141,11 @@ describe('AssistantMessage unfinished todo state', () => {
       />,
     );
 
-    expect(screen.queryByText(/32s/)).toBeNull();
+    // State matrix: succeeded + settled + duration known → the compact
+    // role-row timer shows ("32s"); the detailed footer stats (tokens,
+    // cost) stay hidden.
+    const timer = container.querySelector('.run-total-timer');
+    expect(timer?.textContent).toMatch(/32s/);
     expect(screen.queryByText(/1439 out/)).toBeNull();
     expect(screen.queryByText(/\$0\.0123/)).toBeNull();
   });

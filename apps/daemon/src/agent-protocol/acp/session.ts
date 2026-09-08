@@ -371,6 +371,10 @@ export function attachAcpSession({
       // lexically masks Bash, so redact before the canonical transcript ships.
       content: acpSafeToolResultContent(st.name, st.resultContent),
       isError,
+      // Wall-clock completion of the tool, paired with the tool_use's
+      // startedAt above so the UI can show a real per-step duration
+      // (completedAt - startedAt) that survives reload.
+      completedAt: Date.now(),
     }, meta), meta);
     // Concrete only on terminal tool_result for a real (non-think) tool.
     emittedConcreteToolEvent = true;

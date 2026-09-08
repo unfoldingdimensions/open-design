@@ -53,6 +53,56 @@ describe('Dialog', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it('moves focus into the dialog, traps Tab, and restores the opener', () => {
+    const opener = document.createElement('button');
+    opener.textContent = 'Open dialog';
+    document.body.appendChild(opener);
+    opener.focus();
+
+    const { unmount } = render(
+      <Dialog ariaLabel="Rename design">
+        <button type="button">Cancel</button>
+        <button type="button">Save</button>
+      </Dialog>,
+    );
+
+    const dialog = screen.getByRole('dialog', { name: 'Rename design' });
+    const cancel = screen.getByRole('button', { name: 'Cancel' });
+    const save = screen.getByRole('button', { name: 'Save' });
+
+    expect(document.activeElement).toBe(cancel);
+    expect(dialog.getAttribute('aria-modal')).toBe('true');
+
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(save);
+
+    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(document.activeElement).toBe(cancel);
+
+    unmount();
+    expect(document.activeElement).toBe(opener);
+    opener.remove();
+  });
+
+  it('preserves prior inert state on background siblings', () => {
+    const app = document.createElement('main');
+    app.textContent = 'Background app';
+    document.body.appendChild(app);
+    app.setAttribute('inert', '');
+
+    const { unmount } = render(
+      <Dialog ariaLabel="Settings">
+        <button type="button">Close</button>
+      </Dialog>,
+    );
+
+    expect(app.hasAttribute('inert')).toBe(true);
+
+    unmount();
+    expect(app.hasAttribute('inert')).toBe(true);
+    app.remove();
+  });
+
   it('lets custom panels opt out of the shared modal chrome class', () => {
     const { container } = render(
       <Dialog className="plugin-details-modal" includeChromeClassName={false}>

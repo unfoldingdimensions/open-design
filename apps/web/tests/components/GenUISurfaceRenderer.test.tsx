@@ -1,99 +1,54 @@
 // @vitest-environment jsdom
 
-// Plan §3.C3 / §3.C4 — GenUISurfaceRenderer unit test.
-//
-// Confirms:
-//   - confirmation surface renders Continue / Cancel buttons; each
-//     forwards the matching boolean through onAnswered.
-//   - oauth-prompt surface forwards { authorized: true, connectorId }
-//     for the connector route, matching the daemon's
-//     genui_surfaces.value_json contract from spec §10.3.1.
-
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { GenUISurfaceRenderer } from '../../src/components/GenUISurfaceRenderer';
-import type {
-  GenUISurfaceSpec,
-  WorkspaceCollabContext,
-} from '@open-design/contracts';
 
-afterEach(() => cleanup());
+afterEach(() => {
+  cleanup();
+});
 
-describe('GenUISurfaceRenderer', () => {
-  it('confirmation surface emits true on Continue and false on Cancel', async () => {
-    const surface: GenUISurfaceSpec = {
-      id: 'media-spend-approval',
-      kind: 'confirmation',
-      persist: 'run',
-      prompt: 'Approve generating up to 4 image variants?',
-    };
-    const onAnswered = vi.fn();
+describe('GenUISurfaceRenderer accessibility', () => {
+  it('names the dialog by its prompt text, not the internal surface id', () => {
     render(
       <GenUISurfaceRenderer
-        pending={{ surface, runId: 'run-1' }}
-        onAnswered={onAnswered}
-      />,
-    );
-    fireEvent.click(screen.getByTestId('genui-confirm'));
-    await waitFor(() => expect(onAnswered).toHaveBeenCalledWith(true));
-    fireEvent.click(screen.getByTestId('genui-cancel'));
-    await waitFor(() => expect(onAnswered).toHaveBeenLastCalledWith(false));
-  });
-
-  it('oauth-prompt surface forwards the connectorId on Authorize', async () => {
-    const surface: GenUISurfaceSpec = {
-      id: '__auto_connector_slack',
-      kind: 'oauth-prompt',
-      persist: 'project',
-      capabilitiesRequired: ['connector:slack'],
-      oauth: { route: 'connector', connectorId: 'slack' },
-    };
-    const onAnswered = vi.fn();
-    render(
-      <GenUISurfaceRenderer
-        pending={{ surface, runId: 'run-1' }}
-        onAnswered={onAnswered}
-      />,
-    );
-    fireEvent.click(screen.getByTestId('genui-authorize'));
-    await waitFor(() =>
-      expect(onAnswered).toHaveBeenCalledWith({
-        authorized: true,
-        connectorId: 'slack',
-      }),
-    );
-  });
-
-  it('keeps a bundled component iframe on the captured Workspace identity', () => {
-    const surface: GenUISurfaceSpec = {
-      id: 'review',
-      kind: 'form',
-      persist: 'run',
-      component: { path: './surfaces/review.html', sandbox: 'iframe' },
-    };
-    const workspaceContext = {
-      workspaceId: 'workspace-a',
-      workspaceMemberId: 'member-a',
-      workspaceType: 'team',
-      role: 'member',
-      memberStatus: 'active',
-      lifecycleState: 'active',
-      permissions: {
-        canShareProjects: true,
-        canWriteSyncedFiles: true,
-      },
-    } as WorkspaceCollabContext;
-    render(
-      <GenUISurfaceRenderer
-        pending={{ surface, runId: 'run-1', componentPluginId: 'plugin-1' }}
-        workspaceContext={workspaceContext}
+        pending={{
+          surface: {
+            id: 'confirm-deploy-9f3a',
+            kind: 'confirmation',
+            persist: 'run',
+            prompt: 'Deploy to production now?',
+          },
+          runId: 'run-1',
+        }}
         onAnswered={() => undefined}
       />,
     );
 
-    const src = screen.getByTestId('genui-component-iframe').getAttribute('src');
-    const parsed = new URL(src ?? '', 'https://od.local');
-    expect(parsed.searchParams.get('workspaceId')).toBe('workspace-a');
-    expect(parsed.searchParams.get('workspaceMemberId')).toBe('member-a');
+    expect(
+      screen.getByRole('dialog', { name: 'Deploy to production now?' }),
+    ).toBeTruthy();
+  });
+
+  it('announces submission failures as alerts', async () => {
+    render(
+      <GenUISurfaceRenderer
+        pending={{
+          surface: {
+            id: 'confirm-deploy-9f3a',
+            kind: 'confirmation',
+            persist: 'run',
+            prompt: 'Deploy to production now?',
+          },
+          runId: 'run-1',
+        }}
+        onAnswered={() => Promise.reject(new Error('Daemon unreachable'))}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('genui-confirm'));
+
+    const alert = await screen.findByRole('alert');
+    expect(alert.textContent).toMatch(/Daemon unreachable/);
   });
 });

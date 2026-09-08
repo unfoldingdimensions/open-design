@@ -18,6 +18,7 @@ export type IconName =
   | 'chevron-up'
   | 'chevron-left'
   | 'chevron-right'
+  | 'clock'
   | 'close'
   | 'copy'
   | 'crop'
@@ -438,6 +439,13 @@ export function Icon({ name, size = 14, strokeWidth = 1.6, ...rest }: Props) {
       return (
         <svg {...common}>
           <path d="m9 18 6-6-6-6" />
+        </svg>
+      );
+    case 'clock':
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6v6l4 2" />
         </svg>
       );
     case 'close':
