@@ -439,9 +439,12 @@ The identifier is slugged before use, collisions receive `-2`, `-3`, etc., and o
 ### 5.14 ZCode
 
 - ZCode ships its agent runtime inside the desktop app
-  (`resources/glm/zcode.cjs`); OD drives the `zcode` binary from
-  `npm install -g zcode-app-cli@latest`, with `ZCODE_BIN` as the override
-  for custom installs (same convention as `DSH_BIN`).
+  (`resources/glm/zcode.cjs`); OD drives it through the `zcode` bin name:
+  on Windows a `zcode.cmd` shim on PATH running
+  `node %LOCALAPPDATA%\Programs\ZCode\<...>\zcode.cjs` (tracks the live
+  install, so app updates flow through), otherwise the `zcode` binary
+  from `npm install -g zcode-app-cli@latest`. `ZCODE_BIN` overrides
+  either for custom installs (same convention as `DSH_BIN`).
 - Invocation is `zcode --prompt <text> --mode yolo --no-color` with
   `--resume <sessionId>` (`sess_...`) for follow-ups and repeatable
   `--attach <file>` for image paths. The prompt travels as an argv value

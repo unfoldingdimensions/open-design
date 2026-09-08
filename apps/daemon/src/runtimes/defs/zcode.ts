@@ -2,9 +2,14 @@ import { DEFAULT_MODEL_OPTION } from './shared.js';
 import type { RuntimeAgentDef } from '../types.js';
 
 // ZCode ships its agent runtime inside the desktop app
-// (`resources/glm/zcode.cjs`); the supported OD path is the `zcode` binary
-// from `npm install -g zcode-app-cli@latest`, with `ZCODE_BIN` as the
-// escape hatch (see executables.ts). Verified live against v0.16.5.
+// (`resources/glm/zcode.cjs` — no PATH binary on Windows). Two supported
+// launch shapes, both resolving through the `zcode` bin name:
+// - Windows: a `zcode.cmd` shim on PATH that runs
+//   `node %LOCALAPPDATA%\Programs\ZCode\<...>\zcode.cjs` (tracks the live
+//   install, so app updates flow through);
+// - Any OS: the `zcode` binary from `npm install -g zcode-app-cli@latest`.
+// `ZCODE_BIN` overrides either (see executables.ts). Verified live
+// against runtime v0.16.5.
 //
 // Flag notes (every flag below was acceptance-tested; the root `--help`
 // lists flags the parser rejects, so help text alone is not trusted):
