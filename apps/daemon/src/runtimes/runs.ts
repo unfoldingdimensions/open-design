@@ -2251,6 +2251,7 @@ export function createChatRunService({
         ? result.remainingPids.filter((pid) => Number.isInteger(pid))
         : [],
     };
+  };
   /**
    * B11 「引导对话」: hand one more user message to a turn that is still running,
    * instead of stopping it and re-sending.

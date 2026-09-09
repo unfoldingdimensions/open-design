@@ -7452,6 +7452,7 @@ Common options:
         return;
       }
       console.error(`unknown image-agent action: ${action} (use get, set <agentId>, or unset)`);
+    }
     // Chat artifact snapshots. The UI reads these through the same endpoints;
     // this is the embeddability half of the dual-track rule, so an external
     // agent can inspect and export a turn's exact bytes without the web app.
