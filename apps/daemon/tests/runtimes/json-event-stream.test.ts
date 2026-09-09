@@ -2168,6 +2168,9 @@ test('command-code stream surfaces thinking, text, tool lifecycle and usage (liv
     {
       type: 'usage',
       usage: { input_tokens: 100, output_tokens: 20, cached_read_tokens: 5, cached_write_tokens: 0 },
+    },
+  ]);
+});
 /*
  * ── codex `mcp_tool_call` / `web_search` ────────────────────────────────
  *
