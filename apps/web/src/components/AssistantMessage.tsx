@@ -1,5 +1,6 @@
 import { Fragment, memo, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCharReveal } from "./chat/useCharReveal";
+import { TodoCard, ToolCard } from "./ToolCard";
 import { ExecutionShell } from "./chat/ExecutionShell";
 import { buildTurnBlocks } from "../runtime/chat/build-turn-blocks";
 import { copyableTurnText } from "../runtime/chat/copyable-turn";
@@ -361,6 +362,11 @@ function SkillPluginCandidateCard({
 interface Props {
   message: ChatMessage;
   streaming: boolean;
+  // Live-only streaming tool-input partials keyed by tool-use id (raw,
+  // mid-token JSON accumulated from `input_json_delta`). Used to render an
+  // in-flight Write/Edit's code in real time before the full `tool_use`
+  // arrives. Never persisted.
+  liveToolInput?: Record<string, { name: string; text: string; seq?: number }>;
   projectId?: string | null;
   // Analytics context for the assistant_feedback_* events. Defaults
   // applied at the call site keep AssistantMessage usable in tests
@@ -492,6 +498,11 @@ interface Props {
 const ASSISTANT_MESSAGE_COMPARED_PROPS: Array<keyof Props> = [
   'message',
   'streaming',
+  // Live streaming tool input changes identity on every `tool_input_delta`.
+  // ChatPane passes it only to the streaming row (undefined elsewhere), so
+  // comparing it re-renders just that row as the card grows — without it the
+  // memo swallows the deltas and the card only updates on the final tool_use.
+  'liveToolInput',
   'projectId',
   'projectKind',
   'conversationId',
@@ -600,6 +611,7 @@ function useTickingNow(active: boolean, runId?: string): StreamClock {
 function AssistantMessageImpl({
   message,
   streaming,
+  liveToolInput,
   projectId = null,
   projectKind = null,
   conversationId = null,
@@ -694,14 +706,73 @@ function AssistantMessageImpl({
     () => new Set(displayEvents.filter((e) => e.kind === "tool_use").map((e) => e.id)),
     [displayEvents],
   );
+  // Tools whose streaming JSON input is worth previewing as live code. Other
+  // tools (Bash, Grep, TodoWrite, …) stream JSON too but a code panel for them
+  // would be noise.
+  const LIVE_CODE_TOOL_NAMES = new Set([
+    "Write",
+    "write",
+    "Edit",
+    "edit",
+    "MultiEdit",
+    "multiedit",
+    "NotebookEdit",
+  ]);
+
+  function isLiveCodeToolName(name: string): boolean {
+    return LIVE_CODE_TOOL_NAMES.has(name);
+  }
+
+  // Live code boxes (Write/Edit streaming) append after everything else.
+  const liveCodeBlocks = useMemo<Block[]>(() => {
+    if (!streaming || !liveToolInput) return [];
+    const out: Block[] = [];
+    for (const [id, entry] of Object.entries(liveToolInput)) {
+      if (settledUseIds.has(id)) continue;
+      if (!isLiveCodeToolName(entry.name)) continue;
+      out.push({ kind: "live-tool", id, name: entry.name, raw: entry.text });
+    }
+    return out;
+  }, [streaming, liveToolInput, settledUseIds]);
   // ChatPane owns one canonical conversation-level Todo card above the
   // composer. Strip TodoWrite snapshots from individual messages so plans do
   // not appear twice or jump around as history is virtualized.
   const blocks = useMemo(() => {
+    const rawBlocks = [...buildBlocks(displayEvents), ...liveCodeBlocks];
     return stripTodoToolGroups(
-      stripEmptyThinkingBlocks(suppressDuplicateQuestionForms(buildBlocks(displayEvents))),
+      stripEmptyThinkingBlocks(suppressDuplicateQuestionForms(rawBlocks)),
     );
-  }, [displayEvents]);
+  }, [displayEvents, liveCodeBlocks]);
+  // A task gets one execution-record disclosure. This keeps answer prose
+  // readable when an agent has alternated between many tools, while retaining
+  // every command, file operation, and streaming code preview for review.
+  // TodoWrite has already been removed because ChatPane owns the single
+  // conversation-level progress card outside message history.
+  const { contentBlocks, taskActivity } = useMemo(
+    () => splitTaskActivity(blocks),
+    [blocks],
+  );
+  const hasConclusion = contentBlocks.some(
+    (block) => block.kind === "text" && block.text.trim().length > 0,
+  );
+  const completedWithAuthenticatedDone = useMemo(
+    () =>
+      message.runStatus === "succeeded" &&
+      eventsHaveAuthenticatedDoneConclusion(displayEvents),
+    [displayEvents, message.runStatus],
+  );
+  // `turnDoneMarkerLanded`: same done-marker criterion, without asking
+  // whether the run ended — drives the execution-record auto-collapse.
+  const turnDoneMarkerLanded = useMemo(
+    () => eventsHaveAuthenticatedDoneConclusion(displayEvents),
+    [displayEvents],
+  );
+  // Thinking text renders markdown too — its file links must route in-app
+  // exactly like prose links (ProseBlock builds the same handler itself).
+  const thinkingLinkClick = useMemo(
+    () => chatFileLinkClickHandler(onRequestOpenFile, projectFileNames, projectId, projectResolvedDir),
+    [onRequestOpenFile, projectFileNames, projectId, projectResolvedDir],
+  );
   /**
    * 这一轮对执行记录来说算什么状态。
    *
@@ -3554,6 +3625,7 @@ function ProseBlock({
   assistantMessageId,
   isLastAssistant,
   streaming,
+  showStreamCursor,
   nextUserContent,
   suppressDirectionForms,
   onSubmitQuestionForm,
@@ -3573,6 +3645,7 @@ function ProseBlock({
   assistantMessageId: string;
   isLastAssistant: boolean;
   streaming: boolean;
+  showStreamCursor?: boolean;
   nextUserContent?: string;
   suppressDirectionForms: boolean;
   projectId?: string | null;
@@ -3710,6 +3783,7 @@ function ProseBlock({
     <div
       ref={proseRef}
       className="prose-block"
+      data-stream-cursor={showStreamCursor && !live ? "true" : undefined}
     >
       {renderable.map((seg) => {
         if (seg.kind === "reminder") {
@@ -5017,6 +5091,141 @@ function CurrentTaskActivityRow({
   );
 }
 
+// Snapshot tools (the call IS the state, later calls supersede earlier
+// ones) and tools the model retries verbatim under headless-mode errors
+// are noisy when stacked. Collapse identical-input neighbors to the most
+// recent. Currently:
+//   - TodoWrite / todowrite: the input replaces the previous list, so the
+//     latest call is the only one worth showing; older identical or
+//     superseded snapshots are pure duplication.
+// Other tool names pass through untouched.
+const SNAPSHOT_TOOL_NAMES = new Set([
+  "TodoWrite",
+  "todowrite",
+  "todo_write",
+  "update_plan",
+]);
+
+function dedupeSnapshotToolRetries(items: ToolItem[]): ToolItem[] {
+  if (items.length <= 1) return items;
+  const allSnapshot = items.every((it) => SNAPSHOT_TOOL_NAMES.has(it.use.name));
+  if (!allSnapshot) return items;
+  // For TodoWrite specifically, the LATEST call always wins regardless of
+  // input — it is a state replace, not an append. The cheap unifying
+  // behavior: keep the last item per `(name, JSON.stringify(input))` key;
+  // for TodoWrite a single name+input is the snapshot identity.
+  const lastByKey = new Map<string, ToolItem>();
+  for (const it of items) {
+    let key: string;
+    try {
+      key = `${it.use.name}:${JSON.stringify(it.use.input)}`;
+    } catch {
+      key = it.use.id;
+    }
+    lastByKey.set(key, it);
+  }
+  // For TodoWrite groups, additionally collapse to just the most recent
+  // item overall (a later call supersedes an earlier one even when inputs
+  // differ). We detect by checking whether all items share a TodoWrite
+  // name after the input-key dedupe above.
+  const collapsed = Array.from(lastByKey.values());
+  const allTodoWrite = collapsed.every((it) => isTodoWriteToolName(it.use.name));
+  if (allTodoWrite && collapsed.length > 1) {
+    return [collapsed[collapsed.length - 1]!];
+  }
+  return collapsed;
+}
+function extractStreamingJsonString(raw: string, field: string): string | null {
+  const marker = `"${field}"`;
+  const mi = raw.indexOf(marker);
+  if (mi === -1) return null;
+  let i = mi + marker.length;
+  // Advance to the value's opening quote, past the `:` and any whitespace.
+  while (i < raw.length && raw[i] !== '"') i++;
+  if (i >= raw.length) return null;
+  i++; // step past the opening quote
+  let out = "";
+  while (i < raw.length) {
+    const ch = raw[i]!;
+    if (ch === "\\") {
+      const next = raw[i + 1];
+      if (next === undefined) break; // incomplete escape at the streaming tail
+      switch (next) {
+        case "n": out += "\n"; break;
+        case "t": out += "\t"; break;
+        case "r": out += "\r"; break;
+        case '"': out += '"'; break;
+        case "\\": out += "\\"; break;
+        case "/": out += "/"; break;
+        case "b": out += "\b"; break;
+        case "f": out += "\f"; break;
+        case "u": {
+          const hex = raw.slice(i + 2, i + 6);
+          if (hex.length < 4) return out; // incomplete \u escape at the tail
+          out += String.fromCharCode(parseInt(hex, 16));
+          i += 6;
+          continue;
+        }
+        default: out += next;
+      }
+      i += 2;
+      continue;
+    }
+    if (ch === '"') break; // closing quote → value complete
+    out += ch;
+    i++;
+  }
+  return out;
+}
+
+type TaskActivityEntry =
+  | Extract<Block, { kind: "thinking" }>
+  | Extract<Block, { kind: "live-tool" }>
+  | { kind: "tool"; item: ToolItem };
+
+type TaskActivity = {
+  entries: TaskActivityEntry[];
+  trailingThinking: boolean;
+};
+
+function splitTaskActivity(blocks: Block[]): {
+  contentBlocks: Block[];
+  taskActivity: TaskActivity | null;
+} {
+  const contentBlocks: Block[] = [];
+  const entries: TaskActivityEntry[] = [];
+
+  for (const block of blocks) {
+    if (block.kind === "thinking") {
+      entries.push(block);
+      continue;
+    }
+    if (block.kind === "live-tool") {
+      entries.push(block);
+      continue;
+    }
+    if (block.kind === "tool-group") {
+      // The canonical TodoWrite display is kept above the composer. It
+      // remains the one task-progress surface, rather than becoming another
+      // item inside the execution audit trail.
+      if (block.items.every((item) => isTodoWriteToolName(item.use.name))) {
+        contentBlocks.push(block);
+      } else {
+        entries.push(...block.items.map((item) => ({ kind: "tool" as const, item })));
+      }
+      continue;
+    }
+    contentBlocks.push(block);
+  }
+
+  return {
+    contentBlocks,
+    taskActivity: entries.length > 0
+      ? { entries, trailingThinking: blocks.at(-1)?.kind === "thinking" }
+      : null,
+  };
+}
+
 function summarizeGroup(
   items: ToolItem[],
   t: (k: keyof Dict, vars?: Record<string, string | number>) => string,
@@ -5051,10 +5260,70 @@ function toolFamily(name: string): string {
   return name.toLowerCase();
 }
 
+function familyIcon(family: string): string {
+  if (family === "edit") return "✎";
+  if (family === "write") return "+";
+  if (family === "read") return "↗";
+  if (family === "glob" || family === "grep" || family === "search") return "⌕";
+  if (family === "bash") return "$";
+  if (family === "todo") return "☐";
+  if (family === "fetch") return "↬";
+  return "·";
+}
+
+function countLabel(
+  family: string,
+  n: number,
+  t: (k: keyof Dict) => string
+): string {
+  const verb =
+    family === "edit"
+      ? t("assistant.verbEditing")
+      : family === "write"
+      ? t("assistant.verbWriting")
+      : family === "read"
+      ? t("assistant.verbReading")
+      : family === "glob" || family === "grep" || family === "search"
+      ? t("assistant.verbSearching")
+      : family === "bash"
+      ? t("assistant.verbRunning")
+      : family === "todo"
+      ? t("assistant.verbTodos")
+      : family === "fetch"
+      ? t("assistant.verbFetching")
+      : t("assistant.verbCalling");
+  return n > 1 ? `${verb} ×${n}` : verb;
+}
+
+function verbForState(
+  it: ToolItem,
+  t: (k: keyof Dict) => string,
+  runStreaming = false,
+  runSucceeded = false
+): string {
+  if (!it.result && runStreaming) return t("assistant.verbRunning");
+  if (!it.result && !runSucceeded) return t("tool.error");
+  if (it.result?.isError) return t("tool.error");
+  return t("tool.done");
+}
+
+function lastStateLabel(verbs: string[], t: (k: keyof Dict) => string): string {
+  const set = new Set(verbs);
+  if (set.size === 1) return verbs[verbs.length - 1] ?? "";
+  // Mixed states: surface error first, else running, else any.
+  if (set.has(t("tool.error"))) return t("tool.error");
+  if (set.has(t("assistant.verbRunning"))) return t("assistant.verbRunning");
+  return verbs[verbs.length - 1] ?? "";
+}
+
 type Block =
   | { kind: "text"; text: string }
   | { kind: "thinking"; text: string; startedAt?: number; completedAt?: number }
   | { kind: "tool-group"; items: ToolItem[] }
+  // Live-tool producer pending re-application onto the merged pipeline
+  // (buildBlocks no longer emits these; the render branches below stay
+  // until it does rather than being deleted and re-derived).
+  | { kind: "live-tool"; id: string; name: string; raw: string }
   | {
       kind: "plugin-candidate";
       candidateId: string;
@@ -5386,6 +5655,7 @@ function formatElapsedMs(ms: number): string {
   const m = Math.floor(s / 60);
   const rem = Math.floor(s - m * 60);
   return `${m}m ${rem.toString().padStart(2, "0")}s`;
+}
 /**
  * 反馈原因面板(设计稿第 40 格)。
  *
