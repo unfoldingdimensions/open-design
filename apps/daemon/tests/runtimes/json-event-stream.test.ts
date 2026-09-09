@@ -2151,6 +2151,10 @@ test('command-code stream surfaces thinking, text, tool lifecycle and usage (liv
     }) + '\n',
   );
 
+  // The parser stamps the daemon clock at emission (tool-timing choke
+  // point); pin the shape, not the wall-clock value.
+  assert.equal(typeof (events[7] as { startedAt: unknown }).startedAt, 'number');
+  assert.equal(typeof (events[8] as { completedAt: unknown }).completedAt, 'number');
   assert.deepEqual(events, [
     { type: 'status', label: 'running' },
     { type: 'status', label: 'running' },
@@ -2159,8 +2163,8 @@ test('command-code stream surfaces thinking, text, tool lifecycle and usage (liv
     { type: 'thinking_delta', delta: ' plan' },
     { type: 'text_delta', delta: 'HE' },
     { type: 'text_delta', delta: 'LLO' },
-    { type: 'tool_use', id: 'call_1', name: 'read_directory', input: { path: '/tmp/x' } },
-    { type: 'tool_result', toolUseId: 'call_1', content: 'Found 1 items', isError: false },
+    { type: 'tool_use', id: 'call_1', name: 'read_directory', input: { path: '/tmp/x' }, startedAt: (events[7] as { startedAt: unknown }).startedAt },
+    { type: 'tool_result', toolUseId: 'call_1', content: 'Found 1 items', isError: false, completedAt: (events[8] as { completedAt: unknown }).completedAt },
     {
       type: 'usage',
       usage: { input_tokens: 100, output_tokens: 20, cached_read_tokens: 5, cached_write_tokens: 0 },
