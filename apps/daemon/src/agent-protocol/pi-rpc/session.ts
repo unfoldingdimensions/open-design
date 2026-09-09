@@ -31,6 +31,11 @@ export type PiRpcSessionOptions = {
   imagePaths?: string[];
   uploadRoot?: string;
   parentSession?: string;
+  // Captured process-group id of the spawned attempt. Lets shutdown and
+  // failure fallbacks signal the whole tree (not just the direct child).
+  // Omitted callers keep today's direct-child behavior plus the new SIGKILL
+  // escalation.
+  processGroupId?: number | null;
 };
 /** Handle returned by `attachPiRpcSession` for querying run state and requesting abort. */
 export type PiRpcSession = {
@@ -187,6 +192,7 @@ export function attachPiRpcSession({
   imagePaths,
   uploadRoot,
   parentSession,
+  processGroupId,
 }: PiRpcSessionOptions): PiRpcSession {
   const stdin = child.stdin;
   const stdout = child.stdout;
@@ -207,6 +213,42 @@ export function attachPiRpcSession({
   let nextRpcId = 1;
   let stdinOpen = true;
 
+  // Grace period before SIGTERM. Configurable via PI_GRACEFUL_SHUTDOWN_MS
+  // for resource-constrained machines where the event loop drains slowly.
+  // The same window separates the SIGKILL escalation: a CLI that traps
+  // SIGTERM must not linger (and leak its tool subprocesses) unnoticed.
+  const gracefulShutdownMs = (): number => Number(process.env.PI_GRACEFUL_SHUTDOWN_MS) || 5000;
+
+  // Signal the owned tree: the captured process group on POSIX, the direct
+  // child elsewhere (or when the group is already gone). The group id is
+  // captured by value at attach so a same-run retry can never misdirect it.
+  const signalOwnedTree = (signal: NodeJS.Signals): boolean => {
+    const exited = (child as { exitCode?: number | null; signalCode?: NodeJS.Signals | null });
+    if (exited.exitCode != null || exited.signalCode != null) return false;
+    if (process.platform !== 'win32' && typeof processGroupId === 'number' && Number.isInteger(processGroupId)) {
+      try {
+        process.kill(-processGroupId, signal);
+        return true;
+      } catch {
+        // Group gone or otherwise unsignallable: fall through to the
+        // direct child, which is likely gone too (a no-op kill).
+      }
+    }
+    try {
+      return child.kill(signal);
+    } catch {
+      return false;
+    }
+  };
+
+  // SIGTERM the owned tree now, SIGKILL survivors after the grace window.
+  const terminateOwnedTree = (killGraceMs: number): void => {
+    signalOwnedTree('SIGTERM');
+    setTimeout(() => {
+      signalOwnedTree('SIGKILL');
+    }, killGraceMs);
+  };
+
   function sendCommand(writable: Writable, type: string, params: PiRpcParams = {}): number | null {
     if (!stdinOpen) return null;
     const id = nextRpcId++;
@@ -225,7 +267,7 @@ export function attachPiRpcSession({
     finished = true;
     fatal = true;
     send('error', { message, ...(code ? { code } : {}) });
-    if (!child.killed) child.kill('SIGTERM');
+    terminateOwnedTree(gracefulShutdownMs());
   };
 
   // Emit initial status with model name immediately — before pi even
@@ -375,11 +417,14 @@ export function attachPiRpcSession({
       } catch (err: unknown) {
         fail(`stdin close: ${errorMessage(err)}`);
       }
-      // Grace period before SIGTERM. Configurable via PI_GRACEFUL_SHUTDOWN_MS
-      // for resource-constrained machines where the event loop drains slowly.
-      const shutdownMs = Number(process.env.PI_GRACEFUL_SHUTDOWN_MS) || 5000;
+      // Grace period before SIGTERM (see gracefulShutdownMs), then one more
+      // window before SIGKILL escalation for a CLI that traps SIGTERM.
+      const shutdownMs = gracefulShutdownMs();
       setTimeout(() => {
-        if (!child.killed) child.kill('SIGTERM');
+        signalOwnedTree('SIGTERM');
+        setTimeout(() => {
+          signalOwnedTree('SIGKILL');
+        }, shutdownMs);
       }, shutdownMs);
     }
   });

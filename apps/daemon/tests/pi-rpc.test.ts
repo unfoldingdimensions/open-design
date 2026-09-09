@@ -1,4 +1,4 @@
-import { test } from 'vitest';
+import { test, vi } from 'vitest';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { parsePiModels, mapPiRpcEvent, attachPiRpcSession } from '../src/agent-protocol/index.js';
@@ -646,6 +646,95 @@ test('attachPiRpcSession abort() is idempotent and no-op after stdin close', () 
 
   const buffered = child.stdin.read();
   assert.equal(buffered, null, 'no bytes should be written after abort on closed stdin');
+});
+
+// ─── owned-tree SIGTERM→SIGKILL escalation ──────────────────────────────────
+
+function createRecordingChild() {
+  const child = createMockChild();
+  const signals: Array<string | number | undefined> = [];
+  const baseKill = child.kill.bind(child);
+  child.kill = (signal?: NodeJS.Signals | number) => {
+    signals.push(signal);
+    return baseKill(signal);
+  };
+  return { child, signals };
+}
+
+function stubPiShutdownGraceMs(ms: string): () => void {
+  const prev = process.env.PI_GRACEFUL_SHUTDOWN_MS;
+  process.env.PI_GRACEFUL_SHUTDOWN_MS = ms;
+  return () => {
+    if (prev === undefined) delete process.env.PI_GRACEFUL_SHUTDOWN_MS;
+    else process.env.PI_GRACEFUL_SHUTDOWN_MS = prev;
+  };
+}
+
+test('attachPiRpcSession fail() escalates SIGTERM to SIGKILL', async () => {
+  vi.useFakeTimers();
+  const restoreGrace = stubPiShutdownGraceMs('50');
+  try {
+    const { child, signals } = createRecordingChild();
+    attachPiRpcSession({
+      child: child as unknown as ChildProcess,
+      prompt: 'test',
+      cwd: '/tmp',
+      send: () => {},
+    });
+    child.emit('error', new Error('boom'));
+    assert.deepEqual(signals, ['SIGTERM']);
+    await vi.advanceTimersByTimeAsync(50);
+    assert.deepEqual(signals, ['SIGTERM', 'SIGKILL']);
+  } finally {
+    restoreGrace();
+    vi.useRealTimers();
+  }
+});
+
+test('attachPiRpcSession falls back to the direct child when the process group is gone', async () => {
+  vi.useFakeTimers();
+  const restoreGrace = stubPiShutdownGraceMs('50');
+  try {
+    const { child, signals } = createRecordingChild();
+    attachPiRpcSession({
+      child: child as unknown as ChildProcess,
+      prompt: 'test',
+      cwd: '/tmp',
+      send: () => {},
+      // No such group: POSIX takes the ESRCH fallthrough, win32 skips the
+      // group leg outright. Either way the direct child carries the signals.
+      processGroupId: 2147483646,
+    });
+    child.emit('error', new Error('boom'));
+    assert.deepEqual(signals, ['SIGTERM']);
+    await vi.advanceTimersByTimeAsync(50);
+    assert.deepEqual(signals, ['SIGTERM', 'SIGKILL']);
+  } finally {
+    restoreGrace();
+    vi.useRealTimers();
+  }
+});
+
+test('attachPiRpcSession agent_end shutdown escalates SIGTERM to SIGKILL', async () => {
+  vi.useFakeTimers();
+  const restoreGrace = stubPiShutdownGraceMs('50');
+  try {
+    const { child, signals } = createRecordingChild();
+    attachPiRpcSession({
+      child: child as unknown as ChildProcess,
+      prompt: 'test',
+      cwd: '/tmp',
+      send: () => {},
+    });
+    feedStdoutLines(child, [{ type: 'agent_end' }]);
+    await vi.advanceTimersByTimeAsync(50);
+    assert.deepEqual(signals, ['SIGTERM']);
+    await vi.advanceTimersByTimeAsync(50);
+    assert.deepEqual(signals, ['SIGTERM', 'SIGKILL']);
+  } finally {
+    restoreGrace();
+    vi.useRealTimers();
+  }
 });
 
 // ─── extension_error event handling ─────────────────────────────────────────

@@ -3047,6 +3047,126 @@ test('attachAcpSession does not double-kill a child that exits cleanly on stdin.
   }
 });
 
+function createRecordingAcpChild() {
+  const child = new FakeAcpChild();
+  const signals: string[] = [];
+  child.kill = ((signal?: string) => {
+    signals.push(signal ?? 'SIGTERM');
+    child.killed = true;
+    return true;
+  }) as never;
+  return { child, signals };
+}
+
+function stubAcpFallbackKillGraceMs(ms: string): () => void {
+  const prev = process.env.OD_ACP_FALLBACK_KILL_GRACE_MS;
+  process.env.OD_ACP_FALLBACK_KILL_GRACE_MS = ms;
+  return () => {
+    if (prev === undefined) delete process.env.OD_ACP_FALLBACK_KILL_GRACE_MS;
+    else process.env.OD_ACP_FALLBACK_KILL_GRACE_MS = prev;
+  };
+}
+
+test('attachAcpSession fail() escalates SIGTERM to SIGKILL without a terminal owner', async () => {
+  vi.useFakeTimers();
+  const restoreGrace = stubAcpFallbackKillGraceMs('50');
+  try {
+    const { child, signals } = createRecordingAcpChild();
+    const events: Array<{ event: string; payload: unknown }> = [];
+    const session = attachAcpSession({
+      child: child as never,
+      prompt: 'hello',
+      cwd: '/tmp/od-project',
+      model: 'claude-opus-5',
+      mcpServers: [],
+      modelUnavailableErrorCode: 'AMR_MODEL_UNAVAILABLE',
+      // No such group: POSIX takes the ESRCH fallthrough, win32 skips the
+      // group leg outright. Either way the direct child carries the signals.
+      processGroupId: 2147483646,
+      send: (event, payload) => events.push({ event, payload }),
+    });
+
+    try {
+      writeAcpResult(child, 1, {});
+      writeAcpResult(child, 2, {
+        sessionId: 'session-1',
+        models: { currentModelId: null },
+      });
+      writeAcpError(child, 3, {
+        code: -32602,
+        message: 'session/set_model modelId is not available',
+      });
+
+      assert.equal(session.hasFatalError(), true);
+      assert.deepEqual(signals, ['SIGTERM']);
+      await vi.advanceTimersByTimeAsync(50);
+      assert.deepEqual(signals, ['SIGTERM', 'SIGKILL']);
+    } finally {
+      session.abort();
+    }
+  } finally {
+    restoreGrace();
+    vi.useRealTimers();
+  }
+});
+
+test('attachAcpSession clean completion escalates to SIGKILL when the child traps SIGTERM', async () => {
+  vi.useFakeTimers();
+  const restoreGrace = stubAcpFallbackKillGraceMs('50');
+  try {
+    const { child, signals } = createRecordingAcpChild();
+    attachAcpSession({
+      child: child as never,
+      prompt: 'hello',
+      cwd: '/tmp/od-project',
+      model: null,
+      mcpServers: [],
+      send: () => {},
+    });
+
+    child.stdout.write(`${JSON.stringify({ id: 1, result: {} })}\n`);
+    child.stdout.write(`${JSON.stringify({ id: 2, result: { sessionId: 'session-1' } })}\n`);
+    child.stdout.write(`${JSON.stringify({ id: 3, result: { usage: { inputTokens: 1, outputTokens: 2 } } })}\n`);
+
+    await vi.advanceTimersByTimeAsync(500);
+    assert.deepEqual(signals, ['SIGTERM']);
+    await vi.advanceTimersByTimeAsync(50);
+    assert.deepEqual(signals, ['SIGTERM', 'SIGKILL']);
+  } finally {
+    restoreGrace();
+    vi.useRealTimers();
+  }
+});
+
+test('attachAcpSession clean completion stands down the SIGKILL leg when the child exits after SIGTERM', async () => {
+  vi.useFakeTimers();
+  const restoreGrace = stubAcpFallbackKillGraceMs('50');
+  try {
+    const { child, signals } = createRecordingAcpChild();
+    attachAcpSession({
+      child: child as never,
+      prompt: 'hello',
+      cwd: '/tmp/od-project',
+      model: null,
+      mcpServers: [],
+      send: () => {},
+    });
+
+    child.stdout.write(`${JSON.stringify({ id: 1, result: {} })}\n`);
+    child.stdout.write(`${JSON.stringify({ id: 2, result: { sessionId: 'session-1' } })}\n`);
+    child.stdout.write(`${JSON.stringify({ id: 3, result: {} })}\n`);
+
+    await vi.advanceTimersByTimeAsync(500);
+    assert.deepEqual(signals, ['SIGTERM']);
+    child.emit('close', null, 'SIGTERM');
+    await vi.advanceTimersByTimeAsync(5_000);
+    assert.deepEqual(signals, ['SIGTERM']);
+  } finally {
+    restoreGrace();
+    vi.useRealTimers();
+  }
+});
+
 test('attachAcpSession preserves redacted stderr diagnostics for startup exits', () => {
   const child = new FakeAcpChild();
   const events: Array<{ event: string; payload: unknown }> = [];

@@ -551,6 +551,7 @@ function durableRunState(run) {
     failureAction: run.failureAction ?? null,
     cancelOrigin: run.cancelOrigin ?? null,
     terminalTrigger: run.terminalTrigger ?? null,
+    ...(run.termination ? { termination: run.termination } : {}),
     resumable: run.resumable ?? false,
     artifactCount: Number.isFinite(run.artifactCount) ? run.artifactCount : 0,
     ...(Array.isArray(run.artifactPaths) ? { artifactPaths: run.artifactPaths } : {}),
@@ -1230,6 +1231,7 @@ export function createChatRunService({
     run.acpSession = null;
     run.childPid = null;
     run.processGroupId = null;
+    run.termination = null;
     run.childExitObservedAt = null;
     run.stdinOpen = false;
     run.eventsLogStream = null;
@@ -1329,7 +1331,14 @@ export function createChatRunService({
         // swallowing here keeps the SSE fan-out below from being skipped.
       }
     }
-    for (const sse of run.clients) sse.send(event, data, id);
+    for (const sse of run.clients) {
+      // Drop subscribers whose transport is already gone: their res 'close'
+      // may never arrive (half-open socket), and keeping them pins an FD, a
+      // keepalive timer, and — in the packaged renderer — a pool slot that
+      // starves cancel requests (electron/electron#47097). Deleting during
+      // iteration is safe for Sets; res 'close' re-deletes idempotently.
+      if (!sse.send(event, data, id)) run.clients.delete(sse);
+    }
     return record;
   };
 
@@ -1356,6 +1365,7 @@ export function createChatRunService({
     terminalTrigger: run.terminalTrigger ?? null,
     childPid: typeof run.child?.pid === 'number' ? run.child.pid : run.childPid ?? null,
     processGroupId: run.processGroupId ?? null,
+    ...(run.termination ? { termination: run.termination } : {}),
     childExited: !run.child || run.child.exitCode !== null || run.child.signalCode !== null,
     childExitObservedAt: run.childExitObservedAt ?? null,
     exitCode: run.exitCode,
@@ -1573,6 +1583,16 @@ export function createChatRunService({
       sse.end();
       return;
     }
+    // Evict the oldest subscribers past the per-run cap before adding the new
+    // one, so leaked subscribers cannot accumulate without bound (see
+    // runStreamMaxClients). Ending is graceful: the victim's client
+    // reconnects with its cursor and replays anything it missed.
+    while (run.clients.size >= runStreamMaxClients()) {
+      const oldest = run.clients.values().next().value;
+      if (!oldest) break;
+      run.clients.delete(oldest);
+      try { oldest.end(); } catch { /* res close handler also detaches */ }
+    }
     run.clients.add(sse);
     res.on('close', () => {
       run.clients.delete(sse);
@@ -1618,6 +1638,19 @@ export function createChatRunService({
   const forceWaitMs = () => {
     const raw = Number(process.env.OD_CHAT_RUN_CANCEL_FORCE_WAIT_MS);
     return Number.isFinite(raw) && raw > 0 ? raw : 500;
+  };
+
+  // Bound on concurrent SSE subscribers per run. Each subscriber pins a
+  // server FD + keepalive timer and, in the packaged renderer, a loopback
+  // pool slot; an unbounded set lets leaked subscribers starve the pool
+  // until cancel requests cannot even be sent (electron/electron#47097).
+  // Eviction is reconnect-safe: stream() replays missed events from the
+  // cursor (`?after=`), and the web client reconnects until it sees terminal
+  // status. Generous default — normal fan-out is a tab plus a CLI tail.
+  const runStreamMaxClients = () => {
+    const raw = Number(process.env.OD_CHAT_RUN_MAX_STREAM_CLIENTS);
+    if (!Number.isFinite(raw)) return 8;
+    return Math.max(1, Math.floor(raw));
   };
 
   // Signal an EXPLICIT child + its captured process group, rather than
@@ -1886,10 +1919,16 @@ export function createChatRunService({
     return statusBody(run);
   };
 
+  // Best-effort stdin EOF for the attempt's child. Deliberately NOT gated on
+  // run.stdinOpen: ACP/pi sessions drive the prompt over RPC and end stdin
+  // themselves, so the flag never opens for them — yet a fail()-finished
+  // session whose abort() no-ops still holds stdin open (its EOF teardown
+  // never fires). Ending an already-ended stdin is a safe no-op, so always
+  // attempt when the stream looks open and clear the flag.
   const closeRunStdin = (run) => {
-    if (!run?.stdinOpen) return;
+    if (!run) return;
     const stdin = run.child?.stdin;
-    if (stdin && !stdin.destroyed) {
+    if (stdin && !stdin.destroyed && !stdin.writableEnded) {
       try {
         stdin.end();
       } catch {
@@ -1897,6 +1936,22 @@ export function createChatRunService({
       }
     }
     run.stdinOpen = false;
+  };
+
+  // Record one attempt's process-tree teardown outcome on the run so status
+  // surfaces (statusBody) and restart hydration (durableRunState) can report
+  // whether OS processes outlived the run — a `canceled` run with
+  // `termination.quiescent === false` still holds ports/PIDs. Only the three
+  // serializable fields are kept; the raw error already rides the
+  // `termination_failed` diagnostic event.
+  const recordTermination = (run, result) => {
+    run.termination = {
+      quiescent: result?.quiescent === true,
+      forced: result?.forced === true,
+      remainingPids: Array.isArray(result?.remainingPids)
+        ? result.remainingPids.filter((pid) => Number.isInteger(pid))
+        : [],
+    };
   };
 
   // A same-run retry can be waiting out its backoff window (server.ts
@@ -1934,6 +1989,13 @@ export function createChatRunService({
       } catch {
         // Signal fallback below owns eventual process termination.
       }
+      // EOF deterministically with cancel, right after the abort RPC went
+      // out above. abort() ends stdin itself in the normal case (making this
+      // a guarded no-op), but a fail()-finished session no-ops abort() while
+      // still holding stdin open — without this, EOF waits out the abort
+      // grace below and EOF-driven teardown (e.g. vela's private server)
+      // never fires before the signals land.
+      closeRunStdin(run);
       const termination = terminateProcessTree(
         run,
         targetChild,
@@ -1946,6 +2008,7 @@ export function createChatRunService({
         },
       );
       const terminationResult = await termination;
+      recordTermination(run, terminationResult);
       return finishCanceledFromChildState(run, terminationResult.forced ? 'SIGKILL' : 'SIGTERM');
     }
 
@@ -1960,6 +2023,7 @@ export function createChatRunService({
         reason: 'run_cancel',
       },
     );
+    recordTermination(run, termination);
     return finishCanceledFromChildState(run, termination.forced ? 'SIGKILL' : 'SIGTERM');
   };
 
@@ -1990,6 +2054,7 @@ export function createChatRunService({
       }
       closeRunStdin(run);
       const terminationResult = await termination;
+      recordTermination(run, terminationResult);
       finish(run, 'canceled', null, terminationResult.forced ? 'SIGKILL' : 'SIGTERM');
     }));
   };

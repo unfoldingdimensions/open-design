@@ -148,6 +148,11 @@ export interface AttachAcpSessionOptions {
   onCliReady?: () => void;
   onSessionInit?: () => void;
   onPromptComplete?: () => void;
+  // Captured process-group id of the spawned attempt. Lets the ownerless
+  // fallbacks below signal the whole tree (not just the direct child) the
+  // same way runs.ts signalChildProcess does. Omitted callers keep today's
+  // direct-child behavior plus the new SIGKILL escalation.
+  processGroupId?: number | null;
   /**
    * Transfers process-tree teardown ownership to the caller once this
    * one-prompt session has a clean or fatal verdict. When provided, the ACP
@@ -204,6 +209,7 @@ export function attachAcpSession({
   onSessionInit,
   onPromptComplete,
   onTerminal,
+  processGroupId,
 }: AttachAcpSessionOptions) {
   const runStartedAt = Date.now();
   const toolExecutionLifecycleDeduper = createToolExecutionLifecycleDeduper();
@@ -213,6 +219,43 @@ export function attachAcpSession({
   }
   const stdin = child.stdin;
   const stdout = child.stdout;
+
+  // Signal the owned tree: the captured process group on POSIX, the direct
+  // child elsewhere (or when the group is already gone). Mirrors runs.ts
+  // signalChildProcess without importing the run service; the group id is
+  // captured by value at attach so a same-run retry can never misdirect it.
+  const signalOwnedTree = (signal: NodeJS.Signals): boolean => {
+    if (child.exitCode != null || child.signalCode != null) return false;
+    if (process.platform !== 'win32' && typeof processGroupId === 'number' && Number.isInteger(processGroupId)) {
+      try {
+        process.kill(-processGroupId, signal);
+        return true;
+      } catch {
+        // Group gone (ESRCH) or otherwise unsignallable: fall through to
+        // the direct child, which is likely gone too (a no-op kill).
+      }
+    }
+    try {
+      return child.kill(signal);
+    } catch {
+      return false;
+    }
+  };
+
+  const ownedTreeKillGraceMs = (): number => {
+    const raw = Number(process.env.OD_ACP_FALLBACK_KILL_GRACE_MS);
+    return Number.isFinite(raw) && raw > 0 ? raw : 3_000;
+  };
+
+  // SIGTERM the owned tree now, SIGKILL survivors after the grace window.
+  // Ownerless-fallback counterpart to the caller's terminateProcessTree
+  // escalation; only runs when no onTerminal owner exists.
+  const terminateOwnedTree = (): void => {
+    signalOwnedTree('SIGTERM');
+    setTimeout(() => {
+      signalOwnedTree('SIGKILL');
+    }, ownedTreeKillGraceMs());
+  };
 
   const nonNegativeInteger = (value: unknown): number | undefined =>
     typeof value === 'number' &&
@@ -453,7 +496,7 @@ export function attachAcpSession({
       // Fall back to direct-child termination below.
     }
     send('error', payload);
-    if (!terminalOwnedByCaller && !child.killed) child.kill('SIGTERM');
+    if (!terminalOwnedByCaller) terminateOwnedTree();
   };
 
   const fail = (
@@ -493,7 +536,7 @@ export function attachAcpSession({
               },
             },
     );
-    if (!terminalOwnedByCaller && !child.killed) child.kill('SIGTERM');
+    if (!terminalOwnedByCaller) terminateOwnedTree();
   };
 
   const writeRpc = (id: JsonRpcId, method: string, params: unknown, timeoutLabel: string) => {
@@ -832,7 +875,14 @@ export function attachAcpSession({
     // turn, so close it once this prompt is cleanly complete.
     if (!terminalOwnedByCaller) {
       const cleanExitTimer = setTimeout(() => {
-        if (!child.killed) child.kill('SIGTERM');
+        signalOwnedTree('SIGTERM');
+        // A CLI that traps SIGTERM would otherwise linger (and leak its
+        // private server) until the caller notices. Escalate like every
+        // other teardown path.
+        const cleanKillTimer = setTimeout(() => {
+          signalOwnedTree('SIGKILL');
+        }, ownedTreeKillGraceMs());
+        child.once('close', () => clearTimeout(cleanKillTimer));
       }, 500);
       child.once('close', () => clearTimeout(cleanExitTimer));
     }

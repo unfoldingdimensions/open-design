@@ -753,6 +753,71 @@ describe('chat run service shutdown', () => {
       expect(child.signals).toEqual(['SIGTERM']);
     });
 
+    it('records the process-tree termination summary on cancel', async () => {
+      const runs = createRuns();
+      const child = new FakeChildProcess({ closeOn: 'SIGTERM' });
+      const run = runs.create();
+      run.status = 'running';
+      (run as any).child = child;
+
+      await runs.cancel(run);
+
+      expect(run.status).toBe('canceled');
+      expect(runs.statusBody(run).termination).toEqual({
+        quiescent: true,
+        forced: false,
+        remainingPids: [],
+      });
+    });
+
+    it('marks SIGKILL escalation in the termination summary', async () => {
+      vi.useFakeTimers();
+      vi.stubEnv('OD_CHAT_RUN_CANCEL_GRACE_MS', '25');
+      const runs = createRuns();
+      const child = new FakeChildProcess({ closeOn: 'SIGKILL' });
+      const run = runs.create();
+      run.status = 'running';
+      (run as any).child = child;
+
+      const cancelPromise = runs.cancel(run);
+      await vi.advanceTimersByTimeAsync(25);
+      await cancelPromise;
+
+      expect(child.signals).toEqual(['SIGTERM', 'SIGKILL']);
+      expect(runs.statusBody(run).termination).toEqual({
+        quiescent: true,
+        forced: true,
+        remainingPids: [],
+      });
+    });
+
+    it('surfaces a non-quiescent termination with its remaining pids', () => {
+      const runs = createRuns();
+      const run = runs.create();
+      (run as any).termination = { quiescent: false, forced: true, remainingPids: [4242] };
+
+      expect(runs.statusBody(run).termination).toEqual({
+        quiescent: false,
+        forced: true,
+        remainingPids: [4242],
+      });
+    });
+
+    it('clears the termination summary when a canceled run restarts', async () => {
+      const runs = createRuns();
+      const child = new FakeChildProcess({ closeOn: 'SIGTERM' });
+      const run = runs.create();
+      run.status = 'running';
+      (run as any).child = child;
+
+      await runs.cancel(run);
+      expect(runs.statusBody(run).termination).toBeDefined();
+
+      runs.prepareRestart(run);
+      expect(run.status).toBe('queued');
+      expect(runs.statusBody(run).termination).toBeUndefined();
+    });
+
     it('uses ACP abort before falling back to process signals', async () => {
       vi.useFakeTimers();
       vi.stubEnv('PI_ABORT_GRACE_MS', '30');
@@ -780,18 +845,46 @@ describe('chat run service shutdown', () => {
 
       expect((run as any).acpSession.abort).toHaveBeenCalledTimes(1);
       expect(order).toEqual(['abort']);
-      expect(child.stdin.end).not.toHaveBeenCalled();
+      // EOF goes out with cancel (right after the abort RPC above), not
+      // after the abort grace: the session already had its chance to end
+      // stdin itself inside abort().
+      expect(child.stdin.end).toHaveBeenCalledTimes(1);
+      expect(run.stdinOpen).toBe(false);
 
       await vi.advanceTimersByTimeAsync(30);
       expect(order).toEqual(['abort', 'SIGTERM']);
       expect(child.stdin.end).toHaveBeenCalledTimes(1);
-      expect(run.stdinOpen).toBe(false);
 
       await vi.advanceTimersByTimeAsync(30);
       expect(order).toEqual(['abort', 'SIGTERM', 'SIGKILL']);
       await cancelPromise;
       expect(run.status).toBe('canceled');
       expect(run.signal).toBe('SIGKILL');
+    });
+
+    it('closes stdin on ACP cancel even when the session abort is a no-op', async () => {
+      vi.useFakeTimers();
+      vi.stubEnv('PI_ABORT_GRACE_MS', '30');
+      const runs = createRuns();
+      const child = new FakeChildProcess({ closeOn: 'SIGTERM' });
+      const run = runs.create();
+      run.status = 'running';
+      // ACP sessions drive the prompt over RPC, so the run flag never opens;
+      // a fail()-finished session no-ops abort() while still holding stdin.
+      run.stdinOpen = false;
+      (run as any).child = child;
+      (run as any).acpSession = { abort: vi.fn() };
+
+      const cancelPromise = runs.cancel(run);
+
+      expect((run as any).acpSession.abort).toHaveBeenCalledTimes(1);
+      expect(child.stdin.end).toHaveBeenCalledTimes(1);
+      expect(run.stdinOpen).toBe(false);
+
+      await vi.advanceTimersByTimeAsync(30);
+      await cancelPromise;
+      expect(run.status).toBe('canceled');
+      expect(child.stdin.end).toHaveBeenCalledTimes(1);
     });
 
     it('includes descendants created during ACP abort grace in no-pgid teardown', async () => {
@@ -1270,6 +1363,96 @@ describe('chat run service stream replay', () => {
     expect(sendCalls.length).toBeGreaterThanOrEqual(1);
     expect(sendCalls.at(-1)?.event).toBe('end');
     expect(endCalls.length).toBe(1);
+  });
+
+  it('evicts the oldest subscriber past the per-run client cap', () => {
+    const created: Array<{ end: () => void }> = [];
+    const runs = createChatRunService({
+      createSseResponse: () => {
+        const sse = { send: vi.fn(() => true), end: vi.fn(), cleanup: vi.fn() };
+        created.push(sse);
+        return sse;
+      },
+      createSseErrorPayload: (code: string, message: string) => ({ error: { code, message } }),
+      shutdownGraceMs: 10,
+      ttlMs: 60_000,
+    });
+
+    const run = runs.create({ projectId: 'p', conversationId: 'c' }) as any;
+    const fakeReq = { get: () => null, query: {} } as never;
+    for (let i = 0; i < 9; i += 1) {
+      runs.stream(run, fakeReq, { on: () => {} } as never);
+    }
+
+    // Default cap is 8: the first subscriber was ended gracefully (its
+    // client reconnects with ?after= and replays) and the newest eight stay.
+    expect(created).toHaveLength(9);
+    const evicted = created[0];
+    expect(evicted?.end).toHaveBeenCalledTimes(1);
+    for (const sse of created.slice(1)) expect(sse.end).not.toHaveBeenCalled();
+    expect(run.clients.size).toBe(8);
+  });
+
+  it('honors OD_CHAT_RUN_MAX_STREAM_CLIENTS for the per-run client cap', () => {
+    vi.stubEnv('OD_CHAT_RUN_MAX_STREAM_CLIENTS', '2');
+    try {
+      const ended: number[] = [];
+      let nextId = 0;
+      const runs = createChatRunService({
+        createSseResponse: () => {
+          const id = nextId++;
+          return {
+            send: vi.fn(() => true),
+            end: vi.fn(() => { ended.push(id); }),
+            cleanup: vi.fn(),
+          };
+        },
+        createSseErrorPayload: (code: string, message: string) => ({ error: { code, message } }),
+        shutdownGraceMs: 10,
+        ttlMs: 60_000,
+      });
+
+      const run = runs.create({ projectId: 'p', conversationId: 'c' }) as any;
+      const fakeReq = { get: () => null, query: {} } as never;
+      for (let i = 0; i < 3; i += 1) {
+        runs.stream(run, fakeReq, { on: () => {} } as never);
+      }
+
+      expect(ended).toEqual([0]);
+      expect(run.clients.size).toBe(2);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('drops unwritable subscribers on emit instead of pinning them', () => {
+    const created: Array<{ send: () => boolean }> = [];
+    const runs = createChatRunService({
+      createSseResponse: () => {
+        const sse = { send: vi.fn(() => true), end: vi.fn(), cleanup: vi.fn() };
+        created.push(sse);
+        return sse;
+      },
+      createSseErrorPayload: (code: string, message: string) => ({ error: { code, message } }),
+      shutdownGraceMs: 10,
+      ttlMs: 60_000,
+    });
+
+    const run = runs.create({ projectId: 'p', conversationId: 'c' }) as any;
+    const fakeReq = { get: () => null, query: {} } as never;
+    runs.stream(run, fakeReq, { on: () => {} } as never);
+    runs.stream(run, fakeReq, { on: () => {} } as never);
+    expect(run.clients.size).toBe(2);
+
+    // First subscriber's transport died without a res 'close' (half-open
+    // socket): the next emit must detach it instead of writing forever.
+    const dead = created[0];
+    if (dead) dead.send = vi.fn(() => false);
+    runs.emit(run, 'agent', { type: 'text_delta', delta: 'hi' });
+
+    expect(run.clients.size).toBe(1);
+    expect(run.clients.has(created[0])).toBe(false);
+    expect(run.clients.has(created[1])).toBe(true);
   });
 
   it('does not duplicate events when the cursor sits before the final event', () => {

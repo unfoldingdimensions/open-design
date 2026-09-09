@@ -716,6 +716,20 @@ export interface ChatRunStatusResponse {
   processGroupId?: number | null;
   childExited?: boolean;
   childExitObservedAt?: number | null;
+  /**
+   * Outcome of the run's process-tree teardown (cancel, guard abort, or
+   * daemon shutdown). Present once a termination has run for this attempt;
+   * absent when no child was ever spawned. `quiescent: false` means OS
+   * processes outlived the run — `remainingPids` names the survivors (empty
+   * when the backend could not enumerate them) and the run's `end` event
+   * was still published. `forced: true` means escalation reached SIGKILL.
+   * Absent on older daemons.
+   */
+  termination?: {
+    quiescent: boolean;
+    forced: boolean;
+    remainingPids: number[];
+  } | null;
   exitCode?: number | null;
   signal?: string | null;
   error?: string | null;

@@ -155,10 +155,20 @@ export function applyOsLocaleSwitch(electronApp: Electron.App): string {
  * Must run before `app.whenReady()`; Chromium consumes the switch at
  * network-service startup.
  */
-export function applyLoopbackConnectionLimitSwitch(electronApp: Electron.App): void {
+export function applyLoopbackConnectionLimitSwitch(electronApp: Electron.App): boolean {
   if (!electronApp.isReady()) {
     electronApp.commandLine.appendSwitch("ignore-connections-limit", "127.0.0.1,localhost");
+    return true;
   }
+  // Fail loud: Chromium consumes this switch at network-service startup, so a
+  // post-ready call is a silent no-op that leaves the 6-connections-per-origin
+  // cap in place — the packaged SSE-pool deadlock this switch prevents.
+  // Callers must run before app.whenReady().
+  console.warn(
+    "[desktop] ignore-connections-limit switch skipped: app already ready; " +
+      "loopback connection cap still applies",
+  );
+  return false;
 }
 
 export type DesktopMainOptions = {

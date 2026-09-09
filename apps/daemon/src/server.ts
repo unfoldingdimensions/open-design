@@ -13082,7 +13082,6 @@ export async function startServer({
         firstOutputTimer = null;
       }
     };
-    let forcedChildShutdownTimers = [];
     let acpAttemptTermination = null;
     const beginAcpAttemptTermination = (
       reason = 'acp_terminal',
@@ -13102,29 +13101,31 @@ export async function startServer({
       );
       return acpAttemptTermination;
     };
-    const clearForcedChildShutdown = () => {
-      for (const timer of forcedChildShutdownTimers) clearTimeout(timer);
-      forcedChildShutdownTimers = [];
-    };
-    const scheduleForcedChildShutdown = () => {
+    // Tear down THIS attempt's full process tree through the shared terminator
+    // (runs.ts terminateProcessTree), not bare child.kill timers. The shared
+    // path signals the whole process group on POSIX and walks the descendant
+    // tree via snapshot + stopProcesses on Windows, so MCP servers and tool
+    // subprocesses can't orphan holding ports. Capture THIS attempt's child
+    // and its process group: a same-run retry can swap `run.child` to a fresh
+    // child while teardown is in flight, and escalating whatever now occupies
+    // `run.child` would kill the healthy retry and leave this stalled tree
+    // unreaped (#5202). Fire-and-forget: the terminator never rejects (it
+    // resolves a quiescent/forced result) and registers a terminal-publication
+    // barrier so `end`/analytics wait for quiescence.
+    const terminateAttemptTree = (reason: string) => {
       if (!child) return;
-      clearForcedChildShutdown();
-      // Capture THIS attempt's child and its process group. A same-run retry
-      // can swap `run.child` to a fresh child within the grace window; these
-      // timers must escalate the stalled child they were scheduled for, never
-      // whatever now occupies `run.child` — otherwise the healthy retry gets
-      // killed and this stalled child is left unreaped. See runs.ts
-      // `signalChildProcess`.
       const targetChild = child;
       const targetProcessGroupId = run.processGroupId;
-      forcedChildShutdownTimers = [
-        setTimeout(() => {
-          design.runs.signalChildProcess(targetChild, targetProcessGroupId, 'SIGTERM');
-        }, inactivityKillGraceMs),
-        setTimeout(() => {
-          design.runs.signalChildProcess(targetChild, targetProcessGroupId, 'SIGKILL');
-        }, inactivityKillGraceMs * 2),
-      ];
+      void design.runs.terminateProcessTree(
+        run,
+        targetChild,
+        targetProcessGroupId,
+        {
+          termGraceMs: inactivityKillGraceMs,
+          killGraceMs: inactivityKillGraceMs,
+          reason,
+        },
+      );
     };
     const failForInactivity = (reason: 'inactivity' | 'first_output' = 'inactivity') => {
       if (run.cancelRequested || design.runs.isTerminal(run.status)) return;
@@ -13152,8 +13153,7 @@ export async function startServer({
           );
           acpSession.abort();
         } else {
-          if (child && !child.killed) design.runs.signalChild(run, 'SIGTERM');
-          scheduleForcedChildShutdown();
+          terminateAttemptTree('artifact_quiet_timeout');
         }
         return;
       }
@@ -13215,8 +13215,7 @@ export async function startServer({
         watchdogRetryRestarted = true;
       }
       if (!acpSession?.abort) {
-        if (child && !child.killed) design.runs.signalChild(run, 'SIGTERM');
-        scheduleForcedChildShutdown();
+        terminateAttemptTree(`${reason}_timeout`);
       }
     };
     const armFirstOutputWatchdog = () => {
@@ -14113,8 +14112,9 @@ export async function startServer({
           // ignore — best-effort
         }
       }
-      if (child && !child.killed) design.runs.signalChild(run, 'SIGTERM');
-      scheduleForcedChildShutdown();
+      // The shared terminator below owns the SIGTERM/SIGKILL escalation (whole
+      // process group on POSIX, descendant-tree walk on Windows).
+      terminateAttemptTree('role_marker_guard');
     }
 
     // Per-run tool-loop guard. Agents sometimes fixate on a failing tool call
@@ -14152,13 +14152,13 @@ export async function startServer({
           // ignore — best-effort
         }
       }
-      // Route through signalChild (not a bare child.kill) so the halt escalates
-      // to the whole process group when one exists, matching abortForRoleMarker,
-      // cancel, and the inactivity watchdog. A bare child.kill leaves Bash/build
-      // grandchildren alive to keep mutating the workspace until the forced
-      // shutdown fires — exactly the loop class this guard is meant to stop.
-      if (child && !child.killed) design.runs.signalChild(run, 'SIGTERM');
-      scheduleForcedChildShutdown();
+      // Route through the shared process-tree terminator (matching
+      // abortForRoleMarker, cancel, and the inactivity watchdog) so the halt
+      // escalates to the whole process group / descendant tree. A bare
+      // child.kill leaves Bash/build grandchildren alive to keep mutating the
+      // workspace until the forced shutdown fires — exactly the loop class
+      // this guard is meant to stop.
+      terminateAttemptTree('tool_loop_guard');
     }
 
     // Feed a normalized agent event into the loop guard and act on a verdict.
@@ -14566,6 +14566,7 @@ export async function startServer({
         prompt: composed,
         cwd: effectiveCwd,
         model: safeModel,
+        processGroupId: run.processGroupId,
         parentSession: agentResumePromptPolicy.resumeSessionId
           ? agentResumePromptPolicy.resumeSessionId
           : undefined,
@@ -14615,6 +14616,7 @@ export async function startServer({
         prompt: composed,
         cwd: effectiveCwd,
         model: safeModel,
+        processGroupId: run.processGroupId,
         promptBudgetContext: {
           modelId: knownPromptBudgetModel?.id ?? null,
           modelIdSource: knownPromptBudgetModel ? 'model_catalog' : 'unknown',
@@ -14965,7 +14967,6 @@ export async function startServer({
       try {
       clearInactivityWatchdog();
       clearFirstOutputWatchdog();
-      clearForcedChildShutdown();
       flushVisibleAgentStderr();
       if (!attemptStillOwnsRun() || watchdogRetryRestarted) {
         // Finalization and event-sink / run-handle ownership (keyed by the
