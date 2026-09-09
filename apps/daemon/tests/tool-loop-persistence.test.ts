@@ -182,19 +182,18 @@ describe('daemonAgentPayloadToPersistedAgentEvent — step duration stamps', () 
     });
   });
 
-  it('stamps a best-effort completedAt when the runtime sends none', () => {
-    const before = Date.now();
+  it('leaves completedAt absent when the runtime sends none (unknown, not stamped)', () => {
     const persisted = daemonAgentPayloadToPersistedAgentEvent({
       type: 'tool_result',
       toolUseId: 'tool-2',
       content: 'done',
       isError: false,
     }) as Record<string, unknown> | null;
-    const after = Date.now();
     expect(persisted?.kind).toBe('tool_result');
-    expect(typeof persisted?.completedAt).toBe('number');
-    expect((persisted?.completedAt as number) >= before).toBe(true);
-    expect((persisted?.completedAt as number) <= after).toBe(true);
+    // Merge decision: the daemon no longer manufactures a receipt-time end.
+    // A missing end means "unknown" and consumers must render nothing rather
+    // than a duration — see the completedAt contract in api/chat.ts.
+    expect('completedAt' in (persisted ?? {})).toBe(false);
   });
 
   it('keeps startedAt on tool_use', () => {
