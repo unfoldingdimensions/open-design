@@ -1203,6 +1203,14 @@ const DETAIL_FAILURE_UI: Record<string, RunFailureUi> = {
     'chat.runError.title.cliMissing',
     'chat.runError.cliMissingMessage',
   ),
+  // `unknown agent: <id>` dispatch miss (stale client / switch race — the CLI
+  // is installed, the id just didn't resolve). The install card would be a
+  // dead end; a plain retry re-resolves the id. Reuses the "interrupted
+  // unexpectedly" copy so no new i18n keys are needed.
+  unknown_agent: retryWithGuidance(
+    'chat.runError.title.agentCrashed',
+    'chat.runError.agentCrashedMessage',
+  ),
 };
 
 /**
@@ -1638,6 +1646,15 @@ function resolveRunFailureUiIgnoringSelfPromotion(
   }
   // Agent-agnostic codes resolve first so an AMR/Antigravity run that hits one
   // of them still gets the specific guidance instead of the generic fallback.
+  // Exception: `unknown agent: <id>` arrives as AGENT_UNAVAILABLE with detail
+  // unknown_agent — a dispatch miss, not a missing binary — so it is carved
+  // out before the code table or it would inherit the install card.
+  if (detail === 'unknown_agent') {
+    return retryWithGuidance(
+      'chat.runError.title.agentCrashed',
+      'chat.runError.agentCrashedMessage',
+    );
+  }
   const agnostic = typeof code === 'string' ? AGENT_AGNOSTIC_FAILURE_UI[code] : undefined;
   if (agnostic) return agnostic;
   // A rolling per-model window (the hosted gateway's `model_limit_exceeded`)

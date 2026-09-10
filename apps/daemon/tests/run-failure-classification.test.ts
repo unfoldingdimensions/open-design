@@ -2159,6 +2159,24 @@ describe('classifyRunFailure — binary-not-found reclassification out of execut
     expect(result?.failure_category).toBe('process_exit');
     expect(result?.failure_detail).toBe('cli_not_installed');
   });
+
+  // The daemon emits `AGENT_UNAVAILABLE / "unknown agent: <id>"` when the agent
+  // id fails def lookup (stale client, switch/refresh race) — including
+  // `unknown agent: undefined`. That is a dispatch failure, not a missing
+  // install: it must not route to the install_cli card.
+  it('classifies "unknown agent: undefined" as unknown_agent, not cli_not_installed', () => {
+    const result = classify('AGENT_UNAVAILABLE', 'unknown agent: undefined');
+    expect(result?.failure_category).toBe('process_exit');
+    expect(result?.failure_detail).toBe('unknown_agent');
+    expect(result?.retryable).toBe(true);
+    expect(result?.user_action).toBe('retry');
+  });
+
+  it('classifies "unknown agent: <stale id>" as unknown_agent, not cli_not_installed', () => {
+    const result = classify('AGENT_UNAVAILABLE', 'unknown agent: qwen3-coder-plus');
+    expect(result?.failure_detail).toBe('unknown_agent');
+    expect(result?.user_action).toBe('retry');
+  });
 });
 
 // Batch A: more named causes that currently leak into execution_failed, routed

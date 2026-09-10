@@ -335,6 +335,11 @@ export type TrackingRunFailureDetail =
   | 'tool_error'
   | 'plugin_artifact_missing'
   | 'cli_not_installed'
+  // The daemon could not resolve the requested agent id to a registered
+  // runtime (`AGENT_UNAVAILABLE / "unknown agent: <id>"` — stale client,
+  // switch/refresh race, including `undefined`). A dispatch failure, not a
+  // missing install: retryable, never install_cli.
+  | 'unknown_agent'
   | 'bundled_binary_missing'
   | 'host_policy_block'
   | 'local_storage_failure'

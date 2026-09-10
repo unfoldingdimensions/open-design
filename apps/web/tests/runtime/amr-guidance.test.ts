@@ -282,6 +282,7 @@ describe('resolveRunFailureUi', () => {
       ['empty_output', 'chat.runError.title.emptyOutput', 'chat.runError.emptyOutputMessage'],
       ['session_resume_expired', 'chat.runError.title.sessionExpired', 'chat.runError.sessionExpiredMessage'],
       ['git_bash_missing', 'chat.runError.title.gitBashMissing', 'chat.runError.gitBashMissingMessage'],
+      ['unknown_agent', 'chat.runError.title.agentCrashed', 'chat.runError.agentCrashedMessage'],
     ];
     for (const [detail, titleKey, messageKey] of cases) {
       for (const agent of ['claude', 'codex', 'amr', null]) {
@@ -293,6 +294,20 @@ describe('resolveRunFailureUi', () => {
           cloudSwitchCta: agent !== 'amr',
         });
       }
+    }
+  });
+
+  // `unknown agent: <id>` arrives as AGENT_UNAVAILABLE with detail unknown_agent
+  // (dispatch miss, not a missing binary). The detail carves out before the
+  // agent-agnostic code table, so it must not inherit the install card for
+  // any agent.
+  it('maps unknown_agent to a plain retry instead of the install card', () => {
+    for (const agent of ['claude', 'codex', 'amr', null]) {
+      expect(resolveRunFailureUi('AGENT_UNAVAILABLE', 'unknown_agent', agent)).toMatchObject({
+        primaryAction: 'retry',
+        titleKey: 'chat.runError.title.agentCrashed',
+        messageKey: 'chat.runError.agentCrashedMessage',
+      });
     }
   });
 

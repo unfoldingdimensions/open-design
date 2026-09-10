@@ -273,6 +273,14 @@ function isBundledBinaryMissingText(text: string): boolean {
   return /\bbundled (?:OpenCode|agent) binary (?:is )?missing\b/i.test(text);
 }
 
+function isUnknownAgentText(text: string): boolean {
+  // `server.ts` emits `unknown agent: ${agentId}` when def lookup fails —
+  // including `unknown agent: undefined` when the id itself was lost in a
+  // switch/refresh race. A dispatch miss, not a missing CLI binary:
+  // reinstalling nothing fixes it, and the install card is a dead end.
+  return /\bunknown agent\s*:/i.test(text);
+}
+
 /**
  * The endpoint was never reached from this machine.
  *
@@ -598,6 +606,9 @@ function processExitDetail(
   errorCode: string,
   text: string,
 ): TrackingRunFailureDetail {
+  if (isUnknownAgentText(text)) {
+    return 'unknown_agent';
+  }
   if (isCliNotInstalledText(text) || errorCode === 'AGENT_UNAVAILABLE') {
     return 'cli_not_installed';
   }
@@ -1181,6 +1192,12 @@ function classifyRunFailureBase(
   }
 
   if (errorCode === 'AGENT_UNAVAILABLE') {
+    // `unknown agent: <id>` (including `undefined`) is a dispatch miss, not a
+    // missing binary — retry rather than sending the user to install a CLI
+    // that is already there.
+    if (isUnknownAgentText(text)) {
+      return classification('process_exit', 'unknown_agent', 'spawn', true, 'retry');
+    }
     return classification(
       'process_exit',
       'cli_not_installed',
