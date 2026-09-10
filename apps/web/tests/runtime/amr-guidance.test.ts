@@ -283,6 +283,10 @@ describe('resolveRunFailureUi', () => {
       ['session_resume_expired', 'chat.runError.title.sessionExpired', 'chat.runError.sessionExpiredMessage'],
       ['git_bash_missing', 'chat.runError.title.gitBashMissing', 'chat.runError.gitBashMissingMessage'],
       ['unknown_agent', 'chat.runError.title.agentCrashed', 'chat.runError.agentCrashedMessage'],
+      // Text-classified over-long input (non-Claude 400/413) and ACP single-line
+      // overflow share the promptTooLarge card with the structured code path.
+      ['prompt_too_large', 'chat.runError.title.promptTooLarge', 'chat.runError.promptTooLargeMessage'],
+      ['acp_frame_too_large', 'chat.runError.title.promptTooLarge', 'chat.runError.promptTooLargeMessage'],
     ];
     for (const [detail, titleKey, messageKey] of cases) {
       for (const agent of ['claude', 'codex', 'amr', null]) {

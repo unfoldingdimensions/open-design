@@ -1272,6 +1272,18 @@ const AGENT_AGNOSTIC_DETAIL_FAILURE_UI: Record<string, RunFailureUi> = {
     'chat.runError.title.connectionDropped',
     'chat.connectionDropped',
   ),
+  // Over-long input without the structured code: non-Claude 400/413 failures
+  // the daemon could only name by text, and ACP single-line overflow
+  // (acp_frame_too_large — one JSON-RPC line past 1MiB). Same card as the
+  // AGENT_PROMPT_TOO_LARGE code path: trim/new conversation, then retry.
+  prompt_too_large: retryWithGuidance(
+    'chat.runError.title.promptTooLarge',
+    'chat.runError.promptTooLargeMessage',
+  ),
+  acp_frame_too_large: retryWithGuidance(
+    'chat.runError.title.promptTooLarge',
+    'chat.runError.promptTooLargeMessage',
+  ),
   // Hard wall-clock timeout for the run (daemon user_action: retry). A plain
   // retry — optionally with a smaller task — usually gets through.
   timeout: retryWithGuidance(
