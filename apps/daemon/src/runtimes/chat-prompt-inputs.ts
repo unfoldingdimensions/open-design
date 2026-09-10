@@ -972,6 +972,36 @@ export function selectPromptImagePaths(
   return agentId === 'amr' ? amrStagedImages : safeImages;
 }
 
+/**
+ * Render the prompt-text side of image delivery for one agent runtime.
+ *
+ * When the runtime cannot receive images (`supportsImagePaths` falsy — today
+ * only `command-code`, which has no `-p`-mode image flag), the transport
+ * layer sends `imagePaths: []`. Leaving the `@path` references in the prompt
+ * would then be worse than saying nothing: the agent sees filenames and
+ * answers as if it saw the pictures. So instead of references, emit an
+ * explicit dropped-images note telling the agent to say it could not see
+ * them. Image-capable runtimes get the references unchanged; no images means
+ * no text either way.
+ */
+export function imageReferencesForAgent(
+  supportsImagePaths: boolean | undefined,
+  agentId: string,
+  promptImagePaths: readonly string[],
+): string {
+  if (promptImagePaths.length === 0) return '';
+  if (supportsImagePaths) return promptImagePaths.map((p) => `@${p}`).join(' ');
+  const count = promptImagePaths.length;
+  return (
+    `NOTE: the user attached ${count} image${count === 1 ? '' : 's'} ` +
+    `(${promptImagePaths.join(', ')}), but the "${agentId}" agent runtime ` +
+    `cannot receive images, so they were NOT delivered with this request. ` +
+    `Tell the user plainly that you could not see the images and ask them to ` +
+    `switch to an image-capable agent or describe what they need in words. ` +
+    `Do not answer as if you saw them.`
+  );
+}
+
 export function excludeAcpImagePathsAlreadyDeliveredAsResources(
   imagePaths: string[],
   resourcePaths: string[],

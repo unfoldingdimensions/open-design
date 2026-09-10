@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { resolveSafePromptImagePaths, selectPromptImagePaths } from '../src/server.js';
+import { imageReferencesForAgent, resolveSafePromptImagePaths, selectPromptImagePaths } from '../src/server.js';
 
 test('selectPromptImagePaths uses staged AMR paths in prompt text', () => {
   expect(
@@ -74,4 +74,26 @@ test('resolveSafePromptImagePaths surfaces stat failures instead of dropping the
   expect(result.failedImages).toEqual([
     { path: '/tmp/od-uploads/unreadable.png', error: 'EACCES: permission denied' },
   ]);
+});
+
+test('imageReferencesForAgent keeps @refs for image-capable runtimes', () => {
+  expect(imageReferencesForAgent(true, 'zcode', ['/u/a.png', '/u/b.png'])).toBe('@/u/a.png @/u/b.png');
+});
+
+test('imageReferencesForAgent warns instead of referencing when the runtime drops images', () => {
+  // command-code sends `imagePaths: []` at the transport gate; a bare `@path`
+  // in the prompt would make the agent answer as if it saw the pictures.
+  const note = imageReferencesForAgent(false, 'command-code', ['/u/hero.png']);
+  expect(note).not.toContain('@/u/hero.png');
+  expect(note).toContain('/u/hero.png');
+  expect(note).toContain('command-code');
+  expect(note).toContain('NOT delivered');
+  expect(note).toContain('Do not answer as if you saw them.');
+});
+
+test('imageReferencesForAgent pluralizes and treats unknown flags as dropping', () => {
+  const note = imageReferencesForAgent(undefined, 'x', ['/u/a.png', '/u/b.png']);
+  expect(note).toContain('2 images');
+  expect(imageReferencesForAgent(true, 'zcode', [])).toBe('');
+  expect(imageReferencesForAgent(false, 'command-code', [])).toBe('');
 });

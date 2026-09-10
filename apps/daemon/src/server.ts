@@ -139,6 +139,7 @@ import {
   resolveOdNextRequestUserPrompt,
   excludeAcpImagePathsAlreadyDeliveredAsResources,
   selectPromptImagePaths,
+  imageReferencesForAgent,
 } from './runtimes/chat-prompt-inputs.js';
 import {
   writePromptAndEndStdin,
@@ -204,6 +205,7 @@ export {
   resolveSafePromptImagePaths,
   excludeAcpImagePathsAlreadyDeliveredAsResources,
   selectPromptImagePaths,
+  imageReferencesForAgent,
 } from './runtimes/chat-prompt-inputs.js';
 export {
   applyClaudeStreamJsonRunBookkeeping,
@@ -12155,7 +12157,10 @@ export async function startServer({
       requestOrStageText: userRequestPrompt,
       projectAttachmentReferences: attachmentHint,
       commentAttachmentReferences: commentHint,
-      imageReferences: promptImagePaths.map((p) => `@${p}`).join(' '),
+      // Mirrors the transport gate (`imagePaths: def.supportsImagePaths ? … : []`
+      // at the session attach sites): a runtime that cannot receive images must
+      // not see bare `@path` references, or it answers as if it saw the pictures.
+      imageReferences: imageReferencesForAgent(def.supportsImagePaths, def.id, promptImagePaths),
       strategyInputStage: strategyTaskAtStart?.inputStage ?? null,
         });
     const {
