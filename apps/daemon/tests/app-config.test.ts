@@ -13,7 +13,7 @@ import {
   it,
 } from 'vitest';
 
-import { agentCliEnvForAgent, readAppConfig, writeAppConfig } from '../src/app-config.js';
+import { agentCliEnvForAgent, readAppConfig, readAppConfigSync, writeAppConfig } from '../src/app-config.js';
 import { readOdNextRolloutPolicy } from '../src/strategies/od-next/rollout.js';
 import { isLocalSameOrigin } from '../src/origin-validation.js';
 
@@ -1388,3 +1388,66 @@ describe('app-config odNextStrategyMode', () => {
     });
   });
 });
+
+describe('app-config imageAgentId', () => {
+        let dataDir: string;
+
+        beforeEach(async () => {
+          dataDir = await mkdtemp(path.join(tmpdir(), 'od-imageagent-'));
+        });
+
+        afterEach(async () => {
+          await rm(dataDir, { recursive: true, force: true });
+        });
+
+        it('persists the global image agent default across writes and reads', async () => {
+          await writeAppConfig(dataDir, { imageAgentId: 'claude' });
+          expect((await readAppConfig(dataDir)).imageAgentId).toBe('claude');
+          await writeAppConfig(dataDir, { agentId: 'codex' });
+          expect((await readAppConfig(dataDir)).imageAgentId).toBe('claude');
+        });
+
+        it('clears the global image agent default when null is sent', async () => {
+          await writeAppConfig(dataDir, { imageAgentId: 'claude' });
+          await writeAppConfig(dataDir, { imageAgentId: null });
+          expect((await readAppConfig(dataDir)).imageAgentId).toBeNull();
+        });
+
+        it('drops non-string image agent values instead of persisting them', async () => {
+          await writeAppConfig(dataDir, { imageAgentId: 123 as unknown as string });
+          expect((await readAppConfig(dataDir)).imageAgentId).toBeUndefined();
+        });
+      });
+
+      describe('app-config backup', () => {
+        let dataDir: string;
+
+        beforeEach(async () => {
+          dataDir = await mkdtemp(path.join(tmpdir(), 'od-appconfig-bak-'));
+        });
+
+        afterEach(async () => {
+          await rm(dataDir, { recursive: true, force: true });
+        });
+
+        it('recovers preferences from the backup when the main file is corrupted', async () => {
+          await writeAppConfig(dataDir, { agentId: 'claude', imageAgentId: 'codex' });
+          await writeFile(path.join(dataDir, 'app-config.json'), '{not valid');
+          const cfg = await readAppConfig(dataDir);
+          expect(cfg.agentId).toBe('claude');
+          expect(cfg.imageAgentId).toBe('codex');
+        });
+
+        it('recovers via the synchronous reader too', async () => {
+          await writeAppConfig(dataDir, { agentId: 'claude' });
+          await writeFile(path.join(dataDir, 'app-config.json'), '{not valid');
+          expect(readAppConfigSync(dataDir).agentId).toBe('claude');
+        });
+
+        it('falls back to defaults when both main and backup are corrupted', async () => {
+          await writeAppConfig(dataDir, { agentId: 'claude' });
+          await writeFile(path.join(dataDir, 'app-config.json'), '{not valid');
+          await writeFile(path.join(dataDir, 'app-config.json.bak'), '{also not valid');
+          expect(await readAppConfig(dataDir)).toEqual({ telemetry: DEFAULT_TELEMETRY });
+        });
+      });

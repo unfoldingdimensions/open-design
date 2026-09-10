@@ -24,6 +24,9 @@ import {
 import { randomUUID } from '../utils/uuid';
 
 const STORAGE_KEY = 'open-design:config';
+// Last-known-good copy of the local config. loadConfig() falls back to it
+// when the primary payload fails to parse, instead of resetting to defaults.
+const BACKUP_STORAGE_KEY = 'open-design:config:backup';
 const CONFIG_MIGRATION_VERSION = 3;
 // Accent values that were the SHIPPED DEFAULT in an earlier build and were
 // persisted verbatim into every install's config. None of them is offered in
@@ -661,6 +664,10 @@ function migrateRetiredKnownProviderModel(
 }
 
 export function loadConfig(): AppConfig {
+  return loadConfigInner(0);
+}
+
+function loadConfigInner(attempt: number): AppConfig {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
@@ -799,6 +806,17 @@ export function loadConfig(): AppConfig {
 
     return merged;
   } catch {
+    if (attempt === 0) {
+      try {
+        const backup = localStorage.getItem(BACKUP_STORAGE_KEY);
+        if (backup) {
+          localStorage.setItem(STORAGE_KEY, backup);
+          return loadConfigInner(1);
+        }
+      } catch {
+        // Backup missing or unreadable — fall through to defaults.
+      }
+    }
     return {
       ...DEFAULT_CONFIG,
       pet: normalizePet(DEFAULT_PET),
@@ -1035,6 +1053,12 @@ export function saveConfig(config: AppConfig): void {
   for (const key of RETIRED_SECURE_BYOK_KEYS) {
     delete (sanitized as unknown as Record<string, unknown>)[key];
   }
+  try {
+    const prev = localStorage.getItem(STORAGE_KEY);
+    if (prev != null) localStorage.setItem(BACKUP_STORAGE_KEY, prev);
+  } catch {
+    // Quota exceeded or storage disabled — the primary write below is still attempted.
+  }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
 }
 
@@ -1081,6 +1105,9 @@ export function mergeDaemonConfig(
   );
   if (daemonConfig.agentId !== undefined) {
     next.agentId = daemonConfig.agentId;
+  }
+  if (daemonConfig.imageAgentId !== undefined) {
+    next.imageAgentId = daemonConfig.imageAgentId;
   }
   if (daemonConfig.skillId !== undefined) {
     next.skillId = daemonConfig.skillId;
@@ -1161,6 +1188,11 @@ export function mergeDaemonConfig(
   if (daemonConfig.defaultProjectLocationId !== undefined) {
     next.defaultProjectLocationId = daemonConfig.defaultProjectLocationId ?? 'default';
   }
+  // Intentionally not merged: `odNextStrategyMode` (owned by LabsSection's
+  // direct single-field PUT — threading it through here risks the silent
+  // allow-list drop that surface was built to avoid) and `recentLinkedDirs`
+  // (owned by fetchRecentLinkedDirs/pushRecentLinkedDir in providers/registry,
+  // which talk to /api/recent-dirs and PUT single-field bodies directly).
   return next;
 }
 

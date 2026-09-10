@@ -174,6 +174,13 @@ function configFile(dataDir: string): string {
   return path.join(dataDir, 'app-config.json');
 }
 
+// Last-known-good copy of the config, rewritten on every successful write.
+// A torn write or hand edit that leaves app-config.json unparseable falls
+// back to this instead of resetting every preference to its default.
+function configBackupFile(dataDir: string): string {
+  return `${configFile(dataDir)}.bak`;
+}
+
 export function appConfigDir(projectRoot: string, env: NodeJS.ProcessEnv = process.env): string {
   const raw = env.OD_DATA_DIR;
   if (typeof raw !== 'string' || raw.trim().length === 0) {
@@ -547,7 +554,7 @@ function applyConfigValue(
     if (typeof value === 'boolean') target[key] = value;
     return;
   }
-  if (key === 'agentId' || key === 'skillId' || key === 'designSystemId') {
+  if (key === 'agentId' || key === 'imageAgentId' || key === 'skillId' || key === 'designSystemId') {
     if (typeof value === 'string' || value === null) target[key] = value;
     return;
   }
@@ -815,6 +822,18 @@ export function readAppConfigSync(dataDir: string): AppConfigPrefs {
   return applyTelemetryDefaults(base);
 }
 
+function readBackupConfigSync(dataDir: string): AppConfigPrefs {
+  try {
+    const parsed: unknown = JSON.parse(readFileSync(configBackupFile(dataDir), 'utf8'));
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return filterAllowedKeys(parsed as Record<string, unknown>);
+    }
+    return {};
+  } catch {
+    return {};
+  }
+}
+
 function readAppConfigFileOnlySync(dataDir: string): AppConfigPrefs {
   try {
     const parsed: unknown = JSON.parse(
@@ -827,7 +846,7 @@ function readAppConfigFileOnlySync(dataDir: string): AppConfigPrefs {
   } catch (err: unknown) {
     const e = err as { code?: string; name?: string };
     if (e.code === 'ENOENT') return {};
-    if (e.name === 'SyntaxError') return {};
+    if (e.name === 'SyntaxError') return readBackupConfigSync(dataDir);
     throw err;
   }
 }
@@ -845,8 +864,18 @@ async function readAppConfigFileOnly(dataDir: string): Promise<AppConfigPrefs> {
     const e = err as { code?: string; name?: string; message?: string };
     if (e.code === 'ENOENT') return {};
     if (e.name === 'SyntaxError') {
-      console.error('[app-config] Corrupted JSON, returning empty:', e.message);
-      return {};
+      console.error('[app-config] Corrupted JSON, trying backup:', e.message);
+      try {
+        const backupRaw = await readFile(configBackupFile(dataDir), 'utf8');
+        const parsed: unknown = JSON.parse(backupRaw);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          return filterAllowedKeys(parsed as Record<string, unknown>);
+        }
+        return {};
+      } catch {
+        console.error('[app-config] Backup unreadable, returning empty');
+        return {};
+      }
     }
     throw err;
   }
@@ -925,8 +954,14 @@ async function doWrite(
   const file = configFile(dataDir);
   await mkdir(path.dirname(file), { recursive: true });
   const tmp = file + '.' + randomBytes(4).toString('hex') + '.tmp';
-  await writeFile(tmp, JSON.stringify(normalizedNextWithoutRetiredAgents, null, 2), 'utf8');
+  const serialized = JSON.stringify(normalizedNextWithoutRetiredAgents, null, 2);
+  await writeFile(tmp, serialized, 'utf8');
   await rename(tmp, file);
+  try {
+    await writeFile(configBackupFile(dataDir), serialized, 'utf8');
+  } catch {
+    // Best-effort: the canonical write already succeeded.
+  }
   const installationIdWasExplicitlyReset = Object.prototype.hasOwnProperty.call(partial, 'installationId')
     && (partial.installationId == null || (
       typeof existing.installationId === 'string'

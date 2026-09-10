@@ -440,6 +440,15 @@ describe('mergeDaemonConfig', () => {
       mergeDaemonConfig({ ...DEFAULT_CONFIG, allowSilentUpdates: true }, {}).allowSilentUpdates,
     ).toBeUndefined();
   });
+
+  it('adopts the daemon image agent default and keeps the local one when the daemon is silent', () => {
+    expect(
+      mergeDaemonConfig(DEFAULT_CONFIG, { imageAgentId: 'claude' }).imageAgentId,
+    ).toBe('claude');
+    expect(
+      mergeDaemonConfig({ ...DEFAULT_CONFIG, imageAgentId: 'claude' }, {}).imageAgentId,
+    ).toBe('claude');
+  });
 });
 
 describe('mergeDaemonMediaProviders', () => {
@@ -994,6 +1003,19 @@ describe('loadConfig', () => {
       failureSoundId: 'buzz',
       desktopEnabled: true,
     });
+  });
+
+  it('recovers the previous config from the backup when the stored payload is corrupted', () => {
+    store.set('open-design:config', JSON.stringify({ agentId: 'claude' }));
+    saveConfig({ ...DEFAULT_CONFIG, agentId: 'codex' });
+    store.set('open-design:config', '{not valid');
+    expect(loadConfig().agentId).toBe('claude');
+  });
+
+  it('falls back to defaults when both stored payload and backup are corrupted', () => {
+    store.set('open-design:config', '{not valid');
+    store.set('open-design:config:backup', '{also not valid');
+    expect(loadConfig().agentId).toBe(DEFAULT_CONFIG.agentId);
   });
 
   it('preserves an explicit saved notification opt-out', () => {
