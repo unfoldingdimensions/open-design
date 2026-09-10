@@ -2256,6 +2256,13 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
     // router may re-point image/vision work at the project's image agent —
     // falling back to the app-config global default image agent when the
     // project has not set its own. See image-vision-router.ts.
+    //
+    // Clarification continuations are deliberately excluded: the user is
+    // mid-answer inside a `<question-form>` owned by `selectedAgentId`, and
+    // re-pointing that turn at a different CLI would orphan the clarification
+    // state (snapshot, strategy). Image work asked *during* clarification
+    // therefore stays on the clarifying agent; the next fresh turn routes
+    // normally.
     if (!clarificationTask && (runProject?.metadata || typeof meta.projectId === 'string')) {
       let imageAgentId: string | null =
         runProject?.metadata && typeof runProject.metadata.imageAgentId === 'string'
