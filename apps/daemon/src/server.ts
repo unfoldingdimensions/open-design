@@ -140,6 +140,8 @@ import {
   excludeAcpImagePathsAlreadyDeliveredAsResources,
   selectPromptImagePaths,
   imageReferencesForAgent,
+  oversizedImageMessage,
+  formatBytes,
 } from './runtimes/chat-prompt-inputs.js';
 import {
   writePromptAndEndStdin,
@@ -206,6 +208,8 @@ export {
   excludeAcpImagePathsAlreadyDeliveredAsResources,
   selectPromptImagePaths,
   imageReferencesForAgent,
+  oversizedImageMessage,
+  formatBytes,
 } from './runtimes/chat-prompt-inputs.js';
 export {
   applyClaudeStreamJsonRunBookkeeping,
@@ -11035,10 +11039,7 @@ export async function startServer({
     const { safeImages, oversizedImages, failedImages } =
       resolveSafePromptImagePaths(odNextTaskInputSnapshot ? [] : imagePaths);
     if (oversizedImages.length > 0) {
-      return failRun(
-        'BAD_REQUEST',
-        'Image attachments must be 1 MB or smaller.',
-      );
+      return failRun('BAD_REQUEST', oversizedImageMessage(oversizedImages));
     }
     if (failedImages.length > 0) {
       // Name the offenders (bounded): a bare "failed to read" sends the user

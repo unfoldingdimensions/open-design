@@ -22,6 +22,36 @@ import {
 } from './od-next-exact-input.js';
 
 export const MAX_CHAT_IMAGE_BYTES = 1024 * 1024;
+
+/** Human-size a byte count for user-facing copy (`900 KB`, `1.2 MB`). */
+export function formatBytes(bytes: number): string {
+  if (!Number.isFinite(bytes) || bytes < 0) return 'unknown size';
+  if (bytes < 1024) return `${bytes} B`;
+  const kb = bytes / 1024;
+  if (kb < 1024) return `${kb >= 100 ? Math.round(kb) : Math.round(kb * 10) / 10} KB`;
+  const mb = kb / 1024;
+  return `${mb >= 100 ? Math.round(mb) : Math.round(mb * 10) / 10} MB`;
+}
+
+/**
+ * User-facing oversize rejection. Names the offending files with their actual
+ * sizes and states the configured limit — the resolver already computed all
+ * three, and a bare "must be 1 MB or smaller" sends the user hunting through
+ * every attachment (and lies when `maxBytes` is overridden).
+ */
+export function oversizedImageMessage(
+  oversizedImages: ReadonlyArray<{ path: string; sizeBytes: number }>,
+  maxBytes: number = MAX_CHAT_IMAGE_BYTES,
+): string {
+  const culprits = oversizedImages
+    .slice(0, 3)
+    .map((f) => `${f.path} (${formatBytes(f.sizeBytes)})`)
+    .join('; ');
+  const rest = oversizedImages.length > 3 ? `; +${oversizedImages.length - 3} more` : '';
+  const noun = oversizedImages.length === 1 ? 'Image attachment' : 'Image attachments';
+  return `${noun} must be ${formatBytes(maxBytes)} or smaller: ${culprits}${rest}.`;
+}
+
 export const UPLOAD_DIR = path.join(os.tmpdir(), 'od-uploads');
 type InputValue =
   | string

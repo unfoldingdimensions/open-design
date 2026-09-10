@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { imageReferencesForAgent, resolveSafePromptImagePaths, selectPromptImagePaths } from '../src/server.js';
+import { formatBytes, imageReferencesForAgent, oversizedImageMessage, resolveSafePromptImagePaths, selectPromptImagePaths } from '../src/server.js';
 
 test('selectPromptImagePaths uses staged AMR paths in prompt text', () => {
   expect(
@@ -116,4 +116,28 @@ test('imageReferencesForAgent pluralizes and treats unknown flags as dropping', 
   expect(note).toContain('2 images');
   expect(imageReferencesForAgent(true, 'zcode', [])).toBe('');
   expect(imageReferencesForAgent(false, 'command-code', [])).toBe('');
+});
+
+test('oversizedImageMessage names the file, its size, and the limit', () => {
+  // F6: the resolver computes all three; the old copy threw two of them away.
+  expect(oversizedImageMessage([{ path: 'hero.png', sizeBytes: 1024 * 1024 + 512 * 1024 }])).toBe(
+    'Image attachment must be 1 MB or smaller: hero.png (1.5 MB).',
+  );
+  expect(
+    oversizedImageMessage(
+      [
+        { path: 'a.png', sizeBytes: 2 * 1024 * 1024 },
+        { path: 'b.png', sizeBytes: 3 * 1024 * 1024 },
+      ],
+      512 * 1024,
+    ),
+  ).toBe('Image attachments must be 512 KB or smaller: a.png (2 MB); b.png (3 MB).');
+});
+
+test('formatBytes sizes copy without decimals where they add noise', () => {
+  expect(formatBytes(900)).toBe('900 B');
+  expect(formatBytes(1024)).toBe('1 KB');
+  expect(formatBytes(1536)).toBe('1.5 KB');
+  expect(formatBytes(1024 * 1024)).toBe('1 MB');
+  expect(formatBytes(Number.NaN)).toBe('unknown size');
 });
