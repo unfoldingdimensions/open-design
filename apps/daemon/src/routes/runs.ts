@@ -62,6 +62,7 @@ import {
   ensureDetectedRuntimeCapabilities,
   ensureDetectedRuntimeVersions,
   getDetectedRuntimeVersions,
+  resolveCachedFallbackAgentId,
 } from '../runtimes/detection.js';
 import {
   odNextAdvertisedCapabilityGap,
@@ -1670,15 +1671,25 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
         const cfgAgent = typeof appCfg.agentId === 'string' && appCfg.agentId
           ? appCfg.agentId
           : null;
-        const agents = await detectAgents(
+        // Warm path first: the version cache answers in ~65ms with no spawn.
+        // Full `detectAgents()` (≈16s wall) runs only when the cache is cold.
+        const cachedFallback = resolveCachedFallbackAgentId(
           toJsonRecord(appCfg.agentCliEnv),
-        ).catch((): DetectedAgent[] => []);
-        const cfgAgentAvailable = cfgAgent
-          ? agents.some((agent) => agent.id === cfgAgent && agent.available)
-          : false;
-        effectiveAgentId = cfgAgent && cfgAgentAvailable
-          ? cfgAgent
-          : agents.find((agent) => agent.available)?.id ?? null;
+          cfgAgent,
+        );
+        if (cachedFallback) {
+          effectiveAgentId = cachedFallback;
+        } else {
+          const agents = await detectAgents(
+            toJsonRecord(appCfg.agentCliEnv),
+          ).catch((): DetectedAgent[] => []);
+          const cfgAgentAvailable = cfgAgent
+            ? agents.some((agent) => agent.id === cfgAgent && agent.available)
+            : false;
+          effectiveAgentId = cfgAgent && cfgAgentAvailable
+            ? cfgAgent
+            : agents.find((agent) => agent.available)?.id ?? null;
+        }
       } catch (err) {
         console.warn('[runs] agent id fallback failed', err);
       }
@@ -2203,17 +2214,27 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
         const cfgAgent = typeof appCfg.agentId === 'string' && appCfg.agentId
           ? appCfg.agentId
           : null;
-        const agents = await detectAgents(
+        // Warm path first: the version cache answers in ~65ms with no spawn.
+        // Full `detectAgents()` (≈16s wall) runs only when the cache is cold.
+        const cachedFallback = resolveCachedFallbackAgentId(
           toJsonRecord(appCfg.agentCliEnv),
-        ).catch((): DetectedAgent[] => []);
-        const cfgAgentAvailable = cfgAgent
-          ? agents.some((agent) => agent.id === cfgAgent && agent.available)
-          : false;
-        if (cfgAgent && cfgAgentAvailable) {
-          meta.agentId = cfgAgent;
+          cfgAgent,
+        );
+        if (cachedFallback) {
+          meta.agentId = cachedFallback;
         } else {
-          const firstAvailable = agents.find((agent) => agent.available)?.id ?? null;
-          if (firstAvailable) meta.agentId = firstAvailable;
+          const agents = await detectAgents(
+            toJsonRecord(appCfg.agentCliEnv),
+          ).catch((): DetectedAgent[] => []);
+          const cfgAgentAvailable = cfgAgent
+            ? agents.some((agent) => agent.id === cfgAgent && agent.available)
+            : false;
+          if (cfgAgent && cfgAgentAvailable) {
+            meta.agentId = cfgAgent;
+          } else {
+            const firstAvailable = agents.find((agent) => agent.available)?.id ?? null;
+            if (firstAvailable) meta.agentId = firstAvailable;
+          }
         }
       } catch (err) {
         console.warn('[runs] agent id fallback failed', err);

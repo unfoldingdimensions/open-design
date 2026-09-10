@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { execAgentFile } from './invocation.js';
 import { AGENT_DEFS } from './registry.js';
 import {
@@ -13,6 +14,7 @@ import { probeAgentAuthStatus } from './auth.js';
 import { agentCapabilities } from './capabilities.js';
 import { installMetaForAgent } from './metadata.js';
 import {
+  clearPathResolutionCache,
   forgetUnusableExecutables,
   rememberUnusableExecutable,
   resolveAmrOpenCodeExecutable,
@@ -40,6 +42,28 @@ type FetchedRuntimeModels = {
   models: RuntimeModelOption[];
   source: RuntimeModelSource;
 };
+
+// No single CLI's model enumeration may hold the agent picker longer than
+// this. Measured: hermes ACP-handshake enumeration 13.3s, command-code
+// `listModels` 7.2s, against 15s per-def budgets — and the batch wall is the
+// slowest finisher, so the cap lives here rather than in each def. A timed-out
+// enumeration falls back to the def's static fallbackModels; the picker stays
+// complete, just not live. Custom `fetchModels` adapters manage their own
+// (longer) timeouts internally, so the race below only cuts the *wait*, never
+// the underlying child (which still exits on its own budget).
+const DETECTION_MODEL_PROBE_TIMEOUT_MS = 3000;
+
+function raceDetectionModelProbe<T>(
+  enumeration: Promise<T>,
+): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error('detection model probe timed out')), DETECTION_MODEL_PROBE_TIMEOUT_MS);
+  });
+  return Promise.race([enumeration, timeout]).finally(() => {
+    if (timer !== undefined) clearTimeout(timer);
+  });
+}
 
 export interface DetectedRuntimeVersions {
   /** The configured executable successfully spawned, independent of version parsing. */
@@ -76,6 +100,57 @@ export function getDetectedRuntimeVersions(
   if (!agentId) return null;
   const remembered = detectedRuntimeVersions.get(agentId);
   return remembered ? { ...remembered } : null;
+}
+
+/**
+ * Cache-first agent fallback for run creation.
+ *
+ * The invariant: a fallback answer must never spawn. Full `detectAgents()` is
+ * a ~16s wall (version + help + models + auth per CLI); run creation only
+ * needs "which invocable CLI did we already prove", which is exactly what the
+ * daemon-lifetime version cache holds. The configured agent wins when its
+ * cache entry is scope-valid, otherwise the first scope-valid cached agent in
+ * registry order wins, otherwise null — and only null sends the caller down
+ * the full-probe cold path. Scope is checked per candidate (not trusted
+ * blindly) so a changed PATH/env still falls through to a fresh probe.
+ */
+export function resolveCachedFallbackAgentId(
+  configuredEnvByAgent: Record<string, unknown> = {},
+  cfgAgent: string | null = null,
+): string | null {
+  const orderedIds = cfgAgent
+    ? [cfgAgent, ...AGENT_DEFS.map((def) => def.id).filter((id) => id !== cfgAgent)]
+    : AGENT_DEFS.map((def) => def.id);
+  for (const id of orderedIds) {
+    // Memory-only gate first: building the probe context walks the
+    // filesystem (~65ms warm), so never pay it for an agent with no cache.
+    if (!getDetectedRuntimeVersions(id)) continue;
+    const def = AGENT_DEFS.find((candidate) => candidate.id === id);
+    if (!def) continue;
+    const context = runtimeVersionProbeContext(def, narrowConfiguredEnv(configuredEnvByAgent, id));
+    if (!context) continue;
+    if (detectedRuntimeVersionScopes.get(id) === context.scope) return id;
+  }
+  return null;
+}
+
+/**
+ * The route layer hands us `agentCliEnv` as an unvalidated JSON record (see
+ * `ctx.agents.detectAgents`), so narrow one agent's slice defensively instead
+ * of assuming the nested string-record shape.
+ */
+function narrowConfiguredEnv(
+  configuredEnvByAgent: Record<string, unknown>,
+  agentId: string,
+): Record<string, string> {
+  const configAgentId = agentId === 'byok-opencode' ? 'opencode' : agentId;
+  const slice = configuredEnvByAgent[configAgentId];
+  if (!slice || typeof slice !== 'object' || Array.isArray(slice)) return {};
+  const narrowed: Record<string, string> = {};
+  for (const [key, value] of Object.entries(slice)) {
+    if (typeof value === 'string') narrowed[key] = value;
+  }
+  return narrowed;
 }
 
 /**
@@ -201,7 +276,7 @@ async function fetchModels(
 ): Promise<FetchedRuntimeModels> {
   if (typeof def.fetchModels === 'function') {
     try {
-      const parsed = await def.fetchModels(resolvedBin, env);
+      const parsed = await raceDetectionModelProbe(def.fetchModels(resolvedBin, env));
       if (!parsed || parsed.length === 0) {
         return { models: def.fallbackModels, source: 'fallback' };
       }
@@ -214,14 +289,16 @@ async function fetchModels(
     return { models: def.fallbackModels, source: 'fallback' };
   }
   try {
-    const { stdout } = await execAgentFile(resolvedBin, def.listModels.args, {
+    // The def's own budget (up to 15s) still kills the child; the race only
+    // cuts how long detection *waits* for it — see DETECTION_MODEL_PROBE_TIMEOUT_MS.
+    const { stdout } = await raceDetectionModelProbe(execAgentFile(resolvedBin, def.listModels.args, {
       env,
       timeout: def.listModels.timeoutMs ?? 5000,
       // Models lists from popular CLIs (e.g. opencode) easily exceed the
       // default 1MB buffer once you include every openrouter model. Bump
       // it so we don't truncate the listing.
       maxBuffer: 8 * 1024 * 1024,
-    });
+    }));
     const parsed = def.listModels.parse(String(stdout));
     // Empty / null parse result means the CLI didn't actually return a
     // usable list (e.g. cursor-agent's "No models available"); fall back
@@ -391,10 +468,52 @@ type RuntimeVersionProbeContext = {
   scope: string;
 };
 
+// Memoized probe contexts. Measured: building one costs ~65ms warm (~250ms
+// cold) — PATH resolution, full env merge, toolchain dirs — and the OD Next
+// run path builds it twice per run (versions + capabilities) with identical
+// args. The key carries everything the build reads except the live process
+// environment: agent id (covers the def's static `env`), the caller-supplied
+// configured env, and PATH/PATHEXT. A process-level env change therefore
+// takes effect on restart — acceptable, because runtime configuration flows
+// through files into `configuredEnv`, which IS keyed. Hits return a fresh
+// copy of the env so a caller can never mutate the shared snapshot.
+// Batch passes clear the map (same freshness rule as the PATH cache).
+const versionProbeContextCache = new Map<string, RuntimeVersionProbeContext>();
+
+function versionProbeContextCacheKey(
+  def: RuntimeAgentDef,
+  configuredEnv: Record<string, string>,
+): string {
+  const pathValue = process.platform === 'win32'
+    ? (Object.entries(process.env).find(([key]) => key.toLowerCase() === 'path')?.[1] ?? '')
+    : (process.env.PATH ?? '');
+  return JSON.stringify({
+    agentId: def.id,
+    configuredEnv,
+    path: pathValue,
+    pathext: process.env.PATHEXT ?? '',
+  });
+}
+
+export function clearVersionProbeContextCache(): void {
+  versionProbeContextCache.clear();
+}
+
 function runtimeVersionProbeContext(
   def: RuntimeAgentDef,
   configuredEnv: Record<string, string>,
 ): RuntimeVersionProbeContext | null {
+  const key = versionProbeContextCacheKey(def, configuredEnv);
+  const cached = versionProbeContextCache.get(key);
+  if (cached) {
+    // One stat keeps the memo honest: an uninstall between calls must read
+    // as a miss (full recompute → null) rather than a stale invocable.
+    if (!existsSync(cached.launchPath)) {
+      versionProbeContextCache.delete(key);
+    } else {
+      return { ...cached, probeEnv: { ...cached.probeEnv } };
+    }
+  }
   const launch = resolveAgentLaunch(def, configuredEnv);
   if (!launch.selectedPath || !launch.launchPath) return null;
   const probeEnv = applyAgentLaunchEnv(
@@ -413,7 +532,7 @@ function runtimeVersionProbeContext(
   const companionPath = def.id === 'amr'
     ? resolveAmrOpenCodeExecutable(probeEnv)
     : null;
-  return {
+  const context: RuntimeVersionProbeContext = {
     launchPath: launch.launchPath,
     probeEnv,
     scope: createHash('sha256').update(JSON.stringify({
@@ -423,6 +542,8 @@ function runtimeVersionProbeContext(
       companionPath,
     })).digest('hex'),
   };
+  versionProbeContextCache.set(key, context);
+  return { ...context, probeEnv: { ...context.probeEnv } };
 }
 
 async function probeRuntimeVersionsOnly(
@@ -725,6 +846,12 @@ async function probe(
   const surfacedModelResult = withRememberedAmrModels(def, probeEnv, modelResult);
   if (caps) {
     agentCapabilities.set(def.id, caps);
+    // The versions scope below is set unconditionally; the capabilities scope
+    // must land here too. Without it the first
+    // `ensureDetectedRuntimeCapabilities` after any full probe misses and
+    // re-spawns `--help` (measured 189ms for claude) before its first hit.
+    const capabilityScope = runtimeVersionProbeContext(def, configuredEnv)?.scope;
+    if (capabilityScope) detectedRuntimeCapabilityScopes.set(def.id, capabilityScope);
   }
   const authDiagnostic = auth ? buildAuthDiagnostic(def, auth) : null;
   const runtimeVersions: DetectedRuntimeVersions = {
@@ -846,6 +973,11 @@ function rememberDetectedLiveModels(
 export async function detectAgents(
   configuredEnvByAgent: Record<string, Record<string, string>> = {},
 ) {
+  // A batch pass re-proves from the filesystem: clear the shared PATH walk so
+  // a rescan after an install or repair sees it. Single probes keep sharing
+  // the cache between passes.
+  clearPathResolutionCache();
+  clearVersionProbeContextCache();
   const results = await Promise.all(
     AGENT_DEFS.map((def) => detectAgent(def, configuredEnvForAgent(configuredEnvByAgent, def.id))),
   );
@@ -869,6 +1001,9 @@ export async function detectAgents(
 export async function* detectAgentsStream(
   configuredEnvByAgent: Record<string, Record<string, string>> = {},
 ): AsyncGenerator<DetectedAgent> {
+  // Same freshness rule as the batch pass: a rescan re-proves from disk.
+  clearPathResolutionCache();
+  clearVersionProbeContextCache();
   const tagged = AGENT_DEFS.map((def, index) =>
     detectAgent(def, configuredEnvForAgent(configuredEnvByAgent, def.id)).then((agent) => {
       rememberDetectedLiveModels(def, configuredEnvForAgent(configuredEnvByAgent, def.id), agent);

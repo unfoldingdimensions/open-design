@@ -136,7 +136,38 @@ export function agentBinEnvKey(agentId: string | undefined): string | null {
 // name sits in a later directory. Resolution alone cannot tell the two
 // apart — only spawning can — so the caller walks candidates until one
 // actually runs.
+//
+// The walk is synchronously expensive (every PATH dir x every PATHEXT suffix
+// x every fallback bin, per agent) and every detection caller repeats it, so
+// results are shared in-process. The key carries the full search environment
+// (PATH + PATHEXT), so an environment change can never read another
+// environment's answer; batch passes (`detectAgents` / `detectAgentsStream`)
+// clear the map outright, so a rescan after an install or repair re-proves
+// from the filesystem — the same freshness rule `forgetUnusableExecutables`
+// keeps for spawn-proven results.
+const pathResolutionCache = new Map<string, string[]>();
+
+// NUL cannot appear in a PATH entry or bin name, so it is the one separator
+// that cannot collide across key parts. Built without an escape literal so
+// the source stays free of invisible control bytes.
+const PATH_KEY_SEP = String.fromCharCode(0);
+
+function pathResolutionCacheKey(bin: string): string {
+  const pathValue = process.platform === 'win32'
+    // Case-insensitive key lookup — Windows uses 'Path', not 'PATH'.
+    ? (Object.entries(process.env).find(([key]) => key.toLowerCase() === 'path')?.[1] ?? '')
+    : (process.env.PATH ?? '');
+  return [bin, pathValue, process.env.PATHEXT ?? '', process.platform].join(PATH_KEY_SEP);
+}
+
+export function clearPathResolutionCache(): void {
+  pathResolutionCache.clear();
+}
+
 export function resolveAllOnPath(bin: string): string[] {
+  const key = pathResolutionCacheKey(bin);
+  const cached = pathResolutionCache.get(key);
+  if (cached) return [...cached];
   const exts =
     process.platform === 'win32'
       ? (process.env.PATHEXT || '.EXE;.CMD;.BAT').split(';')
@@ -154,7 +185,8 @@ export function resolveAllOnPath(bin: string): string[] {
       }
     }
   }
-  return found;
+  pathResolutionCache.set(key, found);
+  return [...found];
 }
 
 export function resolveOnPath(bin: string): string | null {

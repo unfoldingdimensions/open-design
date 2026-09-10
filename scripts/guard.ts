@@ -21,6 +21,7 @@ import {
   checkDesignSystemUnknownTokens,
 } from "./check-tokens-fixture-sync.ts";
 import { checkCraftReferences } from "./lint-craft-references.ts";
+import { checkSkillModes } from "./check-skill-modes.ts";
 import { checkWhatsNewDocument } from "./check-whats-new-document.ts";
 import { checkWhatsNewPublishWorkflow } from "./check-whats-new-publish-workflow.ts";
 import { collectCssHardcodedColorMatches, cssWideAndSpecialColorKeywords, realNamedColors } from "./style-policy.ts";
@@ -128,6 +129,11 @@ const residualAllowedExactPaths = new Set([
   // spawns it through a PATH shim, so it must be directly executable by Node
   // without a transform — same precedent as `fake-vela.mjs` above.
   "apps/daemon/tests/fixtures/fake-kimi-acp-cli.mjs",
+  // Fake version-fast / models-slow CLI used by the detection model-probe
+  // cap test: answers `--version` instantly but hangs on model enumeration
+  // so only the detection-level timeout can fire. Spawned directly by Node
+  // without a transform — same precedent as `fake-vela.mjs` above.
+  "apps/daemon/tests/fixtures/slow-models-cli.mjs",
   "tools/dev/bin/tools-dev.mjs",
   "tools/dev/esbuild.config.mjs",
   "tools/pack/bin/tools-pack.mjs",
@@ -1529,6 +1535,7 @@ const checks: GuardCheck[] = [
   { name: "tools layout", run: checkToolsLayout },
   { name: "style policy", run: checkStylePolicy },
   { name: "craft references", run: checkCraftReferences },
+  { name: "skill modes", run: checkSkillModes },
   { name: "what's new document", run: ({ repoRoot: root }) => checkWhatsNewDocument(root) },
   { name: "what's new publish workflow", run: ({ repoRoot: root }) => checkWhatsNewPublishWorkflow(root) },
   { name: "HTML plugin preview contracts", run: ({ repoRoot: root }) => checkHtmlPluginPreviewContracts(root) },

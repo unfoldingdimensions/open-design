@@ -30,7 +30,7 @@
 
 import { createReadStream, createWriteStream } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { chmod, cp, lstat, mkdir, readdir, rm, stat, utimes } from 'node:fs/promises';
+import { chmod, cp, lstat, mkdir, readdir, readFile, rm, stat, utimes, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
 
@@ -91,6 +91,127 @@ async function copyTreeDereferenced(srcDir: string, destDir: string): Promise<vo
     }
     // Sockets, FIFOs, and devices can't appear in a sane skill folder and
     // copying them would hang or fail — skip them.
+  }
+}
+
+type SkillDirFingerprint = {
+  files: number;
+  dirs: number;
+  bytes: number;
+  maxMtimeMs: number;
+};
+
+// Content fingerprint for the skip-if-unchanged gate below: file/dir counts
+// plus total bytes plus the newest mtime, following symlinks exactly like the
+// staging copy does (`stat`, not `lstat`). Returns null when the directory
+// cannot be walked (missing, a file, unreadable) — the caller treats that as
+// "changed" and copies.
+async function fingerprintSkillDir(root: string): Promise<SkillDirFingerprint | null> {
+  const print: SkillDirFingerprint = { files: 0, dirs: 0, bytes: 0, maxMtimeMs: 0 };
+  async function walk(dir: string): Promise<boolean> {
+    let entries;
+    try {
+      entries = await readdir(dir, { withFileTypes: true });
+    } catch {
+      return false;
+    }
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      let entryStat;
+      try {
+        entryStat = await stat(full);
+      } catch {
+        return false;
+      }
+      if (entryStat.isDirectory()) {
+        print.dirs += 1;
+        if (!(await walk(full))) return false;
+      } else if (entryStat.isFile()) {
+        print.files += 1;
+        print.bytes += entryStat.size;
+        if (entryStat.mtimeMs > print.maxMtimeMs) print.maxMtimeMs = entryStat.mtimeMs;
+      }
+      // Sockets, FIFOs, and devices are skipped by the copy too — ignoring
+      // them here keeps the two in agreement about what "the dir" holds.
+    }
+    return true;
+  }
+  if (!(await walk(root))) return null;
+  return print;
+}
+
+const STAGE_STAMPS_FILE = '.od-stage-fingerprints.json';
+
+type StageStamp = {
+  source: SkillDirFingerprint;
+  staged: SkillDirFingerprint;
+};
+
+function samePrint(a: SkillDirFingerprint, b: SkillDirFingerprint): boolean {
+  return (
+    a.files === b.files
+    && a.dirs === b.dirs
+    && a.bytes === b.bytes
+    && a.maxMtimeMs === b.maxMtimeMs
+  );
+}
+
+async function readStageStamps(aliasRoot: string): Promise<Record<string, StageStamp>> {
+  try {
+    const raw = await readFile(path.join(aliasRoot, STAGE_STAMPS_FILE), 'utf8');
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    return parsed as Record<string, StageStamp>;
+  } catch {
+    return {};
+  }
+}
+
+// True when the staged tree can be proven to match the source without
+// copying: a stamp from the last successful copy agrees with both live
+// trees. Any I/O failure, a missing stamp, or any disagreement reads as
+// "changed" — the caller copies and re-stamps.
+async function stagedStampMatches(
+  cwd: string,
+  folderName: string,
+  sourceDir: string,
+  stagedPath: string,
+): Promise<boolean> {
+  const aliasRoot = path.join(cwd, SKILLS_CWD_ALIAS);
+  const [stamps, sourcePrint, stagedPrint] = await Promise.all([
+    readStageStamps(aliasRoot),
+    fingerprintSkillDir(sourceDir),
+    fingerprintSkillDir(stagedPath),
+  ]);
+  const stamp = stamps[folderName];
+  if (!stamp || !sourcePrint || !stagedPrint) return false;
+  return samePrint(stamp.source, sourcePrint) && samePrint(stamp.staged, stagedPrint);
+}
+
+async function recordStagedStamp(
+  cwd: string,
+  folderName: string,
+  sourceDir: string,
+  stagedPath: string,
+  log: SkillStagingLogger,
+): Promise<void> {
+  const aliasRoot = path.join(cwd, SKILLS_CWD_ALIAS);
+  const [stamps, sourcePrint, stagedPrint] = await Promise.all([
+    readStageStamps(aliasRoot),
+    fingerprintSkillDir(sourceDir),
+    fingerprintSkillDir(stagedPath),
+  ]);
+  if (!sourcePrint || !stagedPrint) return;
+  try {
+    await writeFile(
+      path.join(aliasRoot, STAGE_STAMPS_FILE),
+      JSON.stringify({ ...stamps, [folderName]: { source: sourcePrint, staged: stagedPrint } }),
+      'utf8',
+    );
+  } catch (err) {
+    // The stamp is a pure optimization: losing it only costs the next turn
+    // its skip, never the staging itself.
+    log(`[od] skill-stage: stamp write skipped: ${(err as Error).message}`);
   }
 }
 
@@ -166,6 +287,19 @@ export async function stageActiveSkill(
   }
 
   try {
+    // Skip-if-unchanged: the copy is a write barrier, not a refresh — when
+    // the staged tree still matches the source there is nothing to gain from
+    // rebuilding it (measured up to ~60ms for the largest skill). The stamp
+    // records the source AND staged fingerprints taken at copy time, so both
+    // a source edit and agent tampering with the staged copy read as
+    // "changed" and re-copy — the per-turn self-heal the wholesale copy used
+    // to provide is preserved. A stamp is compared instead of the two live
+    // trees because the copy rounds mtimes to whole milliseconds, so a live
+    // staged-vs-source mtime equality never holds. Residual edge: a
+    // same-millisecond, same-size rewrite is invisible to the stamp.
+    if (await stagedStampMatches(cwd, folderName, sourceDir, stagedPath)) {
+      return { staged: true, stagedPath };
+    }
     // Wipe a stale per-skill copy first so a removed source file is
     // reflected and a partially-failed previous run cannot leave junk
     // behind.
@@ -190,6 +324,7 @@ export async function stageActiveSkill(
       await rm(stagedPath, { recursive: true, force: true });
       await copyTreeDereferenced(sourceDir, stagedPath);
     }
+    await recordStagedStamp(cwd, folderName, sourceDir, stagedPath, log);
     return { staged: true, stagedPath };
   } catch (err) {
     log(`[od] skill-stage failed: ${(err as Error).message}`);
