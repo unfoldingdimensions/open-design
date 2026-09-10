@@ -113,8 +113,9 @@ export function routeImageVisionRequest(
   if (imageAgentId) {
     const available = agentAvailable(imageAgentId, input.detectedAgents);
     // If we can't confirm availability, still route to the designated id —
-    // the run layer will surface a clear "agent not detected" error rather
-    // than silently running image work on the wrong agent.
+    // the run layer keeps the caller's agent when the id has no definition
+    // and warns on the daemon terminal, rather than silently running image
+    // work on the wrong agent with no trace at all.
     if (available !== false) {
       return { kind: 'route-to-image-agent', agentId: imageAgentId };
     }
@@ -132,4 +133,30 @@ function agentAvailable(id: string, detected: DetectedAgentSet): boolean | undef
     return found ? found.available : undefined;
   }
   return undefined;
+}
+
+/**
+ * Raster extensions the agent CLIs can actually receive as images.
+ * Same set the media `--image` flag and the pi-rpc session gate on
+ * (png/jpg/jpeg/webp/gif, plus avif/bmp which the model APIs accept).
+ * SVG is deliberately excluded: it reads as text, so attaching one is not
+ * by itself a signal the user wants vision work.
+ */
+const IMAGE_ATTACHMENT_EXT_RE = /\.(png|jpe?g|webp|gif|avif|bmp)$/i;
+
+/**
+ * True when a single `attachments` entry looks like an image file.
+ * `attachments` are project-relative paths of ANY kind (README.md included),
+ * so the router must not treat "has attachments" as "has images" — that
+ * misroute sends plain text work to the project's image agent.
+ */
+export function attachmentLooksLikeImage(entry: unknown): boolean {
+  if (typeof entry !== 'string') return false;
+  const base = entry.split(/[/\\]/).pop() ?? '';
+  return IMAGE_ATTACHMENT_EXT_RE.test(base.trim());
+}
+
+/** True when at least one `attachments` entry looks like an image file. */
+export function hasImageAttachment(entries: unknown): boolean {
+  return Array.isArray(entries) && entries.some(attachmentLooksLikeImage);
 }

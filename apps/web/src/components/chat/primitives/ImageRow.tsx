@@ -19,6 +19,7 @@
  * 失败那格自己还分两态,由「这一轮还活着吗」决定 —— 见 `retryHandlerFor`。
  */
 import type { ReactElement } from 'react';
+import type { MediaFailureNextStep } from '@open-design/contracts';
 import { VisuallyHidden } from '@open-design/components';
 import { useT } from '../../../i18n';
 import type { ImageRow as ImageRowData } from '../../../runtime/chat/contract';
@@ -209,13 +210,22 @@ export function ImageRow({ row, onRetry, onOpenImage, imageSrc, running = false 
             );
           }
           if (status === 'failed') {
-            const retry = retryHandlerFor(running, onRetry);
+            // The daemon classified this failure; re-sending the same request
+            // through the agent only helps when the verdict says so.
+            // `retry-later` is the transient case; `switch-model` still routes
+            // through Retry because the agent picks the other model itself.
+            // Anything else (policy refusal, spent credit, missing key, stale
+            // app, …) would fail again identically — show the locked state, not
+            // a button that lies. Absent `nextStep` (legacy / JSONL-fallback
+            // rows) keeps the old behavior: Retry stays.
+            const retry = retryHandlerFor(running, onRetry, cell?.nextStep);
             return (
               <span
                 key={i}
                 className={`${styles.shot} ${styles.fail}`}
                 data-image-cell="failed"
                 data-fail-state={retry ? 'retryable' : 'locked'}
+                {...(cell?.nextStep ? { 'data-next-step': cell.nextStep } : {})}
               >
                 {retry
                   ? (
@@ -249,7 +259,7 @@ export function ImageRow({ row, onRetry, onOpenImage, imageSrc, running = false 
 /**
  * **失败格什么时候才真的能重试** —— 拿到处理器就摆按钮,拿不到就只画状态。
  *
- * 两个条件都得成立,少一个都会摆出一枚点了没反应的假按钮:
+ * 三个条件都得成立,少一个都会摆出一枚点了没反应的假按钮:
  *
  *   `!running`   这一轮已经停了。OPEND-2544 挡的是**并发**:agent 自己还在切
  *                provider 重试的时候,用户再手动重试一张,两边打架。轮次一停,
@@ -259,6 +269,13 @@ export function ImageRow({ row, onRetry, onOpenImage, imageSrc, running = false 
  *                `AssistantMessage` 传的 `isTerminalRunStatus()` 含 `canceled`
  *                和 `failed`。
  *   `onRetry`    宿主接了重发这一路动作。陈列页、纯静态镜像都没有。
+ *   `nextStep`   daemon 对这次失败的分类 verdict。重试是把同样的请求再走一遍
+ *                agent —— 只有 `retry-later`(瞬时故障)与 `switch-model`(agent
+ *                自己换模再发) 有可能成。其它 verdict(`revise-request` /
+ *                `open-settings` / `sign-in` / `add-credit` / `update-app` /
+ *                `unsupported` / `contact-support`)原样重发必再砸,给按钮就是
+ *                撒谎,直接锁死。`undefined`(老数据 / 没见过 task 的 JSONL 兜底
+ *                行)维持旧行为:照旧给重试。
  *
  * 返回处理器而不是 boolean,是为了让调用点拿到**收窄过**的函数:
  * `retry && <button onClick={() => retry(...)}>` 不需要再补一次 `?.`,
@@ -267,6 +284,9 @@ export function ImageRow({ row, onRetry, onOpenImage, imageSrc, running = false 
 function retryHandlerFor(
   running: boolean,
   onRetry: ImageRowProps['onRetry'],
+  nextStep?: MediaFailureNextStep,
 ): NonNullable<ImageRowProps['onRetry']> | undefined {
-  return running ? undefined : onRetry;
+  if (running) return undefined;
+  if (nextStep != null && nextStep !== 'retry-later' && nextStep !== 'switch-model') return undefined;
+  return onRetry;
 }

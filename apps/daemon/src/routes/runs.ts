@@ -37,7 +37,7 @@ import type { AnalyticsContext } from '../analytics.js';
 import { spawnEnvForAgent } from '../agents.js';
 import { agentCliEnvForAgent, readAppConfig } from '../app-config.js';
 import type { AuthorizeProjectRequest } from '../collab/project-request-authority.js';
-import { routeImageVisionRequest } from '../image-vision-router.js';
+import { hasImageAttachment, routeImageVisionRequest } from '../image-vision-router.js';
 import {
   workspaceResourceContextFromRequest,
   type BoundWorkspaceResourceMutationGate,
@@ -2273,9 +2273,13 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
       }
       const messageText =
         typeof meta.message === 'string' ? meta.message : '';
+      // `imagePaths` are daemon upload paths — images by construction.
+      // `attachments` are project-relative paths of ANY kind, so only count
+      // the ones that look like images; a README.md must not reroute the run
+      // to the image agent (see `hasImageAttachment`).
       const hasImageAttachments =
         (Array.isArray(requestBody.imagePaths) && requestBody.imagePaths.length > 0)
-        || (Array.isArray(requestBody.attachments) && requestBody.attachments.length > 0);
+        || hasImageAttachment(requestBody.attachments);
       const routed = routeImageVisionRequest({
         text: messageText,
         hasImageAttachments,
@@ -2288,8 +2292,19 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
         projectImageAgentId: imageAgentId,
         detectedAgents: undefined,
       });
-      if (routed.kind === 'route-to-image-agent' && getAgentDef(routed.agentId)) {
-        meta.agentId = routed.agentId;
+      if (routed.kind === 'route-to-image-agent') {
+        if (getAgentDef(routed.agentId)) {
+          meta.agentId = routed.agentId;
+        } else {
+          // The router picked the project's image agent, but this daemon has
+          // no definition for that id (renamed/removed CLI, typo in metadata).
+          // Keep the caller's agent — there is nothing else that can run —
+          // but say so on the daemon terminal instead of running image work
+          // on the wrong agent silently.
+          console.warn(
+            `[runs] project image agent "${routed.agentId}" is not available; keeping "${typeof meta.agentId === 'string' ? meta.agentId : 'default'}" for this run`,
+          );
+        }
       }
     }
     const requestAnalyticsHints =

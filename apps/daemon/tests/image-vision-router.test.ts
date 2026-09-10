@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  attachmentLooksLikeImage,
+  hasImageAttachment,
   routeImageVisionRequest,
   type ImageVisionRoutingInput,
 } from '../src/image-vision-router.js';
@@ -108,5 +110,47 @@ describe('routeImageVisionRequest', () => {
       }),
     );
     expect(d).toEqual({ kind: 'route-to-image-agent', agentId: 'claude' });
+  });
+});
+
+describe('hasImageAttachment', () => {
+  // `attachments` on the run request are project-relative paths of ANY kind.
+  // Only image files may count as image attachments — a README.md plus an
+  // empty "review this" message must NOT reroute the run to the image agent.
+  it.each([
+    ['hero.png', true],
+    ['shots/landing.JPG', true],
+    ['a.jpeg', true],
+    ['clip.webp', true],
+    ['anim.gif', true],
+    ['photo.avif', true],
+    ['scan.bmp', true],
+    ['README.md', false],
+    ['notes.txt', false],
+    ['plan.pdf', false],
+    ['logo.svg', false],
+    ['image.png.bak', false],
+    ['png', false],
+    ['', false],
+  ])('%s → %s', (entry, expected) => {
+    expect(attachmentLooksLikeImage(entry)).toBe(expected);
+  });
+
+  it('ignores non-string entries instead of throwing', () => {
+    expect(attachmentLooksLikeImage(null)).toBe(false);
+    expect(attachmentLooksLikeImage(42)).toBe(false);
+    expect(attachmentLooksLikeImage({ path: 'a.png' })).toBe(false);
+  });
+
+  it('is true when at least one entry is an image', () => {
+    expect(hasImageAttachment(['README.md', 'shots/hero.png'])).toBe(true);
+  });
+
+  it('is false for text-only attachments, missing, or non-arrays', () => {
+    expect(hasImageAttachment(['README.md', 'src/index.ts'])).toBe(false);
+    expect(hasImageAttachment([])).toBe(false);
+    expect(hasImageAttachment(undefined)).toBe(false);
+    expect(hasImageAttachment(null)).toBe(false);
+    expect(hasImageAttachment('a.png')).toBe(false);
   });
 });

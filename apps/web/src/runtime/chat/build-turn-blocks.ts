@@ -1944,7 +1944,15 @@ function readImageCall(
       }
       if (task.status === 'failed' || task.status === 'interrupted') {
         failed += 1;
-        cells[slot] = { taskId: task.taskId, status: 'failed' as const };
+        // The daemon already classified this failure (`error.nextStep`); carry
+        // it onto the cell so the renderer stops offering "Retry" for failures
+        // a retry cannot fix (policy refusal, spent credit, missing key, …).
+        const nextStep = task.error?.nextStep;
+        cells[slot] = {
+          taskId: task.taskId,
+          status: 'failed' as const,
+          ...(nextStep ? { nextStep } : {}),
+        };
         return;
       }
       cells[slot] = { taskId: task.taskId, status: 'pending' as const };
