@@ -63,10 +63,10 @@ describe('projectRouteSurfaceState', () => {
 });
 
 describe('projectRouteErrorContent', () => {
-  it('names the daemon outage instead of a generic unavailable message', () => {
+  it('offers retry while the daemon is unreachable, keeping the project route', () => {
     expect(projectRouteErrorContent('daemon-unavailable')).toEqual({
       messageKey: 'project.routeDaemonUnavailable',
-      action: 'back',
+      action: 'retry',
     });
   });
 

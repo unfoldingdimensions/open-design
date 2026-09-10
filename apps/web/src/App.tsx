@@ -767,9 +767,14 @@ export type ProjectRouteErrorAction = 'back' | 'retry';
  * Maps a terminal project-route state to the message and action the
  * error surface renders. Each terminal state gets its own copy so the
  * user can tell "the service is down" from "this project is gone"
- * from "loading failed midway" — and the action matches what can
- * actually help (retry only re-runs resolution, so only
- * materialization failures offer it).
+ * from "loading failed midway".
+ *
+ * Retry re-runs resolution (`deepLinkRetryRevision`), so both
+ * materialization failures AND daemon outages offer it: a daemon restart
+ * while the user sits on this screen is exactly what a retry recovers,
+ * and it keeps the project route instead of dropping the user back home.
+ * Only `missing` stays back-only — there is nothing a re-resolution could
+ * find.
  */
 export function projectRouteErrorContent(state: ProjectRouteSurfaceState): {
   messageKey: 'project.missing' | 'project.routeDaemonUnavailable' | 'project.routeMaterializationFailed';
@@ -779,7 +784,7 @@ export function projectRouteErrorContent(state: ProjectRouteSurfaceState): {
     case 'materialization-failed':
       return { messageKey: 'project.routeMaterializationFailed', action: 'retry' };
     case 'daemon-unavailable':
-      return { messageKey: 'project.routeDaemonUnavailable', action: 'back' };
+      return { messageKey: 'project.routeDaemonUnavailable', action: 'retry' };
     case 'missing':
     default:
       // Loading states never reach the error surface (an earlier branch
