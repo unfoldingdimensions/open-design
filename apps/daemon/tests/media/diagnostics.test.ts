@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatMediaTaskDiagnostic } from '../../src/media/diagnostics.js';
+import { formatMediaTaskDiagnostic, retryDiagnosticFor } from '../../src/media/diagnostics.js';
 
 describe('formatMediaTaskDiagnostic', () => {
   it('keeps correlation and routing context while redacting secrets', () => {
@@ -30,5 +30,48 @@ describe('formatMediaTaskDiagnostic', () => {
     expect(line).toContain('"has_composition_dir":false');
     expect(line).toContain('[REDACTED:');
     expect(line).not.toContain('abcdefghijklmnop');
+  });
+
+  it('omits retry fields when no retry was attempted', () => {
+    const line = formatMediaTaskDiagnostic({
+      event: 'done',
+      taskId: 't',
+      projectId: 'p',
+      surface: 'image',
+      model: 'm',
+      retry: retryDiagnosticFor({ retryCount: 0, retryFinalResult: 'not_attempted' }),
+    });
+    expect(line).not.toContain('retry_');
+  });
+
+  it('carries retry attempts and skipped-budget verdicts onto the terminal line', () => {
+    // F8: a 429 that succeeded after one retry, and a 503 whose retry was
+    // skipped for budget — both used to be analytics-only.
+    const retried = formatMediaTaskDiagnostic({
+      event: 'done',
+      taskId: 't',
+      projectId: 'p',
+      surface: 'image',
+      model: 'm',
+      retry: retryDiagnosticFor({
+        retryCount: 1,
+        retryReason: 'rate_limit_429',
+        retryFinalResult: 'success',
+      }),
+    });
+    expect(retried).toContain('"retry_count":1');
+    expect(retried).toContain('"retry_reason":"rate_limit_429"');
+    expect(retried).toContain('"retry_final_result":"success"');
+
+    const skipped = formatMediaTaskDiagnostic({
+      event: 'failed',
+      taskId: 't',
+      projectId: 'p',
+      surface: 'image',
+      model: 'm',
+      retry: retryDiagnosticFor({ retryCount: 0, retryFinalResult: 'skipped_retry_after_budget' }),
+    });
+    expect(skipped).toContain('"retry_final_result":"skipped_retry_after_budget"');
+    expect(skipped).not.toContain('retry_count');
   });
 });

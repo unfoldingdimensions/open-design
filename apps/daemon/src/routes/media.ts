@@ -10,7 +10,7 @@ import type {
 } from '@open-design/contracts';
 import type { AnalyticsContext } from '../analytics.js';
 import { defaultMediaExecutionPolicy, mediaPolicyDenial } from '../media/policy.js';
-import { formatMediaTaskDiagnostic } from '../media/diagnostics.js';
+import { formatMediaTaskDiagnostic, retryDiagnosticFor } from '../media/diagnostics.js';
 import { findMediaModel } from '../media/models.js';
 import type { ImageGenerationRequestSummary } from '../media/image-generation-retry.js';
 import type { RouteDeps } from '../server-context.js';
@@ -519,6 +519,7 @@ export function registerMediaRoutes(app: Express, ctx: RegisterMediaRoutesDeps) 
             ...diagnosticContext,
             event: 'done',
             providerId: meta?.providerId ?? providerRequestSummary?.providerId ?? requestedProviderId,
+            retry: retryDiagnosticFor(providerRequestSummary),
             status: task.status,
             elapsedMs: task.endedAt - task.startedAt,
             fileSize: typeof meta?.size === 'number' ? meta.size : undefined,
@@ -553,6 +554,7 @@ export function registerMediaRoutes(app: Express, ctx: RegisterMediaRoutesDeps) 
             ...diagnosticContext,
             event: 'failed',
             providerId: providerRequestSummary?.providerId ?? requestedProviderId,
+            retry: retryDiagnosticFor(providerRequestSummary),
             status: task.error.status,
             code: task.error.code,
             elapsedMs: task.endedAt - task.startedAt,
