@@ -1776,6 +1776,18 @@ function resolveRunFailureUiIgnoringSelfPromotion(
         { secondaryRetry: true },
       );
     }
+    // Provider-side quota spent while already on Cloud: the shared detail row
+    // below answers rung 3 ("switch to Cloud"), which is the thing that just
+    // failed — the exit strips it to contact-support. But the quota copy
+    // already promises "switch to another model or service", and each model
+    // has its own quota, so switching models is the rung-1 fix. Same shape
+    // as Antigravity's per-model quota above.
+    if (detail === 'hard_quota') {
+      return switchModelWithGuidance(
+        'chat.runError.title.quotaExhausted',
+        'chat.runError.quotaExhaustedMessage',
+      );
+    }
     // No catch-all. Everything past this point — S11 connection dropped, S09
     // rate limit, S10 upstream unavailable, S08 provider quota, S01 missing CLI
     // — is agent-neutral and was dead code for AMR while this branch ended in a

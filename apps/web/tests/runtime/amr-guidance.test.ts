@@ -311,6 +311,19 @@ describe('resolveRunFailureUi', () => {
     }
   });
 
+  // Provider-side quota spent while already on Cloud (each model has its own
+  // quota, so switching models is the in-product fix the quota copy already
+  // promises). Must offer switch-model, not the stripped rung-3 card.
+  it('maps hard_quota on Cloud to switch-model instead of contact-support', () => {
+    for (const code of ['RATE_LIMITED', 'AGENT_EXECUTION_FAILED']) {
+      expect(resolveRunFailureUi(code, 'hard_quota', 'amr')).toMatchObject({
+        primaryAction: 'switch-model',
+        titleKey: 'chat.runError.title.quotaExhausted',
+        messageKey: 'chat.runError.quotaExhaustedMessage',
+      });
+    }
+  });
+
   // A cpu_unsupported crash (bundled agent binary requires AVX2, this CPU has
   // none) is deterministic: retry re-runs the same binary on the same CPU, and
   // switching hosted models doesn't replace the runtime binary — the binary that
