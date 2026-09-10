@@ -23,4 +23,24 @@ describe('shared API error codes', () => {
     const code: ApiErrorCode = 'AGENT_RUNTIME_DEF_INVALID';
     expect(code).toBe('AGENT_RUNTIME_DEF_INVALID');
   });
+
+  // Daemon-emitted startup/lifecycle codes the chat surfaces through the
+  // shared SSE/status error envelopes. Each is proven emitted in
+  // apps/daemon/src (see comments in errors.ts); the contract must name
+  // them so clients can switch on code instead of matching sentences.
+  it('exposes daemon-emitted run lifecycle failure codes', () => {
+    expect(API_ERROR_CODES).toEqual(expect.arrayContaining([
+      'DAEMON_RESTARTED',
+      'BYOK_PROVIDER_REQUIRED',
+      'HTML_VERSION_SNAPSHOT_FAILED',
+      'PI_PARENT_SESSION_FAILED',
+      'DSH_PROFILE_FRAME_TOO_LARGE',
+      'DSH_PROFILE_MALFORMED_FRAME',
+      'DSH_PROFILE_INVALID_FRAME',
+      'DSH_PROFILE_TRUNCATED_FRAME',
+      'DSH_PROFILE_PROTOCOL_ERROR',
+      'AMR_WORKSPACE_SCOPE_REQUIRED',
+      'AMR_WORKSPACE_SCOPE_CONFLICT',
+    ]));
+  });
 });

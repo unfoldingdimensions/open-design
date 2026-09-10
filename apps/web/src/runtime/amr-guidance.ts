@@ -1060,6 +1060,59 @@ const AGENT_AGNOSTIC_FAILURE_UI: Record<string, RunFailureUi> = {
     'chat.runError.title.runtimeConfig',
     'chat.runError.runtimeConfigMessage',
   ),
+  // Startup/lifecycle codes that bypass the classifier (`runs.fail`, not
+  // `finishWithRetryDecision`), so they arrive with a bare code and no
+  // detail. Each names an interruption the run did not cause — a daemon
+  // restart, a snapshot write that failed after the file itself landed, a
+  // dead pi parent session, DSH profile frame failures. Retry-as-new-run is
+  // the honest action, and the "interrupted unexpectedly" copy fits all of
+  // them without new i18n keys.
+  DAEMON_RESTARTED: retryWithGuidance(
+    'chat.runError.title.agentCrashed',
+    'chat.runError.agentCrashedMessage',
+  ),
+  HTML_VERSION_SNAPSHOT_FAILED: retryWithGuidance(
+    'chat.runError.title.agentCrashed',
+    'chat.runError.agentCrashedMessage',
+  ),
+  PI_PARENT_SESSION_FAILED: retryWithGuidance(
+    'chat.runError.title.agentCrashed',
+    'chat.runError.agentCrashedMessage',
+  ),
+  DSH_PROFILE_FRAME_TOO_LARGE: retryWithGuidance(
+    'chat.runError.title.agentCrashed',
+    'chat.runError.agentCrashedMessage',
+  ),
+  DSH_PROFILE_MALFORMED_FRAME: retryWithGuidance(
+    'chat.runError.title.agentCrashed',
+    'chat.runError.agentCrashedMessage',
+  ),
+  DSH_PROFILE_INVALID_FRAME: retryWithGuidance(
+    'chat.runError.title.agentCrashed',
+    'chat.runError.agentCrashedMessage',
+  ),
+  DSH_PROFILE_TRUNCATED_FRAME: retryWithGuidance(
+    'chat.runError.title.agentCrashed',
+    'chat.runError.agentCrashedMessage',
+  ),
+  DSH_PROFILE_PROTOCOL_ERROR: retryWithGuidance(
+    'chat.runError.title.agentCrashed',
+    'chat.runError.agentCrashedMessage',
+  ),
+  // Workspace-scope failures: the run's auth scope is missing or conflicts.
+  // Closest in-product fix is re-authorizing in-app (rung 1), which
+  // re-establishes scope; a member removed from the workspace lands here too,
+  // and signing in is what surfaces that state honestly.
+  AMR_WORKSPACE_SCOPE_REQUIRED: failureCard(
+    { directFix: 'authorize' },
+    'chat.runError.title.signInRequired.amr',
+    'chat.runError.signInMessage.amr',
+  ),
+  AMR_WORKSPACE_SCOPE_CONFLICT: failureCard(
+    { directFix: 'authorize' },
+    'chat.runError.title.signInRequired.amr',
+    'chat.runError.signInMessage.amr',
+  ),
   // R9 · the browser↔daemon stream gave up reconnecting. Ladder rung 2 — the
   // stream can be re-established, and 〔重新连接〕 already exists for exactly
   // that. But the button lives on the reconnect line at the tail of the
@@ -1666,6 +1719,17 @@ function resolveRunFailureUiIgnoringSelfPromotion(
       'chat.runError.title.agentCrashed',
       'chat.runError.agentCrashedMessage',
     );
+  }
+  // API-mode run with no usable provider/key/model. The fix lives in
+  // Settings → execution, never in a retry. Emitted only for byok-opencode
+  // runs so custody always holds; the fallback keeps the same copy with a
+  // retry for ancient persisted events with no agent id.
+  if (code === 'BYOK_PROVIDER_REQUIRED') {
+    return apiKeyInvalidCardFor(agentId)
+      ?? retryWithGuidance(
+        'chat.runError.title.apiKeyInvalid',
+        'chat.runError.apiKeyInvalidMessage',
+      );
   }
   const agnostic = typeof code === 'string' ? AGENT_AGNOSTIC_FAILURE_UI[code] : undefined;
   if (agnostic) return agnostic;

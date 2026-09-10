@@ -386,6 +386,17 @@ describe('resolveRunFailureUi', () => {
       ['AGENT_UNAVAILABLE', 'chat.runError.title.cliMissing', 'chat.runError.cliMissingMessage'],
       ['AGENT_PROMPT_TOO_LARGE', 'chat.runError.title.promptTooLarge', 'chat.runError.promptTooLargeMessage'],
       ['TOOL_LOOP_DETECTED', 'chat.runError.title.toolLoop', 'chat.runError.toolLoopMessage'],
+      // Startup/lifecycle codes that bypass the classifier (bare code, no
+      // detail): daemon restart, snapshot-write failure, dead pi parent
+      // session, DSH profile frame failures. Retry-as-new-run for all.
+      ['DAEMON_RESTARTED', 'chat.runError.title.agentCrashed', 'chat.runError.agentCrashedMessage'],
+      ['HTML_VERSION_SNAPSHOT_FAILED', 'chat.runError.title.agentCrashed', 'chat.runError.agentCrashedMessage'],
+      ['PI_PARENT_SESSION_FAILED', 'chat.runError.title.agentCrashed', 'chat.runError.agentCrashedMessage'],
+      ['DSH_PROFILE_FRAME_TOO_LARGE', 'chat.runError.title.agentCrashed', 'chat.runError.agentCrashedMessage'],
+      ['DSH_PROFILE_MALFORMED_FRAME', 'chat.runError.title.agentCrashed', 'chat.runError.agentCrashedMessage'],
+      ['DSH_PROFILE_INVALID_FRAME', 'chat.runError.title.agentCrashed', 'chat.runError.agentCrashedMessage'],
+      ['DSH_PROFILE_TRUNCATED_FRAME', 'chat.runError.title.agentCrashed', 'chat.runError.agentCrashedMessage'],
+      ['DSH_PROFILE_PROTOCOL_ERROR', 'chat.runError.title.agentCrashed', 'chat.runError.agentCrashedMessage'],
       ['ROLE_MARKER_HALLUCINATION', 'chat.runError.title.outputInvalid', 'chat.runError.outputInvalidMessage'],
     ];
     for (const [code, titleKey, messageKey] of cases) {
@@ -400,6 +411,30 @@ describe('resolveRunFailureUi', () => {
         });
       }
     }
+  });
+
+  // Workspace-scope failures (missing/conflicting scope): closest in-product
+  // fix is re-authorizing in-app, which re-establishes scope.
+  it('routes workspace-scope failures to in-app re-authorize', () => {
+    for (const code of ['AMR_WORKSPACE_SCOPE_REQUIRED', 'AMR_WORKSPACE_SCOPE_CONFLICT']) {
+      for (const agent of ['claude', 'codex', 'amr', null]) {
+        expect(resolveRunFailureUi(code, null, agent)).toMatchObject({
+          primaryAction: 'authorize',
+          titleKey: 'chat.runError.title.signInRequired.amr',
+          messageKey: 'chat.runError.signInMessage.amr',
+        });
+      }
+    }
+  });
+
+  // API-mode run with no usable provider/key/model: the fix is Settings →
+  // execution, never a retry.
+  it('routes missing BYOK provider setup to Settings', () => {
+    expect(resolveRunFailureUi('BYOK_PROVIDER_REQUIRED', null, 'byok-opencode')).toMatchObject({
+      primaryAction: 'open-settings',
+      titleKey: 'chat.runError.title.apiKeyInvalid',
+      messageKey: 'chat.runError.apiKeyInvalidMessage',
+    });
   });
 
   /*

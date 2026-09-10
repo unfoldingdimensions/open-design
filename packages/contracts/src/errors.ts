@@ -73,6 +73,35 @@ export const API_ERROR_CODES = [
   // surface the def-correctness error so it shows up in dev rather
   // than silently disabling the agent-specific watchdog.
   'AGENT_RUNTIME_DEF_INVALID',
+  // Run-lifecycle codes the daemon emits but the contract did not name, so
+  // clients could only match their sentences. Each is proven in daemon source:
+  // - DAEMON_RESTARTED: a restart cut the run short; replayed from disk
+  //   (`runtimes/run-restart-recovery.ts`, classified at
+  //   `run-failure-classification.ts`). The run never really ran — resume if
+  //   the runtime supports it, else retry as a new run.
+  // - BYOK_PROVIDER_REQUIRED: API-mode run with no usable provider/key/model
+  //   (`server.ts` chat-run starter). Fix is in Settings, not a retry.
+  // - HTML_VERSION_SNAPSHOT_FAILED: the deliverable snapshot write failed
+  //   (`run-html-version-snapshots.ts`). The file itself was written; retry
+  //   re-persists rather than re-generating.
+  // - PI_PARENT_SESSION_FAILED: the pi agent's parent session died
+  //   (`agent-protocol/pi-rpc/session.ts`). New run, not a resume.
+  // - DSH_PROFILE_*: DeepSeek Harness profile frame/session failures
+  //   (`agent-protocol/dsh-profile/stream.ts`, `session.ts`).
+  // - AMR_WORKSPACE_SCOPE_REQUIRED / AMR_WORKSPACE_SCOPE_CONFLICT: the run's
+  //   workspace scope is missing or conflicts (`routes/runs.ts`,
+  //   `runtimes/project-amr-trace-env.ts`). Switch workspace / re-login.
+  'DAEMON_RESTARTED',
+  'BYOK_PROVIDER_REQUIRED',
+  'HTML_VERSION_SNAPSHOT_FAILED',
+  'PI_PARENT_SESSION_FAILED',
+  'DSH_PROFILE_FRAME_TOO_LARGE',
+  'DSH_PROFILE_MALFORMED_FRAME',
+  'DSH_PROFILE_INVALID_FRAME',
+  'DSH_PROFILE_TRUNCATED_FRAME',
+  'DSH_PROFILE_PROTOCOL_ERROR',
+  'AMR_WORKSPACE_SCOPE_REQUIRED',
+  'AMR_WORKSPACE_SCOPE_CONFLICT',
   'PROJECT_NOT_FOUND',
   'PROJECT_MATERIALIZATION_PENDING',
   // Handoff (`POST /api/projects/:id/handoff`): the requested conversation
