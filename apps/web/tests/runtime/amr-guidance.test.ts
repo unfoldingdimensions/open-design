@@ -324,6 +324,26 @@ describe('resolveRunFailureUi', () => {
     }
   });
 
+  // S05 custody rule: for BYOK-managed ids the key is ours, so ANY auth-shape
+  // failure (wrong key, missing key, bare 401) goes to Settings — never to
+  // the terminal-login card. Local CLIs keep their S02 path (PR #7893 scope).
+  it('routes BYOK auth failures to Settings instead of terminal login', () => {
+    for (const agent of ['openai-api', 'byok-opencode']) {
+      for (const detail of ['invalid_api_key', 'auth_required', 'missing_api_key']) {
+        expect(resolveRunFailureUi('AGENT_AUTH_REQUIRED', detail, agent)).toMatchObject({
+          primaryAction: 'open-settings',
+          titleKey: 'chat.runError.title.apiKeyInvalid',
+          messageKey: 'chat.runError.apiKeyInvalidMessage',
+        });
+      }
+    }
+    expect(
+      resolveRunFailureUi('AGENT_AUTH_REQUIRED', 'auth_required', 'claude'),
+    ).toMatchObject({
+      titleKey: 'chat.runError.title.signInRequired.other',
+    });
+  });
+
   // A cpu_unsupported crash (bundled agent binary requires AVX2, this CPU has
   // none) is deterministic: retry re-runs the same binary on the same CPU, and
   // switching hosted models doesn't replace the runtime binary — the binary that

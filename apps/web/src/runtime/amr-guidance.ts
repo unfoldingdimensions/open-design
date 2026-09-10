@@ -1826,7 +1826,11 @@ function resolveRunFailureUiIgnoringSelfPromotion(
   // S05 · key 填错了 —— 只在这把 key 归我们保管时才认。判据、摆位理由和它替谁
   // 让路,全写在 `apiKeyInvalidCardFor` 的注释里。不在这一档的 agent 返回 null,
   // 于是继续往下走它原本那条路(码是 AGENT_AUTH_REQUIRED / UNAUTHORIZED 的落 S02)。
-  if (detail === 'invalid_api_key') {
+  //
+  // 判据是保管权,不是 detail:daemon 只在文本写明 invalid 时才给 invalid_api_key,
+  // 而裸 401 ("401 Unauthorized" / "incorrect api key") 只够判 auth_required —
+  // 对 BYOK 那一档,那同样是"去设置里改 key",绝不是"去终端登录"。
+  if (detail === 'invalid_api_key' || detail === 'auth_required' || detail === 'missing_api_key') {
     const apiKeyCard = apiKeyInvalidCardFor(agentId);
     if (apiKeyCard) return apiKeyCard;
   }
