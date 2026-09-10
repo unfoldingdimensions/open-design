@@ -935,10 +935,20 @@ export function resolveSafePromptImagePaths(
     try {
       resolved = pathImpl.resolve(inputPath);
     } catch {
-      // Drop malformed path input; we cannot even resolve it to a location.
+      // We cannot even resolve it to a location — record, don't drop: the
+      // caller fails the run with these entries, and a silent drop would
+      // shrink the prompt context without a trace.
+      failedImages.push({ path: inputPath, error: 'cannot resolve path' });
       continue;
     }
-    if (!isPathWithin(uploadDir, resolved) || !existsSync(resolved)) continue;
+    if (!isPathWithin(uploadDir, resolved)) {
+      failedImages.push({ path: inputPath, error: 'outside the upload directory' });
+      continue;
+    }
+    if (!existsSync(resolved)) {
+      failedImages.push({ path: inputPath, error: 'file not found' });
+      continue;
+    }
     // Past the within-UPLOAD_DIR + existence gate the path points at a real
     // upload. A statSync failure here (EACCES/EPERM, a file that vanished
     // mid-run) is an infrastructure error, not bad input — surface it so the
@@ -953,7 +963,10 @@ export function resolveSafePromptImagePaths(
       });
       continue;
     }
-    if (!stat.isFile()) continue;
+    if (!stat.isFile()) {
+      failedImages.push({ path: inputPath, error: 'not a file' });
+      continue;
+    }
     if (typeof stat.size === 'number' && stat.size > maxBytes) {
       oversizedImages.push({ path: inputPath, sizeBytes: stat.size });
       continue;

@@ -76,6 +76,26 @@ test('resolveSafePromptImagePaths surfaces stat failures instead of dropping the
   ]);
 });
 
+test('resolveSafePromptImagePaths records missing/outside/non-file inputs instead of dropping them', () => {
+  // F5: these used to `continue` silently, shrinking the prompt context
+  // without a trace while a stat failure two lines down failed the run.
+  const result = resolveSafePromptImagePaths(
+    ['/tmp/od-uploads/gone.png', '/etc/passwd', '/tmp/od-uploads/subdir'],
+    {
+      uploadDir: '/tmp/od-uploads',
+      existsSync: (p) => !String(p).endsWith('gone.png'),
+      statSync: () => ({ isFile: () => false, size: 10 }),
+    },
+  );
+
+  expect(result.safeImages).toEqual([]);
+  expect(result.failedImages).toEqual([
+    { path: '/tmp/od-uploads/gone.png', error: 'file not found' },
+    { path: '/etc/passwd', error: 'outside the upload directory' },
+    { path: '/tmp/od-uploads/subdir', error: 'not a file' },
+  ]);
+});
+
 test('imageReferencesForAgent keeps @refs for image-capable runtimes', () => {
   expect(imageReferencesForAgent(true, 'zcode', ['/u/a.png', '/u/b.png'])).toBe('@/u/a.png @/u/b.png');
 });

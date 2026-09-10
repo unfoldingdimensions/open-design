@@ -11041,9 +11041,13 @@ export async function startServer({
       );
     }
     if (failedImages.length > 0) {
+      // Name the offenders (bounded): a bare "failed to read" sends the user
+      // hunting through every attachment they sent.
+      const culprits = failedImages.slice(0, 3).map((f) => `${f.path} (${f.error})`).join('; ');
+      const rest = failedImages.length > 3 ? `; +${failedImages.length - 3} more` : '';
       return failRun(
         'INTERNAL_ERROR',
-        'Failed to read one or more image attachments.',
+        `Failed to read image attachment${failedImages.length === 1 ? '' : 's'}: ${culprits}${rest}.`,
       );
     }
     const transportSourceImages = odNextTaskInputSnapshot?.imagePaths ?? safeImages;
