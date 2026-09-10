@@ -18,12 +18,12 @@ describe('default app background colors', () => {
     expect(root).toContain('--bg-app: #fff;');
   });
 
-  it('ships no dark theme background override (light-only contract)', () => {
-    // The `[data-theme="dark"]` token block is gone (see
+  it('keeps dormant dark theme backgrounds behind the force-light pin', () => {
+    // The `[data-theme="dark"]` token block is dormant, not gone (see
     // `theme-contract.test.ts`); strip comments since the contract itself
     // is documented in prose inside the stylesheet.
     const cssWithoutComments = indexCss.replace(/\/\*[\s\S]*?\*\//g, '');
-    expect(cssWithoutComments).not.toContain('[data-theme="dark"]');
+    expect(cssWithoutComments).toContain('[data-theme="dark"]');
   });
 
   it('prefers platform UI fonts over optional local app fonts', () => {
