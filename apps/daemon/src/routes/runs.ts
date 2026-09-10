@@ -37,7 +37,7 @@ import type { AnalyticsContext } from '../analytics.js';
 import { spawnEnvForAgent } from '../agents.js';
 import { agentCliEnvForAgent, readAppConfig } from '../app-config.js';
 import type { AuthorizeProjectRequest } from '../collab/project-request-authority.js';
-import { hasImageAttachment, routeImageVisionRequest } from '../image-vision-router.js';
+import { hasImageAttachment, messageReferencesProjectImage, routeImageVisionRequest } from '../image-vision-router.js';
 import {
   workspaceResourceContextFromRequest,
   type BoundWorkspaceResourceMutationGate,
@@ -2283,7 +2283,10 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
       const routed = routeImageVisionRequest({
         text: messageText,
         hasImageAttachments,
-        referencesProjectImages: false,
+        // Filename mentions (`review hero.png`) count as referencing project
+        // images, so the router's project-image branches are reachable. Was
+        // hardcoded `false`, which made IMAGE_SUBJECT_RE dead code.
+        referencesProjectImages: messageReferencesProjectImage(messageText),
         currentAgentId: typeof meta.agentId === 'string' ? meta.agentId : null,
         explicitAgentId:
           typeof requestBody.agentId === 'string' && requestBody.agentId

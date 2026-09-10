@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   attachmentLooksLikeImage,
   hasImageAttachment,
+  messageReferencesProjectImage,
   routeImageVisionRequest,
   type ImageVisionRoutingInput,
 } from '../src/image-vision-router.js';
@@ -152,5 +153,38 @@ describe('hasImageAttachment', () => {
     expect(hasImageAttachment(undefined)).toBe(false);
     expect(hasImageAttachment(null)).toBe(false);
     expect(hasImageAttachment('a.png')).toBe(false);
+  });
+});
+
+describe('messageReferencesProjectImage', () => {
+  // F7: the run route hardcoded `referencesProjectImages: false`, which made
+  // the router's project-image branches (and IMAGE_SUBJECT_RE) unreachable.
+  it.each([
+    ['review the hero.png', true],
+    ['is the landing mockup at shots/a.webp good?', true],
+    ['compare logo.JPG with the new one', true],
+    ['Design the database schema for the billing service', false],
+    ['review the design doc', false],
+    ['look at the png wireframe', false],
+    ['', false],
+  ])('%s → %s', (text, expected) => {
+    expect(messageReferencesProjectImage(text)).toBe(expected);
+  });
+
+  it('ignores non-strings instead of throwing', () => {
+    expect(messageReferencesProjectImage(null)).toBe(false);
+    expect(messageReferencesProjectImage(42)).toBe(false);
+  });
+
+  it('routes a filename mention plus a vision verb to the image agent', () => {
+    const d = routeImageVisionRequest(
+      input({
+        text: 'review the hero.png and tell me what looks off',
+        referencesProjectImages: true,
+        projectImageAgentId: 'claude',
+        detectedAgents: [{ id: 'claude', available: true }],
+      }),
+    );
+    expect(d).toEqual({ kind: 'route-to-image-agent', agentId: 'claude' });
   });
 });

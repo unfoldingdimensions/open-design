@@ -160,3 +160,17 @@ export function attachmentLooksLikeImage(entry: unknown): boolean {
 export function hasImageAttachment(entries: unknown): boolean {
   return Array.isArray(entries) && entries.some(attachmentLooksLikeImage);
 }
+
+/**
+ * Image filenames mentioned mid-sentence (`review hero.png`, `the landing
+ * mockup at shots/a.webp looks off`). Word-boundary aware: the extension
+ * regex alone is `$`-anchored for whole-path matching and would miss a name
+ * followed by more words or a `?`.
+ */
+const IMAGE_FILENAME_MENTION_RE = /\.(png|jpe?g|webp|gif|avif|bmp)(?=[\s"'`.,;:!?)\]]|$)/i;
+
+/** True when the message text mentions an image file by name. */
+export function messageReferencesProjectImage(text: unknown): boolean {
+  if (typeof text !== 'string' || text.length === 0) return false;
+  return IMAGE_FILENAME_MENTION_RE.test(text);
+}
