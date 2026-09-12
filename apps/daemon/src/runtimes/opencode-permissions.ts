@@ -1,18 +1,40 @@
 import { agentCapabilities } from './capabilities.js';
 import type { RuntimeAgentDef } from './types.js';
 
+export const OPENCODE_AUTO_APPROVE_FLAG = '--auto';
 export const OPENCODE_SKIP_PERMISSIONS_FLAG = '--dangerously-skip-permissions';
 export const OPENCODE_WORKSPACE_DIR_FLAG = '--dir';
 
 export const OPENCODE_PERMISSION_CAPABILITY = {
   helpArgs: ['run', '--help'],
   capabilityFlags: {
+    [OPENCODE_AUTO_APPROVE_FLAG]: 'autoApprove',
     [OPENCODE_SKIP_PERMISSIONS_FLAG]: 'skipPermissions',
   },
 } satisfies Pick<RuntimeAgentDef, 'helpArgs' | 'capabilityFlags'>;
 
+/**
+ * Pass OpenCode's non-interactive approval bypass when the installed CLI
+ * advertises one.
+ *
+ * `--auto` ("auto-approve permissions that are not explicitly denied") is
+ * what current OpenCode builds actually ship: `opencode run --help` on
+ * 1.18.x lists `--auto` and contains `dangerously-skip-permissions` zero
+ * times, so a gate on the legacy flag alone never fired and every run fell
+ * back to interactive approval prompts a headless child cannot answer.
+ * `--auto` is preferred when advertised; the legacy flag is kept as a
+ * fallback for older builds that still carry it. Neither advertised means
+ * neither sent — an unknown option would fail the spawn loudly, while a
+ * missing bypass fails as denied tools, and guessing wrong picks the loud
+ * failure for a run that might otherwise have worked.
+ */
 export function appendOpenCodePermissionBypass(args: string[], agentId: string): void {
-  if (agentCapabilities.get(agentId)?.skipPermissions) {
+  const caps = agentCapabilities.get(agentId);
+  if (caps?.autoApprove) {
+    args.push(OPENCODE_AUTO_APPROVE_FLAG);
+    return;
+  }
+  if (caps?.skipPermissions) {
     args.push(OPENCODE_SKIP_PERMISSIONS_FLAG);
   }
 }

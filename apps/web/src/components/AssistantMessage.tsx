@@ -687,7 +687,15 @@ function AssistantMessageImpl({
       : message.content.trim()
         ? ([{ kind: "text", text: message.content }] satisfies AgentEvent[])
         : [];
-  const displayEvents = useMemo(() => dedupeToolUsesById(events), [events]);
+  const displayEvents = useMemo(
+    // The in-flight early row must retire BEFORE id-dedupe runs: `dedupe`
+    // keeps the FIRST event per id, so without the retirement step the
+    // settled row (the one carrying `content`, hence `+N −M`) never renders
+    // live — while a reload shows only the settled row. See the contract on
+    // `dropSupersededInFlightToolUses`.
+    () => dedupeToolUsesById(dropSupersededInFlightToolUses(events)),
+    [events],
+  );
   // Live phase + last-activity heartbeat for the streaming turn. The daemon
   // only forwards substantive events (text/thinking/tool deltas) — there is
   // no per-second tick — so a long model call between two events is silent on

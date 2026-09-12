@@ -10,10 +10,11 @@ import {
 import { byokOpenCodeAgentDef } from '../../src/runtimes/defs/byok-opencode.js';
 
 describe('byok-opencode runtime config', () => {
-  it('gates non-interactive permission bypass on the installed OpenCode capability', () => {
+  it('gates non-interactive permission bypass on the installed OpenCode capability (prefers --auto)', () => {
     agentCapabilities.delete('byok-opencode');
     expect(byokOpenCodeAgentDef.helpArgs).toEqual(['run', '--help']);
     expect(byokOpenCodeAgentDef.capabilityFlags).toEqual({
+      '--auto': 'autoApprove',
       '--dangerously-skip-permissions': 'skipPermissions',
     });
     expect(byokOpenCodeAgentDef.buildArgs('', [], [], {})).toEqual([
@@ -21,6 +22,20 @@ describe('byok-opencode runtime config', () => {
       '--format',
       'json',
     ]);
+
+    agentCapabilities.set('byok-opencode', { autoApprove: true });
+    try {
+      expect(byokOpenCodeAgentDef.buildArgs('', [], [], { model: 'gpt-5.5' })).toEqual([
+        'run',
+        '--format',
+        'json',
+        '--auto',
+        '-m',
+        'open-design-byok/gpt-5.5',
+      ]);
+    } finally {
+      agentCapabilities.delete('byok-opencode');
+    }
 
     agentCapabilities.set('byok-opencode', { skipPermissions: true });
     try {

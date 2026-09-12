@@ -18,6 +18,7 @@
     "tools-serve": "pnpm exec tools-serve",
     "guard": "tsx ./scripts/guard.ts",
     "lint:craft": "tsx ./scripts/lint-craft-references.ts",
+    "lint:skill-modes": "tsx ./scripts/check-skill-modes.ts",
     "i18n:check": "tsx ./scripts/i18n-check.ts",
     "i18n:coverage": "tsx ./scripts/i18n-coverage-report.ts",
     "sync:community-pets": "node --experimental-strip-types scripts/sync-community-pets.ts",

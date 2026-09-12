@@ -1,3 +1,7 @@
+import {
+  OPENCODE_PERMISSION_CAPABILITY,
+  appendOpenCodePermissionBypass,
+} from '../opencode-permissions.js';
 import { DEFAULT_MODEL_OPTION } from './shared.js';
 import type { RuntimeAgentDef } from '../types.js';
 
@@ -7,8 +11,16 @@ export const mimoAgentDef = {
   bin: 'mimo',
   versionArgs: ['--version'],
   fallbackModels: [DEFAULT_MODEL_OPTION],
+  // Same config/event family as OpenCode (`eventParser: 'opencode'` below),
+  // so the same `--auto` / `--dangerously-skip-permissions` probe applies.
+  // The live mimo CLI was not available where this was written, so no flag
+  // is verified — but without this declaration there is no code path that
+  // could pass a bypass at all. Probe-gated: when neither flag appears in
+  // the advertisement, argv is unchanged.
+  ...OPENCODE_PERMISSION_CAPABILITY,
   buildArgs: (_prompt, _imagePaths, _extra, options = {}) => {
     const args = ['run', '--format', 'json'];
+    appendOpenCodePermissionBypass(args, 'mimo');
     if (options.model && options.model !== 'default') {
       args.push('--model', options.model);
     }

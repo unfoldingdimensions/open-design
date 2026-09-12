@@ -1584,6 +1584,55 @@ test('codex json stream emits command execution tool events', () => {
   ]);
 });
 
+test('codex json stream emits each tool_result once when item.completed repeats', () => {
+  // The use half was already guarded (`codexToolUses`) but every repeated
+  // `item.completed` re-emitted the result — the persisted stream and tool
+  // counters doubled while the web's last-wins Map hid it on screen.
+  // Newlines ride `String.fromCharCode(10)` so this fixture carries no
+  // backslash escapes at all.
+  const { events, handler } = collectEvents('codex');
+  const NL = String.fromCharCode(10);
+
+  const started = JSON.stringify({
+    type: 'item.started',
+    item: {
+      id: 'item-1',
+      type: 'command_execution',
+      command: 'echo hello-from-codex',
+      aggregated_output: '',
+      exit_code: null,
+      status: 'in_progress',
+    },
+  });
+  const completed = JSON.stringify({
+    type: 'item.completed',
+    item: {
+      id: 'item-1',
+      type: 'command_execution',
+      command: 'echo hello-from-codex',
+      aggregated_output: 'hello-from-codex',
+      exit_code: 0,
+      status: 'completed',
+    },
+  });
+  handler.feed(started + NL + completed + NL + completed + NL);
+
+  assert.deepEqual(events, [
+    {
+      type: 'tool_use',
+      id: 'item-1',
+      name: 'Bash',
+      input: { command: 'echo hello-from-codex' },
+    },
+    {
+      type: 'tool_result',
+      toolUseId: 'item-1',
+      content: 'hello-from-codex',
+      isError: false,
+    },
+  ]);
+});
+
 /*
  * The `file_change` fixtures below are copied verbatim out of recorded runs
  * under `.od/runs/<id>/events.jsonl`, where they were passed through as

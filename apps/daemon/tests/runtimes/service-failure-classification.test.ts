@@ -128,6 +128,24 @@ describe('classifyAgentServiceFailure', () => {
     }
   });
 
+  it('classifies bare credential-state phrases that carry no "invalid" wording', () => {
+    // Each of these fell through to AGENT_EXECUTION_FAILED (no sign-in card)
+    // because the old alternatives required "invalid", an "oauth" prefix, a
+    // "logged in" shape, or a literal "/login".
+    for (const text of [
+      'DEEPSEEK_API_KEY is not set',
+      'Error: API key not found: deepseek-official',
+      'missing api key',
+      'No credentials found for this provider',
+      'API key is required',
+      'Not signed in. Run `claude auth login`.',
+      'token expired',
+      'login required',
+    ]) {
+      expect(classifyAgentServiceFailure(text)).toBe('AGENT_AUTH_REQUIRED');
+    }
+  });
+
   it('does not treat a process exit code as an HTTP status', () => {
     for (const text of [
       'exit code 401',

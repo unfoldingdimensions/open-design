@@ -23,8 +23,13 @@ full split.
 
 ## Adding a skill
 
-1. Create `skills/<my-skill>/SKILL.md` with `name`, `description`,
-   `triggers`, and `od.mode: utility` (or `design-system`) frontmatter.
+1. Create `skills/<my-skill>/SKILL.md` with `name`, `description`, `triggers`,
+   and `od.mode` frontmatter. `od.mode` must be one of: `prototype`, `deck`,
+   `template`, `design-system`, `image`, `video`, `audio`, `utility`. Use
+   `utility` for a functional workflow with no artifact surface of its own
+   (audits, debugging recipes, library maintenance). An unrecognised value is
+   not an error at load time — the daemon warns and infers a mode from the
+   body — so a typo silently reclassifies the skill until `pnpm guard` says so.
 2. Drop any side files alongside; reference them from the body using
    the relative-from-skill-root paths the daemon advertises in the
    skill preamble.

@@ -299,8 +299,21 @@ const STATUS_CTX =
   ')[\\s:=#-]*';
 
 // Authentication / authorization: a missing, invalid, or expired credential.
+//
+// The api-key arm names the key's STATES, not just the word "invalid": a
+// missing key (`missing api key`, `DEEPSEEK_API_KEY is not set`), a rejected
+// one (`API key not found`, `API key is required`) and a bare `no
+// credentials` all arrive without any of the older alternatives matching,
+// and each fell through to AGENT_EXECUTION_FAILED with no sign-in card.
+// Likewise `not signed in`, a bare `token expired` (the `oauth` prefix was
+// mandatory), and `login required` (only `/login` with a literal slash
+// matched) each missed. The states stay tight — `login` alone is NOT matched,
+// so a healthy status line that merely mentions login cannot read as missing.
+// Key names ride an optional PREFIX_ (e.g. DEEPSEEK_API_KEY): without it the
+// leading word boundary can never hold mid-token and provider-key failures
+// miss while the bare suffix matches.
 const AGENT_AUTH_FAILURE_RE = new RegExp(
-  `(\\b(unauthor(?:ized|ised)|authenticat(?:e|ed|ion)|invalid[ _-]?(?:api[ _-]?)?key|incorrect api key|no api key|x-api-key|missing[ _-]?credentials?|not (?:authenticated|logged[ _-]?in)|please (?:sign|log)[ _-]?in|oauth token (?:has )?expired|session expired|credentials? (?:are )?(?:missing|invalid|required))\\b|\\/login\\b|${STATUS_CTX}401\\b)`,
+  `(\\b(unauthor(?:ized|ised)|authenticat(?:e|ed|ion)|invalid[ _-]?(?:api[ _-]?)?key|incorrect[ _-]?api[ _-]?key|no[ _-]?api[ _-]?keys?|no[ _-]?credentials?|x-api-key|missing[ _-]?api[ _-]?keys?|missing[ _-]?credentials?|(?:[A-Za-z0-9_]+[_-])?api[ _-]?keys?(?:[ _-]?(?:is|are))?[ _-]?(?:required|missing|invalid|not[ _-]?(?:set|found))|not (?:authenticated|logged[ _-]?in|signed[ _-]?in)|please (?:sign|log)[ _-]?in|(?:oauth[ _-]?)?token (?:has )?expired|session expired|(?:log[ _-]?in|login)[ _-]?required|credentials? (?:are )?(?:missing|invalid|required))\\b|\\/login\\b|${STATUS_CTX}401\\b)`,
   'i',
 );
 

@@ -63,7 +63,7 @@ triggers: […]
 # --- OD extensions below this line ---
 
 od:
-  mode: deck                        # prototype | deck | template | design-system | image | video | audio
+  mode: deck                        # prototype | deck | template | design-system | image | video | audio | utility
   surface: web                      # web | image | video | audio
   scenario: marketing               # gallery/filter hint
   category: presentations           # free-form lowercase filter slug
@@ -150,7 +150,9 @@ link, but that storage detail is separate from per-run staging.
 
 ## 4. Registry modes
 
-The daemon normalizes `od.mode` to one of seven values. These values classify both functional skills and design-template bundles; they are not the same thing as the six New Project tabs described in [`modes.md`](modes.md).
+The daemon normalizes `od.mode` to one of eight values. These values classify both functional skills and design-template bundles; they are not the same thing as the six New Project tabs described in [`modes.md`](modes.md).
+
+An `od.mode` the daemon does not recognize is not fatal: the loader falls back to inferring a mode from the skill body and logs a warning naming the offending value. Authoring the right value is nonetheless required, because the inferred mode is what reclassifies the skill in the gallery — `scripts/check-skill-modes.ts` fails `pnpm guard` on any unrecognized value so this cannot drift unnoticed.
 
 ### 4.1 `prototype`
 
@@ -194,6 +196,21 @@ The daemon normalizes `od.mode` to one of seven values. These values classify bo
 - **Surface:** defaults to the matching media kind unless `od.surface` overrides it.
 - **Inputs:** provider/model controls and media-specific metadata are owned by the Media UI and shared contracts.
 - **Design system:** media bundles normally opt out because prompt templates, rather than interface tokens, drive these provider-backed generations.
+
+### 4.6 `utility`
+
+- **Purpose:** classify a functional workflow that produces no artifact surface of
+  its own — repository audits, debugging recipes, library or catalog
+  maintenance, plan/scaffolding preparation, export and fidelity checks.
+- **Surface:** resolves to `web`. `utility` carries no preview or media
+  semantics and never forces a creation surface; a bundle that *does* generate
+  images, decks, or prototypes belongs in the matching mode instead.
+- **Output:** defined by the skill. A `utility` skill typically edits existing
+  files, reports findings, or drives other skills rather than emitting a new
+  artifact of its own kind.
+- **Authoring note:** this is the mode most likely to be mis-typed, because its
+  members are workflows rather than artifacts. If the skill's main deliverable is
+  an interface, a deck, or a media file, it is not `utility`.
 
 ## 5. The DESIGN.md as skill context
 

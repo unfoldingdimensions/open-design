@@ -31,7 +31,37 @@ export const SKILL_ID_ALIASES = Object.freeze({
   "taste-skill": "design-taste-frontend",
 });
 
-type SkillMode = "image" | "video" | "audio" | "deck" | "design-system" | "template" | "prototype";
+type SkillMode =
+  | "image"
+  | "video"
+  | "audio"
+  | "deck"
+  | "design-system"
+  | "template"
+  | "prototype"
+  // A functional workflow that carries no artifact surface of its own —
+  // audits, debugging recipes, library maintenance, plan preparation. It
+  // resolves to the `web` surface and never forces a media creation surface.
+  | "utility";
+
+// The authored vocabulary for `od.mode`. Exported so the loader, the daemon
+// tests, and `scripts/check-skill-modes.ts` assert one list instead of each
+// re-spelling the values and drifting apart — the drift is what let six
+// bundled skills author `utility` while the loader silently guessed a media
+// mode for them.
+export const SKILL_MODES = [
+  "image",
+  "video",
+  "audio",
+  "deck",
+  "design-system",
+  "template",
+  "prototype",
+  "utility",
+] as const satisfies readonly SkillMode[];
+
+export const SKILL_MODE_SET: ReadonlySet<string> = new Set<string>(SKILL_MODES);
+
 type SkillSurface = "web" | "image" | "video" | "audio";
 type SkillPlatform = "desktop" | "mobile" | null;
 type JsonRecord = Record<string, unknown>;
@@ -739,6 +769,12 @@ function derivePrompt(data: SkillFrontmatter): string {
   return (firstSentence || collapsed).slice(0, 320);
 }
 
+// A value the registry could not honour is reported once per process. The
+// scanner re-reads every root on each `/api/skills` call, so warning per scan
+// would drown the daemon log; one line per offending value is enough to point
+// at the file, and `scripts/check-skill-modes.ts` is what fails the build.
+const reportedUnknownModes = new Set<string>();
+
 function inferMode(body: unknown, description: unknown): SkillMode {
   const hay = `${description ?? ""}\n${body ?? ""}`.toLowerCase();
   if (/\bimage|poster|illustration|photography|图片|海报|插画/.test(hay)) return "image";
@@ -752,11 +788,26 @@ function inferMode(body: unknown, description: unknown): SkillMode {
 }
 
 function normalizeMode(value: unknown, body: unknown, description: unknown): SkillMode {
-  if (
-    value === "image" || value === "video" || value === "audio" || value === "deck" ||
-    value === "design-system" || value === "template" || value === "prototype"
-  ) return value;
-  return inferMode(body, description);
+  // No authored mode: inference is the documented zero-config path (§2.2).
+  if (typeof value !== "string" || value.trim() === "") {
+    return inferMode(body, description);
+  }
+  const candidate = value.trim().toLowerCase();
+  if (SKILL_MODE_SET.has(candidate)) return candidate as SkillMode;
+  // Authored but unrecognised. Guessing here is what let `mode: utility` — a
+  // value the authoring guide taught and six bundled skills wrote — resolve to
+  // `image` off incidental body vocabulary with nothing said. Stay tolerant,
+  // but never silently.
+  const fallback = inferMode(body, description);
+  const key = `${candidate}\u0000${description ?? ""}`;
+  if (!reportedUnknownModes.has(key)) {
+    reportedUnknownModes.add(key);
+    console.warn(
+      `[skills] unknown od.mode ${JSON.stringify(value)} — falling back to "${fallback}". ` +
+        `Valid modes: ${SKILL_MODES.join(", ")}.`,
+    );
+  }
+  return fallback;
 }
 
 const KNOWN_SURFACES = new Set<SkillSurface>(["web", "image", "video", "audio"]);

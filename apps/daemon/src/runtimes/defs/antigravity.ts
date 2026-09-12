@@ -9,7 +9,6 @@ import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 
 import { DEFAULT_MODEL_OPTION } from './shared.js';
-import { agentCapabilities } from '../capabilities.js';
 import type { RuntimeAgentDef } from '../types.js';
 
 const ANTIGRAVITY_SKIP_PERMISSIONS_FLAG = '--dangerously-skip-permissions';
@@ -241,10 +240,15 @@ export const antigravityAgentDef = {
     if (runtimeContext.agentLogFilePath) {
       args.push('--log-file', runtimeContext.agentLogFilePath);
     }
-    // Daemon-managed print-mode runs have no interactive approval channel.
-    if (agentCapabilities.get('antigravity')?.skipPermissions) {
-      args.push(ANTIGRAVITY_SKIP_PERMISSIONS_FLAG);
-    }
+    // Daemon-managed print-mode runs have no interactive approval channel
+    // (`agy -p` cannot prompt), so the bypass is sent unconditionally —
+    // matching claude/codebuddy's unconditional `bypassPermissions`. A help
+    // reword, a probe timeout, or a detection scope change must not silently
+    // drop it back into skipped/denied tools; a build without the flag fails
+    // loudly at spawn instead. The `capabilityFlags` declaration above is
+    // kept so detection still records what the installed build advertises
+    // for diagnostics.
+    args.push(ANTIGRAVITY_SKIP_PERMISSIONS_FLAG);
     args.push('-p', prompt);
     return args;
   },

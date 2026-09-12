@@ -191,6 +191,102 @@ function writeSkill(
 }
 
 describe('listSkills', () => {
+  it('resolves od.mode: utility as a first-class mode instead of coercing it', async () => {
+    const root = fresh();
+    try {
+      const dir = path.join(root, 'nightly-audit');
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(
+        path.join(dir, 'SKILL.md'),
+        [
+          '---',
+          'name: nightly-audit',
+          'description: "Audit a component tree for design debt and report findings."',
+          'od:',
+          '  mode: utility',
+          '---',
+          '',
+          '# Nightly audit',
+          '',
+        ].join('\n'),
+      );
+
+      const skills = await listSkills(root);
+      const skill = skills.find((entry: { id: string }) => entry.id === 'nightly-audit');
+      if (!skill) throw new Error('nightly-audit skill not found');
+
+      // Regression anchor: `utility` used to be absent from the mode vocabulary,
+      // so this declaration silently resolved to `image` off the word "component"
+      // / "design" in the description and landed the skill on the Media rail.
+      expect(skill.mode).toBe('utility');
+      // `utility` carries no artifact surface of its own.
+      expect(skill.surface).toBe('web');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('still infers a mode when od.mode is absent', async () => {
+    const root = fresh();
+    try {
+      const dir = path.join(root, 'poster-maker');
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(
+        path.join(dir, 'SKILL.md'),
+        [
+          '---',
+          'name: poster-maker',
+          'description: "Generate a poster illustration."',
+          '---',
+          '',
+          '# Poster maker',
+          '',
+        ].join('\n'),
+      );
+
+      const skills = await listSkills(root);
+      const skill = skills.find((entry: { id: string }) => entry.id === 'poster-maker');
+      if (!skill) throw new Error('poster-maker skill not found');
+
+      // Absent mode stays inference-driven: §2.2 sanctions the zero-config path.
+      expect(skill.mode).toBe('image');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('falls back to inference for an unrecognized od.mode without dropping the skill', async () => {
+    const root = fresh();
+    try {
+      const dir = path.join(root, 'mistyped');
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(
+        path.join(dir, 'SKILL.md'),
+        [
+          '---',
+          'name: mistyped',
+          'description: "Generate a poster illustration."',
+          'od:',
+          '  mode: poster',
+          '---',
+          '',
+          '# Mistyped mode',
+          '',
+        ].join('\n'),
+      );
+
+      const skills = await listSkills(root);
+      const skill = skills.find((entry: { id: string }) => entry.id === 'mistyped');
+      if (!skill) throw new Error('mistyped skill not found');
+
+      // Tolerance is deliberate for workspace skills, but it is no longer
+      // silent: `normalizeMode` warns, and the guard fails bundled manifests.
+      expect(skill.mode).toBe('image');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   it('surfaces optional localized display metadata from SKILL.md frontmatter', async () => {
     const root = fresh();
     try {

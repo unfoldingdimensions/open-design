@@ -14,6 +14,11 @@ type ParserState = {
   openCodeToolUses: Set<string>;
   openCodeToolResults: Set<string>;
   codexToolUses: Set<string>;
+  // Mirrors the opencode both-halves guard above: the use half is guarded by
+  // `codexToolUses`, and without this the result half re-emits on every
+  // repeated `item.completed`. The web's last-wins Map absorbs the duplicate
+  // visually, but the persisted stream and tool counters would double.
+  codexToolResults: Set<string>;
   codexErrorEmitted: boolean;
   codexPreviousEventWasAgentMessage: boolean;
   codexLastAgentMessageEndedWithNewline: boolean;
@@ -1329,12 +1334,15 @@ function handleCodexEvent(obj: unknown, onEvent: StreamEventHandler, state: Pars
         });
       }
       const content = stringifyContent(item.aggregated_output ?? '');
-      onEvent({
-        type: 'tool_result',
-        toolUseId: item.id,
-        content,
-        isError: typeof item.exit_code === 'number' ? item.exit_code !== 0 : item.status === 'failed',
-      });
+      if (!state.codexToolResults.has(item.id)) {
+        state.codexToolResults.add(item.id);
+        onEvent({
+          type: 'tool_result',
+          toolUseId: item.id,
+          content,
+          isError: typeof item.exit_code === 'number' ? item.exit_code !== 0 : item.status === 'failed',
+        });
+      }
       const connectorToolError = connectorToolSelectionErrorMessage(content);
       if (connectorToolError && !state.codexErrorEmitted) {
         state.codexErrorEmitted = true;
@@ -1355,6 +1363,8 @@ function handleCodexEvent(obj: unknown, onEvent: StreamEventHandler, state: Pars
       // signal on the item, on both wires.
       const isError = item.status === 'failed';
       for (const change of completedFileChanges) {
+        if (state.codexToolResults.has(change.id)) continue;
+        state.codexToolResults.add(change.id);
         onEvent({ type: 'tool_result', toolUseId: change.id, content: '', isError });
       }
       return true;
@@ -1365,7 +1375,10 @@ function handleCodexEvent(obj: unknown, onEvent: StreamEventHandler, state: Pars
       state.codexLastAgentMessageEndedWithNewline = false;
       emitCodexMcpToolUse(item, item.id, completedMcpToolName, onEvent, state);
       const { content, isError } = codexMcpToolResult(item);
-      onEvent({ type: 'tool_result', toolUseId: item.id, content, isError });
+      if (!state.codexToolResults.has(item.id)) {
+        state.codexToolResults.add(item.id);
+        onEvent({ type: 'tool_result', toolUseId: item.id, content, isError });
+      }
       return true;
     }
     const completedSearchQuery = codexWebSearchQuery(item);
@@ -1392,7 +1405,10 @@ function handleCodexEvent(obj: unknown, onEvent: StreamEventHandler, state: Pars
       // `codex-app-server/normalize.ts` drops it on the way in regardless — so
       // a hit count here would be invented, not read. Measure the wire before
       // changing this; do not infer a count from the type alone.
-      onEvent({ type: 'tool_result', toolUseId: item.id, content: '', isError: false });
+      if (!state.codexToolResults.has(item.id)) {
+        state.codexToolResults.add(item.id);
+        onEvent({ type: 'tool_result', toolUseId: item.id, content: '', isError: false });
+      }
       return true;
     }
   }
@@ -1440,6 +1456,7 @@ function createParserState(): ParserState {
     openCodeToolUses: new Set<string>(),
     openCodeToolResults: new Set<string>(),
     codexToolUses: new Set<string>(),
+    codexToolResults: new Set<string>(),
     codexErrorEmitted: false,
     codexPreviousEventWasAgentMessage: false,
     codexLastAgentMessageEndedWithNewline: false,

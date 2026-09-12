@@ -18,7 +18,7 @@ triggers:
   - "extract the logo"
   - "build a brand kit"
 od:
-  mode: design
+  mode: design-system
   surface: web
   scenario: validation
   design_system:

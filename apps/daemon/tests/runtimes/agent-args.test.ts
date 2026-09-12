@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'vitest';
 import {
-  AGENT_DEFS, aider, antigravity, assert, claude, codex, commandCode, copilot, cursorAgent, deepseek, devin, detectAgents, grokBuild, join, kilo, kimi, kiro, mkdtempSync, opencode, pi, qoder, qwen, rmSync, spawnEnvForAgent, tmpdir, vibe, writeFileSync, zcode, chmodSync,
+  AGENT_DEFS, aider, antigravity, assert, claude, codex, commandCode, copilot, cursorAgent, deepseek, devin, detectAgents, grokBuild, join, kilo, kimi, kiro, mimo, mkdtempSync, opencode, pi, qoder, qwen, rmSync, spawnEnvForAgent, tmpdir, vibe, writeFileSync, zcode, chmodSync,
 } from './helpers/test-helpers.js';
 import { parseCommandCodeModels } from '../../src/runtimes/defs/command-code.js';
 import { writeAntigravityModelSelection } from '../../src/runtimes/defs/antigravity.js';
@@ -89,7 +89,10 @@ test('opencode args pass model-supported variants without changing the default a
     (model) => model.id === 'openai/gpt-5.6-sol',
   )?.reasoningOptions, undefined);
   assert.deepEqual(opencode.helpArgs, ['run', '--help']);
-  assert.deepEqual(opencode.capabilityFlags?.['--dangerously-skip-permissions'], 'skipPermissions');
+  assert.deepEqual(opencode.capabilityFlags, {
+    '--auto': 'autoApprove',
+    '--dangerously-skip-permissions': 'skipPermissions',
+  });
   assert.equal(baseArgs.includes('-'), false);
   assert.equal(baseArgs.includes(prompt), false);
   assert.deepEqual(baseArgs, [
@@ -224,7 +227,22 @@ test('opencode parses live verbose variant metadata and only forwards variants a
   }
 });
 
-test('opencode passes --dangerously-skip-permissions when the help probe finds it', () => {
+test('opencode prefers --auto when the help probe finds it (1.18.x advertises --auto, not --dangerously-skip-permissions)', () => {
+  agentCapabilities.set('opencode', { autoApprove: true });
+  try {
+    const args = opencode.buildArgs('design a dashboard', [], [], {});
+    assert.deepEqual(args, [
+      'run',
+      '--format',
+      'json',
+      '--auto',
+    ]);
+  } finally {
+    agentCapabilities.delete('opencode');
+  }
+});
+
+test('opencode falls back to --dangerously-skip-permissions on older builds', () => {
   agentCapabilities.set('opencode', { skipPermissions: true });
   try {
     const args = opencode.buildArgs('design a dashboard', [], [], {});
@@ -236,6 +254,46 @@ test('opencode passes --dangerously-skip-permissions when the help probe finds i
     ]);
   } finally {
     agentCapabilities.delete('opencode');
+  }
+});
+
+test('opencode --auto wins when a build advertises both flags', () => {
+  agentCapabilities.set('opencode', { autoApprove: true, skipPermissions: true });
+  try {
+    const args = opencode.buildArgs('design a dashboard', [], [], {});
+    assert.deepEqual(args, [
+      'run',
+      '--format',
+      'json',
+      '--auto',
+    ]);
+  } finally {
+    agentCapabilities.delete('opencode');
+  }
+});
+
+test('mimo probes the same approval bypass as opencode (same event family)', () => {
+  assert.deepEqual(mimo.helpArgs, ['run', '--help']);
+  assert.deepEqual(mimo.capabilityFlags, {
+    '--auto': 'autoApprove',
+    '--dangerously-skip-permissions': 'skipPermissions',
+  });
+  agentCapabilities.delete('mimo');
+  assert.deepEqual(mimo.buildArgs('design a dashboard', [], [], {}), [
+    'run',
+    '--format',
+    'json',
+  ]);
+  agentCapabilities.set('mimo', { autoApprove: true });
+  try {
+    assert.deepEqual(mimo.buildArgs('design a dashboard', [], [], {}), [
+      'run',
+      '--format',
+      'json',
+      '--auto',
+    ]);
+  } finally {
+    agentCapabilities.delete('mimo');
   }
 });
 
@@ -738,7 +796,11 @@ test('antigravity passes prompt via -p argument (print mode)', () => {
   assert.equal(antigravity.promptViaStdin, false);
 
   const args = antigravity.buildArgs('write hello world', [], [], {}, {});
-  assert.deepEqual(args, ['-p', 'write hello world']);
+  assert.deepEqual(args, [
+    '--dangerously-skip-permissions',
+    '-p',
+    'write hello world',
+  ]);
 
   const argsWithLog = antigravity.buildArgs('write hello world', [], [], {}, {
     agentLogFilePath: '/tmp/od-agy-test.log',
@@ -746,6 +808,7 @@ test('antigravity passes prompt via -p argument (print mode)', () => {
   assert.deepEqual(argsWithLog, [
     '--log-file',
     '/tmp/od-agy-test.log',
+    '--dangerously-skip-permissions',
     '-p',
     'write hello world',
   ]);
@@ -766,6 +829,7 @@ test('antigravity passes prompt via -p argument (print mode)', () => {
     assert.deepEqual(withModel, [
       '--log-file',
       '/tmp/od-agy-test.log',
+      '--dangerously-skip-permissions',
       '-p',
       'hi',
     ]);
@@ -784,13 +848,21 @@ test('antigravity passes prompt via -p argument (print mode)', () => {
   const followUp = antigravity.buildArgs('next message', [], [], {}, {
     hasPriorAssistantTurn: true,
   });
-  assert.deepEqual(followUp, ['-p', 'next message']);
+  assert.deepEqual(followUp, [
+    '--dangerously-skip-permissions',
+    '-p',
+    'next message',
+  ]);
   assert.equal(followUp.includes('-c'), false);
 
   const firstTurn = antigravity.buildArgs('first', [], [], {}, {
     hasPriorAssistantTurn: false,
   });
-  assert.deepEqual(firstTurn, ['-p', 'first']);
+  assert.deepEqual(firstTurn, [
+    '--dangerously-skip-permissions',
+    '-p',
+    'first',
+  ]);
   assert.equal(antigravity.resumesSessionViaCli, undefined);
 
   assert.equal(antigravity.maxPromptArgBytes, undefined);
@@ -822,15 +894,24 @@ test('antigravity passes prompt via -p argument (print mode)', () => {
   assert.equal(antigravity.supportsCustomModel, false);
 });
 
-test('antigravity gates non-interactive permission bypass on the detected CLI capability', () => {
+test('antigravity always passes the non-interactive permission bypass (agy -p cannot prompt)', () => {
+  // Unconditional by design — matching claude/codebuddy's unconditional
+  // bypassPermissions. A help reword, a probe timeout, or a detection scope
+  // change must not silently drop it back into skipped/denied tools; a build
+  // without the flag fails loudly at spawn instead. Detection still records
+  // the advertisement for diagnostics.
   agentCapabilities.delete('antigravity');
   assert.deepEqual(antigravity.helpArgs, ['--help']);
   assert.deepEqual(antigravity.capabilityFlags, {
     '--dangerously-skip-permissions': 'skipPermissions',
   });
-  assert.deepEqual(antigravity.buildArgs('', [], [], {}), ['-p', '']);
+  assert.deepEqual(antigravity.buildArgs('', [], [], {}), [
+    '--dangerously-skip-permissions',
+    '-p',
+    '',
+  ]);
 
-  agentCapabilities.set('antigravity', { skipPermissions: true });
+  agentCapabilities.set('antigravity', { skipPermissions: false });
   try {
     assert.deepEqual(antigravity.buildArgs('', [], [], {}), [
       '--dangerously-skip-permissions',
@@ -842,34 +923,14 @@ test('antigravity gates non-interactive permission bypass on the detected CLI ca
   }
 });
 
-test('antigravity keeps log argv order when permission bypass is unavailable', () => {
-  agentCapabilities.set('antigravity', { skipPermissions: false });
+test('antigravity keeps log argv order with the unconditional permission bypass', () => {
+  agentCapabilities.delete('antigravity');
   try {
     assert.deepEqual(
       antigravity.buildArgs('', [], [], {}, {
         agentLogFilePath: '/tmp/od-agy-test.log',
       }),
-      ['--log-file', '/tmp/od-agy-test.log', '-p', ''],
-    );
-  } finally {
-    agentCapabilities.delete('antigravity');
-  }
-});
-
-test('antigravity places permission bypass after log args', () => {
-  agentCapabilities.set('antigravity', { skipPermissions: true });
-  try {
-    assert.deepEqual(
-      antigravity.buildArgs('', [], [], {}, {
-        agentLogFilePath: '/tmp/od-agy-test.log',
-      }),
-      [
-        '--log-file',
-        '/tmp/od-agy-test.log',
-        '--dangerously-skip-permissions',
-        '-p',
-        '',
-      ],
+      ['--log-file', '/tmp/od-agy-test.log', '--dangerously-skip-permissions', '-p', ''],
     );
   } finally {
     agentCapabilities.delete('antigravity');
