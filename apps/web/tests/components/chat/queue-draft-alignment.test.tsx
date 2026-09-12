@@ -81,7 +81,7 @@ const DRAFT = {
   textSoft: '#848484', //        --text-soft   components.css:2911 `.ix`、:2930 `.qops button`
   textFaint: '#bdbdbd', //       --text-faint  components.css:2907 `.grip`
   fillSecondary: 'rgba(0, 0, 0, 0.06)', // --bg-fill-secondary  :2935
-  mono: '"JiduMono Pro", ui-monospace, "SFMono-Regular", monospace', // --mono  :2911
+  mono: 'ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace', // --mono:系统栈,有意偏离稿子 :2911 的 JiduMono Pro
   tMini: '12px', //              --t-mini = --font-size-12   :2896
   tCap: '12px', //               --t-cap  = --font-size-12   :2911
   lhRow: '1.5', //               --lh-row                    :2926

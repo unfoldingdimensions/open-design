@@ -194,11 +194,10 @@
    * (对应稿子的 `.fold .body { line-height: var(--lh-body) }`),
    * 组件名 / 卡片标题用 `--chat-t-lead`,阶段标题用 `--chat-t-head`。
    *
-   * ⚠ 和这条绑死的还有一处:`styles/base.css` 里 `JiduMono Pro` 的 `@font-face`
-   * 描述符。那个字体只有一个静态字重文件(`JiduMonoPro-Regular.otf`),稿子把
-   * **同一份字节**的描述符写成 `500`。基线到 500 之后描述符也必须是 500,否则
-   * 耗时 / 文件路径 / Hex / 改动量这些走 mono 的位置就是「请求 500、可用面只有
-   * 400」,各浏览器的折算行为并不一致。两处只改一半就是坏的。
+   * ⚠ 和这条绑死的曾经还有一处:`styles/base.css` 里已删除的 mono `@font-face`
+   * 描述符。那个商业字体只有一个静态字重文件,稿子把**同一份字节**的描述符写成
+   * `500` 以匹配这条基线。字体删除后 mono 走系统栈,描述符一致性由用户平台决定,
+   * 不再由我们声明——两处绑定的历史见 `typography-baseline.test.ts` 的注释。
    */
   font-weight: 500;
   font-size: var(--chat-t-body);

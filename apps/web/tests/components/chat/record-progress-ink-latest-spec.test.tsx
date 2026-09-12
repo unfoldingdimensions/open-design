@@ -81,8 +81,8 @@ const DESIGN_RED = '#f04142';
 const DESIGN_BODY_SIZE = '13px';
 /** `--t-cap` / `--t-mini` → `--font-size-12` */
 const DESIGN_CAP_SIZE = '12px';
-/** 稿子 `--mono`(稿子 `tokens.css:156`),等宽那几格全走它 */
-const DESIGN_MONO = '"JiduMono Pro", ui-monospace, "SFMono-Regular", monospace';
+/** 产品 `--mono`(系统等宽栈;稿子 `tokens.css:156` 的 JiduMono Pro 已随商业字体删除而偏离),等宽那几格全走它 */
+const DESIGN_MONO = 'ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace';
 
 /** 掉头之前落在这几档 —— 反向锚,用来确认「量尺真的看得见这处偏差」 */
 const BEFORE = {

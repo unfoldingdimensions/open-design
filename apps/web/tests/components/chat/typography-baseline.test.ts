@@ -23,13 +23,18 @@
  * 行高那一条早已按同一个理由写在那里。
  * 「全站 body 没被顺手推过去」由本文件的反向守卫钉住。
  *
- * ## 等宽字体的描述符跟着一起走
+ * ## 等宽字体不再有捆绑面,描述符绑定随之解除
  *
- * `JiduMono Pro` 只有一个静态字重文件(`JiduMonoPro-Regular.otf`)。稿子把**同一份
- * 字节**(md5 `207e55ed70d71a2deb9c6516f75c2d4a`,已核)的 `@font-face` 描述符写成
- * `font-weight: 500`,我们写的是 `400`。基线一到 500,耗时 / 文件路径 / Hex /
- * 改动量这些走 mono 的位置就会**请求 500 而可用面只有 400**,各浏览器的折算
- * (回退取面 vs 合成加粗)并不一致。所以描述符必须和基线同时改,不能只做一半。
+ * 旧状态:`JiduMono Pro` 只有一个静态字重文件(`JiduMonoPro-Regular.otf`,
+ * md5 `207e55ed70d71a2deb9c6516f75c2d4a`)。稿子把**同一份字节**的 `@font-face`
+ * 描述符写成 `font-weight: 500`,我们一度写的是 `400`。基线到 500 后,耗时 /
+ * 文件路径 / Hex / 改动量这些走 mono 的位置会**请求 500 而可用面只有 400**,
+ * 各浏览器的折算(回退取面 vs 合成加粗)并不一致 —— 所以描述符必须和基线同时改。
+ *
+ * 新状态:该商业字体(CoType Foundry,不可再分发)已删除,`base.css` 里不再声明
+ * 任何 mono 面,`--mono` 改为纯系统等宽栈。描述符一致性改由用户平台决定,
+ * 不再由我们声明,旧的「两处同改」绑定也随之解除,不是被遗忘。
+ * 剩下的不变量是语义接缝:对齐位置只消费 `--mono` 变量,不点名具体字族。
  *
  * ## 尺子:jsdom 里怎么量「计算值」
  *
@@ -239,27 +244,37 @@ describe('chat 根的排版基线', () => {
   });
 });
 
-describe('等宽字体的 @font-face 描述符跟基线走', () => {
-  const monoFace = () => {
-    const face = decomment(BASE_CSS).match(/@font-face\s*\{[^}]*JiduMono Pro[^}]*\}/);
-    expect(face, 'base.css 里找不到 JiduMono Pro 的 @font-face').not.toBeNull();
-    return face![0];
-  };
+describe('mono 的语义接缝:无捆绑面,系统栈,变量消费', () => {
+  const TOKENS_CSS = readFileSync(resolve(SRC, 'styles/tokens.css'), 'utf-8');
+  const MEMORY_CSS = readFileSync(resolve(SRC, 'styles/viewer/memory.css'), 'utf-8');
 
-  it('描述符写的是 500,和稿子一致', () => {
-    expect(monoFace()).toMatch(/font-weight:\s*500\s*;/);
+  it('base.css 不再声明 JiduMono Pro 的 @font-face', () => {
+    const face = decomment(BASE_CSS).match(/@font-face\s*\{[^}]*JiduMono Pro[^}]*\}/);
+    expect(face, 'JiduMono Pro 的 @font-face 回来了?商业字体不可再分发').toBeNull();
   });
 
-  it('和 chat 根的基线字重是同一个数', () => {
-    const baseline = decomment(CHAT_ROOT_CSS).match(/font-weight:\s*(\d+)\s*;/);
-    expect(baseline, '接缝上没有基线字重').not.toBeNull();
-    const descriptor = monoFace().match(/font-weight:\s*(\d+)\s*;/);
-    expect(descriptor).not.toBeNull();
-    expect(
-      descriptor![1],
-      'mono 只有一个静态字重文件。描述符和基线对不上,就会出现「请求 500、' +
-        '可用面只有 400」——各浏览器的折算行为不一致(有的取面,有的合成加粗)',
-    ).toBe(baseline![1]);
+  it('--mono 是纯系统等宽栈,不点名任何具体字族', () => {
+    const mono = decomment(TOKENS_CSS).match(/--mono:\s*([^;]+);/);
+    expect(mono, 'tokens.css 里找不到 --mono').not.toBeNull();
+    const value = mono![1]!;
+    expect(value, '--mono 里仍有点名的 JiduMono').not.toMatch(/JiduMono/i);
+    // 有意不指向 Albert Sans:它是比例字体(无 tabular figures),放进 --mono
+    // 会让所有对齐位置失去等宽回退。哪天要换,那是一行 token 的决定。
+    expect(value, '--mono 不能指向比例字体的 Albert Sans').not.toMatch(/Albert Sans/i);
+    for (const anchor of ['ui-monospace', 'monospace']) {
+      expect(value, `--mono 丢了系统回退 ${anchor}`).toContain(anchor);
+    }
+  });
+
+  it('对齐位置消费 --mono 变量,不点名具体 mono 字族', () => {
+    for (const [name, css] of [
+      ['tokens.css', TOKENS_CSS],
+      ['memory.css', MEMORY_CSS],
+    ] as const) {
+      expect(css, `${name} 里仍有点名的 JiduMono`).not.toMatch(/JiduMono/i);
+    }
+    const fallbacks = decomment(MEMORY_CSS).match(/font-family:\s*var\(--mono[^;]*;/g) ?? [];
+    expect(fallbacks, 'memory.css 里没有消费 --mono 的位置?接缝被绕过了').not.toHaveLength(0);
   });
 });
 

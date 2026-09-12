@@ -2847,7 +2847,7 @@ const FONTS_MISSING_MARK = 'od-fonts-missing';
 function fontsMissingBanner(): string {
   return `<p id="${FONTS_MISSING_MARK}" class="fontwarn">⚠️ <b>这份页面还没上字体</b> ——`
     + ` 现在量出来的行高 / 文本宽度 / 折行位置 / 卡片高度都是回退面 <code>PingFang SC</code> 的,`
-    + ` 不是产品真实的 <code>Albert Sans</code> / <code>JiduMono Pro</code>,`
+    + ` 不是产品真实的 <code>Albert Sans</code> / <code>系统等宽栈(--mono)</code>,`
     + ` 而稿子那一侧是自带内联字体的,比出来的差异会整批带偏。<br>`
     + ` 先跑 <code>node docs/design/chat-mirror/inline-fonts.mjs</code>(再跑`
     + ` <code>check-fonts.mjs</code> 确认退出码 0),然后再量、再截图、再下结论。</p>`;

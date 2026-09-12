@@ -23,12 +23,14 @@ bundled license directory below stops being named here.
   files if they are redistributed on their own; no standalone OFL text file is
   currently bundled in this repository (see
   `docs/plans/captdesign-rebrand/attribution-inventory.md`).
-- **JiduMono Pro (CoType Foundry) is not licensed for redistribution.**
-  `apps/web/public/fonts/JiduMonoPro-Regular.otf` is a commercial CoType
-  Foundry face (Copyright (c) 2020 CoType Foundry. All Rights Reserved) that is
-  still present in the working tree and is scheduled for removal (workstream
-  WS2). It must not ship in any CaptDesign distribution. The guard check fails
-  while the file exists, so its removal cannot regress silently.
+- **JiduMono Pro (CoType Foundry) was removed and must stay removed.**
+  `apps/web/public/fonts/JiduMonoPro-Regular.otf` was a commercial CoType
+  Foundry face (Copyright (c) 2020 CoType Foundry. All Rights Reserved) with
+  no redistribution license; it was deleted (workstream WS2, md5
+  `207e55ed70d71a2deb9c6516f75c2d4a`) and must not ship in any CaptDesign
+  distribution. The guard check fails if the file reappears, and
+  `apps/web/tests/styles/bundled-fonts.test.ts` fences its name-table string
+  and source references, so its return cannot regress silently.
 
 ## Icons
 

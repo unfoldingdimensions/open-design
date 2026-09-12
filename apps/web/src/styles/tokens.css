@@ -169,7 +169,7 @@
 
   --serif: "Albert Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
   --sans: "Albert Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --mono: "JiduMono Pro", ui-monospace, "SFMono-Regular", monospace;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   /* Chat prose scale: body 13, headings 14, top-level emphasis 16 — the
      whole message module stays inside the 12–16px band. */

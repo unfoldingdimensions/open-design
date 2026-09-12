@@ -805,7 +805,7 @@
   min-width: 0;
   overflow: hidden;
   color: var(--manual-edit-field-text);
-  font-family: var(--mono, "JiduMono Pro", ui-monospace, monospace);
+  font-family: var(--mono, ui-monospace, monospace);
   font-size: var(--font-size-12, 12px);
   font-variant-numeric: tabular-nums;
   line-height: 125%;
@@ -895,7 +895,7 @@
   font-weight: 600;
 }
 .manual-edit-search-result strong {
-  font-family: var(--mono, "JiduMono Pro", ui-monospace, monospace);
+  font-family: var(--mono, ui-monospace, monospace);
   font-variant-numeric: tabular-nums;
 }
 .manual-edit-token-row em,

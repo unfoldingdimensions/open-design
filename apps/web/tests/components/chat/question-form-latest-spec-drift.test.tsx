@@ -135,8 +135,8 @@ const TEXT_SOFT = '#848484';
 const BRAND_TEXT = '#0d5400';
 /** `--sans`(稿子 tokens.css:155);jsdom 把逗号后的空格吃掉,比较前统一归一。 */
 const SANS = '"Albert Sans", "PingFang SC", "Microsoft YaHei", sans-serif';
-/** `--mono`(稿子 tokens.css:156)。 */
-const MONO = '"JiduMono Pro", ui-monospace, "SFMono-Regular", monospace';
+/** `--mono`:产品现为系统等宽栈 —— 商业字体删除后有意偏离稿子 tokens.css:156 的 `JiduMono Pro`。 */
+const MONO = 'ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace';
 const tidy = (v: string): string => v.replace(/\s*,\s*/g, ', ').trim();
 
 function mount(form: QuestionForm, over: Record<string, unknown> = {}): HTMLElement {
