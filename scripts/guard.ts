@@ -22,6 +22,7 @@ import {
 } from "./check-tokens-fixture-sync.ts";
 import { checkCraftReferences } from "./lint-craft-references.ts";
 import { checkSkillModes } from "./check-skill-modes.ts";
+import { checkAttributionNotices } from "./check-attribution-notices.ts";
 import { checkWhatsNewDocument } from "./check-whats-new-document.ts";
 import { checkWhatsNewPublishWorkflow } from "./check-whats-new-publish-workflow.ts";
 import { collectCssHardcodedColorMatches, cssWideAndSpecialColorKeywords, realNamedColors } from "./style-policy.ts";
@@ -1536,6 +1537,7 @@ const checks: GuardCheck[] = [
   { name: "style policy", run: checkStylePolicy },
   { name: "craft references", run: checkCraftReferences },
   { name: "skill modes", run: checkSkillModes },
+  { name: "attribution notices", run: checkAttributionNotices },
   { name: "what's new document", run: ({ repoRoot: root }) => checkWhatsNewDocument(root) },
   { name: "what's new publish workflow", run: ({ repoRoot: root }) => checkWhatsNewPublishWorkflow(root) },
   { name: "HTML plugin preview contracts", run: ({ repoRoot: root }) => checkHtmlPluginPreviewContracts(root) },
