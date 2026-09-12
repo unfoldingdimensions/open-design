@@ -103,3 +103,6 @@ deploy/agent-bins/
 # Python bytecode from workflow helper self-checks / local compile.
 __pycache__/
 *.py[cod]
+
+# CaptDesign rebrand baseline scratch (WS0) — local measurement output, never commit.
+.captdesign-rebrand/
