@@ -18,49 +18,49 @@ const execFileAsync = promisify(execFile);
 describe("resolveWinInstallIdentity", () => {
   it("keeps the default namespace on the canonical Windows display name", () => {
     expect(resolveWinInstallIdentity({ namespace: "default" })).toMatchObject({
-      displayName: "Open Design",
-      shortcutName: "Open Design.lnk",
-      uninstallerName: "Uninstall Open Design.exe",
+      displayName: "CapyDesign",
+      shortcutName: "CapyDesign.lnk",
+      uninstallerName: "Uninstall CapyDesign.exe",
     });
   });
 
   it("uses the canonical Windows display name for stable release namespaces", () => {
     expect(resolveWinInstallIdentity({ namespace: "release-stable-win" })).toMatchObject({
-      appPathsKey: "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\Open Design.exe",
-      displayName: "Open Design",
-      registryKey: "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Open Design-release-stable-win",
-      shortcutName: "Open Design.lnk",
-      uninstallerName: "Uninstall Open Design.exe",
+      appPathsKey: "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\CapyDesign.exe",
+      displayName: "CapyDesign",
+      registryKey: "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\CapyDesign-release-stable-win",
+      shortcutName: "CapyDesign.lnk",
+      uninstallerName: "Uninstall CapyDesign.exe",
     });
   });
 
   it("uses first-class beta display identity for beta release namespaces", () => {
     expect(resolveWinInstallIdentity({ namespace: "release-beta-win" })).toMatchObject({
-      appPathsKey: "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\Open Design Beta.exe",
-      displayName: "Open Design Beta",
-      registryKey: "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Open Design-release-beta-win",
-      shortcutName: "Open Design Beta.lnk",
-      uninstallerName: "Uninstall Open Design Beta.exe",
+      appPathsKey: "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\CapyDesign Beta.exe",
+      displayName: "CapyDesign Beta",
+      registryKey: "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\CapyDesign-release-beta-win",
+      shortcutName: "CapyDesign Beta.lnk",
+      uninstallerName: "Uninstall CapyDesign Beta.exe",
     });
   });
 
   it("keeps non-release beta-like namespaces isolated from the real beta channel identity", () => {
     expect(resolveWinInstallIdentity({ namespace: "beta-local-flow" })).toMatchObject({
-      appPathsKey: "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\Open Design beta-local-flow.exe",
-      displayName: "Open Design beta-local-flow",
-      registryKey: "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Open Design-beta-local-flow",
-      shortcutName: "Open Design beta-local-flow.lnk",
-      uninstallerName: "Uninstall Open Design beta-local-flow.exe",
+      appPathsKey: "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\CapyDesign beta-local-flow.exe",
+      displayName: "CapyDesign beta-local-flow",
+      registryKey: "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\CapyDesign-beta-local-flow",
+      shortcutName: "CapyDesign beta-local-flow.lnk",
+      uninstallerName: "Uninstall CapyDesign beta-local-flow.exe",
     });
   });
 
   it("uses first-class preview display identity for preview release namespaces", () => {
     expect(resolveWinInstallIdentity({ namespace: "release-preview-win" })).toMatchObject({
-      appPathsKey: "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\Open Design Preview.exe",
-      displayName: "Open Design Preview",
-      registryKey: "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Open Design-release-preview-win",
-      shortcutName: "Open Design Preview.lnk",
-      uninstallerName: "Uninstall Open Design Preview.exe",
+      appPathsKey: "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\CapyDesign Preview.exe",
+      displayName: "CapyDesign Preview",
+      registryKey: "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\CapyDesign-release-preview-win",
+      shortcutName: "CapyDesign Preview.lnk",
+      uninstallerName: "Uninstall CapyDesign Preview.exe",
     });
   });
 
@@ -69,15 +69,15 @@ describe("resolveWinInstallIdentity", () => {
       appVersion: "0.8.0-prerelease.2",
       namespace: "release-stable-win",
     })).toMatchObject({
-      appPathsKey: "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\Open Design Prerelease.exe",
-      displayName: "Open Design Prerelease",
-      registryKey: "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Open Design-release-stable-win",
-      shortcutName: "Open Design Prerelease.lnk",
-      uninstallerName: "Uninstall Open Design Prerelease.exe",
+      appPathsKey: "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\CapyDesign Prerelease.exe",
+      displayName: "CapyDesign Prerelease",
+      registryKey: "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\CapyDesign-release-stable-win",
+      shortcutName: "CapyDesign Prerelease.lnk",
+      uninstallerName: "Uninstall CapyDesign Prerelease.exe",
     });
     expect(resolveWinInstallIdentity({ namespace: "release-prerelease-win" })).toMatchObject({
-      displayName: "Open Design Prerelease",
-      shortcutName: "Open Design Prerelease.lnk",
+      displayName: "CapyDesign Prerelease",
+      shortcutName: "CapyDesign Prerelease.lnk",
     });
   });
 
@@ -88,11 +88,11 @@ describe("resolveWinInstallIdentity", () => {
   });
 
   it("emits a valid NSIS command literal for executable paths containing spaces", () => {
-    expect(createNsisQuotedCommandLiteral(["$INSTDIR\\Open Design.exe", "%1"])).toBe(
-      `'"$INSTDIR\\Open Design.exe" "%1"'`,
+    expect(createNsisQuotedCommandLiteral(["$INSTDIR\\CapyDesign.exe", "%1"])).toBe(
+      `'"$INSTDIR\\CapyDesign.exe" "%1"'`,
     );
-    expect(createNsisQuotedCommandLiteral(["$INSTDIR\\Open Design.exe"])).toBe(
-      `'"$INSTDIR\\Open Design.exe"'`,
+    expect(createNsisQuotedCommandLiteral(["$INSTDIR\\CapyDesign.exe"])).toBe(
+      `'"$INSTDIR\\CapyDesign.exe"'`,
     );
   });
 

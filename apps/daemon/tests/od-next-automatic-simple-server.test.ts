@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
   AppliedStrategyBindingV2,
   OdNextRuntimeCapabilitySnapshotV1,
-  OpenDesignPlanContractV2,
+  CapyDesignPlanContractV2,
   ProjectScenarioTaskProfile,
 } from '@open-design/contracts';
 import {
@@ -2872,7 +2872,7 @@ function planContract(
   strategy: AppliedStrategyBindingV2,
   mode: 'repair' | 'direct' | 'complex' = 'repair',
   capability = complexCapabilitySnapshot(),
-): OpenDesignPlanContractV2 {
+): CapyDesignPlanContractV2 {
   return {
     schema: 'open-design.plan-contract/v2',
     strategy: {
@@ -2969,7 +2969,7 @@ function machineBlock(tag: string, value: unknown, fenced = false): string {
 async function writeStrategyCodex(
   dir: string,
   mode: 'repair' | 'direct' | 'complex',
-  plan: OpenDesignPlanContractV2,
+  plan: CapyDesignPlanContractV2,
 ): Promise<{ bin: string; logPath: string }> {
   const bin = path.join(dir, `codex-${mode}`);
   const logPath = path.join(dir, `codex-${mode}.jsonl`);
@@ -3093,7 +3093,7 @@ setTimeout(finish, 1500);
 
 async function writeStrategyClaude(
   dir: string,
-  plan: OpenDesignPlanContractV2,
+  plan: CapyDesignPlanContractV2,
 ): Promise<{ bin: string; logPath: string }> {
   const bin = path.join(dir, 'claude-complex');
   const logPath = path.join(dir, 'claude-complex.jsonl');

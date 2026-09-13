@@ -30,7 +30,7 @@ import { SocialShareGrid } from './SocialShareGrid';
 import { enterpriseUrl } from './enterpriseUrl';
 
 const DISCORD_URL = 'https://discord.gg/mHAjSMV6gz';
-const X_URL = 'https://x.com/OpenDesignHQ';
+const X_URL = 'https://x.com/CapyDesignHQ';
 const THREADS_URL = 'https://www.threads.com/@opendesign.ai';
 const YOUTUBE_URL = 'https://www.youtube.com/@Open-Design-ai';
 const INSTAGRAM_URL = 'https://www.instagram.com/opendesign.ai/';
@@ -83,7 +83,7 @@ export function EntrySettingsMenu({
   const discordPresence = useDiscordPresence();
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [openDesignShare, setOpenDesignShare] = useState<SocialShareResponse | null>(null);
+  const [openDesignShare, setCapyDesignShare] = useState<SocialShareResponse | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const langListRef = useRef<HTMLDivElement | null>(null);
@@ -105,7 +105,7 @@ export function EntrySettingsMenu({
       }),
     };
   }, [locale, t]);
-  const fallbackOpenDesignShare = useMemo(
+  const fallbackCapyDesignShare = useMemo(
     () => buildSocialSharePayload(openDesignShareRequest),
     [openDesignShareRequest],
   );
@@ -157,13 +157,13 @@ export function EntrySettingsMenu({
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
-    setOpenDesignShare(null);
+    setCapyDesignShare(null);
     void createSocialSharePayload(openDesignShareRequest)
       .then((payload) => {
-        if (!cancelled) setOpenDesignShare(payload);
+        if (!cancelled) setCapyDesignShare(payload);
       })
       .catch(() => {
-        if (!cancelled) setOpenDesignShare(null);
+        if (!cancelled) setCapyDesignShare(null);
       });
     return () => {
       cancelled = true;
@@ -281,7 +281,7 @@ export function EntrySettingsMenu({
               <span>{t('socialShare.openDesignSection')}</span>
             </div>
             <SocialShareGrid
-              share={openDesignShare ?? fallbackOpenDesignShare}
+              share={openDesignShare ?? fallbackCapyDesignShare}
               className="entry-settings-social-share"
               onShare={(platform) => {
                 trackSettingsPopoverClick(analytics.track, {

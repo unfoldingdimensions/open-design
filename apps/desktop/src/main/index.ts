@@ -142,7 +142,7 @@ export function applyOsLocaleSwitch(electronApp: Electron.App): string {
 
 /**
  * Lift Chromium's hardcoded 6-connections-per-origin socket cap for the
- * loopback hosts every OpenDesign renderer talks to (directly in dev,
+ * loopback hosts every CapyDesign renderer talks to (directly in dev,
  * through the od:// proxy's main-process net.fetch when packaged).
  *
  * Long-lived SSE streams pin pool slots, and once the pool saturates,
@@ -584,7 +584,7 @@ function installDesktopMenu(
           {
             label: "Contact Us",
             click() {
-              void shell.openExternal("https://x.com/OpenDesignHQ");
+              void shell.openExternal("https://x.com/CapyDesignHQ");
             },
           },
           {

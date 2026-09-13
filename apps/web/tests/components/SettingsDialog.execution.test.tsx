@@ -2,8 +2,8 @@
 
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { OpenDesignHostUpdaterStatusSnapshot } from '@open-design/host';
-import { installMockOpenDesignHost } from '@open-design/host/testing';
+import type { CapyDesignHostUpdaterStatusSnapshot } from '@open-design/host';
+import { installMockCapyDesignHost } from '@open-design/host/testing';
 import type { WorkspaceCollabContext } from '@open-design/contracts';
 import { en } from '../../src/i18n/locales/en';
 
@@ -327,11 +327,11 @@ const sampleDesignSystems = [
   },
 ];
 
-let restoreOpenDesignHost: (() => void) | null = null;
+let restoreCapyDesignHost: (() => void) | null = null;
 
 function updateStatus(
-  overrides: Partial<OpenDesignHostUpdaterStatusSnapshot> = {},
-): OpenDesignHostUpdaterStatusSnapshot {
+  overrides: Partial<CapyDesignHostUpdaterStatusSnapshot> = {},
+): CapyDesignHostUpdaterStatusSnapshot {
   return {
     arch: 'arm64',
     capabilities: {
@@ -554,8 +554,8 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  restoreOpenDesignHost?.();
-  restoreOpenDesignHost = null;
+  restoreCapyDesignHost?.();
+  restoreCapyDesignHost = null;
 });
 
 describe('SettingsDialog privacy settings interactions', () => {
@@ -2743,7 +2743,7 @@ describe('SettingsDialog execution settings Local CLI interactions', () => {
     vi.unstubAllGlobals();
   });
 
-  it('pins OpenDesign to the top of the installed CLI list', () => {
+  it('pins CapyDesign to the top of the installed CLI list', () => {
     const claudeAgent: AgentInfo = {
       id: 'claude',
       name: 'Claude Code',
@@ -4810,9 +4810,9 @@ describe('SettingsDialog connectors interactions', () => {
 
 describe('SettingsDialog MCP server interactions', () => {
   const installInfo = {
-    command: '/Applications/Open Design.app/Contents/Resources/open-design/bin/node',
+    command: '/Applications/CapyDesign.app/Contents/Resources/open-design/bin/node',
     args: [
-      '/Applications/Open Design.app/Contents/Resources/app/node_modules/@open-design/daemon/dist/cli.js',
+      '/Applications/CapyDesign.app/Contents/Resources/app/node_modules/@open-design/daemon/dist/cli.js',
       'mcp',
       '--daemon-url',
       'http://127.0.0.1:51706',
@@ -4865,12 +4865,12 @@ describe('SettingsDialog MCP server interactions', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith('/api/mcp/install-info');
     });
-    expect(screen.getByRole('heading', { name: /Connect OpenDesign to your coding agent/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /Connect CapyDesign to your coding agent/i })).toBeTruthy();
     expect(screen.queryByText(/Run this command in your terminal/i)).toBeNull();
     await waitFor(() => {
       expect(screen.getByText(/claude mcp add-json --scope user open-design/i)).toBeTruthy();
     });
-    expect(screen.getByText(/Keep OpenDesign running\. Restart your coding agent after setup\./i)).toBeTruthy();
+    expect(screen.getByText(/Keep CapyDesign running\. Restart your coding agent after setup\./i)).toBeTruthy();
     expect(screen.getByText(/What your agent can do/i)).toBeTruthy();
   });
 
@@ -5922,17 +5922,17 @@ describe('SettingsDialog about interactions', () => {
     });
     const downloaded = updateStatus({
       artifact: {
-        name: 'Open Design Beta.dmg',
+        name: 'CapyDesign Beta.dmg',
         platformKey: 'macAppleSilicon',
         type: 'dmg',
-        url: 'https://fixture.test/Open Design Beta.dmg',
+        url: 'https://fixture.test/CapyDesign Beta.dmg',
       },
       availableVersion: '1.2.3-beta.4',
-      downloadPath: '/tmp/open-design-updater/Open Design Beta.dmg',
+      downloadPath: '/tmp/open-design-updater/CapyDesign Beta.dmg',
       state: 'downloaded',
     });
     const download = vi.fn(async () => downloaded);
-    restoreOpenDesignHost = installMockOpenDesignHost({
+    restoreCapyDesignHost = installMockCapyDesignHost({
       host: {
         updater: {
           download,
@@ -5970,7 +5970,7 @@ describe('SettingsDialog about interactions', () => {
   it('clears the updater cache from the about page after inline confirmation', async () => {
     const cleared = updateStatus({ state: 'idle' });
     const clearCache = vi.fn(async () => cleared);
-    restoreOpenDesignHost = installMockOpenDesignHost({
+    restoreCapyDesignHost = installMockCapyDesignHost({
       host: {
         updater: {
           'clear-cache': clearCache,
@@ -6007,7 +6007,7 @@ describe('SettingsDialog about interactions', () => {
   });
 
   it('hides updater cache recovery when packaged updates are unsupported', async () => {
-    restoreOpenDesignHost = installMockOpenDesignHost({
+    restoreCapyDesignHost = installMockCapyDesignHost({
       host: {
         updater: {
           status: vi.fn(async () => updateStatus({
@@ -6061,7 +6061,7 @@ describe('SettingsDialog about interactions', () => {
     });
     const install = vi.fn(async () => installing);
     const quit = vi.fn(async () => ({ ok: true as const }));
-    restoreOpenDesignHost = installMockOpenDesignHost({
+    restoreCapyDesignHost = installMockCapyDesignHost({
       host: {
         updater: {
           install,
@@ -6130,7 +6130,7 @@ describe('SettingsDialog about interactions', () => {
         ok: false as const,
         reason: 'desktop quit is not available',
       });
-    restoreOpenDesignHost = installMockOpenDesignHost({
+    restoreCapyDesignHost = installMockCapyDesignHost({
       host: {
         updater: {
           install,

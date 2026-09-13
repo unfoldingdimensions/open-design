@@ -243,7 +243,7 @@ vi.mock('../../src/components/ChatPane', () => ({
       meta?: unknown,
     ) => unknown;
     onResumeRun?: (message: ChatMessage) => void;
-    onShareToOpenDesign?: (assistantMessageId: string) => void;
+    onShareToCapyDesign?: (assistantMessageId: string) => void;
     onContinueRemainingTasks?: (
       message: ChatMessage,
       todos: Array<{ content: string; status: string }>,
@@ -313,7 +313,7 @@ vi.mock('../../src/components/ChatPane', () => ({
           type="button"
           data-testid="share-to-open-design"
           onClick={() => {
-            if (failed) props.onShareToOpenDesign?.(failed.id);
+            if (failed) props.onShareToCapyDesign?.(failed.id);
           }}
         >
           share
@@ -388,12 +388,12 @@ const localConfig: AppConfig = {
   designSystemId: null,
 };
 
-/** OpenDesign Cloud:2719 那条路唯一会跑预检的配置。 */
+/** CapyDesign Cloud:2719 那条路唯一会跑预检的配置。 */
 const amrConfig: AppConfig = { ...localConfig, agentId: 'amr' };
 
 const agents = [
   { id: 'agent-1', name: 'OpenCode', bin: 'opencode', available: true, models: [] },
-  { id: 'amr', name: 'OpenDesign Cloud', available: true, models: [] },
+  { id: 'amr', name: 'CapyDesign Cloud', available: true, models: [] },
 ] as unknown as AgentInfo[];
 
 const userMessage: ChatMessage = {

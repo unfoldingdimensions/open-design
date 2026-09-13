@@ -3,7 +3,7 @@
 **Dependencies:** WS4 (appId/scope/namespace) landed. Runs before WS11.
 **You own:** the remaining places where "Open Design" appears in a **built
 artifact** rather than in source constants. Local `pnpm tools-pack` builds must
-produce CaptDesign-identified output.
+produce CapyDesign-identified output.
 
 ## Why this is a separate workstream
 
@@ -14,9 +14,9 @@ reach:
 1. **Electron's own product metadata.** `apps/desktop/package.json` has `name:
    "@open-design/desktop"` (WS4) but **no `productName`**. Without one, Electron
    derives the display name from `name`, producing a packaged app called
-   something like `@captdesign/desktop` — visibly wrong in the dock, the
+   something like `@capydesign/desktop` — visibly wrong in the dock, the
    taskbar, the Windows "Apps & features" list and the installer title.
-   **Add an explicit `productName: "CaptDesign"`.**
+   **Add an explicit `productName: "CapyDesign"`.**
 2. **The app-bundle and executable names**, which are derived by
    `tools/pack/src/mac/identity.ts` from `PRODUCT_NAME` and, when a channel is
    set, from `releaseInstallIdentity`. Verify rather than assume: build and read
@@ -34,7 +34,7 @@ Root `AGENTS.md` says, verbatim:
 > `release-beta-win`; otherwise a local beta-like namespace can create a separate
 > uninstall registry key while looking like the same `Open Design Beta` app.
 
-The same failure mode applies to CaptDesign: a local namespace that *looks* like
+The same failure mode applies to CapyDesign: a local namespace that *looks* like
 the real channel but is not produces **two** uninstall entries for what a user
 believes is one app. Before editing anything under `tools/pack/src/win/`, read
 `tools/pack/AGENTS.md` §"Packaged auto-update architecture and harness" and the
@@ -43,7 +43,7 @@ principles; do not change a build-cache node key.
 
 ## Do this
 
-1. Add `productName: "CaptDesign"` to `apps/desktop/package.json`. Check whether
+1. Add `productName: "CapyDesign"` to `apps/desktop/package.json`. Check whether
    `apps/packaged/package.json` needs the same — inspect how the packaged entry
    is launched and named before deciding.
 2. Sweep the built-artifact naming chain:
@@ -79,8 +79,8 @@ principles; do not change a build-cache node key.
 
    Then verify the identity **in the artifact**, not in the source:
    - macOS: read `Contents/Info.plist` from the built (and installed) `.app` —
-     assert `CFBundleIdentifier == io.captdesign.desktop`, `CFBundleName` /
-     `CFBundleDisplayName` read CaptDesign, and the executable name matches.
+     assert `CFBundleIdentifier == io.capydesign.desktop`, `CFBundleName` /
+     `CFBundleDisplayName` read CapyDesign, and the executable name matches.
    - Linux: read the generated `.desktop` file and the AppImage's embedded
      metadata.
    - Windows (if reachable): read the NSIS-generated registry writes and the
@@ -99,8 +99,8 @@ principles; do not change a build-cache node key.
 ## Verification
 
 ```bash
-pnpm --filter @captdesign/tools-pack build
-pnpm --filter @captdesign/tools-pack test
+pnpm --filter @capydesign/tools-pack build
+pnpm --filter @capydesign/tools-pack test
 pnpm guard
 pnpm typecheck
 ```

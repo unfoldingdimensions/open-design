@@ -1,4 +1,4 @@
-// Capability-detected wrapper around the OpenDesign host shell.openPath
+// Capability-detected wrapper around the CapyDesign host shell.openPath
 // bridge for the Continue in CLI button (#451). On desktop builds the
 // host bridge exposes shell.openPath; the renderer hands it
 // a *project ID* (not a path) and the desktop main process asks the
@@ -11,7 +11,7 @@
 
 import { useMemo } from 'react';
 import {
-  isOpenDesignHostAvailable,
+  isCapyDesignHostAvailable,
   openHostProjectPath,
 } from '@open-design/host';
 
@@ -27,7 +27,7 @@ export interface TerminalLauncher {
 
 export function useTerminalLaunch(): TerminalLauncher {
   return useMemo<TerminalLauncher>(() => {
-    const isHost = isOpenDesignHostAvailable();
+    const isHost = isCapyDesignHostAvailable();
 
     async function open(projectId: string): Promise<TerminalLaunchResult> {
       if (!isHost) {

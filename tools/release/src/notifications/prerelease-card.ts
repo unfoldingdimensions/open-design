@@ -327,7 +327,7 @@ export function headerTemplate(state: PrereleaseCardState): string {
 }
 
 export function headerTitle(state: PrereleaseCardState): string {
-  const name = `Open Design ${state.channelLabel} ${state.version}`;
+  const name = `CapyDesign ${state.channelLabel} ${state.version}`;
   if (!anyPackagePublished(state)) {
     // Order matters: a run whose platforms all failed has a verdict, and saying
     // "等待产物超时" about it would report the watcher's clock instead of the

@@ -300,13 +300,13 @@ async function writeReleaseFixture(root: string, key: string, channel: FixtureCh
 
 async function writeLauncherPayloadFixture(destinationRoot: string, version: string): Promise<void> {
   await mkdir(join(destinationRoot, "payload", "resources", "open-design"), { recursive: true });
-  await writeFile(join(destinationRoot, "payload", "Open Design.exe"), "");
+  await writeFile(join(destinationRoot, "payload", "CapyDesign.exe"), "");
   await writeFile(join(destinationRoot, "payload", "resources", "open-design-config.json"), "{}\n");
   await writeFile(join(destinationRoot, "manifest.json"), `${JSON.stringify({
     channel: "beta",
     entry: {
       cwd: "payload",
-      executable: "payload/Open Design.exe",
+      executable: "payload/CapyDesign.exe",
     },
     namespace: "release-beta-win",
     payloadRoot: "payload",
@@ -485,7 +485,7 @@ describe("desktop updater", () => {
       version: "1.0.0-beta.3",
     });
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
-    const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
     try {
       await mkdir(join(root, "installed"), { recursive: true });
       await writeFile(launcherLaunchPath, "");
@@ -542,7 +542,7 @@ describe("desktop updater", () => {
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
     const launcherRoot = root;
     const versionRoot = join(root, "launcher", "channels", "beta", "namespaces", "release-beta-win", "versions");
-    const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
     const launches: Array<{ appPid: number; launchPath: string; root: string }> = [];
     let extractCount = 0;
     try {
@@ -579,14 +579,14 @@ describe("desktop updater", () => {
         extractLauncherPayloadArchive: async ({ destinationRoot }) => {
           extractCount += 1;
           await mkdir(join(destinationRoot, "payload", "resources", "open-design"), { recursive: true });
-          await writeFile(join(destinationRoot, "payload", "Open Design.exe"), "");
+          await writeFile(join(destinationRoot, "payload", "CapyDesign.exe"), "");
           await writeFile(
             join(destinationRoot, "manifest.json"),
             `${JSON.stringify({
               channel: "beta",
               entry: {
                 cwd: "payload",
-                executable: "payload/Open Design.exe",
+                executable: "payload/CapyDesign.exe",
               },
               namespace: "release-beta-win",
               payloadRoot: "payload",
@@ -605,7 +605,7 @@ describe("desktop updater", () => {
           });
           return { helperLogPath: join(root, "updates", "helpers", "open-app-after-quit-test.log") };
         },
-        processExecPath: "C:\\Program Files\\Open Design Beta\\Open Design Beta.exe",
+        processExecPath: "C:\\Program Files\\CapyDesign Beta\\CapyDesign Beta.exe",
         processPid: 4242,
       });
 
@@ -640,7 +640,7 @@ describe("desktop updater", () => {
         "versions",
         "1.0.0-beta.2",
         "payload",
-        "Open Design.exe",
+        "CapyDesign.exe",
       );
       expect(installed.installResult?.launchPath).toBe(payloadLaunchPath);
       expect(installed.installResult?.launcherRuntimePath).toBe(launcherRuntimePath);
@@ -683,7 +683,7 @@ describe("desktop updater", () => {
       namespace: "release-beta-win",
       root,
     });
-    const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
     const logger = { error: vi.fn(), info: vi.fn(), warn: vi.fn() };
     let extractCount = 0;
     const createUpdater = (removeLauncherPayloadRoot?: (path: string) => Promise<void>) => createDesktopUpdater({
@@ -814,7 +814,7 @@ describe("desktop updater", () => {
       namespace: "release-beta-win",
       root,
     });
-    const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
     const logger = { error: vi.fn(), info: vi.fn(), warn: vi.fn() };
     let extractCount = 0;
     const relaunchInputs: Array<{ delegated?: { generation: number; version: string } }> = [];
@@ -918,7 +918,7 @@ describe("desktop updater", () => {
       ...fixtureOptions,
     });
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
-    const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
     await mkdir(join(root, "installed"), { recursive: true });
     await writeFile(launcherLaunchPath, "");
     // The physically installed outer bundle's config, read by the updater to
@@ -964,12 +964,12 @@ describe("desktop updater", () => {
     const updaterDeps: NonNullable<Parameters<typeof createDesktopUpdater>[1]> = {
       extractLauncherPayloadArchive: async ({ destinationRoot }) => {
         await mkdir(join(destinationRoot, "payload", "resources", "open-design"), { recursive: true });
-        await writeFile(join(destinationRoot, "payload", "Open Design.exe"), "");
+        await writeFile(join(destinationRoot, "payload", "CapyDesign.exe"), "");
         await writeFile(
           join(destinationRoot, "manifest.json"),
           `${JSON.stringify({
             channel: "beta",
-            entry: { cwd: "payload", executable: "payload/Open Design.exe" },
+            entry: { cwd: "payload", executable: "payload/CapyDesign.exe" },
             namespace: "release-beta-win",
             payloadRoot: "payload",
             platform: "win32",
@@ -980,7 +980,7 @@ describe("desktop updater", () => {
         await writeFile(join(destinationRoot, "payload", "resources", "open-design-config.json"), "{}\n");
       },
       launchAppAfterQuit: async () => ({ helperLogPath: join(root, "updates", "helpers", "test.log") }),
-      processExecPath: "C:\\Program Files\\Open Design Beta\\Open Design Beta.exe",
+      processExecPath: "C:\\Program Files\\CapyDesign Beta\\CapyDesign Beta.exe",
       processPid: 4242,
     };
     const updater = createDesktopUpdater(updaterInput, updaterDeps);
@@ -1250,7 +1250,7 @@ describe("desktop updater", () => {
         namespace: "release-beta-win",
         root,
       });
-      const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+      const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
       await mkdir(join(root, "installed"), { recursive: true });
       await writeFile(launcherLaunchPath, "");
       await mkdir(launcherPaths.stateRoot, { recursive: true });
@@ -1431,7 +1431,7 @@ describe("desktop updater", () => {
         namespace: "release-beta-win",
         root,
       });
-      const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+      const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
       await mkdir(join(root, "installed"), { recursive: true });
       await writeFile(launcherLaunchPath, "");
       await mkdir(launcherPaths.stateRoot, { recursive: true });
@@ -1487,7 +1487,7 @@ describe("desktop updater", () => {
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
     const launcherRoot = root;
     const versionRoot = join(root, "launcher", "channels", "beta", "namespaces", "release-beta-win", "versions");
-    const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
     const launches: Array<{ appPid: number; launchPath: string; root: string }> = [];
     let extractCount = 0;
     try {
@@ -1523,14 +1523,14 @@ describe("desktop updater", () => {
         extractLauncherPayloadArchive: async ({ destinationRoot }) => {
           extractCount += 1;
           await mkdir(join(destinationRoot, "payload", "resources", "open-design"), { recursive: true });
-          await writeFile(join(destinationRoot, "payload", "Open Design.exe"), "");
+          await writeFile(join(destinationRoot, "payload", "CapyDesign.exe"), "");
           await writeFile(
             join(destinationRoot, "manifest.json"),
             `${JSON.stringify({
               channel: "beta",
               entry: {
                 cwd: "payload",
-                executable: "payload/Open Design.exe",
+                executable: "payload/CapyDesign.exe",
               },
               namespace: "release-beta-win",
               payloadRoot: "payload",
@@ -1549,7 +1549,7 @@ describe("desktop updater", () => {
           });
           return { helperLogPath: join(root, "updates", "helpers", "open-app-after-quit-test.log") };
         },
-        processExecPath: "C:\\Program Files\\Open Design Beta\\Open Design Beta.exe",
+        processExecPath: "C:\\Program Files\\CapyDesign Beta\\CapyDesign Beta.exe",
         processPid: 4242,
       });
 
@@ -1586,7 +1586,7 @@ describe("desktop updater", () => {
     });
     const namespaceRoot = join(root, "launcher", "channels", "beta", "namespaces", "release-beta-win");
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
-    const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
     try {
       await mkdir(join(root, "installed"), { recursive: true });
       await writeFile(launcherLaunchPath, "");
@@ -1618,14 +1618,14 @@ describe("desktop updater", () => {
       }, {
         extractLauncherPayloadArchive: async ({ destinationRoot }) => {
           await mkdir(join(destinationRoot, "payload", "resources"), { recursive: true });
-          await writeFile(join(destinationRoot, "payload", "Open Design.exe"), "");
+          await writeFile(join(destinationRoot, "payload", "CapyDesign.exe"), "");
           await writeFile(
             join(destinationRoot, "manifest.json"),
             `${JSON.stringify({
               channel: "beta",
               entry: {
                 cwd: "payload",
-                executable: "payload/Open Design.exe",
+                executable: "payload/CapyDesign.exe",
               },
               namespace: "release-beta-win",
               payloadRoot: "payload",
@@ -1664,7 +1664,7 @@ describe("desktop updater", () => {
       version: "1.0.0-beta.2",
     });
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
-    const launcherLaunchPath = join(root, "missing", "Open Design Beta.exe");
+    const launcherLaunchPath = join(root, "missing", "CapyDesign Beta.exe");
     try {
       await mkdir(join(root, "launcher"), { recursive: true });
       await mkdir(join(root, "launcher", "channels", "beta", "namespaces", "release-beta-win", "versions", "1.0.0-beta.1"), { recursive: true });
@@ -1692,7 +1692,7 @@ describe("desktop updater", () => {
         namespace: "release-beta-win",
         source: SIDECAR_SOURCES.PACKAGED,
       }, {
-        processExecPath: "C:\\Users\\runneradmin\\AppData\\Roaming\\Open Design Beta\\launcher\\channels\\beta\\namespaces\\release-beta-win\\versions\\1.0.0-beta.1\\payload\\Open Design.exe",
+        processExecPath: "C:\\Users\\runneradmin\\AppData\\Roaming\\CapyDesign Beta\\launcher\\channels\\beta\\namespaces\\release-beta-win\\versions\\1.0.0-beta.1\\payload\\CapyDesign.exe",
       });
 
       const checked = await updater.checkForUpdates();
@@ -1719,7 +1719,7 @@ describe("desktop updater", () => {
     });
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
     const launcherRoot = root;
-    const launcherLaunchPath = join(root, "installed", "Open Design Beta.app");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.app");
     const launches: Array<{ appPid: number; launchPath: string; root: string }> = [];
     try {
       await mkdir(launcherLaunchPath, { recursive: true });
@@ -1752,17 +1752,17 @@ describe("desktop updater", () => {
         source: SIDECAR_SOURCES.PACKAGED,
       }, {
         extractLauncherPayloadArchive: async ({ destinationRoot }) => {
-          await mkdir(join(destinationRoot, "payload", "Open Design Beta.app", "Contents", "MacOS"), { recursive: true });
-          await mkdir(join(destinationRoot, "payload", "Open Design Beta.app", "Contents", "Resources", "open-design"), { recursive: true });
-          await writeFile(join(destinationRoot, "payload", "Open Design Beta.app", "Contents", "MacOS", "Open Design Beta"), "");
-          await writeFile(join(destinationRoot, "payload", "Open Design Beta.app", "Contents", "Resources", "open-design-config.json"), "{}\n");
+          await mkdir(join(destinationRoot, "payload", "CapyDesign Beta.app", "Contents", "MacOS"), { recursive: true });
+          await mkdir(join(destinationRoot, "payload", "CapyDesign Beta.app", "Contents", "Resources", "open-design"), { recursive: true });
+          await writeFile(join(destinationRoot, "payload", "CapyDesign Beta.app", "Contents", "MacOS", "CapyDesign Beta"), "");
+          await writeFile(join(destinationRoot, "payload", "CapyDesign Beta.app", "Contents", "Resources", "open-design-config.json"), "{}\n");
           await writeFile(
             join(destinationRoot, "manifest.json"),
             `${JSON.stringify({
               channel: "beta",
               entry: {
-                cwd: "payload/Open Design Beta.app",
-                executable: "payload/Open Design Beta.app/Contents/MacOS/Open Design Beta",
+                cwd: "payload/CapyDesign Beta.app",
+                executable: "payload/CapyDesign Beta.app/Contents/MacOS/CapyDesign Beta",
               },
               namespace: "release-beta",
               payloadRoot: "payload",
@@ -1780,7 +1780,7 @@ describe("desktop updater", () => {
           });
           return {};
         },
-        processExecPath: join(root, "launcher", "channels", "beta", "namespaces", "release-beta", "versions", "1.0.0-beta.2", "payload", "Open Design Beta.app", "Contents", "MacOS", "Open Design Beta"),
+        processExecPath: join(root, "launcher", "channels", "beta", "namespaces", "release-beta", "versions", "1.0.0-beta.2", "payload", "CapyDesign Beta.app", "Contents", "MacOS", "CapyDesign Beta"),
         processPid: 4243,
       });
 
@@ -1808,10 +1808,10 @@ describe("desktop updater", () => {
             "versions",
             "1.0.0-beta.3",
             "payload",
-            "Open Design Beta.app",
+            "CapyDesign Beta.app",
             "Contents",
             "MacOS",
-            "Open Design Beta",
+            "CapyDesign Beta",
           ),
           root: await realpath(join(root, "updates")),
         },
@@ -1844,7 +1844,7 @@ describe("desktop updater", () => {
     });
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
     const launcherRoot = root;
-    const launcherLaunchPath = join(root, "installed", "Open Design Prerelease.app");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Prerelease.app");
     const launches: Array<{ appPid: number; launchPath: string; root: string }> = [];
     try {
       await mkdir(launcherLaunchPath, { recursive: true });
@@ -1879,17 +1879,17 @@ describe("desktop updater", () => {
         source: SIDECAR_SOURCES.PACKAGED,
       }, {
         extractLauncherPayloadArchive: async ({ destinationRoot }) => {
-          await mkdir(join(destinationRoot, "payload", "Open Design Prerelease.app", "Contents", "MacOS"), { recursive: true });
-          await mkdir(join(destinationRoot, "payload", "Open Design Prerelease.app", "Contents", "Resources", "open-design"), { recursive: true });
-          await writeFile(join(destinationRoot, "payload", "Open Design Prerelease.app", "Contents", "MacOS", "Open Design Prerelease"), "");
-          await writeFile(join(destinationRoot, "payload", "Open Design Prerelease.app", "Contents", "Resources", "open-design-config.json"), "{}\n");
+          await mkdir(join(destinationRoot, "payload", "CapyDesign Prerelease.app", "Contents", "MacOS"), { recursive: true });
+          await mkdir(join(destinationRoot, "payload", "CapyDesign Prerelease.app", "Contents", "Resources", "open-design"), { recursive: true });
+          await writeFile(join(destinationRoot, "payload", "CapyDesign Prerelease.app", "Contents", "MacOS", "CapyDesign Prerelease"), "");
+          await writeFile(join(destinationRoot, "payload", "CapyDesign Prerelease.app", "Contents", "Resources", "open-design-config.json"), "{}\n");
           await writeFile(
             join(destinationRoot, "manifest.json"),
             `${JSON.stringify({
               channel: "prerelease",
               entry: {
-                cwd: "payload/Open Design Prerelease.app",
-                executable: "payload/Open Design Prerelease.app/Contents/MacOS/Open Design Prerelease",
+                cwd: "payload/CapyDesign Prerelease.app",
+                executable: "payload/CapyDesign Prerelease.app/Contents/MacOS/CapyDesign Prerelease",
               },
               namespace: "release-prerelease",
               payloadRoot: "payload",
@@ -1907,7 +1907,7 @@ describe("desktop updater", () => {
           });
           return {};
         },
-        processExecPath: join(root, "launcher", "channels", "prerelease", "namespaces", "release-prerelease", "versions", "1.0.0-prerelease.2", "payload", "Open Design Prerelease.app", "Contents", "MacOS", "Open Design Prerelease"),
+        processExecPath: join(root, "launcher", "channels", "prerelease", "namespaces", "release-prerelease", "versions", "1.0.0-prerelease.2", "payload", "CapyDesign Prerelease.app", "Contents", "MacOS", "CapyDesign Prerelease"),
         processPid: 4244,
       });
 
@@ -1929,10 +1929,10 @@ describe("desktop updater", () => {
         "versions",
         "1.0.0-prerelease.3",
         "payload",
-        "Open Design Prerelease.app",
+        "CapyDesign Prerelease.app",
         "Contents",
         "MacOS",
-        "Open Design Prerelease",
+        "CapyDesign Prerelease",
       );
       expect(installed.installResult?.activeVersion).toBe("1.0.0-prerelease.3");
       expect(installed.installResult?.launchPath).toBe(payloadLaunchPath);
@@ -1967,7 +1967,7 @@ describe("desktop updater", () => {
     });
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
     const launcherRoot = root;
-    const launcherLaunchPath = join(root, "installed", "Open Design.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign.exe");
     const launches: Array<{ appPid: number; launchPath: string; root: string }> = [];
     try {
       await mkdir(join(root, "installed"), { recursive: true });
@@ -2001,7 +2001,7 @@ describe("desktop updater", () => {
       }, {
         extractLauncherPayloadArchive: async ({ destinationRoot }) => {
           await mkdir(join(destinationRoot, "payload", "resources", "open-design"), { recursive: true });
-          await writeFile(join(destinationRoot, "payload", "Open Design.exe"), "");
+          await writeFile(join(destinationRoot, "payload", "CapyDesign.exe"), "");
           await writeFile(join(destinationRoot, "payload", "resources", "open-design-config.json"), "{}\n");
           await writeFile(
             join(destinationRoot, "manifest.json"),
@@ -2009,7 +2009,7 @@ describe("desktop updater", () => {
               channel: "beta",
               entry: {
                 cwd: "payload",
-                executable: "payload/Open Design.exe",
+                executable: "payload/CapyDesign.exe",
               },
               namespace: "release-beta-win",
               payloadRoot: "payload",
@@ -2027,7 +2027,7 @@ describe("desktop updater", () => {
           });
           return {};
         },
-        processExecPath: "C:\\Users\\runneradmin\\AppData\\Roaming\\Open Design Beta\\launcher\\channels\\beta\\namespaces\\release-beta-win\\versions\\1.0.0-beta.2\\payload\\Open Design.exe",
+        processExecPath: "C:\\Users\\runneradmin\\AppData\\Roaming\\CapyDesign Beta\\launcher\\channels\\beta\\namespaces\\release-beta-win\\versions\\1.0.0-beta.2\\payload\\CapyDesign.exe",
         processPid: 4244,
       });
 
@@ -2055,7 +2055,7 @@ describe("desktop updater", () => {
             "versions",
             "1.0.0-beta.3",
             "payload",
-            "Open Design.exe",
+            "CapyDesign.exe",
           ),
           root: await realpath(join(root, "updates")),
         },
@@ -2078,7 +2078,7 @@ describe("desktop updater", () => {
     });
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
     const launcherRoot = root;
-    const launcherLaunchPath = join(root, "installed", "Open Design.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign.exe");
     const launches: Array<{ appPid: number; launchPath: string; root: string }> = [];
     try {
       await mkdir(join(root, "installed"), { recursive: true });
@@ -2112,7 +2112,7 @@ describe("desktop updater", () => {
       }, {
         extractLauncherPayloadArchive: async ({ destinationRoot }) => {
           await mkdir(join(destinationRoot, "payload", "resources", "open-design"), { recursive: true });
-          await writeFile(join(destinationRoot, "payload", "Open Design.exe"), "");
+          await writeFile(join(destinationRoot, "payload", "CapyDesign.exe"), "");
           await writeFile(join(destinationRoot, "payload", "resources", "open-design-config.json"), "{}\n");
           await writeFile(
             join(destinationRoot, "manifest.json"),
@@ -2120,7 +2120,7 @@ describe("desktop updater", () => {
               channel: "beta",
               entry: {
                 cwd: "payload",
-                executable: "payload/Open Design.exe",
+                executable: "payload/CapyDesign.exe",
               },
               namespace: "release-beta-win",
               payloadRoot: "payload",
@@ -2162,7 +2162,7 @@ describe("desktop updater", () => {
             "versions",
             "1.0.0-beta.3",
             "payload",
-            "Open Design.exe",
+            "CapyDesign.exe",
           ),
         }),
       ]);
@@ -2184,7 +2184,7 @@ describe("desktop updater", () => {
     });
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
     const launcherRoot = root;
-    const launcherLaunchPath = join(root, "installed", "Open Design.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign.exe");
     const runtimeBase = join(root, "runtime");
     const spawned: Array<{ args: string[]; command: string; options: unknown }> = [];
     const unref = vi.fn();
@@ -2228,7 +2228,7 @@ describe("desktop updater", () => {
       }, {
         extractLauncherPayloadArchive: async ({ destinationRoot }) => {
           await mkdir(join(destinationRoot, "payload", "resources", "open-design"), { recursive: true });
-          await writeFile(join(destinationRoot, "payload", "Open Design.exe"), "");
+          await writeFile(join(destinationRoot, "payload", "CapyDesign.exe"), "");
           await writeFile(join(destinationRoot, "payload", "resources", "open-design-config.json"), "{}\n");
           await writeFile(
             join(destinationRoot, "manifest.json"),
@@ -2236,7 +2236,7 @@ describe("desktop updater", () => {
               channel: "beta",
               entry: {
                 cwd: "payload",
-                executable: "payload/Open Design.exe",
+                executable: "payload/CapyDesign.exe",
               },
               namespace: "release-beta-win",
               payloadRoot: "payload",
@@ -2268,7 +2268,7 @@ describe("desktop updater", () => {
         "versions",
         "1.0.0-beta.3",
         "payload",
-        "Open Design.exe",
+        "CapyDesign.exe",
       );
       expect(installed.installResult?.launchPath).toBe(payloadLaunchPath);
       expect(installed.installResult?.helperLogPath).toBeUndefined();
@@ -2308,7 +2308,7 @@ describe("desktop updater", () => {
     });
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
     const launcherRoot = root;
-    const launcherLaunchPath = join(root, "installed", "Open Design.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign.exe");
     const unref = vi.fn();
     try {
       await mkdir(join(root, "installed"), { recursive: true });
@@ -2358,7 +2358,7 @@ describe("desktop updater", () => {
       }, {
         extractLauncherPayloadArchive: async ({ destinationRoot }) => {
           await mkdir(join(destinationRoot, "payload", "resources", "open-design"), { recursive: true });
-          await writeFile(join(destinationRoot, "payload", "Open Design.exe"), "");
+          await writeFile(join(destinationRoot, "payload", "CapyDesign.exe"), "");
           await writeFile(join(destinationRoot, "payload", "resources", "open-design-config.json"), "{}\n");
           await writeFile(
             join(destinationRoot, "manifest.json"),
@@ -2366,7 +2366,7 @@ describe("desktop updater", () => {
               channel: "beta",
               entry: {
                 cwd: "payload",
-                executable: "payload/Open Design.exe",
+                executable: "payload/CapyDesign.exe",
               },
               namespace: "release-beta-win",
               payloadRoot: "payload",
@@ -2408,7 +2408,7 @@ describe("desktop updater", () => {
     const namespaceRoot = join(root, "launcher", "channels", "beta", "namespaces", "release-beta-win");
     const launcherRuntimePath = join(root, "launcher", "runtime.json");
     const existingVersionRoot = join(namespaceRoot, "versions", "1.0.0-beta.2");
-    const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
     try {
       await mkdir(join(root, "installed"), { recursive: true });
       await writeFile(launcherLaunchPath, "");
@@ -2441,12 +2441,12 @@ describe("desktop updater", () => {
       }, {
         extractLauncherPayloadArchive: async ({ destinationRoot }) => {
           await mkdir(join(destinationRoot, "payload"), { recursive: true });
-          await writeFile(join(destinationRoot, "payload", "Open Design.exe"), "");
+          await writeFile(join(destinationRoot, "payload", "CapyDesign.exe"), "");
           await writeFile(
             join(destinationRoot, "manifest.json"),
             `${JSON.stringify({
               channel: "beta",
-              entry: { cwd: "payload", executable: "payload/Open Design.exe" },
+              entry: { cwd: "payload", executable: "payload/CapyDesign.exe" },
               namespace: "release-beta-win",
               payloadRoot: "payload",
               platform: "win32",
@@ -3452,7 +3452,7 @@ describe("desktop updater", () => {
       namespace: "release-beta-win",
       root,
     });
-    const launcherLaunchPath = join(root, "installed", "Open Design Beta.exe");
+    const launcherLaunchPath = join(root, "installed", "CapyDesign Beta.exe");
     try {
       await mkdir(join(root, "installed"), { recursive: true });
       await writeFile(launcherLaunchPath, "");

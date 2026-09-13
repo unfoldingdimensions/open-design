@@ -108,11 +108,11 @@ The English word "od" in prose, or `OD_`/`od-` identifiers, must not change.
 ## Verification
 
 ```bash
-pnpm --filter @captdesign/daemon build
+pnpm --filter @capydesign/daemon build
 node apps/daemon/bin/capt.mjs --help
 pnpm guard
 pnpm typecheck
-pnpm --filter @captdesign/daemon test
+pnpm --filter @capydesign/daemon test
 ```
 
 Then:

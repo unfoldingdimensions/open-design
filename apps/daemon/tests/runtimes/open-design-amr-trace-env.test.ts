@@ -22,7 +22,7 @@ test('openDesignAmrRunAttempt counts cumulative retries and manual recharge resu
   );
 });
 
-test('openDesignAmrTraceEnv builds OpenDesign trace identity env for AMR only', () => {
+test('openDesignAmrTraceEnv builds CapyDesign trace identity env for AMR only', () => {
   const amrEnv = openDesignAmrTraceEnv({
     agentId: 'amr',
     runId: ' run_trace_123 ',

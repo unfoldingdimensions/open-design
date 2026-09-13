@@ -14,7 +14,7 @@ import { T } from '@/timeouts';
 
 const AMR_AGENT = {
   id: 'amr',
-  name: 'OpenDesign AMR',
+  name: 'CapyDesign AMR',
   bin: 'vela',
   available: true,
   version: 'test',
@@ -207,10 +207,10 @@ test('[P1] expanded English balance actions stay inside a narrow ChatPane', asyn
   const recharge = card.getByRole('button', { name: 'Top up' });
   await expect(recharge).toBeVisible({ timeout: T.long });
   await recharge.evaluate((button) => {
-    button.textContent = 'Top up OpenDesign Cloud balance';
+    button.textContent = 'Top up CapyDesign Cloud balance';
   });
   const expandedRecharge = card.getByRole('button', {
-    name: 'Top up OpenDesign Cloud balance',
+    name: 'Top up CapyDesign Cloud balance',
   });
   const retry = card.getByRole('button', { name: 'Retry' });
   await expectActionsContained(card, expandedRecharge, retry);

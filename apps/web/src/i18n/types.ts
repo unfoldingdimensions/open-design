@@ -2859,7 +2859,7 @@ export interface Dict {
    * 「哪一个 agent 没登录」是这句话的全部信息量,主语不能省。
    */
   'chat.runError.title.signInRequired.other': string;
-  /** S04 · Open Design 智能体没登录 / 授权过期。主语固定,没有插值槽。 */
+  /** S04 · CapyDesign 智能体没登录 / 授权过期。主语固定,没有插值槽。 */
   'chat.runError.title.signInRequired.amr': string;
   'chat.runError.title.rateLimited': string;
   'chat.runError.title.modelWindowLimit': string;
@@ -5639,7 +5639,7 @@ export interface Dict {
    * 「设计系统工作区 · 自动创建」状态卡的两句文案。逐字取自稿子
    * `729fa43ce7:docs/design/chat-panel/src/body-components.html:50-51`:
    *   Creating design system workspace
-   *   Open Design is using the setup sources to generate this project.
+   *   CapyDesign is using the setup sources to generate this project.
    * 和菜单项那句 `designFiles.createDesignSystemFromProject`(「基于此项目创建
    * 设计系统」)是**两回事**:那一句说的是用户点了什么,这两句说的是系统正在做什么。
    * 菜单项和首轮会话标题仍在用旧那枚,别顺手合并。

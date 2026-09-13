@@ -10,13 +10,13 @@ type DesktopExportResult =
   | { ok: false; cancelled: true }
   | { ok: false; cancelled: false; message: string };
 
-interface OpenDesignDesktopApi {
+interface CapyDesignDesktopApi {
   exportDiagnostics(): Promise<DesktopExportResult>;
 }
 
 declare global {
   interface Window {
-    openDesignDesktop?: OpenDesignDesktopApi;
+    openDesignDesktop?: CapyDesignDesktopApi;
   }
 }
 

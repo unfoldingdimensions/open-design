@@ -1,5 +1,5 @@
 /**
- * Refresh the commercial metadata for OpenDesign's slide-deck templates.
+ * Refresh the commercial metadata for CapyDesign's slide-deck templates.
  *
  * Source of truth for WHICH template becomes WHICH commercial use-case is
  * `assignment.json` (default: `<repo>/.tmp/assignment.json`, override with
@@ -248,7 +248,7 @@ function stringListFromUnknown(value: unknown): string[] {
   return value.filter((item): item is string => typeof item === 'string').map((s) => s.trim()).filter(Boolean);
 }
 
-function updateOpenDesignJson(raw: string, copy: RefreshCopy): string {
+function updateCapyDesignJson(raw: string, copy: RefreshCopy): string {
   let manifest: Record<string, unknown>;
   try { manifest = JSON.parse(raw) as Record<string, unknown>; } catch { return raw; }
 
@@ -335,7 +335,7 @@ function refreshTemplate(root: string, dir: string, copy: RefreshCopy, isOfficia
       const nextSkill = updateSkillMarkdown(rawSkill, copy);
       if (nextSkill !== rawSkill) { writeFileSync(skillPath, nextSkill, 'utf8'); counts.skill += 1; touched.push(path.relative(repoRoot, skillPath)); }
       if (isOfficial && rawManifest !== null) {
-        const nextManifest = updateOpenDesignJson(rawManifest, copy);
+        const nextManifest = updateCapyDesignJson(rawManifest, copy);
         if (nextManifest !== rawManifest) { writeFileSync(manifestPath, nextManifest, 'utf8'); counts.manifest += 1; touched.push(path.relative(repoRoot, manifestPath)); }
       }
     }

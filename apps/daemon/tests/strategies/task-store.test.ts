@@ -11,7 +11,7 @@ import {
   serializeCanonicalXml,
   serializeOdNextPromptBundleV1,
   type AppliedPluginSnapshot,
-  type OpenDesignPlanContractV2,
+  type CapyDesignPlanContractV2,
 } from '@open-design/contracts';
 import Database from 'better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -168,7 +168,7 @@ function createStrategySnapshot(db: Database.Database): AppliedPluginSnapshot {
   });
 }
 
-function planContract(snapshot: AppliedPluginSnapshot): OpenDesignPlanContractV2 {
+function planContract(snapshot: AppliedPluginSnapshot): CapyDesignPlanContractV2 {
   const strategy = snapshot.strategy!;
   return {
     schema: 'open-design.plan-contract/v2',
@@ -1083,7 +1083,7 @@ describe('durable strategy task store', () => {
       },
       strategy: originalPlan.strategy,
       schema: originalPlan.schema,
-    } as OpenDesignPlanContractV2;
+    } as CapyDesignPlanContractV2;
     task = compareAndTransitionStrategyTaskExecution(db, {
       taskExecutionId: task.taskExecutionId,
       expectedRevision: task.revision,

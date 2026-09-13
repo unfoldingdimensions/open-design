@@ -64,7 +64,7 @@ export const MEDIA_FAILURE_NEXT_STEPS = [
   'switch-model',
   /** A credential or endpoint is missing or wrong in Settings. */
   'open-settings',
-  /** The Open Design session behind an OD-owned model expired. */
+  /** The CapyDesign session behind an OD-owned model expired. */
   'sign-in',
   /** Credit is spent. Retrying cannot bring it back. */
   'add-credit',
@@ -296,7 +296,7 @@ export const MEDIA_POLICY_DENIAL_CODES = [
 export type MediaPolicyDenialCode = (typeof MEDIA_POLICY_DENIAL_CODES)[number];
 
 /**
- * Run-scoped policy controlling OpenDesign-owned media generation only.
+ * Run-scoped policy controlling CapyDesign-owned media generation only.
  *
  * `allowedSurfaces` and `allowedModels` apply solely to `/api/tools/media/generate`
  * and in-run `od media generate`. External MCP media tools are intentionally
@@ -356,7 +356,7 @@ export function mediaExecutionPolicyDenial(
   return null;
 }
 
-/** Request for Open Design's deterministic local HyperFrames scaffold. */
+/** Request for CapyDesign's deterministic local HyperFrames scaffold. */
 export interface HyperFramesScaffoldRequest {
   /** Project-relative path in the form `.hyperframes-cache/<id>`. */
   compositionDir: string;

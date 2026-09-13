@@ -425,7 +425,7 @@ export const OD_NEXT_EXACT_INPUT_MAP_V1 = [
   {
     id: 'runtime_tool_environment',
     classification: 'out_of_band',
-    source: 'createOpenDesignToolEnv() / spawnEnvForAgent() including OD_TOOL_TOKEN',
+    source: 'createCapyDesignToolEnv() / spawnEnvForAgent() including OD_TOOL_TOKEN',
     owner: 'runtime transport',
     note: 'Executable paths, daemon/data coordinates and the scoped tool credential are child environment facts, not Bundle text.',
   },

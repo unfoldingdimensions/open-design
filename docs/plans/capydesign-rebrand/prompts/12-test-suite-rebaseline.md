@@ -25,10 +25,10 @@ keep it out of the pass/fail claim.
 pnpm install
 pnpm guard
 pnpm typecheck
-pnpm --filter @captdesign/contracts test  2>&1 | tail -60
-pnpm --filter @captdesign/daemon    test  2>&1 | tail -60
-pnpm --filter @captdesign/web       test  2>&1 | tail -60
-pnpm --filter @captdesign/e2e       test  2>&1 | tail -60
+pnpm --filter @capydesign/contracts test  2>&1 | tail -60
+pnpm --filter @capydesign/daemon    test  2>&1 | tail -60
+pnpm --filter @capydesign/web       test  2>&1 | tail -60
+pnpm --filter @capydesign/e2e       test  2>&1 | tail -60
 ```
 
 For every failure, classify it into exactly one bucket:
@@ -40,7 +40,7 @@ For every failure, classify it into exactly one bucket:
 | `pre-existing` | in WS0's baseline list | leave, note |
 | `flaky` | passes on re-run, unrelated to the change | re-run twice, then note |
 
-Write the result to `docs/plans/captdesign-rebrand/test-rebaseline.md` as a table.
+Write the result to `docs/plans/capydesign-rebrand/test-rebaseline.md` as a table.
 
 **Do not launder a `real-regression` into `stale-expectation`.** The distinction is
 the most valuable thing you produce. WS6 removed the Cloud identity layer in full,
@@ -131,10 +131,10 @@ HTTP APIs only (no source-level backdoors). Give the human the exact commands.
 ```bash
 pnpm guard
 pnpm typecheck
-pnpm --filter @captdesign/contracts test
-pnpm --filter @captdesign/daemon test
-pnpm --filter @captdesign/web test
-pnpm --filter @captdesign/e2e test
+pnpm --filter @capydesign/contracts test
+pnpm --filter @capydesign/daemon test
+pnpm --filter @capydesign/web test
+pnpm --filter @capydesign/e2e test
 ```
 
 All green, or every non-green explained against WS0's baseline.

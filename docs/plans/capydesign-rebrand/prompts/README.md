@@ -1,4 +1,4 @@
-# CaptDesign rebrand — agent prompt sheets
+# CapyDesign rebrand — agent prompt sheets
 
 One file = one agent. Give the agent **only** its own prompt, plus the repo
 checkout. Each prompt is self-contained: it restates the decisions, the scope,
@@ -29,7 +29,7 @@ plan's conflict section (C1, C2) first.
 | 00 | `00-baseline-freeze.md` | — (first) |
 | 01 | `01-attribution-ledger.md` | 02 |
 | 02 | `02-font-license-swap.md` | 01 |
-| 03 | `03-product-identity-captdesign.md` | after 01+02 |
+| 03 | `03-product-identity-capydesign.md` | after 01+02 |
 | 04 | `04-package-scope-and-namespaces.md` | after 03 |
 | 05 | `05-cli-bin-rename.md` | after 04 |
 | 06 | `06-cloud-surface-removal.md` | **serial** with 07 (06 first). Largest and riskiest — removes the identity layer, not just a feature. |

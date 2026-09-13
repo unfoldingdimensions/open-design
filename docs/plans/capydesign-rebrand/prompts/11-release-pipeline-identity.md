@@ -13,10 +13,10 @@ pipeline is not a rename target so much as a publishing system pointed entirely 
 nexu-io's infrastructure, governed by a detailed channel policy in root
 `AGENTS.md` ("Release channel model"). Two things are true at once:
 
-1. The old identity strings must go (`Open Design Beta 0.22.1` → the CaptDesign
-   equivalent), or a CaptDesign build publishes under someone else's product name.
-2. There is **no CaptDesign release infrastructure** — no R2 channel, no
-   `releases.captdesign.*` origin, no notifier webhooks, no GitHub release
+1. The old identity strings must go (`Open Design Beta 0.22.1` → the CapyDesign
+   equivalent), or a CapyDesign build publishes under someone else's product name.
+2. There is **no CapyDesign release infrastructure** — no R2 channel, no
+   `releases.capydesign.*` origin, no notifier webhooks, no GitHub release
    target. The pipeline cannot simply be repointed; it has to be either
    re-targeted to infrastructure the human supplies, or disabled.
 
@@ -27,7 +27,7 @@ supply.
 
 ## Step 0 — inventory and decision register (do this first, it is most of the value)
 
-Produce `docs/plans/captdesign-rebrand/release-identity-plan.md` containing a row
+Produce `docs/plans/capydesign-rebrand/release-identity-plan.md` containing a row
 per item below: `path:line`, what it is, disposition
 (repoint / disable / leave), and — where a human-supplied value is required — the
 **exact** variable name and example value they must provide.
@@ -99,15 +99,15 @@ a signal you have misread something — stop and report.
    a constant in scope.
 2. **Storage prefix and channel identity.** `storagePrefix` currently uses
    `stable` / `prerelease` / the channel name, and the R2 layout is
-   `<channel>/latest/…`. If CaptDesign does not own that bucket, the default must
-   be **disabled**, not repointed — a CaptDesign build must not write into
+   `<channel>/latest/…`. If CapyDesign does not own that bucket, the default must
+   be **disabled**, not repointed — a CapyDesign build must not write into
    nexu-io's storage.
 3. **The updater feed origin** (`apps/desktop/src/main/updater/config.ts`,
    WS7 owns the fail-closed change) — confirm your release side and WS7's client
    side agree. A publish path that writes to an origin the client no longer reads
    is worse than no path.
 4. **Notifiers.** `feishu.ts`, `prerelease-card.ts`, `prerelease-progress-card.ts`
-   and the `FEISHU_*` secrets belong to nexu-io's team channel. A CaptDesign build
+   and the `FEISHU_*` secrets belong to nexu-io's team channel. A CapyDesign build
    must not post into it. Make notification **opt-in** via configuration and
    default to off; say so plainly.
 5. **GitHub release targets.** `githubReleaseEnabled` and any
@@ -115,7 +115,7 @@ a signal you have misread something — stop and report.
    (`unfoldingdimensions/open-design`) or be disabled. Do not leave a workflow
    that attempts to publish a release into someone else's repository.
 6. **Signing / notarization.** `mac_sign_mode` defaults to `sign-only`, stable
-   ships notarized. CaptDesign has no Apple identity configured. Do **not**
+   ships notarized. CapyDesign has no Apple identity configured. Do **not**
    silently drop signing from the pipeline — instead make the code-signing
    identity and notary credentials explicitly required inputs, and let the build
    fail loudly when they are absent. A pipeline that quietly publishes unsigned
@@ -128,10 +128,10 @@ a signal you have misread something — stop and report.
 ## Verification
 
 ```bash
-pnpm --filter @captdesign/release build
-pnpm --filter @captdesign/release test
-pnpm --filter @captdesign/tools-release build
-pnpm --filter @captdesign/tools-release test
+pnpm --filter @capydesign/release build
+pnpm --filter @capydesign/release test
+pnpm --filter @capydesign/tools-release build
+pnpm --filter @capydesign/tools-release test
 pnpm guard
 pnpm typecheck
 ```

@@ -23,13 +23,13 @@ import {
   type DesktopUpdateStatusSnapshot,
 } from "@open-design/sidecar-proto";
 import type {
-  OpenDesignHostActionResult,
-  OpenDesignHostCaptureResult,
-  OpenDesignHostPreviewNavigationFailure,
-  OpenDesignHostProjectImportInit,
-  OpenDesignHostUpdaterActionOptions,
-  OpenDesignHostUpdaterMenuLabels,
-  OpenDesignHostUpdaterOpenDialogRequest,
+  CapyDesignHostActionResult,
+  CapyDesignHostCaptureResult,
+  CapyDesignHostPreviewNavigationFailure,
+  CapyDesignHostProjectImportInit,
+  CapyDesignHostUpdaterActionOptions,
+  CapyDesignHostUpdaterMenuLabels,
+  CapyDesignHostUpdaterOpenDialogRequest,
 } from "@open-design/host";
 
 import { renderDeckSlides } from "./deck-capture.js";
@@ -65,7 +65,7 @@ export function previewNavigationFailureFromDidFailLoad(input: {
   isMainFrame: boolean;
   occurredAtMs: number;
   validatedUrl: string;
-}): OpenDesignHostPreviewNavigationFailure | null {
+}): CapyDesignHostPreviewNavigationFailure | null {
   if (
     input.isMainFrame
     || input.errorCode !== ABORTED_NAVIGATION_ERROR_CODE
@@ -298,7 +298,7 @@ const MIN_SPLASH_MS = 2000;
 // While the splash is up, the real web app loads in a hidden main window. We
 // reveal it only once the web bundle reports it has actually mounted (it sets
 // `data-od-app-mounted="1"` on first paint of the real UI), so the user never
-// sees the web's own "Loading OpenDesign…" shell flash between the splash and
+// sees the web's own "Loading CapyDesign…" shell flash between the splash and
 // the app. Poll cadence + a hard ceiling so a missing mount signal can never
 // strand the user on the splash forever.
 const WEB_MOUNT_POLL_MS = 80;
@@ -389,7 +389,7 @@ export type DesktopRuntime = {
   eval(input: DesktopEvalInput): Promise<DesktopEvalResult>;
   exportArtifact(input: DesktopExportArtifactInput): Promise<DesktopExportArtifactResult>;
   exportPdf(input: DesktopExportPdfInput): Promise<DesktopExportPdfResult>;
-  openUpdateDialog(request: OpenDesignHostUpdaterOpenDialogRequest): void;
+  openUpdateDialog(request: CapyDesignHostUpdaterOpenDialogRequest): void;
   renderFrames(input: DesktopRenderFramesInput): Promise<DesktopRenderFramesResult>;
   renderSlides(input: DesktopRenderSlidesInput): Promise<DesktopRenderSlidesResult>;
   screenshot(input: DesktopScreenshotInput): Promise<DesktopScreenshotResult>;
@@ -477,7 +477,7 @@ export type DesktopRuntimeOptions = {
    * as having reached running for abnormal-exit detection.
    */
   onRevealed?: () => void;
-  onUpdateMenuLabels?: (labels: OpenDesignHostUpdaterMenuLabels) => void;
+  onUpdateMenuLabels?: (labels: CapyDesignHostUpdaterMenuLabels) => void;
 };
 
 const DESKTOP_IMPORT_TOKEN_HEADER = "x-od-desktop-import-token";
@@ -522,7 +522,7 @@ export type PickAndImportFolderDeps = {
   baseDir: string;
   desktopAuthSecret: Buffer;
   fetchImpl?: typeof globalThis.fetch;
-  init?: OpenDesignHostProjectImportInit;
+  init?: CapyDesignHostProjectImportInit;
   /** Round-5: lazy re-registration hook. Called once on 503. */
   registerDesktopAuth?: () => Promise<boolean>;
   /** Injected for tests; defaults to the production HMAC mint. */
@@ -941,7 +941,7 @@ function createPendingHtml(): string {
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>OpenDesign</title>
+    <title>CapyDesign</title>
     <style>
       html,
       body {
@@ -1168,7 +1168,7 @@ function buildCrashReportUrl(ctx: RendererCrashScreenContext): string {
   const title = `Desktop app keeps crashing (renderer ${ctx.reason})`;
   const body = [
     "**What happened**",
-    "The OpenDesign desktop window crashed several times in a row and showed the recovery screen.",
+    "The CapyDesign desktop window crashed several times in a row and showed the recovery screen.",
     "",
     "**What I was doing when it started** (please add any detail):",
     "",
@@ -1187,9 +1187,9 @@ function buildCrashReportUrl(ctx: RendererCrashScreenContext): string {
 // Prefilled mailto for the "Email us" action — same auto-filled diagnostics as
 // the issue, for users who'd rather email than open a GitHub account.
 function buildCrashMailtoUrl(ctx: RendererCrashScreenContext): string {
-  const subject = `OpenDesign keeps crashing (renderer ${ctx.reason})`;
+  const subject = `CapyDesign keeps crashing (renderer ${ctx.reason})`;
   const body = [
-    "The OpenDesign desktop app crashed several times in a row on my device.",
+    "The CapyDesign desktop app crashed several times in a row on my device.",
     "",
     "(If possible, attach the diagnostics file you saved with the “Save logs…” button.)",
     "",
@@ -1207,7 +1207,7 @@ function createRendererCrashHtml(ctx: RendererCrashScreenContext): string {
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>OpenDesign</title>
+    <title>CapyDesign</title>
     <style>
       /* Palette mirrors the app's neutral design tokens (apps/web tokens.css):
          warm off-white + near-black, no accent color — matching the black/white
@@ -1303,7 +1303,7 @@ function createRendererCrashHtml(ctx: RendererCrashScreenContext): string {
   </head>
   <body>
     <div class="panel">
-      <p class="title">OpenDesign keeps closing on this device</p>
+      <p class="title">CapyDesign keeps closing on this device</p>
       <p class="body">The app window crashed several times in a row, so it has paused to avoid getting stuck reloading.</p>
       <p class="body">It will try to recover on its own in a few minutes.</p>
       <div class="actions">
@@ -1313,7 +1313,7 @@ function createRendererCrashHtml(ctx: RendererCrashScreenContext): string {
       <p class="hint" id="diag-note">Saved logs include a crash memory snapshot so we can find the cause. Nothing is sent unless you choose to share it.</p>
       <p class="status" id="status" aria-live="polite"></p>
       <p class="email" id="email-line">Prefer email? <a href="#" id="email">Contact ${SUPPORT_EMAIL}</a></p>
-      <p class="hint">If this keeps happening, quitting and reinstalling OpenDesign usually resolves it.</p>
+      <p class="hint">If this keeps happening, quitting and reinstalling CapyDesign usually resolves it.</p>
     </div>
     <script>
       (function () {
@@ -1401,7 +1401,7 @@ const SPLASH_STAGE_SEQUENCE: readonly SplashBootStage[] = [
 ];
 
 const SPLASH_STAGE_LABELS: Record<SplashBootStage, string> = {
-  starting: "Starting OpenDesign",
+  starting: "Starting CapyDesign",
   engine: "Starting the local engine",
   engineReady: "Local engine ready",
   interface: "Preparing the interface",
@@ -1528,7 +1528,7 @@ export function pinNativeAppearanceToLight(): void {
  * + matching size so the reveal swap reads as a single window, never a flash.
  */
 export function createSplashWindow(): SplashWindowHandle {
-  // OpenDesign ships light-only (the theme setting was removed), so pin the
+  // CapyDesign ships light-only (the theme setting was removed), so pin the
   // native appearance before the first window exists. Electron defaults
   // `themeSource` to `system`, which paints the macOS vibrancy glass and the
   // native chrome dark on a dark-mode Mac — visible on the splash and again in
@@ -1543,7 +1543,7 @@ export function createSplashWindow(): SplashWindowHandle {
     height: 900,
     resizable: false,
     show: true,
-    title: "OpenDesign",
+    title: "CapyDesign",
     width: 1280,
     webPreferences: {
       contextIsolation: true,
@@ -1957,7 +1957,7 @@ function unavailableUpdaterStatus(): DesktopUpdateStatusSnapshot {
 }
 
 function checkOptionsFromHost(options: unknown): { autoDownload?: boolean } | undefined {
-  const input = options as OpenDesignHostUpdaterActionOptions | null | undefined;
+  const input = options as CapyDesignHostUpdaterActionOptions | null | undefined;
   const payload = input?.payload;
   if (payload == null || typeof payload.autoDownload !== "boolean") return undefined;
   return { autoDownload: payload.autoDownload };
@@ -2079,7 +2079,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
   // import boundary while leaving web-only deployments untouched.
   ipcMain.handle(
     "dialog:pick-and-import",
-    async (event, init?: OpenDesignHostProjectImportInit) => {
+    async (event, init?: CapyDesignHostProjectImportInit) => {
       // Defensive failsafe for non-production runtimes (test harnesses
       // that construct createDesktopRuntime without a secret). Round-5
       // production wiring in runDesktopMain ALWAYS passes the per-process
@@ -2260,7 +2260,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
 
   const consoleEntries: DesktopConsoleEntry[] = [];
   const petWindow = createDesktopPetWindow(preloadPath, options.osLocale);
-  const windowTitle = options.windowTitle ?? "OpenDesign";
+  const windowTitle = options.windowTitle ?? "CapyDesign";
   const window = new BrowserWindow({
     height: 900,
     icon: resolveDesktopIconPath(),
@@ -2273,7 +2273,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
     // Starts hidden: the splash window is what the user sees while the real web
     // app loads in here. We reveal this window only once the app has actually
     // mounted (see `revealWhenReady` below), so there is never a flash of the
-    // web's own "Loading OpenDesign…" shell.
+    // web's own "Loading CapyDesign…" shell.
     show: false,
     title: windowTitle,
     autoHideMenuBar: true,
@@ -2482,7 +2482,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
   const unsubscribeUpdater = options.updater?.subscribe(() => sendUpdaterStatus()) ?? (() => undefined);
   const requireMainWindowSender = (event: Electron.IpcMainInvokeEvent): void => {
     if (event.sender !== window.webContents) {
-      throw new Error("host IPC is only available to the main OpenDesign window");
+      throw new Error("host IPC is only available to the main CapyDesign window");
     }
   };
   const discoverUpdateDaemonBaseUrl = async (): Promise<string> => {
@@ -2527,7 +2527,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
     guestWebContents.on("will-redirect", blockDisallowed);
     guestWebContents.setWindowOpenHandler(() => ({ action: "deny" }));
   });
-  ipcMain.handle("browser:clear-data", async (event, rawOptions: unknown): Promise<OpenDesignHostActionResult> => {
+  ipcMain.handle("browser:clear-data", async (event, rawOptions: unknown): Promise<CapyDesignHostActionResult> => {
     requireMainWindowSender(event);
     const optionsRecord = rawOptions != null && typeof rawOptions === "object"
       ? rawOptions as { cookies?: unknown; storage?: unknown }
@@ -2597,7 +2597,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
     sendUpdaterStatus(status);
     return status;
   });
-  ipcMain.handle("od:update:quit", async (event, updaterOptions: unknown): Promise<OpenDesignHostActionResult> => {
+  ipcMain.handle("od:update:quit", async (event, updaterOptions: unknown): Promise<CapyDesignHostActionResult> => {
     requireMainWindowSender(event);
     const blocked = await guardedUpdaterStatus(updaterOptions);
     if (blocked?.error != null) {
@@ -2613,7 +2613,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
     setTimeout(() => options.requestQuit?.(), 0);
     return { ok: true };
   });
-  ipcMain.handle("od:update:set-menu-labels", async (event, rawLabels: unknown): Promise<OpenDesignHostActionResult> => {
+  ipcMain.handle("od:update:set-menu-labels", async (event, rawLabels: unknown): Promise<CapyDesignHostActionResult> => {
     requireMainWindowSender(event);
     const labels = parseDesktopUpdateMenuLabels(rawLabels);
     if (labels == null) return { ok: false, reason: "invalid updater menu labels" };
@@ -2668,7 +2668,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
   });
 
   ipcMain.removeHandler('od:capture-page');
-  ipcMain.handle('od:capture-page', async (event, rawOptions: unknown): Promise<OpenDesignHostCaptureResult> => {
+  ipcMain.handle('od:capture-page', async (event, rawOptions: unknown): Promise<CapyDesignHostCaptureResult> => {
     if (event.sender !== window.webContents) {
       return { ok: false, reason: 'capture sender not allowed' };
     }
@@ -2812,7 +2812,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
     splashStartedAt = created.startedAt;
   }
 
-  let pendingUpdateDialogRequest: OpenDesignHostUpdaterOpenDialogRequest | null = null;
+  let pendingUpdateDialogRequest: CapyDesignHostUpdaterOpenDialogRequest | null = null;
   let revealed = false;
   let revealing = false;
 
@@ -2839,7 +2839,7 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
 
   // Hold the splash until BOTH (a) the web bundle reports it has mounted — it
   // sets `data-od-app-mounted="1"` on first paint of the real UI — so we never
-  // reveal the web's own dark "Loading OpenDesign…" shell, and (b) the splash
+  // reveal the web's own dark "Loading CapyDesign…" shell, and (b) the splash
   // has been up at least MIN_SPLASH_MS so the brand clip plays through. A hard
   // ceiling guarantees the user is never stranded on the splash if the mount
   // signal never arrives.

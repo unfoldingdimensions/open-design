@@ -9,14 +9,14 @@ import {
   OPEN_DESIGN_HOST_VERSION,
   clearHostBrowserData,
   checkHostUpdater,
-  detectOpenDesignHostClientType,
+  detectCapyDesignHostClientType,
   getLatestHostPreviewNavigationFailure,
   getHostUpdaterStatus,
-  getOpenDesignHost,
+  getCapyDesignHost,
   installHostUpdater,
-  isOpenDesignHostAvailable,
-  isOpenDesignHostBridge,
-  normalizeOpenDesignHostProjectImportResult,
+  isCapyDesignHostAvailable,
+  isCapyDesignHostBridge,
+  normalizeCapyDesignHostProjectImportResult,
   openHostExternalUrl,
   pickAndImportHostProject,
   printHostPdf,
@@ -28,7 +28,7 @@ import {
   subscribeHostUpdater,
   subscribeHostPreviewNavigationFailure,
 } from "../src/index.js";
-import { createMockOpenDesignHost, installMockOpenDesignHost } from "../src/testing.js";
+import { createMockCapyDesignHost, installMockCapyDesignHost } from "../src/testing.js";
 
 const hostRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -63,54 +63,54 @@ describe("open-design host contract", () => {
   });
 
   it("recognizes the canonical bridge shape", () => {
-    const host = createMockOpenDesignHost();
-    expect(isOpenDesignHostBridge(host)).toBe(true);
+    const host = createMockCapyDesignHost();
+    expect(isCapyDesignHostBridge(host)).toBe(true);
     expect(host.version).toBe(OPEN_DESIGN_HOST_VERSION);
   });
 
   it("rejects legacy or incomplete bridge shapes", () => {
-    expect(isOpenDesignHostBridge({ version: OPEN_DESIGN_HOST_VERSION })).toBe(false);
-    expect(isOpenDesignHostBridge({ ...createMockOpenDesignHost(), version: 1 })).toBe(false);
-    expect(isOpenDesignHostBridge({
-      ...createMockOpenDesignHost(),
+    expect(isCapyDesignHostBridge({ version: OPEN_DESIGN_HOST_VERSION })).toBe(false);
+    expect(isCapyDesignHostBridge({ ...createMockCapyDesignHost(), version: 1 })).toBe(false);
+    expect(isCapyDesignHostBridge({
+      ...createMockCapyDesignHost(),
       browser: {},
     })).toBe(false);
-    expect(isOpenDesignHostBridge({
-      ...createMockOpenDesignHost(),
+    expect(isCapyDesignHostBridge({
+      ...createMockCapyDesignHost(),
       capture: {},
     })).toBe(false);
-    expect(isOpenDesignHostBridge({
-      ...createMockOpenDesignHost(),
+    expect(isCapyDesignHostBridge({
+      ...createMockCapyDesignHost(),
       shell: { openExternal: async () => ({ ok: true }) },
     })).toBe(false);
-    expect(isOpenDesignHostBridge({
-      ...createMockOpenDesignHost(),
-      updater: { status: async () => createMockOpenDesignHost().updater.status() },
+    expect(isCapyDesignHostBridge({
+      ...createMockCapyDesignHost(),
+      updater: { status: async () => createMockCapyDesignHost().updater.status() },
     })).toBe(false);
-    const { "clear-cache": _clearCache, ...updaterWithoutClearCache } = createMockOpenDesignHost().updater;
-    expect(isOpenDesignHostBridge({
-      ...createMockOpenDesignHost(),
+    const { "clear-cache": _clearCache, ...updaterWithoutClearCache } = createMockCapyDesignHost().updater;
+    expect(isCapyDesignHostBridge({
+      ...createMockCapyDesignHost(),
       updater: updaterWithoutClearCache,
     })).toBe(false);
   });
 
   it("reads the bridge through the package-owned global accessor", () => {
     const scope: Record<string, unknown> = {};
-    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockOpenDesignHost();
-    expect(getOpenDesignHost(scope)?.client.type).toBe("desktop");
-    expect(isOpenDesignHostAvailable(scope)).toBe(true);
-    expect(detectOpenDesignHostClientType(scope)).toBe("desktop");
+    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockCapyDesignHost();
+    expect(getCapyDesignHost(scope)?.client.type).toBe("desktop");
+    expect(isCapyDesignHostAvailable(scope)).toBe(true);
+    expect(detectCapyDesignHostClientType(scope)).toBe("desktop");
   });
 
   it("falls back to web when no host is installed", () => {
-    expect(getOpenDesignHost({})).toBeNull();
-    expect(isOpenDesignHostAvailable({})).toBe(false);
-    expect(detectOpenDesignHostClientType({})).toBe("web");
+    expect(getCapyDesignHost({})).toBeNull();
+    expect(isCapyDesignHostAvailable({})).toBe(false);
+    expect(detectCapyDesignHostClientType({})).toBe("web");
   });
 
   it("wraps host action throws into structured failures", async () => {
     const scope: Record<string, unknown> = {};
-    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockOpenDesignHost({
+    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockCapyDesignHost({
       shell: {
         openPath: vi.fn(async () => {
           throw new Error("failed");
@@ -125,7 +125,7 @@ describe("open-design host contract", () => {
   });
 
   it("normalizes privileged project-import results into host-owned identifiers", () => {
-    const result = normalizeOpenDesignHostProjectImportResult({
+    const result = normalizeCapyDesignHostProjectImportResult({
       ok: true,
       response: {
         project: {
@@ -148,7 +148,7 @@ describe("open-design host contract", () => {
   });
 
   it("accepts imported folders with no detected entry file", () => {
-    const result = normalizeOpenDesignHostProjectImportResult({
+    const result = normalizeCapyDesignHostProjectImportResult({
       ok: true,
       response: {
         project: {
@@ -171,11 +171,11 @@ describe("open-design host contract", () => {
   });
 
   it("preserves canceled and structured failure project-import results", () => {
-    expect(normalizeOpenDesignHostProjectImportResult({ canceled: true, ok: false })).toEqual({
+    expect(normalizeCapyDesignHostProjectImportResult({ canceled: true, ok: false })).toEqual({
       canceled: true,
       ok: false,
     });
-    expect(normalizeOpenDesignHostProjectImportResult({
+    expect(normalizeCapyDesignHostProjectImportResult({
       ok: false,
       reason: "daemon returned HTTP 500",
       details: { code: "boom" },
@@ -187,7 +187,7 @@ describe("open-design host contract", () => {
   });
 
   it("rejects malformed successful project-import results before they reach web callers", () => {
-    expect(normalizeOpenDesignHostProjectImportResult({
+    expect(normalizeCapyDesignHostProjectImportResult({
       ok: true,
       response: {
         project: { id: "project-1" },
@@ -216,7 +216,7 @@ describe("open-design host contract", () => {
     const print = vi.fn(async () => ({ ok: true as const }));
     const setVisible = vi.fn();
     const scope: Record<string, unknown> = {};
-    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockOpenDesignHost({
+    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockCapyDesignHost({
       browser: { clearData },
       shell: { openExternal, openPath },
       project: { pickAndImport },
@@ -254,7 +254,7 @@ describe("open-design host contract", () => {
       },
       channel: "beta" as const,
       currentVersion: "1.0.0-beta.0",
-      downloadPath: "/tmp/Open Design Beta.dmg",
+      downloadPath: "/tmp/CapyDesign Beta.dmg",
       enabled: true,
       mode: "package-launcher" as const,
       platform: "darwin",
@@ -271,7 +271,7 @@ describe("open-design host contract", () => {
     const subscribeOpenDialog = vi.fn(() => unsubscribeOpenDialog);
     const setMenuLabels = vi.fn(async () => ({ ok: true as const }));
     const scope: Record<string, unknown> = {};
-    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockOpenDesignHost({
+    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockCapyDesignHost({
       updater: { check, install, quit, setMenuLabels, status: statusFn, subscribe, subscribeOpenDialog },
     });
 
@@ -301,7 +301,7 @@ describe("open-design host contract", () => {
       downloading: "Downloading Update…",
       install: "Install Update…",
       installing: "Installing Update…",
-      restart: "Restart to Update OpenDesign…",
+      restart: "Restart to Update CapyDesign…",
     }, scope)).resolves.toEqual({ ok: true });
     expect(statusFn).toHaveBeenCalledWith({ payload: { source: "mount" } });
     expect(check).toHaveBeenCalledWith({ payload: { source: "button" } });
@@ -324,7 +324,7 @@ describe("open-design host contract", () => {
     const subscribeNavigationFailure = vi.fn(() => unsubscribe);
     const getLatestNavigationFailure = vi.fn(() => failure);
     const scope: Record<string, unknown> = {};
-    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockOpenDesignHost({
+    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockCapyDesignHost({
       preview: { getLatestNavigationFailure, subscribeNavigationFailure },
     });
     const listener = vi.fn();
@@ -339,7 +339,7 @@ describe("open-design host contract", () => {
 
   it("wraps updater action throws into structured failures", async () => {
     const scope: Record<string, unknown> = {};
-    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockOpenDesignHost({
+    scope[OPEN_DESIGN_HOST_GLOBAL] = createMockCapyDesignHost({
       updater: {
         check: vi.fn(async () => {
           throw new Error("updater failed");
@@ -355,9 +355,9 @@ describe("open-design host contract", () => {
 
   it("installs and restores test hosts without exposing callers to the global key", () => {
     const scope: Record<string, unknown> = {};
-    const restore = installMockOpenDesignHost({ scope });
-    expect(getOpenDesignHost(scope)).not.toBeNull();
+    const restore = installMockCapyDesignHost({ scope });
+    expect(getCapyDesignHost(scope)).not.toBeNull();
     restore();
-    expect(getOpenDesignHost(scope)).toBeNull();
+    expect(getCapyDesignHost(scope)).toBeNull();
   });
 });

@@ -27,7 +27,7 @@ Measured `OpenDesign`/`Open Design` occurrences by area:
 name at all — they are `manifest.json` fields like
 `"origin": "OpenDesign curated bundled fixture"` and `DESIGN.md` prose about a
 third-party brand. A blind replace rewrites sentences about *other companies*
-into sentences about CaptDesign. That is both wrong and a legal problem.
+into sentences about CapyDesign. That is both wrong and a legal problem.
 
 ## Rule 1 — never rename a third party
 
@@ -67,14 +67,14 @@ Do **not** rewrite:
 - `plugins/spec/**` if it is a versioned spec with a published history — check
   and decide, then state your reasoning.
 
-Add a short note at the top of `docs/plans/captdesign-rebrand/PLAN.md`'s sibling
+Add a short note at the top of `docs/plans/capydesign-rebrand/PLAN.md`'s sibling
 (or in `README.md`'s provenance section) explaining that historical documents
 retain the original product name because that is what they described at the time.
 
 ## Rule 3 — rename the product, everywhere else
 
 Product-name occurrences in prose, headings, diagrams, code fences, and content
-metadata → **CaptDesign**. Includes:
+metadata → **CapyDesign**. Includes:
 
 - `README.md` (48 `OpenDesign` hits) and the **13 translated READMEs** under
   `docs/i18n/`: `ar, de, es, fr, ja-JP, ko, pt-BR, ru, th, tr, uk, zh-CN, zh-TW`.
@@ -117,9 +117,9 @@ conventions. If you touch a section, you must preserve every normative sentence.
 While you are in these files, make the provenance discoverable where a reader
 actually looks. Add, near the top of `README.md` and in `CONTRIBUTING.md`:
 
-> CaptDesign is a derivative work of **Open Design**
+> CapyDesign is a derivative work of **Open Design**
 > ([nexu-io/open-design](https://github.com/nexu-io/open-design)), Copyright 2026
-> Open Design contributors, licensed under Apache-2.0. CaptDesign is not
+> Open Design contributors, licensed under Apache-2.0. CapyDesign is not
 > affiliated with or endorsed by the Open Design project or nexu-io. Bundled
 > third-party components remain under their own licenses — see
 > `THIRD-PARTY-NOTICES.md`.

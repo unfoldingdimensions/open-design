@@ -1,11 +1,11 @@
-export interface OpenDesignGithubRepoResponse {
+export interface CapyDesignGithubRepoResponse {
   repo: string;
   stargazers_count: number;
   fetchedAt: number;
   stale: boolean;
 }
 
-export interface OpenDesignGithubLatestReleaseResponse {
+export interface CapyDesignGithubLatestReleaseResponse {
   repo: string;
   tag_name: string;
   html_url: string;

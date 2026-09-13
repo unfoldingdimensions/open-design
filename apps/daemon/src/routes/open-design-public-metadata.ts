@@ -1,33 +1,33 @@
 import type { Express } from 'express';
 import type {
-  OpenDesignDiscordPresenceResponse,
-  OpenDesignGithubLatestReleaseResponse,
-  OpenDesignGithubRepoResponse,
+  CapyDesignDiscordPresenceResponse,
+  CapyDesignGithubLatestReleaseResponse,
+  CapyDesignGithubRepoResponse,
 } from '@open-design/contracts';
 import type { RouteDeps } from '../server-context.js';
 import {
   OPEN_DESIGN_DISCORD_INVITE_URL,
-  type OpenDesignPublicMetadataService,
+  type CapyDesignPublicMetadataService,
 } from '../services/open-design-public-metadata.js';
 
-export interface RegisterOpenDesignPublicMetadataRoutesDeps extends RouteDeps<'http'> {
-  openDesignPublicMetadata: OpenDesignPublicMetadataService;
+export interface RegisterCapyDesignPublicMetadataRoutesDeps extends RouteDeps<'http'> {
+  openDesignPublicMetadata: CapyDesignPublicMetadataService;
 }
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-export function registerOpenDesignPublicMetadataRoutes(
+export function registerCapyDesignPublicMetadataRoutes(
   app: Express,
-  ctx: RegisterOpenDesignPublicMetadataRoutesDeps,
+  ctx: RegisterCapyDesignPublicMetadataRoutesDeps,
 ): void {
   const { openDesignPublicMetadata } = ctx;
 
   app.get('/api/github/open-design', async (_req, res) => {
     try {
       const stats = await openDesignPublicMetadata.readGithubRepoStats();
-      const payload: OpenDesignGithubRepoResponse = {
+      const payload: CapyDesignGithubRepoResponse = {
         repo: 'nexu-io/open-design',
         stargazers_count: stats.stargazersCount,
         fetchedAt: stats.fetchedAt,
@@ -42,7 +42,7 @@ export function registerOpenDesignPublicMetadataRoutes(
   app.get('/api/github/open-design/releases/latest', async (_req, res) => {
     try {
       const release = await openDesignPublicMetadata.readLatestReleaseInfo();
-      const payload: OpenDesignGithubLatestReleaseResponse = {
+      const payload: CapyDesignGithubLatestReleaseResponse = {
         repo: 'nexu-io/open-design',
         tag_name: release.tagName,
         html_url: release.htmlUrl,
@@ -58,7 +58,7 @@ export function registerOpenDesignPublicMetadataRoutes(
   app.get('/api/community/discord', async (_req, res) => {
     try {
       const presence = await openDesignPublicMetadata.readDiscordPresence();
-      const payload: OpenDesignDiscordPresenceResponse = {
+      const payload: CapyDesignDiscordPresenceResponse = {
         inviteCode: 'mHAjSMV6gz',
         inviteUrl: OPEN_DESIGN_DISCORD_INVITE_URL,
         onlineCount: presence.onlineCount,

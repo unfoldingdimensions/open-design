@@ -1,4 +1,4 @@
-export interface OpenDesignDiscordPresenceResponse {
+export interface CapyDesignDiscordPresenceResponse {
   inviteCode: string;
   inviteUrl: string;
   onlineCount: number;

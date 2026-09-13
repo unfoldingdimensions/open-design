@@ -16,7 +16,7 @@ Two kinds of upstream reference exist and they go opposite ways:
   `download.open-design.ai`, `open-design.ai/marketplace`, `open-design.ai/schemas/*`,
   the Discord invite, download links, hero images, star charts, and every
   `.github` workflow that posts to nexu-io's infrastructure.
-  → **remove, or point at CaptDesign.** Never leave a live CaptDesign endpoint
+  → **remove, or point at CapyDesign.** Never leave a live CapyDesign endpoint
   aimed at another company's production infrastructure.
 - **Attribution references to the original project** — the Apache-2.0 `LICENSE`,
   `NOTICE`, `THIRD-PARTY-NOTICES.md`, "derivative work of Open Design
@@ -39,15 +39,15 @@ function defaultMetadataUrl(channel) {
 }
 ```
 
-A CaptDesign build that still reads this feed will happily **fetch and install
-nexu-io's OpenDesign over a CaptDesign install**. With WS4's `appId` change this
+A CapyDesign build that still reads this feed will happily **fetch and install
+nexu-io's OpenDesign over a CapyDesign install**. With WS4's `appId` change this
 becomes a worse failure (identity mismatch mid-update), not a safe one.
 
 **Fix it to fail closed.** There must be no default remote feed at all unless the
-operator configures one: a CaptDesign build with no configured release origin
+operator configures one: a CapyDesign build with no configured release origin
 must **not check for updates** and must say so clearly (a log line and, if the
 UI surfaces it, an explicit "updates not configured" state). Do not repoint it at
-a guessed CaptDesign URL — a guessed host that does not exist produces a
+a guessed CapyDesign URL — a guessed host that does not exist produces a
 different silent failure.
 
 Add a test asserting the no-configuration case performs **no network fetch**.
@@ -73,23 +73,23 @@ from a stranger".
 
 | `path:line` | Value | Disposition |
 |---|---|---|
-| `apps/daemon/src/plugins/marketplaces.ts:80,81` | `open-design.ai/marketplace`, `open-design.ai/plugins` | repoint to CaptDesign, or disable the public marketplace with an explicit env override |
+| `apps/daemon/src/plugins/marketplaces.ts:80,81` | `open-design.ai/marketplace`, `open-design.ai/plugins` | repoint to CapyDesign, or disable the public marketplace with an explicit env override |
 | `apps/daemon/src/plugins/plugin-preview-bakes.ts:23` | `repo-assets.open-design.ai/plugin-previews` | disable the default; opt-in env only |
-| `apps/daemon/src/plugins/export.ts:179`, `scaffold.ts:102`, `skill-candidates.ts:359` | `$schema: https://open-design.ai/schemas/plugin.v1.json` | **careful**: this is written into generated plugin manifests. Either host the schema under CaptDesign and bump a schema version, or drop the `$schema` key — do not point generated files at a third party's schema without saying so |
+| `apps/daemon/src/plugins/export.ts:179`, `scaffold.ts:102`, `skill-candidates.ts:359` | `$schema: https://open-design.ai/schemas/plugin.v1.json` | **careful**: this is written into generated plugin manifests. Either host the schema under CapyDesign and bump a schema version, or drop the `$schema` key — do not point generated files at a third party's schema without saying so |
 | `apps/daemon/src/plugins/publish.ts:285` | generated doc link to `open-design.ai/docs/plugins-spec.md` | point at the in-repo doc |
-| `packages/contracts/src/plugins/plugin-url.ts` | `OPEN_DESIGN_SITE_ORIGIN = 'https://open-design.ai'` | this is the single source of truth for shareable plugin links. Repoint to CaptDesign, or make it required-config, and update `apps/web/src/components/plugin-details/PluginShareMenu.tsx` |
+| `packages/contracts/src/plugins/plugin-url.ts` | `OPEN_DESIGN_SITE_ORIGIN = 'https://open-design.ai'` | this is the single source of truth for shareable plugin links. Repoint to CapyDesign, or make it required-config, and update `apps/web/src/components/plugin-details/PluginShareMenu.tsx` |
 | `packages/contracts/tests/plugin-url.test.ts` | expectations | update with the constant |
 
 ### Web surfaces
 
 | `path:line` | Value | Disposition |
 |---|---|---|
-| `apps/web/src/first-party-external-link.ts:1` | `FIRST_PARTY_HOSTS = open-design.ai, www…, staging…` | this decides which links open in the OS browser. Repoint to CaptDesign's domain, or make it empty and let the browser handle links — decide explicitly |
+| `apps/web/src/first-party-external-link.ts:1` | `FIRST_PARTY_HOSTS = open-design.ai, www…, staging…` | this decides which links open in the OS browser. Repoint to CapyDesign's domain, or make it empty and let the browser handle links — decide explicitly |
 | `apps/web/src/components/HomeHero.tsx:2327` | `'open-design.ai': '/logo.svg'` | favicon host map; repoint or remove |
 | `apps/web/src/components/EnterpriseUrl.tsx` / `enterpriseUrl.ts` | enterprise host handling | audit for upstream hosts |
 | `apps/web/src/campaigns/go-plan.ts` | campaign URLs | remove with the campaigns (WS6) |
 | `apps/web/src/runtime/visual-style-catalog.ts`, `sketch-model.ts` | any `open-design.ai` asset refs | audit |
-| `apps/daemon/src/prompts/system.ts:1664` and `packages/contracts/src/prompts/system.ts` | Ask-mode paragraph: GitHub, website, **Discord invite** | **read `docs/prompt-composition.md` first.** Replace with CaptDesign's own links, or remove the links and keep the sentence |
+| `apps/daemon/src/prompts/system.ts:1664` and `packages/contracts/src/prompts/system.ts` | Ask-mode paragraph: GitHub, website, **Discord invite** | **read `docs/prompt-composition.md` first.** Replace with CapyDesign's own links, or remove the links and keep the sentence |
 | `plugins/_official/scenarios/od-next-strategy/assets/*.md` | OD Next prompt text | same switch; keep both sides consistent |
 | `apps/daemon/src/server.ts:3586` | `publisher: { id: 'open-design', url: 'https://open-design.ai' }` | repoint or remove |
 | `apps/web/src/components/ConnectorLogo.tsx`, `support-brand-icons.tsx` | third-party brand icons (Discord/Feishu) | **not yours** — these are other companies' marks, used to link to them. Leave |
@@ -150,9 +150,9 @@ rules naming upstream surfaces.
 ```bash
 pnpm guard
 pnpm typecheck
-pnpm --filter @captdesign/contracts test
-pnpm --filter @captdesign/daemon test
-pnpm --filter @captdesign/desktop test
+pnpm --filter @capydesign/contracts test
+pnpm --filter @capydesign/daemon test
+pnpm --filter @capydesign/desktop test
 
 grep -rn "open-design\.ai\|nexu-io" --include='*.ts' --include='*.tsx' --include='*.json' \
   --include='*.yml' --include='*.yaml' apps/ packages/ tools/ e2e/ .github/ \

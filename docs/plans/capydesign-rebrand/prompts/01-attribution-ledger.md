@@ -2,7 +2,7 @@
 
 **Dependencies:** WS0.
 **You own:** `THIRD-PARTY-NOTICES.md`, `NOTICE`, `scripts/check-attribution-notices.ts`,
-`docs/plans/captdesign-rebrand/attribution-inventory.md`, and the root `LICENSE`
+`docs/plans/capydesign-rebrand/attribution-inventory.md`, and the root `LICENSE`
 header. Nothing else.
 
 ## Why this workstream exists
@@ -62,12 +62,12 @@ surface that a recipient can read to learn who made what.
   (`Copyright 2017–2026 Remix Design`). The CSS header at
   `apps/web/src/styles/remixicon/remixicon.css:1-9` carries the notice: retain
   it. Note the license's §3.3 (no use as a logo/brand mark) and §4.2 (brand
-  icons carry their owners' trademarks) in the notices file, because CaptDesign's
+  icons carry their owners' trademarks) in the notices file, because CapyDesign's
   new icon must not be derived from an icon in that set.
 
 ## Deliverables
 
-### 1. `docs/plans/captdesign-rebrand/attribution-inventory.md`
+### 1. `docs/plans/capydesign-rebrand/attribution-inventory.md`
 
 The machine-generated, complete inventory. Regenerate it, do not hand-write it:
 
@@ -87,7 +87,7 @@ cd "$(git rev-parse --show-toplevel)"
         holder=$(grep -m1 -i 'copyright' "$f" | tr -d '\r' | sed 's/^[[:space:]]*//')
         printf '| `%s` | %s | %s |\n' "$f" "${lic:-—}" "${holder:-—}"
       done
-} > docs/plans/captdesign-rebrand/attribution-inventory.md
+} > docs/plans/capydesign-rebrand/attribution-inventory.md
 ```
 
 Then hand-audit it: every row whose License or holder cell is `—` needs you to
@@ -100,12 +100,12 @@ The recipient-facing document. Structure:
 ```
 # Third-Party Notices
 
-CaptDesign is a derivative work of Open Design
+CapyDesign is a derivative work of Open Design
 (https://github.com/nexu-io/open-design), Copyright 2026 Open Design
 contributors, licensed under the Apache License 2.0. See NOTICE.
 
-CaptDesign's own source is licensed under Apache-2.0 (see LICENSE).
-The components below are bundled with CaptDesign and remain under their own
+CapyDesign's own source is licensed under Apache-2.0 (see LICENSE).
+The components below are bundled with CapyDesign and remain under their own
 licenses; the copyright in each belongs to the holder named.
 
 ## Fonts
@@ -127,17 +127,17 @@ Two entries need care:
 - **Fonts.** Albert Sans: OFL 1.1, The Albert Sans Project Authors, and state
   that a copy of the OFL must accompany the font if the font file itself is
   redistributed. State plainly that **JiduMono Pro (CoType Foundry) has been
-  removed** and is not distributed by CaptDesign.
+  removed** and is not distributed by CapyDesign.
 - **Design system references.** `design-systems/` contains 152 packages, 19 of
   them explicitly real third-party brands (`airbnb`, `apple`, `nike`, `tesla`,
   `meta`, `ferrari`, `starbucks`, `mastercard`, `playstation`, `bmw`, `binance`,
   `coinbase`, `ibm`, `pinterest`, `renault`, `spotify`, `uber`, `bugatti`,
-  `bmw-m`). The `DESIGN.md` documents are original analysis and are CaptDesign's
+  `bmw-m`). The `DESIGN.md` documents are original analysis and are CapyDesign's
   under Apache-2.0 — **but the brand names, logos and trade dress they describe
   are their owners' trademarks**, and `design-systems/airbnb/components.html`
   renders an `airbnb` wordmark. Write an explicit paragraph: these packages are
   design *references* for internal use as a starting point, they do not grant
-  any trademark right, and CaptDesign is not affiliated with or endorsed by any
+  any trademark right, and CapyDesign is not affiliated with or endorsed by any
   of the named brands. Also note the two design-system docs that name
   proprietary typefaces (`design-systems/airbnb/DESIGN.md` — Airbnb Cereal VF;
   `design-systems/ferrari/DESIGN.md` — FerrariSans) and explicitly recommend open
@@ -149,8 +149,8 @@ Apache-2.0 §4(d) makes this the file a redistributor must carry forward. Keep i
 short and factual:
 
 ```
-CaptDesign
-Copyright 2026 CaptDesign contributors
+CapyDesign
+Copyright 2026 CapyDesign contributors
 
 This product is a derivative work of Open Design, Copyright 2026 Open Design
 contributors (https://github.com/nexu-io/open-design), and includes
@@ -164,7 +164,7 @@ CC-BY-4.0 and Remix Icon License v1.0 components.
 ```
 
 Adjust the copyright line to the holder the user actually wants on record; if
-that is unclear, use `CaptDesign contributors` and flag it in your report.
+that is unclear, use `CapyDesign contributors` and flag it in your report.
 
 ### 4. `scripts/check-attribution-notices.ts` — the guard that keeps this true
 

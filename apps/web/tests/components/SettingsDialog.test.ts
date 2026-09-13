@@ -24,7 +24,7 @@ import {
   updateCurrentApiProtocolConfig,
 } from '../../src/components/SettingsDialog';
 import { deriveUpdaterModel } from '../../src/lib/updater';
-import type { OpenDesignHostUpdaterStatusSnapshot } from '@open-design/host';
+import type { CapyDesignHostUpdaterStatusSnapshot } from '@open-design/host';
 import type { AppConfig, AppVersionInfo, ConnectionTestResponse } from '../../src/types';
 import type { WorkspaceCollabContext } from '@open-design/contracts';
 
@@ -51,8 +51,8 @@ const packagedVersion: AppVersionInfo = {
 };
 
 function updateStatus(
-  overrides: Partial<OpenDesignHostUpdaterStatusSnapshot> = {},
-): OpenDesignHostUpdaterStatusSnapshot {
+  overrides: Partial<CapyDesignHostUpdaterStatusSnapshot> = {},
+): CapyDesignHostUpdaterStatusSnapshot {
   return {
     arch: 'arm64',
     capabilities: {
@@ -161,10 +161,10 @@ describe('SettingsDialog about update control', () => {
           incoming: {
             arch: 'arm64',
             artifact: {
-              name: 'Open Design Beta.dmg',
+              name: 'CapyDesign Beta.dmg',
               platformKey: 'macAppleSilicon',
               type: 'dmg',
-              url: 'https://fixture.test/Open Design Beta.dmg',
+              url: 'https://fixture.test/CapyDesign Beta.dmg',
             },
             channel: 'beta',
             progress: {
@@ -194,13 +194,13 @@ describe('SettingsDialog about update control', () => {
       deriveUpdaterModel(
         updateStatus({
           artifact: {
-            name: 'Open Design Beta.dmg',
+            name: 'CapyDesign Beta.dmg',
             platformKey: 'macAppleSilicon',
             type: 'dmg',
-            url: 'https://fixture.test/Open Design Beta.dmg',
+            url: 'https://fixture.test/CapyDesign Beta.dmg',
           },
           availableVersion: '1.2.3-beta.4',
-          downloadPath: '/tmp/Open Design Beta.dmg',
+          downloadPath: '/tmp/CapyDesign Beta.dmg',
           state: 'downloaded',
         }),
         { hostAvailable: true },
@@ -254,17 +254,17 @@ describe('SettingsDialog about update control', () => {
       deriveUpdaterModel(
         updateStatus({
           artifact: {
-            name: 'Open Design Beta.dmg',
+            name: 'CapyDesign Beta.dmg',
             platformKey: 'macAppleSilicon',
             type: 'dmg',
-            url: 'https://fixture.test/Open Design Beta.dmg',
+            url: 'https://fixture.test/CapyDesign Beta.dmg',
           },
           availableVersion: '1.2.3-beta.4',
-          downloadPath: '/tmp/Open Design Beta.dmg',
+          downloadPath: '/tmp/CapyDesign Beta.dmg',
           installResult: {
             dryRun: true,
             openedAt: '2026-05-19T00:00:00.000Z',
-            path: '/tmp/Open Design Beta.dmg',
+            path: '/tmp/CapyDesign Beta.dmg',
           },
           state: 'downloaded',
         }),
@@ -308,7 +308,7 @@ describe('SettingsDialog about update control', () => {
       deriveUpdaterModel(
         updateStatus({
           availableVersion: '1.2.3-beta.4',
-          downloadPath: '/tmp/Open Design Beta.dmg',
+          downloadPath: '/tmp/CapyDesign Beta.dmg',
           state: 'error',
         }),
         { hostAvailable: true },

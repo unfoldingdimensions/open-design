@@ -3,9 +3,9 @@ import type { ReleaseChannel } from "@open-design/release";
 /**
  * @module protocol
  *
- * The OpenDesign renderer host-bridge wire contract: the injected-global name
+ * The CapyDesign renderer host-bridge wire contract: the injected-global name
  * and version, client/updater constant registries, and every request/result
- * type that crosses the host bridge — including the {@link OpenDesignHostBridge}
+ * type that crosses the host bridge — including the {@link CapyDesignHostBridge}
  * shape itself. Pure declarations only; depends on nothing else in the package.
  */
 
@@ -16,28 +16,28 @@ export const OPEN_DESIGN_HOST_CLIENT_TYPES = Object.freeze({
   DESKTOP: "desktop",
 } as const);
 
-export type OpenDesignHostClientType =
+export type CapyDesignHostClientType =
   (typeof OPEN_DESIGN_HOST_CLIENT_TYPES)[keyof typeof OPEN_DESIGN_HOST_CLIENT_TYPES];
 
-export type OpenDesignHostClient = {
+export type CapyDesignHostClient = {
   // BCP-47 locale string (e.g. "zh-CN", "pt-BR") the host process read from
   // the OS at startup. The renderer uses this so the packaged desktop app
   // can follow the OS language even when Chromium's built-in
   // `navigator.language` would have defaulted to en-US.
   osLocale?: string;
   platform?: string;
-  type: OpenDesignHostClientType;
+  type: CapyDesignHostClientType;
 };
 
-export type OpenDesignHostFailure = {
+export type CapyDesignHostFailure = {
   details?: unknown;
   ok: false;
   reason: string;
 };
 
-export type OpenDesignHostActionResult =
+export type CapyDesignHostActionResult =
   | { ok: true }
-  | OpenDesignHostFailure;
+  | CapyDesignHostFailure;
 
 /**
  * The workspace attribution the renderer gives the host so a folder import
@@ -57,7 +57,7 @@ export type OpenDesignHostActionResult =
  * it would reject the very `WorkspaceCollabContext` callers pass. Callers hand
  * over a variable, not a fresh literal, so the extra fields ride along fine.
  */
-export type OpenDesignHostWorkspaceContext = {
+export type CapyDesignHostWorkspaceContext = {
   lifecycleState: string;
   memberStatus: string;
   permissions: {
@@ -70,43 +70,43 @@ export type OpenDesignHostWorkspaceContext = {
   workspaceType: string;
 };
 
-export type OpenDesignHostProjectImportInit = {
+export type CapyDesignHostProjectImportInit = {
   designSystemId?: string | null;
   name?: string;
   skillId?: string | null;
-  workspaceContext?: OpenDesignHostWorkspaceContext | null;
+  workspaceContext?: CapyDesignHostWorkspaceContext | null;
 };
 
-export type OpenDesignHostProjectImportSuccess = {
+export type CapyDesignHostProjectImportSuccess = {
   conversationId: string;
   entryFile: string | null;
   ok: true;
   projectId: string;
 };
 
-export type OpenDesignHostProjectImportResult =
-  | OpenDesignHostProjectImportSuccess
+export type CapyDesignHostProjectImportResult =
+  | CapyDesignHostProjectImportSuccess
   | {
       canceled: true;
       ok: false;
     }
-  | OpenDesignHostFailure;
+  | CapyDesignHostFailure;
 
-export type OpenDesignHostProjectReplaceWorkingDirSuccess = {
+export type CapyDesignHostProjectReplaceWorkingDirSuccess = {
   baseDir: string;
   entryFile: string | null;
   ok: true;
 };
 
-export type OpenDesignHostProjectReplaceWorkingDirResult =
-  | OpenDesignHostProjectReplaceWorkingDirSuccess
+export type CapyDesignHostProjectReplaceWorkingDirResult =
+  | CapyDesignHostProjectReplaceWorkingDirSuccess
   | {
       canceled: true;
       ok: false;
     }
-  | OpenDesignHostFailure;
+  | CapyDesignHostFailure;
 
-export type OpenDesignHostPickWorkingDirSuccess = {
+export type CapyDesignHostPickWorkingDirSuccess = {
   baseDir: string;
   ok: true;
   // Single-use HMAC token (minted by the host main process for `baseDir`)
@@ -116,24 +116,24 @@ export type OpenDesignHostPickWorkingDirSuccess = {
   token: string;
 };
 
-export type OpenDesignHostPickWorkingDirResult =
-  | OpenDesignHostPickWorkingDirSuccess
+export type CapyDesignHostPickWorkingDirResult =
+  | CapyDesignHostPickWorkingDirSuccess
   | {
       canceled: true;
       ok: false;
     }
-  | OpenDesignHostFailure;
+  | CapyDesignHostFailure;
 
-export type OpenDesignHostPdfPrintOptions = {
+export type CapyDesignHostPdfPrintOptions = {
   deck?: boolean;
 };
 
-export type OpenDesignHostCaptureClip = { x: number; y: number; width: number; height: number };
-export type OpenDesignHostCaptureOptions = { clip?: OpenDesignHostCaptureClip };
-export type OpenDesignHostCaptureSuccess = { dataUrl: string; h: number; ok: true; w: number };
-export type OpenDesignHostCaptureResult = OpenDesignHostCaptureSuccess | OpenDesignHostFailure;
+export type CapyDesignHostCaptureClip = { x: number; y: number; width: number; height: number };
+export type CapyDesignHostCaptureOptions = { clip?: CapyDesignHostCaptureClip };
+export type CapyDesignHostCaptureSuccess = { dataUrl: string; h: number; ok: true; w: number };
+export type CapyDesignHostCaptureResult = CapyDesignHostCaptureSuccess | CapyDesignHostFailure;
 
-export type OpenDesignHostPreviewNavigationFailure = {
+export type CapyDesignHostPreviewNavigationFailure = {
   errorCode: number;
   eventId: number;
   frameName?: string;
@@ -141,11 +141,11 @@ export type OpenDesignHostPreviewNavigationFailure = {
   validatedUrl: string;
 };
 
-export type OpenDesignHostPreviewNavigationFailureListener = (
-  failure: OpenDesignHostPreviewNavigationFailure,
+export type CapyDesignHostPreviewNavigationFailureListener = (
+  failure: CapyDesignHostPreviewNavigationFailure,
 ) => void;
 
-export type OpenDesignHostBrowserClearDataOptions = {
+export type CapyDesignHostBrowserClearDataOptions = {
   cookies?: boolean;
   storage?: boolean;
 };
@@ -163,7 +163,7 @@ export const OPEN_DESIGN_HOST_APPEARANCE_THEMES = Object.freeze({
   SYSTEM: "system",
 } as const);
 
-export type OpenDesignHostAppearanceTheme =
+export type CapyDesignHostAppearanceTheme =
   (typeof OPEN_DESIGN_HOST_APPEARANCE_THEMES)[keyof typeof OPEN_DESIGN_HOST_APPEARANCE_THEMES];
 
 export const OPEN_DESIGN_HOST_UPDATER_ACTIONS = Object.freeze({
@@ -175,12 +175,12 @@ export const OPEN_DESIGN_HOST_UPDATER_ACTIONS = Object.freeze({
   STATUS: "status",
 } as const);
 
-export type OpenDesignHostUpdaterAction =
+export type CapyDesignHostUpdaterAction =
   (typeof OPEN_DESIGN_HOST_UPDATER_ACTIONS)[keyof typeof OPEN_DESIGN_HOST_UPDATER_ACTIONS];
 
 /** @internal Updater actions that return a status snapshot (every action except `quit`). */
-export type OpenDesignHostUpdaterStatusAction = Exclude<
-  OpenDesignHostUpdaterAction,
+export type CapyDesignHostUpdaterStatusAction = Exclude<
+  CapyDesignHostUpdaterAction,
   typeof OPEN_DESIGN_HOST_UPDATER_ACTIONS.QUIT
 >;
 
@@ -196,35 +196,35 @@ export const OPEN_DESIGN_HOST_UPDATER_STATES = Object.freeze({
   UNSUPPORTED: "unsupported",
 } as const);
 
-export type OpenDesignHostUpdaterState =
+export type CapyDesignHostUpdaterState =
   (typeof OPEN_DESIGN_HOST_UPDATER_STATES)[keyof typeof OPEN_DESIGN_HOST_UPDATER_STATES];
 
-export type OpenDesignHostUpdaterMode = "js-incremental" | "package-launcher";
-export type OpenDesignHostUpdaterChannel = ReleaseChannel;
+export type CapyDesignHostUpdaterMode = "js-incremental" | "package-launcher";
+export type CapyDesignHostUpdaterChannel = ReleaseChannel;
 
-export type OpenDesignHostUpdaterActionOptions = {
+export type CapyDesignHostUpdaterActionOptions = {
   payload?: Record<string, unknown>;
 };
 
-export type OpenDesignHostUpdaterCapabilitySet = {
+export type CapyDesignHostUpdaterCapabilitySet = {
   canApplyInPlace: boolean;
   canDownload: boolean;
   canOpenInstaller: boolean;
   requiresManualInstall: boolean;
 };
 
-export type OpenDesignHostUpdaterPathSnapshot = {
+export type CapyDesignHostUpdaterPathSnapshot = {
   downloadRoot?: string;
   manifestPath?: string;
 };
 
-export type OpenDesignHostUpdaterChecksumSnapshot = {
+export type CapyDesignHostUpdaterChecksumSnapshot = {
   algorithm: "sha256" | "sha512";
   url?: string;
   value?: string;
 };
 
-export type OpenDesignHostUpdaterArtifactSnapshot = {
+export type CapyDesignHostUpdaterArtifactSnapshot = {
   name?: string;
   platformKey?: string;
   size?: number;
@@ -232,18 +232,18 @@ export type OpenDesignHostUpdaterArtifactSnapshot = {
   url: string;
 };
 
-export type OpenDesignHostUpdaterProgressSnapshot = {
+export type CapyDesignHostUpdaterProgressSnapshot = {
   receivedBytes: number;
   totalBytes?: number;
 };
 
-export type OpenDesignHostUpdaterErrorSnapshot = {
+export type CapyDesignHostUpdaterErrorSnapshot = {
   code: string;
   details?: unknown;
   message: string;
 };
 
-export type OpenDesignHostUpdaterInstallResult = {
+export type CapyDesignHostUpdaterInstallResult = {
   activeVersion?: string;
   artifactPath?: string;
   dryRun?: boolean;
@@ -254,11 +254,11 @@ export type OpenDesignHostUpdaterInstallResult = {
   path: string;
 };
 
-export type OpenDesignHostUpdaterReleaseSnapshot = {
+export type CapyDesignHostUpdaterReleaseSnapshot = {
   arch: string;
-  artifact: OpenDesignHostUpdaterArtifactSnapshot;
-  checksum: OpenDesignHostUpdaterChecksumSnapshot;
-  channel: OpenDesignHostUpdaterChannel;
+  artifact: CapyDesignHostUpdaterArtifactSnapshot;
+  checksum: CapyDesignHostUpdaterChecksumSnapshot;
+  channel: CapyDesignHostUpdaterChannel;
   downloadedAt: string;
   key: string;
   metadata?: Record<string, unknown>;
@@ -267,29 +267,29 @@ export type OpenDesignHostUpdaterReleaseSnapshot = {
   version: string;
 };
 
-export type OpenDesignHostUpdaterIncomingSnapshot = {
+export type CapyDesignHostUpdaterIncomingSnapshot = {
   arch: string;
-  artifact: OpenDesignHostUpdaterArtifactSnapshot;
-  channel: OpenDesignHostUpdaterChannel;
+  artifact: CapyDesignHostUpdaterArtifactSnapshot;
+  channel: CapyDesignHostUpdaterChannel;
   key?: string;
   metadata?: Record<string, unknown>;
-  progress?: OpenDesignHostUpdaterProgressSnapshot;
+  progress?: CapyDesignHostUpdaterProgressSnapshot;
   startedAt: string;
   version: string;
 };
 
-export type OpenDesignHostUpdaterCacheLifecycleTrigger = "cold-start" | "manual" | "next-version-ready";
+export type CapyDesignHostUpdaterCacheLifecycleTrigger = "cold-start" | "manual" | "next-version-ready";
 
-export type OpenDesignHostUpdaterReleaseLifecycleState =
+export type CapyDesignHostUpdaterReleaseLifecycleState =
   | "cleanup-deferred"
   | "cleanup-removed"
   | "deprecated"
   | "retained"
   | "unknown";
 
-export type OpenDesignHostUpdaterCacheLifecycleSummary = {
+export type CapyDesignHostUpdaterCacheLifecycleSummary = {
   lastRunAt?: string;
-  lastTrigger?: OpenDesignHostUpdaterCacheLifecycleTrigger;
+  lastTrigger?: CapyDesignHostUpdaterCacheLifecycleTrigger;
   platform: string;
   releases: {
     cleanupDeferred: number;
@@ -302,11 +302,11 @@ export type OpenDesignHostUpdaterCacheLifecycleSummary = {
   };
 };
 
-export type OpenDesignHostUpdaterCacheSnapshot = {
-  lifecycle?: OpenDesignHostUpdaterCacheLifecycleSummary;
+export type CapyDesignHostUpdaterCacheSnapshot = {
+  lifecycle?: CapyDesignHostUpdaterCacheLifecycleSummary;
 };
 
-export type OpenDesignHostUpdaterReinstallReason =
+export type CapyDesignHostUpdaterReinstallReason =
   | "launcher-schema"
   | "outer-below-min"
   | "outer-version-unreadable";
@@ -317,47 +317,47 @@ export type OpenDesignHostUpdaterReinstallReason =
  * outer package version; `url` is an optional operator-supplied explanation
  * link.
  */
-export type OpenDesignHostUpdaterReinstallSnapshot = {
+export type CapyDesignHostUpdaterReinstallSnapshot = {
   installedVersion?: string;
   minVersion?: string;
-  reason: OpenDesignHostUpdaterReinstallReason;
+  reason: CapyDesignHostUpdaterReinstallReason;
   url?: string;
 };
 
-export type OpenDesignHostUpdaterStatusSnapshot = {
-  active?: OpenDesignHostUpdaterReleaseSnapshot;
+export type CapyDesignHostUpdaterStatusSnapshot = {
+  active?: CapyDesignHostUpdaterReleaseSnapshot;
   arch: string;
-  artifact?: OpenDesignHostUpdaterArtifactSnapshot;
+  artifact?: CapyDesignHostUpdaterArtifactSnapshot;
   artifactUrl?: string;
   availableVersion?: string;
-  cache?: OpenDesignHostUpdaterCacheSnapshot;
-  capabilities: OpenDesignHostUpdaterCapabilitySet;
-  channel: OpenDesignHostUpdaterChannel;
-  checksum?: OpenDesignHostUpdaterChecksumSnapshot;
+  cache?: CapyDesignHostUpdaterCacheSnapshot;
+  capabilities: CapyDesignHostUpdaterCapabilitySet;
+  channel: CapyDesignHostUpdaterChannel;
+  checksum?: CapyDesignHostUpdaterChecksumSnapshot;
   currentVersion: string;
   downloadPath?: string;
   enabled: boolean;
-  error?: OpenDesignHostUpdaterErrorSnapshot;
-  incoming?: OpenDesignHostUpdaterIncomingSnapshot;
-  installResult?: OpenDesignHostUpdaterInstallResult;
+  error?: CapyDesignHostUpdaterErrorSnapshot;
+  incoming?: CapyDesignHostUpdaterIncomingSnapshot;
+  installResult?: CapyDesignHostUpdaterInstallResult;
   lastCheckedAt?: string;
   metadata?: Record<string, unknown>;
-  mode: OpenDesignHostUpdaterMode;
-  paths?: OpenDesignHostUpdaterPathSnapshot;
+  mode: CapyDesignHostUpdaterMode;
+  paths?: CapyDesignHostUpdaterPathSnapshot;
   platform: string;
-  progress?: OpenDesignHostUpdaterProgressSnapshot;
-  reinstall?: OpenDesignHostUpdaterReinstallSnapshot;
-  state: OpenDesignHostUpdaterState;
+  progress?: CapyDesignHostUpdaterProgressSnapshot;
+  reinstall?: CapyDesignHostUpdaterReinstallSnapshot;
+  state: CapyDesignHostUpdaterState;
   supported: boolean;
 };
 
-export type OpenDesignHostUpdaterResult =
-  | { ok: true; status: OpenDesignHostUpdaterStatusSnapshot }
-  | OpenDesignHostFailure;
+export type CapyDesignHostUpdaterResult =
+  | { ok: true; status: CapyDesignHostUpdaterStatusSnapshot }
+  | CapyDesignHostFailure;
 
-export type OpenDesignHostUpdaterStatusListener = (status: OpenDesignHostUpdaterStatusSnapshot) => void;
+export type CapyDesignHostUpdaterStatusListener = (status: CapyDesignHostUpdaterStatusSnapshot) => void;
 
-export type OpenDesignHostUpdaterMenuLabels = {
+export type CapyDesignHostUpdaterMenuLabels = {
   check: string;
   checking: string;
   downloading: string;
@@ -366,27 +366,27 @@ export type OpenDesignHostUpdaterMenuLabels = {
   restart: string;
 };
 
-export type OpenDesignHostUpdaterOpenDialogRequest = {
+export type CapyDesignHostUpdaterOpenDialogRequest = {
   source: string;
 };
 
-export type OpenDesignHostUpdaterOpenDialogListener = (request: OpenDesignHostUpdaterOpenDialogRequest) => void;
+export type CapyDesignHostUpdaterOpenDialogListener = (request: CapyDesignHostUpdaterOpenDialogRequest) => void;
 
-export type OpenDesignHostBridge = {
+export type CapyDesignHostBridge = {
   // Optional so older host builds still satisfy the bridge shape; callers
   // must feature-detect before invoking.
   appearance?: {
-    setTheme(theme: OpenDesignHostAppearanceTheme): void;
+    setTheme(theme: CapyDesignHostAppearanceTheme): void;
   };
   browser: {
-    clearData(options?: OpenDesignHostBrowserClearDataOptions): Promise<OpenDesignHostActionResult>;
+    clearData(options?: CapyDesignHostBrowserClearDataOptions): Promise<CapyDesignHostActionResult>;
   };
   capture: {
-    page(options?: OpenDesignHostCaptureOptions): Promise<OpenDesignHostCaptureResult>;
+    page(options?: CapyDesignHostCaptureOptions): Promise<CapyDesignHostCaptureResult>;
   };
-  client: OpenDesignHostClient;
+  client: CapyDesignHostClient;
   pdf: {
-    print(html: string, nonce?: string, options?: OpenDesignHostPdfPrintOptions): Promise<OpenDesignHostActionResult>;
+    print(html: string, nonce?: string, options?: CapyDesignHostPdfPrintOptions): Promise<CapyDesignHostActionResult>;
   };
   pet: {
     setVisible(visible: boolean): void;
@@ -395,34 +395,34 @@ export type OpenDesignHostBridge = {
   // Electron is the only layer that can observe a compositor-affecting
   // subframe navigation failure after the iframe DOM remains healthy.
   preview?: {
-    getLatestNavigationFailure(): OpenDesignHostPreviewNavigationFailure | null;
-    subscribeNavigationFailure(listener: OpenDesignHostPreviewNavigationFailureListener): () => void;
+    getLatestNavigationFailure(): CapyDesignHostPreviewNavigationFailure | null;
+    subscribeNavigationFailure(listener: CapyDesignHostPreviewNavigationFailureListener): () => void;
   };
   project: {
-    pickAndImport(init?: OpenDesignHostProjectImportInit): Promise<OpenDesignHostProjectImportResult>;
-    pickAndReplaceWorkingDir(projectId: string): Promise<OpenDesignHostProjectReplaceWorkingDirResult>;
+    pickAndImport(init?: CapyDesignHostProjectImportInit): Promise<CapyDesignHostProjectImportResult>;
+    pickAndReplaceWorkingDir(projectId: string): Promise<CapyDesignHostProjectReplaceWorkingDirResult>;
     // Optional so older host builds still satisfy the bridge shape; callers
     // must feature-detect before invoking.
-    pickWorkingDir?(): Promise<OpenDesignHostPickWorkingDirResult>;
+    pickWorkingDir?(): Promise<CapyDesignHostPickWorkingDirResult>;
   };
   shell: {
-    openExternal(url: string): Promise<OpenDesignHostActionResult>;
-    openPath(projectId: string): Promise<OpenDesignHostActionResult>;
+    openExternal(url: string): Promise<CapyDesignHostActionResult>;
+    openPath(projectId: string): Promise<CapyDesignHostActionResult>;
   };
   updater: {
-    check(options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostUpdaterStatusSnapshot>;
-    "clear-cache"(options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostUpdaterStatusSnapshot>;
-    download(options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostUpdaterStatusSnapshot>;
-    install(options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostUpdaterStatusSnapshot>;
-    quit(options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostActionResult>;
-    setMenuLabels(labels: OpenDesignHostUpdaterMenuLabels): Promise<OpenDesignHostActionResult>;
-    status(options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostUpdaterStatusSnapshot>;
-    subscribe(listener: OpenDesignHostUpdaterStatusListener): () => void;
-    subscribeOpenDialog(listener: OpenDesignHostUpdaterOpenDialogListener): () => void;
+    check(options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostUpdaterStatusSnapshot>;
+    "clear-cache"(options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostUpdaterStatusSnapshot>;
+    download(options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostUpdaterStatusSnapshot>;
+    install(options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostUpdaterStatusSnapshot>;
+    quit(options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostActionResult>;
+    setMenuLabels(labels: CapyDesignHostUpdaterMenuLabels): Promise<CapyDesignHostActionResult>;
+    status(options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostUpdaterStatusSnapshot>;
+    subscribe(listener: CapyDesignHostUpdaterStatusListener): () => void;
+    subscribeOpenDialog(listener: CapyDesignHostUpdaterOpenDialogListener): () => void;
   };
   version: typeof OPEN_DESIGN_HOST_VERSION;
 };
 
-export type OpenDesignHostGlobalScope = Record<string, unknown> & {
+export type CapyDesignHostGlobalScope = Record<string, unknown> & {
   window?: unknown;
 };

@@ -1,24 +1,24 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 import type {
-  OpenDesignHostBridge,
-  OpenDesignHostActionResult,
-  OpenDesignHostBrowserClearDataOptions,
-  OpenDesignHostCaptureOptions,
-  OpenDesignHostCaptureResult,
-  OpenDesignHostFailure,
-  OpenDesignHostProjectImportResult,
-  OpenDesignHostProjectImportInit,
-  OpenDesignHostProjectReplaceWorkingDirResult,
-  OpenDesignHostPickWorkingDirResult,
-  OpenDesignHostPreviewNavigationFailure,
-  OpenDesignHostPreviewNavigationFailureListener,
-  OpenDesignHostUpdaterActionOptions,
-  OpenDesignHostUpdaterMenuLabels,
-  OpenDesignHostUpdaterOpenDialogListener,
-  OpenDesignHostUpdaterOpenDialogRequest,
-  OpenDesignHostUpdaterStatusListener,
-  OpenDesignHostUpdaterStatusSnapshot,
+  CapyDesignHostBridge,
+  CapyDesignHostActionResult,
+  CapyDesignHostBrowserClearDataOptions,
+  CapyDesignHostCaptureOptions,
+  CapyDesignHostCaptureResult,
+  CapyDesignHostFailure,
+  CapyDesignHostProjectImportResult,
+  CapyDesignHostProjectImportInit,
+  CapyDesignHostProjectReplaceWorkingDirResult,
+  CapyDesignHostPickWorkingDirResult,
+  CapyDesignHostPreviewNavigationFailure,
+  CapyDesignHostPreviewNavigationFailureListener,
+  CapyDesignHostUpdaterActionOptions,
+  CapyDesignHostUpdaterMenuLabels,
+  CapyDesignHostUpdaterOpenDialogListener,
+  CapyDesignHostUpdaterOpenDialogRequest,
+  CapyDesignHostUpdaterStatusListener,
+  CapyDesignHostUpdaterStatusSnapshot,
 } from '@open-design/host';
 
 const OPEN_DESIGN_HOST_GLOBAL: typeof import('@open-design/host').OPEN_DESIGN_HOST_GLOBAL = '__od__';
@@ -63,7 +63,7 @@ function reasonFromError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-function failure(reason: string, details?: unknown): OpenDesignHostFailure {
+function failure(reason: string, details?: unknown): CapyDesignHostFailure {
   return {
     ...(details === undefined ? {} : { details }),
     ok: false,
@@ -71,19 +71,19 @@ function failure(reason: string, details?: unknown): OpenDesignHostFailure {
   };
 }
 
-function actionFailure(reason: string, details?: unknown): OpenDesignHostActionResult {
+function actionFailure(reason: string, details?: unknown): CapyDesignHostActionResult {
   return failure(reason, details);
 }
 
-function importFailure(reason: string): OpenDesignHostProjectImportResult {
+function importFailure(reason: string): CapyDesignHostProjectImportResult {
   return failure(reason);
 }
 
-function replaceWorkingDirFailure(reason: string): OpenDesignHostProjectReplaceWorkingDirResult {
+function replaceWorkingDirFailure(reason: string): CapyDesignHostProjectReplaceWorkingDirResult {
   return failure(reason);
 }
 
-function normalizeProjectReplaceWorkingDirResult(input: unknown): OpenDesignHostProjectReplaceWorkingDirResult {
+function normalizeProjectReplaceWorkingDirResult(input: unknown): CapyDesignHostProjectReplaceWorkingDirResult {
   if (!isRecord(input)) return failure('desktop working-dir replace returned an invalid response', input);
   if (input.ok !== true) {
     if (input.canceled === true) return { canceled: true, ok: false };
@@ -105,11 +105,11 @@ function normalizeProjectReplaceWorkingDirResult(input: unknown): OpenDesignHost
   return { baseDir, entryFile, ok: true };
 }
 
-function pickWorkingDirFailure(reason: string): OpenDesignHostPickWorkingDirResult {
+function pickWorkingDirFailure(reason: string): CapyDesignHostPickWorkingDirResult {
   return failure(reason);
 }
 
-function normalizePickWorkingDirResult(input: unknown): OpenDesignHostPickWorkingDirResult {
+function normalizePickWorkingDirResult(input: unknown): CapyDesignHostPickWorkingDirResult {
   if (!isRecord(input)) return failure('desktop working-dir pick returned an invalid response', input);
   if (input.ok !== true) {
     if (input.canceled === true) return { canceled: true, ok: false };
@@ -126,7 +126,7 @@ function normalizePickWorkingDirResult(input: unknown): OpenDesignHostPickWorkin
   return { baseDir, ok: true, token };
 }
 
-function normalizeProjectImportResult(input: unknown): OpenDesignHostProjectImportResult {
+function normalizeProjectImportResult(input: unknown): CapyDesignHostProjectImportResult {
   if (!isRecord(input)) return failure('desktop import returned an invalid response', input);
   if (input.ok !== true) {
     if (input.canceled === true) return { canceled: true, ok: false };
@@ -182,23 +182,23 @@ type DesktopDiagnosticsExportResult =
 
 const project = {
   pickAndImport: (
-    init?: OpenDesignHostProjectImportInit,
-  ): Promise<OpenDesignHostProjectImportResult> =>
+    init?: CapyDesignHostProjectImportInit,
+  ): Promise<CapyDesignHostProjectImportResult> =>
     ipcRenderer.invoke('dialog:pick-and-import', init ?? null)
       .then(normalizeProjectImportResult)
       .catch((error: unknown) => importFailure(reasonFromError(error))),
-  pickAndReplaceWorkingDir: (projectId: string): Promise<OpenDesignHostProjectReplaceWorkingDirResult> =>
+  pickAndReplaceWorkingDir: (projectId: string): Promise<CapyDesignHostProjectReplaceWorkingDirResult> =>
     ipcRenderer.invoke('dialog:pick-and-replace-working-dir', { projectId })
       .then(normalizeProjectReplaceWorkingDirResult)
       .catch((error: unknown) => replaceWorkingDirFailure(reasonFromError(error))),
-  pickWorkingDir: (): Promise<OpenDesignHostPickWorkingDirResult> =>
+  pickWorkingDir: (): Promise<CapyDesignHostPickWorkingDirResult> =>
     ipcRenderer.invoke('dialog:pick-working-dir')
       .then(normalizePickWorkingDirResult)
       .catch((error: unknown) => pickWorkingDirFailure(reasonFromError(error))),
 };
 
 const shell = {
-  openExternal: async (url: string): Promise<OpenDesignHostActionResult> => {
+  openExternal: async (url: string): Promise<CapyDesignHostActionResult> => {
     try {
       const opened = await ipcRenderer.invoke('shell:open-external', url);
       return opened === true
@@ -216,7 +216,7 @@ const shell = {
   // to be true (set by the HMAC-gated import flow), so renderer code
   // cannot ask the bridge to open arbitrary local paths even
   // indirectly through legacy or future project-creation routes.
-  openPath: async (projectId: string): Promise<OpenDesignHostActionResult> => {
+  openPath: async (projectId: string): Promise<CapyDesignHostActionResult> => {
     try {
       const result = await ipcRenderer.invoke('shell:open-path', projectId);
       if (typeof result === 'string' && result.length > 0) return actionFailure(result);
@@ -228,7 +228,7 @@ const shell = {
 };
 
 const browser = {
-  clearData: async (options?: OpenDesignHostBrowserClearDataOptions): Promise<OpenDesignHostActionResult> => {
+  clearData: async (options?: CapyDesignHostBrowserClearDataOptions): Promise<CapyDesignHostActionResult> => {
     try {
       return await ipcRenderer.invoke('browser:clear-data', options ?? null);
     } catch (error) {
@@ -238,7 +238,7 @@ const browser = {
 };
 
 const capture = {
-  page: async (options?: OpenDesignHostCaptureOptions): Promise<OpenDesignHostCaptureResult> => {
+  page: async (options?: CapyDesignHostCaptureOptions): Promise<CapyDesignHostCaptureResult> => {
     try {
       return await ipcRenderer.invoke('od:capture-page', options ?? null);
     } catch (error) {
@@ -247,12 +247,12 @@ const capture = {
   },
 };
 
-let latestPreviewNavigationFailure: OpenDesignHostPreviewNavigationFailure | null = null;
-const previewNavigationFailureListeners = new Set<OpenDesignHostPreviewNavigationFailureListener>();
+let latestPreviewNavigationFailure: CapyDesignHostPreviewNavigationFailure | null = null;
+const previewNavigationFailureListeners = new Set<CapyDesignHostPreviewNavigationFailureListener>();
 
 ipcRenderer.on(PREVIEW_NAVIGATION_FAILURE_IPC_CHANNEL, (
   _event: unknown,
-  failure: OpenDesignHostPreviewNavigationFailure,
+  failure: CapyDesignHostPreviewNavigationFailure,
 ): void => {
   if (
     failure == null
@@ -275,10 +275,10 @@ ipcRenderer.on(PREVIEW_NAVIGATION_FAILURE_IPC_CHANNEL, (
 });
 
 const preview = {
-  getLatestNavigationFailure: (): OpenDesignHostPreviewNavigationFailure | null =>
+  getLatestNavigationFailure: (): CapyDesignHostPreviewNavigationFailure | null =>
     latestPreviewNavigationFailure,
   subscribeNavigationFailure: (
-    listener: OpenDesignHostPreviewNavigationFailureListener,
+    listener: CapyDesignHostPreviewNavigationFailureListener,
   ): (() => void) => {
     previewNavigationFailureListeners.add(listener);
     return () => {
@@ -289,38 +289,38 @@ const preview = {
 
 function invokeUpdater(
   action: 'check' | 'clear-cache' | 'download' | 'install' | 'status',
-  options?: OpenDesignHostUpdaterActionOptions,
-): Promise<OpenDesignHostUpdaterStatusSnapshot> {
+  options?: CapyDesignHostUpdaterActionOptions,
+): Promise<CapyDesignHostUpdaterStatusSnapshot> {
   return ipcRenderer.invoke(`od:update:${action}`, options ?? null);
 }
 
 const updater = {
-  check: (options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostUpdaterStatusSnapshot> =>
+  check: (options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostUpdaterStatusSnapshot> =>
     invokeUpdater('check', options),
-  'clear-cache': (options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostUpdaterStatusSnapshot> =>
+  'clear-cache': (options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostUpdaterStatusSnapshot> =>
     invokeUpdater('clear-cache', options),
-  download: (options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostUpdaterStatusSnapshot> =>
+  download: (options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostUpdaterStatusSnapshot> =>
     invokeUpdater('download', options),
-  install: (options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostUpdaterStatusSnapshot> =>
+  install: (options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostUpdaterStatusSnapshot> =>
     invokeUpdater('install', options),
-  quit: async (options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostActionResult> => {
+  quit: async (options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostActionResult> => {
     try {
       return await ipcRenderer.invoke('od:update:quit', options ?? null);
     } catch (error) {
       return actionFailure(reasonFromError(error));
     }
   },
-  setMenuLabels: async (labels: OpenDesignHostUpdaterMenuLabels): Promise<OpenDesignHostActionResult> => {
+  setMenuLabels: async (labels: CapyDesignHostUpdaterMenuLabels): Promise<CapyDesignHostActionResult> => {
     try {
       return await ipcRenderer.invoke('od:update:set-menu-labels', labels);
     } catch (error) {
       return actionFailure(reasonFromError(error));
     }
   },
-  status: (options?: OpenDesignHostUpdaterActionOptions): Promise<OpenDesignHostUpdaterStatusSnapshot> =>
+  status: (options?: CapyDesignHostUpdaterActionOptions): Promise<CapyDesignHostUpdaterStatusSnapshot> =>
     invokeUpdater('status', options),
-  subscribe: (listener: OpenDesignHostUpdaterStatusListener): (() => void) => {
-    const handler = (_event: unknown, status: OpenDesignHostUpdaterStatusSnapshot): void => {
+  subscribe: (listener: CapyDesignHostUpdaterStatusListener): (() => void) => {
+    const handler = (_event: unknown, status: CapyDesignHostUpdaterStatusSnapshot): void => {
       listener(status);
     };
     ipcRenderer.on(UPDATER_STATUS_EVENT, handler);
@@ -328,8 +328,8 @@ const updater = {
       ipcRenderer.removeListener(UPDATER_STATUS_EVENT, handler);
     };
   },
-  subscribeOpenDialog: (listener: OpenDesignHostUpdaterOpenDialogListener): (() => void) => {
-    const handler = (_event: unknown, request: OpenDesignHostUpdaterOpenDialogRequest): void => {
+  subscribeOpenDialog: (listener: CapyDesignHostUpdaterOpenDialogListener): (() => void) => {
+    const handler = (_event: unknown, request: CapyDesignHostUpdaterOpenDialogRequest): void => {
       if (request == null || typeof request !== 'object' || typeof request.source !== 'string') return;
       listener({ source: request.source });
     };
@@ -365,7 +365,7 @@ const hostBridge = {
   preview,
   project,
   pdf: {
-    print: async (html: string, nonce?: string, options?: PrintPdfOptions): Promise<OpenDesignHostActionResult> => {
+    print: async (html: string, nonce?: string, options?: PrintPdfOptions): Promise<CapyDesignHostActionResult> => {
       try {
         await ipcRenderer.invoke('od:print-pdf', html, nonce, options ?? null);
         return { ok: true };
@@ -379,7 +379,7 @@ const hostBridge = {
       ipcRenderer.send('desktop-pet:set-visible', Boolean(visible)),
   },
   updater,
-} satisfies OpenDesignHostBridge;
+} satisfies CapyDesignHostBridge;
 
 contextBridge.exposeInMainWorld(OPEN_DESIGN_HOST_GLOBAL, hostBridge);
 

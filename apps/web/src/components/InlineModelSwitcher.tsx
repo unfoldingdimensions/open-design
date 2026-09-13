@@ -79,7 +79,7 @@ import {
   isAmrSessionAuthenticated,
   notifyAmrLoginStatusChanged,
 } from './amrLoginPolling';
-import { orderAgentsWithOpenDesignFirst } from './agentOrdering';
+import { orderAgentsWithCapyDesignFirst } from './agentOrdering';
 import { anchorSelectionInView } from './pickerSelectionAnchor';
 import {
   agentModelIsSelectable,
@@ -166,11 +166,11 @@ function markAmrReminderSeen(): void {
 }
 
 function displayAgentName(agent: Pick<AgentInfo, 'id' | 'name'>): string {
-  return agent.id === 'amr' ? 'OpenDesign' : agent.name;
+  return agent.id === 'amr' ? 'CapyDesign' : agent.name;
 }
 
 function displayAgentChipName(agent: Pick<AgentInfo, 'id' | 'name'>): string {
-  return agent.id === 'amr' ? 'OpenDesign' : displayAgentName(agent);
+  return agent.id === 'amr' ? 'CapyDesign' : displayAgentName(agent);
 }
 
 export function InlineModelSwitcher({
@@ -676,7 +676,7 @@ export function InlineModelSwitcher({
 
   const installedAgents = useMemo(
     () =>
-      orderAgentsWithOpenDesignFirst(
+      orderAgentsWithCapyDesignFirst(
         agents.filter((a) => a.available && isVisibleLocalCliAgent(a)),
       ),
     [agents],
@@ -1573,7 +1573,7 @@ export function InlineModelSwitcher({
                     type="button"
                     role="radio"
                     aria-checked={config.agentId === 'amr'}
-                    aria-label={`OpenDesign ${amrInlineStatus}`}
+                    aria-label={`CapyDesign ${amrInlineStatus}`}
                     className="inline-switcher__account-id inline-switcher__account-select"
                     data-testid="inline-model-switcher-agent-amr"
                     title={amrLoginPending ? amrPendingHoverLabel : undefined}
@@ -1592,7 +1592,7 @@ export function InlineModelSwitcher({
                     <span className="inline-switcher__account-text">
                       <span className="inline-switcher__account-name-row">
                         <span className="inline-switcher__account-name">
-                          OpenDesign
+                          CapyDesign
                         </span>
                         {amrLoggedIn ? (
                           <PlanBadge plan={amrPlanLabel} size="md" />

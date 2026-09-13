@@ -1,27 +1,27 @@
-export interface OpenDesignGithubRepoStats {
+export interface CapyDesignGithubRepoStats {
   stargazersCount: number;
   fetchedAt: number;
   stale: boolean;
 }
 
-export interface OpenDesignGithubLatestReleaseInfo {
+export interface CapyDesignGithubLatestReleaseInfo {
   tagName: string;
   htmlUrl: string;
   fetchedAt: number;
   stale: boolean;
 }
 
-export interface OpenDesignDiscordPresence {
+export interface CapyDesignDiscordPresence {
   onlineCount: number;
   memberCount: number;
   fetchedAt: number;
   stale: boolean;
 }
 
-export interface OpenDesignPublicMetadataService {
-  readGithubRepoStats(): Promise<OpenDesignGithubRepoStats>;
-  readLatestReleaseInfo(): Promise<OpenDesignGithubLatestReleaseInfo>;
-  readDiscordPresence(): Promise<OpenDesignDiscordPresence>;
+export interface CapyDesignPublicMetadataService {
+  readGithubRepoStats(): Promise<CapyDesignGithubRepoStats>;
+  readLatestReleaseInfo(): Promise<CapyDesignGithubLatestReleaseInfo>;
+  readDiscordPresence(): Promise<CapyDesignDiscordPresence>;
 }
 
 interface CachedGithubRepoStats {
@@ -61,7 +61,7 @@ interface DiscordInvitePayload {
   profile?: unknown;
 }
 
-export interface OpenDesignPublicMetadataServiceOptions {
+export interface CapyDesignPublicMetadataServiceOptions {
   fetchImpl?: typeof fetch;
   now?: () => number;
 }
@@ -93,18 +93,18 @@ function withFreshness<T extends { fetchedAt: number }>(
   return { ...value, stale };
 }
 
-export function createOpenDesignPublicMetadataService({
+export function createCapyDesignPublicMetadataService({
   fetchImpl = fetch,
   now = () => Date.now(),
-}: OpenDesignPublicMetadataServiceOptions = {}): OpenDesignPublicMetadataService {
+}: CapyDesignPublicMetadataServiceOptions = {}): CapyDesignPublicMetadataService {
   let githubRepoCache: CachedGithubRepoStats | null = null;
-  let githubRepoInflight: Promise<OpenDesignGithubRepoStats> | null = null;
+  let githubRepoInflight: Promise<CapyDesignGithubRepoStats> | null = null;
   let githubLatestReleaseCache: CachedGithubLatestReleaseInfo | null = null;
-  let githubLatestReleaseInflight: Promise<OpenDesignGithubLatestReleaseInfo> | null = null;
+  let githubLatestReleaseInflight: Promise<CapyDesignGithubLatestReleaseInfo> | null = null;
   let discordPresenceCache: CachedDiscordPresence | null = null;
-  let discordPresenceInflight: Promise<OpenDesignDiscordPresence> | null = null;
+  let discordPresenceInflight: Promise<CapyDesignDiscordPresence> | null = null;
 
-  async function readGithubRepoStats(): Promise<OpenDesignGithubRepoStats> {
+  async function readGithubRepoStats(): Promise<CapyDesignGithubRepoStats> {
     const currentTime = now();
     if (
       githubRepoCache &&
@@ -148,7 +148,7 @@ export function createOpenDesignPublicMetadataService({
     return githubRepoInflight;
   }
 
-  async function readLatestReleaseInfo(): Promise<OpenDesignGithubLatestReleaseInfo> {
+  async function readLatestReleaseInfo(): Promise<CapyDesignGithubLatestReleaseInfo> {
     const currentTime = now();
     if (
       githubLatestReleaseCache &&
@@ -193,7 +193,7 @@ export function createOpenDesignPublicMetadataService({
     return githubLatestReleaseInflight;
   }
 
-  async function readDiscordPresence(): Promise<OpenDesignDiscordPresence> {
+  async function readDiscordPresence(): Promise<CapyDesignDiscordPresence> {
     const currentTime = now();
     if (
       discordPresenceCache &&

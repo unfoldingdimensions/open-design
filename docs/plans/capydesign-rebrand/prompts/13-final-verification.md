@@ -8,7 +8,7 @@ workstream, and then you say which).
 
 ## This is an adversarial review, not a victory lap
 
-Your job is to try to falsify the claim "CaptDesign is a properly rebranded,
+Your job is to try to falsify the claim "CapyDesign is a properly rebranded,
 properly licensed Apache-2.0 derivative with no Cloud surface and no upstream
 dependencies." A verification pass that confirms everything is worthless. Look
 for the lie.
@@ -23,10 +23,10 @@ not the working tree you have been developing in), so that no stale `dist/`,
 pnpm install
 pnpm guard
 pnpm typecheck
-pnpm --filter @captdesign/contracts test
-pnpm --filter @captdesign/daemon test
-pnpm --filter @captdesign/web test
-pnpm --filter @captdesign/e2e test
+pnpm --filter @capydesign/contracts test
+pnpm --filter @capydesign/daemon test
+pnpm --filter @capydesign/web test
+pnpm --filter @capydesign/e2e test
 ```
 
 Paste the real output. If a suite is red, this is the headline of your report, not
@@ -84,10 +84,10 @@ Then extract from the artifact:
 
 Assert, with the extracted values quoted:
 
-- identifier is `io.captdesign.desktop` (or the correct channel suffix);
-- the display name reads CaptDesign, **not** `@captdesign/desktop` and not
+- identifier is `io.capydesign.desktop` (or the correct channel suffix);
+- the display name reads CapyDesign, **not** `@capydesign/desktop` and not
   anything containing `open-design`;
-- the window title reads CaptDesign;
+- the window title reads CapyDesign;
 - the artifact contains **no** file matching `*Jidu*` and no `.otf` file at all
   (the only shipped fonts are the two Albert Sans `.ttf` files);
 - no packaged file references a live `*.open-design.ai` operational endpoint.
@@ -104,14 +104,14 @@ The single highest-consequence code change in this effort. Prove it:
    network-blocked condition and paste the result.
 2. Confirm there is no code path that defaults to `releases.open-design.ai`.
 
-A CaptDesign install that silently accepts nexu-io's OpenDesign update is the
+A CapyDesign install that silently accepts nexu-io's OpenDesign update is the
 worst outcome this project can produce. If you cannot prove this, say so loudly.
 
 ## 5. The legal pack
 
-Produce `docs/plans/captdesign-rebrand/LEGAL-READINESS.md`. Contents:
+Produce `docs/plans/capydesign-rebrand/LEGAL-READINESS.md`. Contents:
 
-1. **Provenance statement** — CaptDesign is a derivative of Open Design
+1. **Provenance statement** — CapyDesign is a derivative of Open Design
    (`nexu-io/open-design`), Apache-2.0, Copyright 2026 Open Design contributors,
    with the fork's own modifications stated. Point at `LICENSE` and `NOTICE`.
 2. **Distribution checklist** — the mechanical things a distributor must satisfy,
@@ -135,7 +135,7 @@ Produce `docs/plans/captdesign-rebrand/LEGAL-READINESS.md`. Contents:
    that their redistribution status is unresolved.
 5. **Trademark position** — a plain paragraph:
    - Apache-2.0 §6 grants no trademark right in "Open Design".
-   - CaptDesign is not affiliated with or endorsed by nexu-io or the Open Design
+   - CapyDesign is not affiliated with or endorsed by nexu-io or the Open Design
      project, and the notices/README must say so.
    - `design-systems/` contains 19 packages named after real brands
      (`airbnb`, `apple`, `nike`, `tesla`, `meta`, `ferrari`, `starbucks`,
@@ -146,7 +146,7 @@ Produce `docs/plans/captdesign-rebrand/LEGAL-READINESS.md`. Contents:
      referenced trade dress belong to their owners. Recommend a stated
      non-affiliation note and no promotional use of those brands.
    - Remix Icon License v1.0 §3.3 / §4.2: no icon from that set may become
-     CaptDesign's logo or brand mark. Confirm WS9 honoured it.
+     CapyDesign's logo or brand mark. Confirm WS9 honoured it.
 6. **Fonts** — Albert Sans is OFL 1.1 (keep the notice when redistributing the
    font file); the commercial JiduMono Pro is removed and not distributed;
    the two Albert Sans `.ttf` files are shipped under their OFL 1.1 terms.

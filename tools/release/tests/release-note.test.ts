@@ -32,7 +32,7 @@ async function writeNote(
   await mkdir(directory, { recursive: true });
   const value = [
     "---",
-    `title: ${options.title ?? `Open Design ${releaseVersion}`}`,
+    `title: ${options.title ?? `CapyDesign ${releaseVersion}`}`,
     `description: ${options.description ?? `Release notes for ${releaseVersion}.`}`,
     "---",
     "",

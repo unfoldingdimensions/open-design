@@ -67,12 +67,12 @@ function createNotionService(
         accountLabel: 'Product wiki',
         toolName: request.toolName,
         safety: notionDefinition.tools[0]!.safety,
-        outputSummary: 'Found OpenDesign design memory notes in Notion.',
+        outputSummary: 'Found CapyDesign design memory notes in Notion.',
         output: {
           pages: [
             {
-              title: 'OpenDesign memory plan',
-              text: 'OpenDesign connector memory should collect design preferences, UI decisions, and visual references from Notion.',
+              title: 'CapyDesign memory plan',
+              text: 'CapyDesign connector memory should collect design preferences, UI decisions, and visual references from Notion.',
             },
           ],
         },
@@ -93,9 +93,9 @@ describe('connector memory extraction', () => {
               entries: [
                 {
                   type: 'project',
-                  name: 'OpenDesign design memory',
+                  name: 'CapyDesign design memory',
                   description: 'Connector memories should stay design-related',
-                  body: 'OpenDesign connector memories should focus on design preferences, UI decisions, and visual references rather than generic app activity.',
+                  body: 'CapyDesign connector memories should focus on design preferences, UI decisions, and visual references rather than generic app activity.',
                 },
               ],
             }),
@@ -134,9 +134,9 @@ describe('connector memory extraction', () => {
     expect(result.attemptedLLM).toBe(true);
     expect(result.suggestions).toEqual([
       expect.objectContaining({
-        id: 'project_opendesign_design_memory_1',
+        id: 'project_capydesign_design_memory_1',
         type: 'project',
-        name: 'OpenDesign design memory',
+        name: 'CapyDesign design memory',
         source: expect.objectContaining({
           kind: 'connector',
           connectorId: 'notion',
@@ -152,7 +152,7 @@ describe('connector memory extraction', () => {
       }),
     ]);
     await expect(
-      readMemoryEntry(dataDir, 'project_opendesign_design_memory'),
+      readMemoryEntry(dataDir, 'project_capydesign_design_memory'),
     ).resolves.toBeNull();
     expect(listExtractions()[0]).toMatchObject({
       kind: 'connector',
@@ -189,7 +189,7 @@ describe('connector memory extraction', () => {
             pages: [
               {
                 title: 'Memory project',
-                text: 'OpenDesign should summarize connector findings when no durable memory is obvious.',
+                text: 'CapyDesign should summarize connector findings when no durable memory is obvious.',
               },
             ],
           },
@@ -207,7 +207,7 @@ describe('connector memory extraction', () => {
     expect(executeCalls.length).toBeGreaterThan(1);
     expect(executeCalls[0]).toEqual(expect.objectContaining({
       input: expect.objectContaining({
-        query: '设计思路 设计偏好 UI UX 视觉风格 品牌 logo 设计系统 OpenDesign',
+        query: '设计思路 设计偏好 UI UX 视觉风格 品牌 logo 设计系统 CapyDesign',
       }),
     }));
     expect(executeCalls[1]).toEqual(expect.objectContaining({
@@ -651,7 +651,7 @@ describe('connector memory extraction', () => {
             pages: [
               {
                 title: 'Memory source notes',
-                text: 'OpenDesign should read the currently available Notion search tool.',
+                text: 'CapyDesign should read the currently available Notion search tool.',
               },
             ],
           },
@@ -732,7 +732,7 @@ describe('connector memory extraction', () => {
           pages: [
             {
               title: 'Memory source notes',
-              text: 'OpenDesign should summarize connector findings before saving them as memory.',
+              text: 'CapyDesign should summarize connector findings before saving them as memory.',
             },
           ],
         },
@@ -766,13 +766,13 @@ describe('connector memory extraction', () => {
                   type: 'reference',
                   name: 'GitHub context summary',
                   description: 'Summary from GitHub',
-                  body: 'OpenDesign read GitHub via List notifications. Summary: Found 5 readable items from GitHub. Save this if it should be reused as context in future chats.',
+                  body: 'CapyDesign read GitHub via List notifications. Summary: Found 5 readable items from GitHub. Save this if it should be reused as context in future chats.',
                 },
                 {
                   type: 'feedback',
                   name: 'UI density preference',
                   description: 'The user prefers denser design interfaces',
-                  body: 'The user prefers OpenDesign UI to use higher information density with clear hierarchy instead of spacious marketing-style cards.',
+                  body: 'The user prefers CapyDesign UI to use higher information density with clear hierarchy instead of spacious marketing-style cards.',
                 },
               ],
             }),
@@ -808,7 +808,7 @@ describe('connector memory extraction', () => {
           type: 'feedback',
           name: 'Design memory source',
           description: 'Connector memory should use Claude Code',
-          body: 'OpenDesign connector memory extraction should use the same Claude Code Local CLI selected for chat when the memory model is set to same as chat.',
+          body: 'CapyDesign connector memory extraction should use the same Claude Code Local CLI selected for chat when the memory model is set to same as chat.',
         },
       ],
     }));
@@ -855,7 +855,7 @@ describe('connector memory extraction', () => {
           type: 'project',
           name: 'OpenCode design memory',
           description: 'Connector memory should use OpenCode',
-          body: 'OpenDesign connector memory extraction should use the same OpenCode Local CLI selected for chat instead of falling back to an OpenAI API key.',
+          body: 'CapyDesign connector memory extraction should use the same OpenCode Local CLI selected for chat instead of falling back to an OpenAI API key.',
         },
       ],
     }));
@@ -902,7 +902,7 @@ describe('connector memory extraction', () => {
           type: 'project',
           name: 'Codex design memory',
           description: 'Connector memory should use Codex',
-          body: 'OpenDesign connector memory extraction should use the same Codex Local CLI selected for chat instead of falling back to an OpenAI API key.',
+          body: 'CapyDesign connector memory extraction should use the same Codex Local CLI selected for chat instead of falling back to an OpenAI API key.',
         },
       ],
     }));
@@ -965,7 +965,7 @@ process.stdout.write(JSON.stringify({
         type: 'project',
         name: 'Codex stdin prompt',
         description: 'Codex memory used stdin',
-        body: 'OpenDesign connector memory extraction should pass the compacted prompt to Codex stdin and parse the JSON event stream response.'
+        body: 'CapyDesign connector memory extraction should pass the compacted prompt to Codex stdin and parse the JSON event stream response.'
       }]
     })
   }
@@ -1007,7 +1007,7 @@ process.stdout.write(JSON.stringify({
         'gpt-5',
       ]));
       expect(captured.stdin).toContain('You are a design-memory extractor');
-      expect(captured.stdin).toContain('OpenDesign connector memory should collect design preferences');
+      expect(captured.stdin).toContain('CapyDesign connector memory should collect design preferences');
     } finally {
       if (previousPath == null) {
         delete process.env.PATH;
@@ -1067,7 +1067,7 @@ process.stdout.write(JSON.stringify({
         type: 'project',
         name: 'OpenCode stdin prompt',
         description: 'OpenCode memory used stdin',
-        body: 'OpenDesign connector memory extraction should pass the compacted prompt to OpenCode on stdin and parse the JSON event stream response.'
+        body: 'CapyDesign connector memory extraction should pass the compacted prompt to OpenCode on stdin and parse the JSON event stream response.'
       }]
     })
   }
@@ -1111,7 +1111,7 @@ process.stdout.write(JSON.stringify({
       expect(captured.args).not.toContain('-f');
       expect(captured.files).toEqual([]);
       expect(captured.stdin).toContain('You are a design-memory extractor');
-      expect(captured.stdin).toContain('OpenDesign connector memory should collect design preferences');
+      expect(captured.stdin).toContain('CapyDesign connector memory should collect design preferences');
     } finally {
       if (previousPath == null) {
         delete process.env.PATH;
@@ -1157,12 +1157,12 @@ process.stdout.write(JSON.stringify({
     ]);
     expect(result.changed).toHaveLength(1);
     expect(result.changed[0]).toMatchObject({
-      id: 'project_opendesign_design_memory',
+      id: 'project_capydesign_design_memory',
       type: 'project',
-      name: 'OpenDesign design memory',
+      name: 'CapyDesign design memory',
     });
 
-    const stored = await readMemoryEntry(dataDir, 'project_opendesign_design_memory');
+    const stored = await readMemoryEntry(dataDir, 'project_capydesign_design_memory');
     expect(stored?.body).toContain('design preferences');
     expect(listExtractions()[0]).toMatchObject({
       kind: 'connector',

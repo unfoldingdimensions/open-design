@@ -29,11 +29,11 @@ function parseModels(stdout: string) {
   ];
 }
 
-export function hasOpenDesignProfile(env: NodeJS.ProcessEnv): boolean {
-  return existsSync(path.join(resolveOpenDesignProfileDir(env), 'package.json'));
+export function hasCapyDesignProfile(env: NodeJS.ProcessEnv): boolean {
+  return existsSync(path.join(resolveCapyDesignProfileDir(env), 'package.json'));
 }
 
-export function resolveOpenDesignProfileDir(env: NodeJS.ProcessEnv): string {
+export function resolveCapyDesignProfileDir(env: NodeJS.ProcessEnv): string {
   const configuredHome = env.DSH_HOME?.trim();
   const dshHome = configuredHome
     ? path.resolve(configuredHome)
@@ -86,7 +86,7 @@ export const deepseekHarnessAgentDef = {
     timeoutMs: 10_000,
     // rc.6 auto-initializes a missing profile before booting it, so avoid
     // invoking --probe until the user-installed profile already exists.
-    preflight: hasOpenDesignProfile,
+    preflight: hasCapyDesignProfile,
     parse: (stdout) => parseDshProfileProbeOutput(stdout).plugin_version,
   },
   listModels: {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { OpenDesignPlanContractV2 } from '@open-design/contracts';
+import type { CapyDesignPlanContractV2 } from '@open-design/contracts';
 
 import {
   decideStrategyRequestRoute,
@@ -14,14 +14,14 @@ function daemonPlan(
   route: string,
   outputKind: string,
   inputRefs: string[] = ['request'],
-): OpenDesignPlanContractV2 {
+): CapyDesignPlanContractV2 {
   return {
     taskProfile: {
       taskType,
       requiredDeliverables: [{ id: outputKind, kind: outputKind }],
     },
     runManifest: { productionRoutes: [route], inputRefs },
-  } as OpenDesignPlanContractV2;
+  } as CapyDesignPlanContractV2;
 }
 
 describe('OD Next resolver and preflight', () => {

@@ -1,7 +1,7 @@
-# CaptDesign rebrand & Cloud removal — master plan
+# CapyDesign rebrand & Cloud removal — master plan
 
 Status: **proposed**, awaiting execution.
-Scope: turn the `unfoldingdimensions/open-design` fork into **CaptDesign** — an
+Scope: turn the `unfoldingdimensions/open-design` fork into **CapyDesign** — an
 Apache-2.0 derivative that keeps upstream attribution and MIT/OFL/Remix notices,
 stops shipping the proprietary JiduMono Pro font, carries none of nexu-io's
 OpenDesign Cloud surface, and no longer points at nexu-io infrastructure.
@@ -14,9 +14,9 @@ Read this file first. Then hand one prompt from `prompts/` to one agent.
 
 | # | Decision | Value |
 |---|----------|-------|
-| D1 | Product name (display) | **CaptDesign** |
-| D2 | Package scope | **`@captdesign/*`** — full rename from `@open-design/*` |
-| D3 | Install / updater identity | **`io.captdesign.desktop`**, namespace **`captdesign`** |
+| D1 | Product name (display) | **CapyDesign** |
+| D2 | Package scope | **`@capydesign/*`** — full rename from `@open-design/*` |
+| D3 | Install / updater identity | **`io.capydesign.desktop`**, namespace **`capydesign`** |
 | D4 | CLI binary | **`capt`** only — `od` is dropped, not aliased |
 | D5 | Mono font | **Albert Sans** — the face the repo already ships. `JiduMonoPro-Regular.otf` (CoType Foundry, commercial) is deleted, no third family is added, and `--mono` becomes a system-monospace stack. **Accepted regression: Albert Sans has no tabular figures, so timings/paths/diff counts lose column alignment.** See F1. |
 | D6 | Cloud cut depth | **Full removal — keep nothing.** Sign-in, wallet, billing, plans, telemetry, console handoff, hosted feeds, the `amr` model-provider runtime, **and the workspace/team identity layer they ride on**. No Tier A/B split. End state **(a)**: projects collapse to a single implicit local scope. See F2. |
@@ -30,7 +30,7 @@ Read this file first. Then hand one prompt from `prompts/` to one agent.
   and `packages/sidecar-proto` define these as a public contract that external
   agents and shells consume. Renaming them breaks every out-of-tree consumer
   for no user-visible gain. The `.od` *default data directory* **is** renamed to
-  `.captdesign` (see WS4) — that is a path, not an env var.
+  `.capydesign` (see WS4) — that is a path, not an env var.
   *(Distinct from `VELA_*` / `OPEN_DESIGN_AMR_*` / `AMR_*`, which are removed
   entirely with the Cloud layer by WS6 — they are not a contract to preserve,
   they are the deleted feature's configuration.)*
@@ -94,7 +94,7 @@ the web app.
 WS0 baseline            (no deps)                  prompts/00-baseline-freeze.md
  └─> WS1 attribution ledger                        prompts/01-attribution-ledger.md
  └─> WS2 font swap                                 prompts/02-font-license-swap.md
- └─> WS3 product identity (text + constants)       prompts/03-product-identity-captdesign.md
+ └─> WS3 product identity (text + constants)       prompts/03-product-identity-capydesign.md
       └─> WS4 package scope + install namespaces   prompts/04-package-scope-and-namespaces.md
       └─> WS9 visual assets (needs human design)   prompts/09-logo-and-visual-assets.md
  └─> WS5 CLI bin rename  (AFTER WS3+WS4)           prompts/05-cli-bin-rename.md
@@ -167,12 +167,12 @@ them:
 ## 4. Definition of done for the whole effort
 
 1. `pnpm guard` and `pnpm typecheck` pass from a clean checkout.
-2. `pnpm --filter @captdesign/web test`, `@captdesign/daemon test`,
-   `@captdesign/contracts test`, `e2e test` pass (WS12 owns the rebaseline).
+2. `pnpm --filter @capydesign/web test`, `@capydesign/daemon test`,
+   `@capydesign/contracts test`, `e2e test` pass (WS12 owns the rebaseline).
 3. All four acceptance greps from WS13 return zero unexpected hits.
 4. A `pnpm tools-pack <platform> build` produces a locally installable app whose
-   macOS bundle id is `io.captdesign.desktop`, whose Windows uninstall registry
-   key is CaptDesign's, and whose window title reads CaptDesign.
+   macOS bundle id is `io.capydesign.desktop`, whose Windows uninstall registry
+   key is CapyDesign's, and whose window title reads CapyDesign.
 5. `THIRD-PARTY-NOTICES.md` exists, enumerates every third-party component by
    holder and license, and passes `node scripts/check-attribution-notices.ts`.
 6. No file in the tree is licensed incompatibly with Apache-2.0 redistribution
@@ -188,10 +188,10 @@ them:
 | Risk | Where | Mitigation |
 |------|-------|------------|
 | Rebasing on upstream gets harder — 137 files already diverge, and every rename deepens it | WS3/WS4/WS5 | Do the renames in as few, as mechanical, passes as possible; keep `git mv` where only the name changes so upstream merges line up |
-| `.od` → `.captdesign` strands existing local data | WS4 | Read-from-both / write-to-new, with a documented one-time import; never delete `.od` |
+| `.od` → `.capydesign` strands existing local data | WS4 | Read-from-both / write-to-new, with a documented one-time import; never delete `.od` |
 | `od` → `capt` breaks external shell tooling (902 documented `od` invocations) | WS5 | Land the rename with a full-tree sweep in one commit; call the break out in the PR body — it is a deliberate, accepted break |
-| product-neutrality guard fires on the new name | WS3 onward | The guard only blocks *named-orchestrator examples* and `OD_PRODUCT_NEUTRALITY_FORBIDDEN_TERMS`; CaptDesign is the product, not an orchestrator example. Re-read `scripts/guard.ts:655-730` if it fires |
-| `@open-design/*` scope rename silently breaks workspace resolution | WS4 | `pnpm install` is mandatory after, then `pnpm --filter @captdesign/web typecheck` as the canary |
+| product-neutrality guard fires on the new name | WS3 onward | The guard only blocks *named-orchestrator examples* and `OD_PRODUCT_NEUTRALITY_FORBIDDEN_TERMS`; CapyDesign is the product, not an orchestrator example. Re-read `scripts/guard.ts:655-730` if it fires |
+| `@open-design/*` scope rename silently breaks workspace resolution | WS4 | `pnpm install` is mandatory after, then `pnpm --filter @capydesign/web typecheck` as the canary |
 | **Removing the workspace identity layer locks the daemon out of its own projects** — `GET /api/projects` returns `[]` and project/run calls 400 with `WORKSPACE_CONTEXT_REQUIRED` | WS6 | Implement end state (a): remove the sign-in gate and `bindUnboundProjectsToPersonalWorkspace` together. Prove it with a headerless `GET /api/projects` test before touching the web app. Never implement end state (c) |
 | Dropping workspace columns breaks the local SQLite DB | WS6 | Drop cleanly only if `apps/daemon/src/db.ts`'s migration pattern supports it; otherwise leave the columns unused and report it |
 | Deleting the AMR runtime def orphans model-picker rows | WS6 | WS6 owns the picker cleanup; WS12 owns the test rebaseline |

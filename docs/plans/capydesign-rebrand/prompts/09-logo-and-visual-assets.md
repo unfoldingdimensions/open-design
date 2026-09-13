@@ -16,7 +16,7 @@ Every asset below is **OpenDesign's own branding** — its marks. Apache-2.0 §6
 > describing the origin of the Work and reproducing the content of the NOTICE
 > file.
 
-So a CaptDesign build cannot ship OpenDesign's logo, glyph, wordmark, app icon,
+So a CapyDesign build cannot ship OpenDesign's logo, glyph, wordmark, app icon,
 or splash. This is the one part of the rebrand that **cannot be done by editing
 code** — it needs artwork that does not exist yet.
 
@@ -25,7 +25,7 @@ code** — it needs artwork that does not exist yet.
 Do not invent a logo and do not claim one was supplied. Ask for, and wait on:
 
 1. **A new brand glyph / mark** (SVG, monochrome-capable, `currentColor`-safe).
-2. **A wordmark** for "CaptDesign" (SVG). Note the current hero wordmark is
+2. **A wordmark** for "CapyDesign" (SVG). Note the current hero wordmark is
    animated by a WebGL pixel-scan engine that samples an SVG's alpha channel — a
    replacement must have a clean, high-contrast silhouette or the effect will
    look muddy.
@@ -116,7 +116,7 @@ do not leave a half-swapped tree.
 6. **Do not source a new mark from Remix Icon.** Its license (§3.3) forbids using
    its icons as a logo, brand identifier, or primary visual identity, and §4.2
    says brand icons carry their owners' trademarks. Using an icon from
-   `apps/web/src/components/remix-icon-paths.ts` as CaptDesign's app icon is a
+   `apps/web/src/components/remix-icon-paths.ts` as CapyDesign's app icon is a
    license violation. State this in your report if anyone suggests it.
 
 7. **Style policy**: `scripts/guard.ts` rejects hardcoded UI colors in favour of
@@ -126,7 +126,7 @@ do not leave a half-swapped tree.
 
 ## Deliverables
 
-1. `docs/plans/captdesign-rebrand/visual-asset-swap-plan.md` — the inventory
+1. `docs/plans/capydesign-rebrand/visual-asset-swap-plan.md` — the inventory
    above, extended with: for each asset, the exact replacement step, the
    consumers that must be updated, the test that will fail if you get it wrong,
    and the platform sizes required. Include the list of artwork you are waiting
@@ -138,7 +138,7 @@ do not leave a half-swapped tree.
    acceptance. Produce a before/after the human can look at — the splash, the
    hero, the app icon in the dock/taskbar, and the favicon — using
    `pnpm tools-dev` and, if desktop is in scope,
-   `pnpm tools-dev inspect desktop screenshot --path /tmp/captdesign-splash.png`
+   `pnpm tools-dev inspect desktop screenshot --path /tmp/capydesign-splash.png`
    and `inspect desktop eval` per the root `AGENTS.md` validation guidance.
 
 ## Report back

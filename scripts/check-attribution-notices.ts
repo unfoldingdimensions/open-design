@@ -95,7 +95,7 @@ function findUnreferencedLicenseDirs(
   for (const file of licenseFiles) {
     const relative = toPosix(path.relative(context.repoRoot, file));
     const directory = relative.includes("/") ? relative.slice(0, relative.lastIndexOf("/") + 1) : "";
-    // The root LICENSE is CaptDesign's own Apache-2.0 text, covered by the
+    // The root LICENSE is CapyDesign's own Apache-2.0 text, covered by the
     // derivative-work statement — only bundled content needs per-directory names.
     if (directory === "") continue;
     if (!context.noticesText.includes(directory)) {

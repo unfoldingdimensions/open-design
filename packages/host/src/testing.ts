@@ -1,30 +1,30 @@
 import {
   OPEN_DESIGN_HOST_GLOBAL,
   OPEN_DESIGN_HOST_VERSION,
-  type OpenDesignHostBridge,
-  type OpenDesignHostGlobalScope,
-  type OpenDesignHostUpdaterStatusSnapshot,
+  type CapyDesignHostBridge,
+  type CapyDesignHostGlobalScope,
+  type CapyDesignHostUpdaterStatusSnapshot,
 } from "./index.js";
 
-export type MockOpenDesignHost = Partial<Omit<OpenDesignHostBridge, "capture" | "client" | "pdf" | "pet" | "preview" | "project" | "shell" | "updater">> & {
-  browser?: Partial<OpenDesignHostBridge["browser"]>;
-  capture?: Partial<OpenDesignHostBridge["capture"]>;
-  client?: Partial<OpenDesignHostBridge["client"]>;
-  pdf?: Partial<OpenDesignHostBridge["pdf"]>;
-  pet?: Partial<OpenDesignHostBridge["pet"]>;
-  preview?: Partial<NonNullable<OpenDesignHostBridge["preview"]>>;
-  project?: Partial<OpenDesignHostBridge["project"]>;
-  shell?: Partial<OpenDesignHostBridge["shell"]>;
-  updater?: Partial<OpenDesignHostBridge["updater"]>;
+export type MockCapyDesignHost = Partial<Omit<CapyDesignHostBridge, "capture" | "client" | "pdf" | "pet" | "preview" | "project" | "shell" | "updater">> & {
+  browser?: Partial<CapyDesignHostBridge["browser"]>;
+  capture?: Partial<CapyDesignHostBridge["capture"]>;
+  client?: Partial<CapyDesignHostBridge["client"]>;
+  pdf?: Partial<CapyDesignHostBridge["pdf"]>;
+  pet?: Partial<CapyDesignHostBridge["pet"]>;
+  preview?: Partial<NonNullable<CapyDesignHostBridge["preview"]>>;
+  project?: Partial<CapyDesignHostBridge["project"]>;
+  shell?: Partial<CapyDesignHostBridge["shell"]>;
+  updater?: Partial<CapyDesignHostBridge["updater"]>;
 };
 
-export type MockOpenDesignHostOptions = {
-  host?: MockOpenDesignHost;
-  scope?: OpenDesignHostGlobalScope;
+export type MockCapyDesignHostOptions = {
+  host?: MockCapyDesignHost;
+  scope?: CapyDesignHostGlobalScope;
 };
 
-function defaultHost(): OpenDesignHostBridge {
-  const updaterStatus: OpenDesignHostUpdaterStatusSnapshot = {
+function defaultHost(): CapyDesignHostBridge {
+  const updaterStatus: CapyDesignHostUpdaterStatusSnapshot = {
     arch: "arm64",
     capabilities: {
       canApplyInPlace: false,
@@ -93,7 +93,7 @@ function defaultHost(): OpenDesignHostBridge {
   };
 }
 
-export function createMockOpenDesignHost(overrides: MockOpenDesignHost = {}): OpenDesignHostBridge {
+export function createMockCapyDesignHost(overrides: MockCapyDesignHost = {}): CapyDesignHostBridge {
   const base = defaultHost();
   return {
     ...base,
@@ -117,14 +117,14 @@ export function createMockOpenDesignHost(overrides: MockOpenDesignHost = {}): Op
   };
 }
 
-export function installMockOpenDesignHost(options: MockOpenDesignHostOptions = {}): () => void {
-  const scope = (options.scope ?? globalThis) as OpenDesignHostGlobalScope;
-  const host = createMockOpenDesignHost(options.host);
+export function installMockCapyDesignHost(options: MockCapyDesignHostOptions = {}): () => void {
+  const scope = (options.scope ?? globalThis) as CapyDesignHostGlobalScope;
+  const host = createMockCapyDesignHost(options.host);
   const windowValue = scope.window;
   const targets = [
     scope,
     ...(typeof windowValue === "object" && windowValue != null && windowValue !== scope
-      ? [windowValue as OpenDesignHostGlobalScope]
+      ? [windowValue as CapyDesignHostGlobalScope]
       : []),
   ];
   const previous = targets.map((target) => ({

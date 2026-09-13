@@ -77,7 +77,7 @@ should approve, **stop and say so** rather than doing (c) by accident.
 
 ## Step 0 — the surface map (hard gate, before any deletion)
 
-Write `docs/plans/captdesign-rebrand/cloud-surface-map.md`: for every symbol you
+Write `docs/plans/capydesign-rebrand/cloud-surface-map.md`: for every symbol you
 intend to remove, `path:line`, what it is, **every inbound reference**, and a
 one-line reason it is safe to remove.
 
@@ -284,7 +284,7 @@ keys behind.
 With the hosted analytics and safety telemetry destinations gone, `PRIVACY.md`
 and Settings → Privacy (`settings.privacy*`) must tell the truth. **Do not leave a
 consent UI governing nothing.** Tell WS8, in your report, exactly what the new
-truth is (expected: no telemetry destination exists in a CaptDesign build), so it
+truth is (expected: no telemetry destination exists in a CapyDesign build), so it
 can rewrite the doc.
 
 ## Step 7 — CLI
@@ -340,9 +340,9 @@ Rules:
 pnpm install
 pnpm guard
 pnpm typecheck
-pnpm --filter @captdesign/contracts test
-pnpm --filter @captdesign/daemon test
-pnpm --filter @captdesign/web test
+pnpm --filter @capydesign/contracts test
+pnpm --filter @capydesign/daemon test
+pnpm --filter @capydesign/web test
 ```
 
 Removal proof:

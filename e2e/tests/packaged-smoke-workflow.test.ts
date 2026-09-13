@@ -2915,8 +2915,8 @@ process.stdin.on("end", () => {
     // The staged path must stay in lockstep with resolveMacPaths().dmgPath and
     // resolveWinPaths().setupPath, which is the only file `tools-pack install`
     // reads. A drift here fails as "no mac dmg found at ...".
-    expect(stage).toContain('join(toolsPackDir, "out", "mac", "namespaces", namespace, "dmg", `Open Design-${token}.dmg`)');
-    expect(stage).toContain('join(toolsPackDir, "out", "win", "namespaces", namespace, "builder", `Open Design-${token}-setup.exe`)');
+    expect(stage).toContain('join(toolsPackDir, "out", "mac", "namespaces", namespace, "dmg", `CapyDesign-${token}.dmg`)');
+    expect(stage).toContain('join(toolsPackDir, "out", "win", "namespaces", namespace, "builder", `CapyDesign-${token}-setup.exe`)');
     // A target that did not build carries no `artifacts` key at all, so status
     // is the only safe thing to branch on.
     expect(stage).toContain('entry?.status === "published"');
@@ -3364,7 +3364,7 @@ process.stdin.on("end", () => {
           {
         artifacts: {
           dmg: {
-            url: "https://releases.open-design.ai/betas/versions/1.2.3-beta.3.unsigned/Open Design Beta.dmg",
+            url: "https://releases.open-design.ai/betas/versions/1.2.3-beta.3.unsigned/CapyDesign Beta.dmg",
           },
         },
         channel: "beta",
@@ -3448,7 +3448,7 @@ process.stdin.on("end", () => {
           {
         artifacts: {
           dmg: {
-            url: "https://releases.open-design.ai/betas/versions/1.2.3-beta.4.unsigned/Open Design Beta.dmg",
+            url: "https://releases.open-design.ai/betas/versions/1.2.3-beta.4.unsigned/CapyDesign Beta.dmg",
           },
         },
         channel: "beta",
@@ -3532,7 +3532,7 @@ process.stdin.on("end", () => {
           {
         artifacts: {
           dmg: {
-            url: "https://releases.open-design.ai/betas/versions/1.2.3-beta.4.unsigned/Open Design Beta.dmg",
+            url: "https://releases.open-design.ai/betas/versions/1.2.3-beta.4.unsigned/CapyDesign Beta.dmg",
           },
         },
         channel: "beta",
@@ -4005,8 +4005,8 @@ function stablePrereleaseMetadataFixture(baseVersion: string, prereleaseVersion:
       mac: {
         arch: "arm64",
         artifacts: {
-          dmg: artifact("Open Design.dmg"),
-          zip: artifact("Open Design-mac-arm64.zip"),
+          dmg: artifact("CapyDesign.dmg"),
+          zip: artifact("CapyDesign-mac-arm64.zip"),
         },
         enabled: true,
         signed: true,
@@ -4014,8 +4014,8 @@ function stablePrereleaseMetadataFixture(baseVersion: string, prereleaseVersion:
       macIntel: {
         arch: "x64",
         artifacts: {
-          dmg: artifact("Open Design Intel.dmg"),
-          zip: artifact("Open Design-mac-x64.zip"),
+          dmg: artifact("CapyDesign Intel.dmg"),
+          zip: artifact("CapyDesign-mac-x64.zip"),
         },
         enabled: true,
         signed: true,
@@ -4023,7 +4023,7 @@ function stablePrereleaseMetadataFixture(baseVersion: string, prereleaseVersion:
       win: {
         arch: "x64",
         artifacts: {
-          installer: artifact("Open Design Setup.exe"),
+          installer: artifact("CapyDesign Setup.exe"),
         },
         enabled: true,
       },

@@ -421,7 +421,7 @@ const PlanContractStrategyIdentityV2Schema = z.object({
   snapshotId: z.string().min(1),
 }).strict();
 
-export const OpenDesignPlanContractV2Schema = z.object({
+export const CapyDesignPlanContractV2Schema = z.object({
   schema: z.literal(OD_NEXT_PLAN_CONTRACT_SCHEMA),
   strategy: PlanContractStrategyIdentityV2Schema,
   taskProfile: ResolvedTaskProfileV2Schema,
@@ -446,7 +446,7 @@ export const OpenDesignPlanContractV2Schema = z.object({
     openDecisions: z.array(z.string()),
   }).strict(),
 }).strict().superRefine(rejectForbiddenStrategySemantics);
-export type OpenDesignPlanContractV2 = z.infer<typeof OpenDesignPlanContractV2Schema>;
+export type CapyDesignPlanContractV2 = z.infer<typeof CapyDesignPlanContractV2Schema>;
 
 export const StrategyRuntimeStateV2Schema = z.object({
   schema: z.literal(OD_NEXT_RUNTIME_STATE_SCHEMA),

@@ -3,19 +3,19 @@
 **Dependencies:** WS3 (identity strings). Both edit
 `tools/pack/src/mac/constants.ts`; WS3 goes first.
 **You own:** the `@open-design/*` workspace scope, the install/updater identity
-(`appId`), the release namespace (`captdesign`), the CLI/data directory default
-(`.od` → `.captdesign`), and the tests that assert any of it.
+(`appId`), the release namespace (`capydesign`), the CLI/data directory default
+(`.od` → `.capydesign`), and the tests that assert any of it.
 
 ## Decisions already taken
 
-- Scope: **`@captdesign/*`** (full rename). 28 `package.json` files, 90 refs.
-- `appId`: **`io.captdesign.desktop`** (+ channel suffixes).
-- Namespace: **`captdesign`**.
-- Default local data dir: **`.captdesign`**.
+- Scope: **`@capydesign/*`** (full rename). 28 `package.json` files, 90 refs.
+- `appId`: **`io.capydesign.desktop`** (+ channel suffixes).
+- Namespace: **`capydesign`**.
+- Default local data dir: **`.capydesign`**.
 - **Not renamed:** `OD_*` env vars, `--od-stamp-*` sidecar flags, `od-focus` /
   `od-done` / `od-next` artifact markers, CHANGELOG.
 
-## 1. Workspace package scope — `@open-design/*` → `@captdesign/*`
+## 1. Workspace package scope — `@open-design/*` → `@capydesign/*`
 
 Files that declare it (28):
 
@@ -60,7 +60,7 @@ Procedure:
 
    ```bash
    pnpm install
-   pnpm --filter @captdesign/web typecheck
+   pnpm --filter @capydesign/web typecheck
    ```
 
    `pnpm install` is mandatory — this is a workspace-link change, and a stale
@@ -71,7 +71,7 @@ Procedure:
 - `packages/release/src/index.ts` — `appId` values in the channel descriptors:
   `io.open-design.desktop`, `io.open-design.desktop.prerelease`, and the
   data-defined `io.open-design.desktop.${channel}` template. Also
-  `DEFAULT_NAMESPACE = "open-design"` → `"captdesign"`.
+  `DEFAULT_NAMESPACE = "open-design"` → `"capydesign"`.
 - `tools/pack/src/mac/identity.ts:29` — the no-channel default
   `{ appId: "io.open-design.desktop", productName: PRODUCT_NAME }`.
 - `tools/pack/src/mac/builder.ts:98`, `tools/pack/src/win/builder.ts:179`,
@@ -84,7 +84,7 @@ Procedure:
   `--od-stamp-*` **flag names stay**.
 
 **Consequence you must state in your report:** changing `appId` and the namespace
-means an existing CaptDesign-less local install will not be recognised as the
+means an existing CapyDesign-less local install will not be recognised as the
 same app. The beta Windows namespace must not become a separate uninstall
 registry key while looking like the same product — see `tools/pack/AGENTS.md`
 ("Packaged auto-update architecture and harness") before you touch
@@ -94,7 +94,7 @@ principles.**
 The user did **not** ask for backward-compatible installs, so a clean break is
 acceptable — but it must be a *stated* break, not a surprise.
 
-## 3. Local data directory `.od` → `.captdesign`
+## 3. Local data directory `.od` → `.capydesign`
 
 Measured references (treat as a starting list):
 
@@ -110,8 +110,8 @@ Measured references (treat as a starting list):
 **The rule that makes this safe:** read from both, write to the new one.
 
 - Introduce one resolver that returns the data dir, and have it prefer
-  `.captdesign` when it exists, else fall back to `.od` **read-only** when it
-  exists, else default to `.captdesign`. Do not scatter that logic — one helper,
+  `.capydesign` when it exists, else fall back to `.od` **read-only** when it
+  exists, else default to `.capydesign`. Do not scatter that logic — one helper,
   every caller.
 - **Never delete `.od`.** If an import/copy is needed, it must be additive and
   idempotent, and it must be possible to run the old and new dir side by side.
@@ -140,7 +140,7 @@ Own these:
 - `e2e/lib/vitest/packaged-win-identity.ts` and any e2e identity assertion.
 
 Add a test that asserts the new identity end to end: `releaseInstallIdentity`
-produces `io.captdesign.desktop` for stable, the channel suffixes resolve, and
+produces `io.capydesign.desktop` for stable, the channel suffixes resolve, and
 the Windows registry key derives from the new appId. If a helper already exists
 that derives the registry key, extend its test rather than adding a parallel one.
 
@@ -150,10 +150,10 @@ that derives the registry key, extend its test rather than adding a parallel one
 pnpm install
 pnpm guard
 pnpm typecheck
-pnpm --filter @captdesign/contracts test
-pnpm --filter @captdesign/daemon test
-pnpm --filter @captdesign/desktop test
-pnpm --filter @captdesign/tools-pack test
+pnpm --filter @capydesign/contracts test
+pnpm --filter @capydesign/daemon test
+pnpm --filter @capydesign/desktop test
+pnpm --filter @capydesign/tools-pack test
 ```
 
 Plus:
@@ -168,7 +168,7 @@ All three must come back empty (or be explained line by line).
 
 ## Report back
 
-- The exact `pnpm install` result and the first `pnpm --filter @captdesign/web typecheck`.
+- The exact `pnpm install` result and the first `pnpm --filter @capydesign/web typecheck`.
 - Whether `pnpm guard` passes; if the product-neutrality check fires, what tripped it.
 - Every place the scope sweep touched that surprised you (generated files,
   lockfiles, docs) and what you did about it.

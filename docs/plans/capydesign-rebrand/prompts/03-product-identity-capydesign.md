@@ -1,4 +1,4 @@
-# WS3 — Product identity: OpenDesign / Open Design → CaptDesign
+# WS3 — Product identity: OpenDesign / Open Design → CapyDesign
 
 **Dependencies:** WS2 (font) landed, so this rebase is on a stable tree.
 **You own:** every user-visible and identity-bearing **string** in shipped code
@@ -9,7 +9,7 @@ Cloud code (WS6), upstream URLs (WS7), or `docs/`/`specs/`/content packs (WS8).
 
 Two different strings are in play and they must not be conflated:
 
-- **`OpenDesign` / `Open Design`** — the product's own name. → **CaptDesign**.
+- **`OpenDesign` / `Open Design`** — the product's own name. → **CapyDesign**.
 - **`Open Design contributors`** and the upstream project reference
   (`nexu-io/open-design`, `github.com/nexu-io/open-design`) — **a real other
   party who wrote this code.** → **never renamed.** Attribution is the whole
@@ -131,7 +131,7 @@ A comment like:
 // OpenDesign ships light-only (product removed the theme setting)
 ```
 
-becomes CaptDesign, and the *why* stays intact. Never delete an explanation to
+becomes CapyDesign, and the *why* stays intact. Never delete an explanation to
 make a rename easier. If a comment explains a historical decision by upstream,
 keep upstream named in it — that is attribution.
 
@@ -168,7 +168,7 @@ cannot classify is a bug.**
   `OD_PRODUCT_NEUTRALITY_FORBIDDEN_TERMS`, across `apps/daemon/src/`,
   `apps/web/src/`, `docs/`, `craft/`, `design-systems/`, `design-templates/`,
   `skills/`, `packages/contracts/src/`, and every `README|AGENTS|CLAUDE|
-  CONTRIBUTING|QUICKSTART`. CaptDesign is the product, not an orchestrator
+  CONTRIBUTING|QUICKSTART`. CapyDesign is the product, not an orchestrator
   example, so it should not fire — but if it does, read that block before
   changing anything and explain what tripped.
 - `scripts/guard.ts:1270-1363` refuses hardcoded colors and Tailwind palette
