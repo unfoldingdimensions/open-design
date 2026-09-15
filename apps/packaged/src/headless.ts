@@ -7,9 +7,9 @@ import {
   OPEN_DESIGN_SIDECAR_CONTRACT,
   SIDECAR_DEFAULTS,
   SIDECAR_SOURCES,
-} from "@open-design/sidecar-proto";
-import { bootstrapSidecarProcess, readCurrentSidecarStamp } from "@open-design/sidecar";
-import { releaseChannelFromNamespace } from "@open-design/release";
+} from "@capydesign/sidecar-proto";
+import { bootstrapSidecarProcess, readCurrentSidecarStamp } from "@capydesign/sidecar";
+import { releaseChannelFromNamespace } from "@capydesign/release";
 
 import {
   PACKAGED_NAMESPACE_ENV,

@@ -7,7 +7,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { InstalledPluginRecordSchema } from '@open-design/contracts';
+import { InstalledPluginRecordSchema } from '@capydesign/contracts';
 
 import { ExtensionsMarketplace } from '../../src/components/PluginsView';
 import { MarketplaceView } from '../../src/components/MarketplaceView';

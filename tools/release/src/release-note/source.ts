@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-import { isReleaseChannel, parseReleaseVersion, type ReleaseChannel } from "@open-design/release";
+import { isReleaseChannel, parseReleaseVersion, type ReleaseChannel } from "@capydesign/release";
 import { parseDocument } from "yaml";
 
 export const RELEASE_NOTE_MEDIA_TYPE = "text/markdown; charset=utf-8";

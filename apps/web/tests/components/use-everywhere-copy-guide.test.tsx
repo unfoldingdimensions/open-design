@@ -58,7 +58,7 @@ describe('UseEverywhereGuidePanel copy guide', () => {
       '"C:\\\\Program Files\\\\CapyDesign\\\\resources\\\\app\\\\apps\\\\daemon\\\\dist\\\\cli.js"',
     );
     expect(copied).toContain('"ELECTRON_RUN_AS_NODE": "1"');
-    expect(copied).not.toContain('"command": "od"');
+    expect(copied).not.toContain('"command": "capt"');
   });
 
   it('waits for daemon install-info before copying the guide', async () => {
@@ -104,7 +104,7 @@ describe('UseEverywhereGuidePanel copy guide', () => {
     await waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
     const copied = writeText.mock.calls[0]?.[0] as string;
     expect(copied).toContain('"command": "C:\\\\Program Files\\\\CapyDesign\\\\CapyDesign.exe"');
-    expect(copied).not.toContain('"command": "od"');
+    expect(copied).not.toContain('"command": "capt"');
   });
 
   it('waits for daemon install-info before copying the MCP tab snippet', async () => {
@@ -157,14 +157,14 @@ describe('UseEverywhereGuidePanel copy guide', () => {
       '"C:\\\\Program Files\\\\CapyDesign\\\\resources\\\\app\\\\apps\\\\daemon\\\\dist\\\\cli.js"',
     );
     expect(copied).toContain('"ELECTRON_RUN_AS_NODE": "1"');
-    expect(copied).not.toContain('"command": "od"');
+    expect(copied).not.toContain('"command": "capt"');
 
     await waitFor(() => {
       const mcpSection = screen.getByTestId('use-everywhere-section-mcp');
       expect(mcpSection.textContent).toContain(
         '"command": "C:\\\\Program Files\\\\CapyDesign\\\\CapyDesign.exe"',
       );
-      expect(mcpSection.textContent).not.toContain('"command": "od"');
+      expect(mcpSection.textContent).not.toContain('"command": "capt"');
     });
   });
 });

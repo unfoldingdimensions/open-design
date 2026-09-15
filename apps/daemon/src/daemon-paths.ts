@@ -20,7 +20,7 @@ export function resolveDaemonCliPath(env: NodeJS.ProcessEnv = process.env): stri
   const configured = cleanOptionalPath(env[DAEMON_CLI_PATH_ENV]) ?? cleanOptionalPath(env.OD_BIN);
   if (configured) return configured;
 
-  const packageJsonPath = require.resolve('@open-design/daemon/package.json');
+  const packageJsonPath = require.resolve('@capydesign/daemon/package.json');
   return path.join(path.dirname(packageJsonPath), 'dist', 'cli.js');
 }
 
@@ -118,6 +118,33 @@ export function resolveDaemonPluginPreviewsDir({
   );
 }
 
+/**
+ * Names of the local daemon data directory.
+ *
+ * `.capydesign` is the rebranded default; `.od` is the legacy name kept for
+ * compatibility. `OD_DATA_DIR` (handled by `resolveDataDir` below) always wins
+ * over both.
+ */
+export const DATA_DIR_NAME = '.capydesign';
+export const LEGACY_DATA_DIR_NAME = '.od';
+
+/**
+ * The single resolver for the default (env-less) daemon data directory.
+ *
+ * Precedence: an existing `.capydesign`, then an existing legacy `.od`, then
+ * `.capydesign` for a fresh install. This is deliberately additive and
+ * non-destructive — `.od` is never deleted, migrated, or rewritten by this
+ * helper, so old and new directories can coexist. Every default-data-dir call
+ * site must route through this helper rather than re-deriving the path.
+ */
+export function resolveDefaultDataDir(projectRoot: string): string {
+  const preferred = path.join(projectRoot, DATA_DIR_NAME);
+  if (fs.existsSync(preferred)) return preferred;
+  const legacy = path.join(projectRoot, LEGACY_DATA_DIR_NAME);
+  if (fs.existsSync(legacy)) return legacy;
+  return preferred;
+}
+
 export interface ResolveDataDirOptions {
   requireExplicit?: boolean;
 }
@@ -132,7 +159,7 @@ export function resolveDataDir(
     if (options.requireExplicit) {
       throw new Error('OD_DATA_DIR is required when OD_SANDBOX_MODE is enabled');
     }
-    return path.join(projectRoot, '.od');
+    return resolveDefaultDataDir(projectRoot);
   }
 
   const resolved = resolveProjectRelativePath(value, projectRoot);

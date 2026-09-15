@@ -12,18 +12,18 @@ import {
   DIAGNOSTICS_FILENAME_PREFIX,
   diagnosticsFileName,
   type LogSource,
-} from '@open-design/diagnostics';
+} from '@capydesign/diagnostics';
 import {
   APP_KEYS,
   OPEN_DESIGN_SIDECAR_CONTRACT,
   SIDECAR_MODES,
   type LegacySidecarRuntimeLayout,
-} from '@open-design/sidecar-proto';
+} from '@capydesign/sidecar-proto';
 import {
   resolveLogFilePath,
   resolveRuntimeNamespaceRoot,
   type SidecarRuntimeContext,
-} from '@open-design/sidecar';
+} from '@capydesign/sidecar';
 
 import { readCurrentAppVersionInfo } from './app-version.js';
 import {
@@ -118,7 +118,7 @@ function safeUsername(): string | undefined {
 }
 
 export const STANDALONE_LAUNCH_WARNING =
-  "Daemon started without a sidecar runtime (plain `od` / standalone launch); " +
+  "Daemon started without a sidecar runtime (plain `capt` / standalone launch); " +
   "file-based logs are not captured. Re-run via `pnpm tools-dev` or the packaged " +
   "desktop app to include daemon/web/desktop log files in the bundle.";
 

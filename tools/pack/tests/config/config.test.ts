@@ -109,9 +109,9 @@ describe("resolveToolPackConfig cache root", () => {
 });
 
 describe("resolveToolPackConfig namespace defaults", () => {
-  it("keeps ordinary local builds on the default namespace", () => {
-    expect(resolveToolPackConfig("mac").namespace).toBe("default");
-    expect(resolveToolPackConfig("win", { appVersion: "0.8.0" }).namespace).toBe("default");
+  it("keeps ordinary local builds on the product namespace", () => {
+    expect(resolveToolPackConfig("mac").namespace).toBe("capydesign");
+    expect(resolveToolPackConfig("win", { appVersion: "0.8.0" }).namespace).toBe("capydesign");
   });
 
   it("defaults prerelease mac builds to their release channel namespace", () => {

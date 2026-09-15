@@ -143,7 +143,7 @@ Every external project this spec leans on. Three questions per entry: what is it
   - The workflow and assets are bundled under [`design-templates/guizang-ppt/`](../design-templates/guizang-ppt/) with the upstream license preserved and OpenDesign metadata/file-handoff integration applied.
   - Skill directory convention (`assets/` + `references/` + `SKILL.md`) as the pattern we document for skill authors.
   - The "6-step workflow + quality-checklist rubric" pattern for authoring new skills.
-- **What we don't:** We do not require the retired `od skill add` flow; the rendering template ships in the catalogue and can still be consumed as a portable `SKILL.md` bundle.
+- **What we don't:** We do not require the retired `capt skill add` flow; the rendering template ships in the catalogue and can still be consumed as a portable `SKILL.md` bundle.
 
 ---
 

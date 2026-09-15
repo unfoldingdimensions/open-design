@@ -21,7 +21,7 @@ interface ParsedOptions {
 }
 
 const USAGE = `Usage:
-  od artifacts create --name <path> --input <file> [--project <id-or-name>] [--manifest artifact.json] [--encoding utf8|base64] [--daemon-url <url>]
+  capt artifacts create --name <path> --input <file> [--project <id-or-name>] [--manifest artifact.json] [--encoding utf8|base64] [--daemon-url <url>]
 
 Creates one normal CapyDesign project artifact entry file through the local daemon.
 When --project is omitted, the active CapyDesign project is used.

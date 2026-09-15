@@ -15,7 +15,7 @@
 import type {
   InstalledPluginRecord,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { createPortal } from 'react-dom';
 import { useT } from '../i18n';
 import type { Dict, Locale } from '../i18n/types';

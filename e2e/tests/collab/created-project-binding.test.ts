@@ -151,7 +151,7 @@ describe('a created project is bound only to an explicit Workspace', () => {
         async ({ webUrl }) => {
           await setAmbientWorkspace(webUrl, AMBIENT);
 
-          // `od project create`, MCP, and other headerless legacy callers do
+          // `capt project create`, MCP, and other headerless legacy callers do
           // not inherit whichever Workspace the daemon most recently observed.
           const plainCreate = await createProject(webUrl, 'Bind plain create');
           const plainScope = await readScope(webUrl, plainCreate);

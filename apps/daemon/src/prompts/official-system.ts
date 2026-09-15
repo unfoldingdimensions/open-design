@@ -8,7 +8,7 @@
  *
  * Composer in `system.ts` stacks active design system + active skill on top.
  */
-import type { ExecutionProfile } from '@open-design/contracts';
+import type { ExecutionProfile } from '@capydesign/contracts';
 
 const EXECUTION_CONTEXT_PLACEHOLDER = '%%OPEN_DESIGN_EXECUTION_CONTEXT%%';
 const WORKFLOW_HANDOFF_PLACEHOLDER = '%%OPEN_DESIGN_WORKFLOW_HANDOFF%%';

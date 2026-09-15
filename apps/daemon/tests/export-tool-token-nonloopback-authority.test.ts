@@ -66,7 +66,7 @@ async function reachableNonLoopbackIpv4(): Promise<string> {
   throw new Error(`no reachable non-loopback IPv4 interface: ${failures.join('; ')}`);
 }
 
-describe('od export non-loopback run-scoped authority', () => {
+describe('capt export non-loopback run-scoped authority', () => {
   let daemon: StartedServer;
   let daemonHost = '';
   let outputDir = '';

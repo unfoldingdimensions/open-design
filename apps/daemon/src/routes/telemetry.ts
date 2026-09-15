@@ -1,11 +1,11 @@
 import express, { type Express } from 'express';
-import { SIDECAR_DEFAULTS } from '@open-design/sidecar-proto';
+import { SIDECAR_DEFAULTS } from '@capydesign/sidecar-proto';
 import { randomUUID } from 'node:crypto';
 import {
   type McpAnalyticsEventRequest,
   type McpAnalyticsContextResponse,
   type ObservabilityEventRequest,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import {
   createAnalyticsService,
   readAnalyticsContext,

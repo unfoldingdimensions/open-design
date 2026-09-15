@@ -6,7 +6,7 @@ import {
   LAUNCHER_SCHEMA_VERSION,
   resolveLauncherVersionPaths,
   type LauncherDesktopHandoffDescriptor,
-} from "@open-design/launcher-proto";
+} from "@capydesign/launcher-proto";
 import { describe, expect, it } from "vitest";
 
 import type { PackagedConfig } from "../src/config.js";

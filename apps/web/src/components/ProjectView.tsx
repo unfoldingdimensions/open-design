@@ -44,7 +44,7 @@ import {
 } from '../runtime/chat/reconnect-state';
 import { forkBoundaryMessageIndex } from '../runtime/chat/fork-boundary';
 import { resolveRecoveryActionBlockReason } from '../runtime/chat/recovery-gating';
-import { normalizeCustomReason } from '@open-design/contracts/analytics';
+import { normalizeCustomReason } from '@capydesign/contracts/analytics';
 import {
   deletePreviewComment,
   fetchConnectorStatuses,
@@ -85,7 +85,7 @@ import {
   type ChatTaskExecutionAnalytics,
   type ProjectWorkspaceScope,
   type ResearchOptions,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   anonymizeArtifactId,
   artifactKindToTracking,
@@ -95,7 +95,7 @@ import {
   projectKindFromMetadataToTrackingOrLegacyDefault,
   projectKindToTracking,
   sessionModeToTracking,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import type {
   TrackingArtifactKind,
   TrackingConversationForkErrorCode,
@@ -104,7 +104,7 @@ import type {
   TrackingDesignSystemOrigin,
   TrackingDesignSystemStatusValue,
   TrackingRunRecoveryActionType,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import { useAnalytics } from '../analytics/provider';
 import {
   trackByokPreflightBlocked,
@@ -193,7 +193,7 @@ import {
   extractBrandFromHtml,
   finalizeBrandProject,
 } from '../runtime/brands';
-import { isCapyDesignHostAvailable } from '@open-design/host';
+import { isCapyDesignHostAvailable } from '@capydesign/host';
 import {
   getBrandBrowser,
   BRAND_BROWSER_TAB_ID,
@@ -254,7 +254,7 @@ import type {
   RunContextSelection,
   WorkspaceCollabContext,
   WorkspaceContextItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   AgentEvent,
   AgentInfo,
@@ -1159,7 +1159,7 @@ function buildBrandAgentExtractionContinuationPrompt(input: {
         '',
         'Inspect brand.html, brand.json, DESIGN.md, BRAND.md, context/, logos/, imagery/, fonts/, and system assets. Measure the source website when reachable. If the live page is an anti-bot verification interstitial, ask the user to clear it in the Browser tab before continuing.',
         '',
-        `Write valid partial brand.json updates progressively, run od brand preview ${brandId} after meaningful field groups, then run od brand finalize ${brandId} when the kit is complete. Fix validation errors and keep updating the same registered design system in place.`,
+        `Write valid partial brand.json updates progressively, run capt brand preview ${brandId} after meaningful field groups, then run capt brand finalize ${brandId} when the kit is complete. Fix validation errors and keep updating the same registered design system in place.`,
       ].join('\n');
   const visibleFiles = input.projectFiles
     .filter((file) => file.name.trim())
@@ -1872,7 +1872,7 @@ function applySplitChatPanelWidth(
 // The media model the user picked in the New Project → Media dialog, keyed by
 // surface. For BYOK providers (AIHubMix) media is produced by the generate_*
 // chat tools whose default model comes from the per-request byok*Model field —
-// NOT the `od media generate` dispatcher — so without this seed the dialog pick
+// NOT the `capt media generate` dispatcher — so without this seed the dialog pick
 // is dropped and the conversation falls back to the Settings default. Returns
 // undefined for non-media projects (and when the field is empty) so callers fall
 // back to the Settings default exactly as before. The daemon re-validates the id
@@ -11469,7 +11469,7 @@ export function ProjectView({
          * 这里的 `conversations` 是可能过期的快照,两个客户端各拿各的快照算同一个号
          * 必然撞。daemon 那边「读名单 → 算号 → 落库」中间没有 await,同进程内原子。
          *
-         * 顺带白拿了 CLI 那条路(`od chat new --fork-after`),它本来就不传标题。
+         * 顺带白拿了 CLI 那条路(`capt chat new --fork-after`),它本来就不传标题。
          * `fresh.title` 是 daemon 返回的真实标题,下面直接进 `conversations`,
          * 所以这里也不需要乐观标题。
          */
@@ -11514,7 +11514,7 @@ export function ProjectView({
          *
          * 标记改由 daemon 在建新会话时盖在**带过来的最后一条**上,见
          * `apps/daemon/src/routes/project/conversations.ts` 的 fork 分支。
-         * 放在 daemon 还顺带白拿了 CLI 那条路(`od project conversation --fork-after`)。
+         * 放在 daemon 还顺带白拿了 CLI 那条路(`capt project conversation --fork-after`)。
          */
         setMessages([]);
         commitPreviewComments([]);
@@ -14354,8 +14354,8 @@ function pluginWorkflowTitle(action: PluginFolderAgentAction): string {
 
 function pluginWorkflowCliCommand(action: PluginFolderAgentAction, relativePath: string): string {
   return action === 'publish'
-    ? `od plugin publish-repo ${relativePath}`
-    : `od plugin open-design-pr ${relativePath}`;
+    ? `capt plugin publish-repo ${relativePath}`
+    : `capt plugin open-design-pr ${relativePath}`;
 }
 
 function pluginWorkflowPlannedSteps(action: PluginFolderAgentAction): string[] {

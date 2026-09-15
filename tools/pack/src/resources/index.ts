@@ -6,7 +6,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
-import { createPackageManagerInvocation } from "@open-design/platform";
+import { createPackageManagerInvocation } from "@capydesign/platform";
 
 const execFileAsync = promisify(execFile);
 
@@ -18,7 +18,7 @@ function resolveToolsPackRoot(startDir: string): string {
     try {
       const raw = readFileSync(join(current, "package.json"), "utf8");
       const parsed = JSON.parse(raw) as { name?: unknown };
-      if (parsed.name === "@open-design/tools-pack") {
+      if (parsed.name === "@capydesign/tools-pack") {
         return current;
       }
     } catch {
@@ -97,7 +97,7 @@ export const DSH_RUNTIME_RESOURCE_DIRECTORY = join("agent-runtimes", "deepseek-h
 
 export type BundledDshRuntimeManifest = {
   file: string;
-  packageName: "@open-design/dsh-runtime";
+  packageName: "@capydesign/dsh-runtime";
   schemaVersion: 1;
   sha256: string;
   version: string;
@@ -121,8 +121,8 @@ export async function packBundledDshRuntime({
     name?: unknown;
     version?: unknown;
   };
-  if (packageJson.name !== "@open-design/dsh-runtime" || typeof packageJson.version !== "string") {
-    throw new Error("tools-pack: invalid @open-design/dsh-runtime package metadata");
+  if (packageJson.name !== "@capydesign/dsh-runtime" || typeof packageJson.version !== "string") {
+    throw new Error("tools-pack: invalid @capydesign/dsh-runtime package metadata");
   }
 
   const destination = join(resourceRoot, DSH_RUNTIME_RESOURCE_DIRECTORY);
@@ -147,7 +147,7 @@ export async function packBundledDshRuntime({
   const sha256 = createHash("sha256").update(await readFile(join(destination, file))).digest("hex");
   const manifest: BundledDshRuntimeManifest = {
     file,
-    packageName: "@open-design/dsh-runtime",
+    packageName: "@capydesign/dsh-runtime",
     schemaVersion: 1,
     sha256,
     version: packageJson.version,

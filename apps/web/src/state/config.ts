@@ -1,4 +1,4 @@
-import type { AppConfigPrefs } from '@open-design/contracts';
+import type { AppConfigPrefs } from '@capydesign/contracts';
 import { MEDIA_PROVIDERS } from '../media/models';
 import { isOpenAICompatible } from '../providers/openai-compatible';
 import type {

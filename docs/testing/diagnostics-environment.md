@@ -1,6 +1,6 @@
 # Environment evidence in diagnostics exports
 
-The existing **Export diagnostics** action and `od diagnostics export --json`
+The existing **Export diagnostics** action and `capt diagnostics export --json`
 use the same daemon export endpoint. Its ZIP includes
 `summary/environment-evidence.json` alongside the existing machine, version,
 login-health and log summaries.

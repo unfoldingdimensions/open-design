@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { ChatSessionMode } from '@open-design/contracts';
-import { MAX_NEXT_STEP_SUGGESTIONS } from '@open-design/contracts';
+import type { ChatSessionMode } from '@capydesign/contracts';
+import { MAX_NEXT_STEP_SUGGESTIONS } from '@capydesign/contracts';
 import { useI18n } from '../i18n';
 import { localizeSkillDescription, localizeSkillName } from '../i18n/content';
 import type { Dict } from '../i18n/types';

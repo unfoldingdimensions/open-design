@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const DAEMON_PORT = Number(process.env.OD_PORT) || 7456;
 const DAEMON_ORIGIN = `http://127.0.0.1:${DAEMON_PORT}`;
 
-// The regular CLI build still ships as a static export so the `od` daemon can
+// The regular CLI build still ships as a static export so the `capt` daemon can
 // serve a single-process production build. Packaged desktop builds opt into a
 // server runtime with OD_WEB_OUTPUT_MODE=server; in that mode the web sidecar
 // owns the Next.js SSR server and proxies daemon routes at runtime. The
@@ -54,7 +54,7 @@ function resolveWorkspaceRoot(): string {
     // Require the resolved path to be a real pnpm workspace root. Without this,
     // an ancestor like `<repo>/apps` would pass the relative-path check but
     // miss the sibling `packages/*` directory that `apps/web` imports from
-    // (for example `@open-design/contracts`), and Next would later fail deep
+    // (for example `@capydesign/contracts`), and Next would later fail deep
     // inside file tracing / Turbopack with a much harder-to-diagnose error.
     if (!existsSync(resolve(canonicalResolved, 'pnpm-workspace.yaml'))) {
       throw new Error(
@@ -164,7 +164,7 @@ const nextConfig: NextConfig = {
   // to inject chunk IDs, upload to PostHog, and ALWAYS delete the .map files
   // before packaging so source never ships inside an installer.
   productionBrowserSourceMaps: true,
-  transpilePackages: ['@open-design/components'],
+  transpilePackages: ['@capydesign/components'],
   turbopack: {
     root: WORKSPACE_ROOT,
   },

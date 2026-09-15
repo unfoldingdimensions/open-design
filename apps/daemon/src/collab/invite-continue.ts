@@ -1,4 +1,4 @@
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import { readVelaControlApiContext } from '../integrations/vela.js';
 import { mapVelaWorkspaceContext } from './vela-workspace-context.js';
 

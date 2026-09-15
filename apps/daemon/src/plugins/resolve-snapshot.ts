@@ -29,7 +29,7 @@ import type {
   PluginConnectorBinding,
   ProjectScenarioBindingProvenance,
   ProjectScenarioTaskProfile,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   applyPlugin,
   InternalBundledStrategyApplyError,
@@ -50,7 +50,7 @@ import { getManifestContextCraft } from './context-craft.js';
 import {
   type ConnectorProbe,
 } from './connector-gate.js';
-import type { RegistryView } from '@open-design/plugin-runtime';
+import type { RegistryView } from '@capydesign/plugin-runtime';
 import {
   createBundledStrategyBindingV2,
   StrategyPackageIdentityError,
@@ -480,7 +480,7 @@ export function capabilitiesRequiredError(args: {
   missing: string[];
 }): ResolveSnapshotError {
   const remediation = [
-    `od plugin trust ${args.pluginId} --capabilities ${args.missing.join(',')}`,
+    `capt plugin trust ${args.pluginId} --capabilities ${args.missing.join(',')}`,
     `or pass --grant-caps ${args.missing.join(',')} to the apply / run command`,
   ];
   return {

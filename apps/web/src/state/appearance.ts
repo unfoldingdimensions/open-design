@@ -1,4 +1,4 @@
-import { getCapyDesignHost } from '@open-design/host';
+import { getCapyDesignHost } from '@capydesign/host';
 import type { AppTheme } from '../types';
 
 const ACCENT_VARS = [

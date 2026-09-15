@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Dialog } from '@open-design/components';
-import type { SkillDetail, SkillSummary } from '@open-design/contracts';
+import { Dialog } from '@capydesign/components';
+import type { SkillDetail, SkillSummary } from '@capydesign/contracts';
 import { useI18n } from '../i18n';
 import {
   localizeSkillDescription,

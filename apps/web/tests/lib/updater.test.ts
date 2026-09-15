@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { CapyDesignHostUpdaterStatusSnapshot } from '@open-design/host';
-import { installMockCapyDesignHost } from '@open-design/host/testing';
+import type { CapyDesignHostUpdaterStatusSnapshot } from '@capydesign/host';
+import { installMockCapyDesignHost } from '@capydesign/host/testing';
 
 import {
   checkForUpdaterUpdate,

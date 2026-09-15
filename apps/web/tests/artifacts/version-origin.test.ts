@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ProjectFileVersion } from '@open-design/contracts';
+import type { ProjectFileVersion } from '@capydesign/contracts';
 
 import {
   artifactExportOriginProps,

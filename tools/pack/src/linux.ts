@@ -12,7 +12,7 @@ import {
   type DesktopEvalResult,
   type DesktopScreenshotResult,
   type DesktopStatusSnapshot,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 import {
   convergeSidecarLaunch,
   findSidecarProcesses,
@@ -20,8 +20,8 @@ import {
   invokeSidecar,
   stopSidecars,
   type SidecarStamp,
-} from "@open-design/sidecar";
-import { createPackageManagerInvocation, readLogTail } from "@open-design/platform";
+} from "@capydesign/sidecar";
+import { createPackageManagerInvocation, readLogTail } from "@capydesign/platform";
 
 import type { ToolPackConfig } from "./config/index.js";
 import {
@@ -50,23 +50,23 @@ const CONTAINER_NODE_VERSION = "24.14.1";
 const CONTAINER_TOOLS_PACK_CLI_PATH = "tools/pack/bin/tools-pack.mjs";
 
 export const INTERNAL_PACKAGES = [
-  { directory: "packages/release", name: "@open-design/release" },
-  { directory: "packages/components", name: "@open-design/components" },
-  { directory: "packages/contracts", name: "@open-design/contracts" },
-  { directory: "packages/registry-protocol", name: "@open-design/registry-protocol" },
-  { directory: "packages/sidecar-proto", name: "@open-design/sidecar-proto" },
-  { directory: "packages/launcher-proto", name: "@open-design/launcher-proto" },
-  { directory: "packages/platform", name: "@open-design/platform" },
-  { directory: "packages/sidecar", name: "@open-design/sidecar" },
-  { directory: "packages/download", name: "@open-design/download" },
-  { directory: "packages/host", name: "@open-design/host" },
-  { directory: "packages/agui-adapter", name: "@open-design/agui-adapter" },
-  { directory: "packages/plugin-runtime", name: "@open-design/plugin-runtime" },
-  { directory: "packages/diagnostics", name: "@open-design/diagnostics" },
-  { directory: "apps/daemon", name: "@open-design/daemon" },
-  { directory: "apps/web", name: "@open-design/web" },
-  { directory: "apps/desktop", name: "@open-design/desktop" },
-  { directory: "apps/packaged", name: "@open-design/packaged" },
+  { directory: "packages/release", name: "@capydesign/release" },
+  { directory: "packages/components", name: "@capydesign/components" },
+  { directory: "packages/contracts", name: "@capydesign/contracts" },
+  { directory: "packages/registry-protocol", name: "@capydesign/registry-protocol" },
+  { directory: "packages/sidecar-proto", name: "@capydesign/sidecar-proto" },
+  { directory: "packages/launcher-proto", name: "@capydesign/launcher-proto" },
+  { directory: "packages/platform", name: "@capydesign/platform" },
+  { directory: "packages/sidecar", name: "@capydesign/sidecar" },
+  { directory: "packages/download", name: "@capydesign/download" },
+  { directory: "packages/host", name: "@capydesign/host" },
+  { directory: "packages/agui-adapter", name: "@capydesign/agui-adapter" },
+  { directory: "packages/plugin-runtime", name: "@capydesign/plugin-runtime" },
+  { directory: "packages/diagnostics", name: "@capydesign/diagnostics" },
+  { directory: "apps/daemon", name: "@capydesign/daemon" },
+  { directory: "apps/web", name: "@capydesign/web" },
+  { directory: "apps/desktop", name: "@capydesign/desktop" },
+  { directory: "apps/packaged", name: "@capydesign/packaged" },
 ] as const;
 
 export function sanitizeNamespace(value: string): string {
@@ -134,7 +134,7 @@ export function buildDockerArgs(
   //
   // Shell-interpolation safety for the inner `bash -lc` command:
   //   - config.namespace is sanitized at config-time by resolveNamespace() in
-  //     @open-design/sidecar-proto (restricted to namespace charset)
+  //     @capydesign/sidecar-proto (restricted to namespace charset)
   //   - config.to is enum-validated by resolveToolPackBuildOutput() in config.ts
   //     to one of "all" | "appimage" | "dir"
   //   - config.portable is a boolean
@@ -271,7 +271,7 @@ export function renderDesktopTemplate(template: string, values: DesktopTemplateV
 }
 
 export function renderLinuxPackagedMainEntry(): string {
-  return 'import("@open-design/packaged").catch((error) => {\n  console.error("packaged entry failed", error);\n  process.exit(1);\n});\n';
+  return 'import("@capydesign/packaged").catch((error) => {\n  console.error("packaged entry failed", error);\n  process.exit(1);\n});\n';
 }
 
 export function renderLinuxAppImageAppRun(): string {
@@ -588,7 +588,7 @@ async function writeLinuxBuilderConfig(config: ToolPackConfig, paths: LinuxPaths
   const packageVersion = electronBuilderVersionForAppVersion(packagedVersion);
 
   const builderConfig: Record<string, unknown> = {
-    appId: "io.open-design.desktop",
+    appId: "io.capydesign.desktop",
     artifactName: `${PRODUCT_NAME}-${namespaceToken}.\${ext}`,
     asar: false,
     buildDependenciesFromSource: false,
@@ -1150,12 +1150,12 @@ export type LinuxCleanupResult = {
 
 // Paths resolved relative to the assembled app written during `tools-pack linux build`.
 // The headless entry lives at:
-//   <assembledAppRoot>/node_modules/@open-design/packaged/dist/headless.mjs
+//   <assembledAppRoot>/node_modules/@capydesign/packaged/dist/headless.mjs
 // The bundled Node binary lives at:
 //   <namespaceRoot>/resources/open-design/bin/node  (populated by copyResourceTree)
 
 function resolveHeadlessEntryPath(paths: LinuxPaths): string {
-  return join(paths.assembledAppRoot, "node_modules", "@open-design", "packaged", "dist", "headless.mjs");
+  return join(paths.assembledAppRoot, "node_modules", "@capydesign", "packaged", "dist", "headless.mjs");
 }
 
 function resolveHeadlessBundledNodePath(paths: LinuxPaths): string {

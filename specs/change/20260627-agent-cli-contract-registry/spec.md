@@ -961,7 +961,7 @@ The web UI can show:
 ### OpenDesign Surface Closure
 
 Runtime compatibility is user-facing, so the implementation must close the
-shared API, web UI, and `od` CLI in the same PR. The daemon HTTP route remains
+shared API, web UI, and `capt` CLI in the same PR. The daemon HTTP route remains
 the single source of truth; web and CLI must not compute different status
 shapes locally.
 
@@ -970,7 +970,7 @@ shapes locally.
 | Contract DTO | `packages/contracts/src/api/agentCliCompatibility.ts` exports `AgentCliCompatibilityRequest`, `AgentCliCompatibilityResponse`, `AgentCliCompatibilityStatus`, `AgentCliCompatibilityEvidence`, and example payloads. |
 | Daemon API | `GET /api/agents/:agent/cli-compatibility?probe=0|1` returns the DTO for one agent; `GET /api/agents/cli-compatibility?probe=0|1` returns all configured agents. Probe execution must be bounded and opt-in when it may call a real provider. |
 | Web UI | The agent/provider settings surface shows the status, evidence timestamp, verified version range, and guidance. Warning/blocking policy comes from the DTO, not duplicated UI rules. |
-| `od` CLI | `od agent compatibility [agent] --json --probe` calls the same API. Without `--json`, it prints a concise table with agent, installed version, status, policy, and next action. With `--json`, it emits the DTO unchanged. |
+| `capt` CLI | `capt agent compatibility [agent] --json --probe` calls the same API. Without `--json`, it prints a concise table with agent, installed version, status, policy, and next action. With `--json`, it emits the DTO unchanged. |
 | Tests | Contract examples typecheck; daemon route tests assert policy/status mapping; CLI tests assert text and `--json` output; web tests assert rendering for normal, warning, and blocking statuses. |
 
 The DTO status enum must match the support-matrix enum exactly:
@@ -1016,7 +1016,7 @@ export interface AgentCliCompatibilityResponse {
 Example CLI output:
 
 ```text
-$ od agent compatibility codex
+$ capt agent compatibility codex
 agent  version  status                  policy  next action
 codex  0.133.0  local_shape_verified    allow   none
 ```

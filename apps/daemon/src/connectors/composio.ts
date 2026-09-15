@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { resolveDefaultDataDir } from '../daemon-paths.js';
 import type { BoundedJsonObject, BoundedJsonValue } from '../live-artifacts/schema.js';
 import { defineConnectorTool, type ConnectorCatalogDefinition, type ConnectorCatalogToolDefinition } from './catalog.js';
 import { deleteComposioAuthConfigId, readComposioConfig, setComposioAuthConfigId } from './composio-config.js';
@@ -39,7 +40,7 @@ interface PersistedComposioCatalogCache {
   definitions: ConnectorCatalogDefinition[];
 }
 
-let composioCatalogCacheFilePath = path.join(process.cwd(), '.od', 'connectors', 'composio-catalog-cache.json');
+let composioCatalogCacheFilePath = path.join(resolveDefaultDataDir(process.cwd()), 'connectors', 'composio-catalog-cache.json');
 
 const FEATURED_COMPOSIO_CATALOG: ConnectorCatalogDefinition[] = [
   {

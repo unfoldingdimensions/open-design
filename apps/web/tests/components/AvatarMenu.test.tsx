@@ -7,7 +7,7 @@ import {
   buildWorkspacePermissions,
   type WorkspaceBillingResponse,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { workspaceBillingSummaryForContext } from '../../src/collab/useWorkspaceContext';
 import { AvatarMenu } from '../../src/components/AvatarMenu';

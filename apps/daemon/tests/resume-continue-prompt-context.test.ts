@@ -16,7 +16,7 @@ import { startServer } from '../src/server.js';
  *
  *  - the client gate (`ChatPane.canResumeFailedRun`) is only
  *    `resumable && agentId === config.agentId`;
- *  - `od run continue` (cli.ts) is only `status.resumable === true`;
+ *  - `capt run continue` (cli.ts) is only `status.resumable === true`;
  *  - the daemon gate (`evaluateResumeInvalidation`) ALSO compares the stored
  *    model / cwd / cursor.
  *
@@ -104,7 +104,7 @@ describe('resume continue prompt context', () => {
 
     // Turn 1, headless shape (no client-pinned message ids): the daemon seeds
     // both the user and assistant rows itself, exactly as it does for a real
-    // `od run start`. It commits a tool block, then drops with an upstream 503
+    // `capt run start`. It commits a tool block, then drops with an upstream 503
     // → resumable failure, session persisted with the model used here.
     const failed = await postRun(started.url, encoded, {
       message: ORIGINAL_REQUEST,
@@ -119,7 +119,7 @@ describe('resume continue prompt context', () => {
       agentModels: { claude: { model: 'claude-sonnet-4-5' } },
     });
 
-    // Turn 2, exactly the `od run continue <runId>` request shape: the continue
+    // Turn 2, exactly the `capt run continue <runId>` request shape: the continue
     // prompt as `message`, no `currentPrompt`, no transcript — plus the flag
     // that declares the message is a directive rather than a request.
     const continued = await postRun(started.url, encoded, {

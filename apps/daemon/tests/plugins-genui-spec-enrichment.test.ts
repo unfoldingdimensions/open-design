@@ -1,6 +1,6 @@
 // Plan §6 Phase 2A.5 — `GET /api/runs/:runId/genui/:surfaceId` enriches
 // the response with the surface spec (incl. JSON Schema) pulled out of
-// the AppliedPluginSnapshot. This is the wire that lets `od ui show`
+// the AppliedPluginSnapshot. This is the wire that lets `capt ui show`
 // (and the web JsonSchemaFormSurface fallback) inspect the schema for
 // surfaces whose `schema_digest` is the only thing the genui_surfaces
 // table holds. Without enrichment, headless callers can't render
@@ -12,7 +12,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import Database from 'better-sqlite3';
 import express from 'express';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -32,7 +32,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(here, '../../..');
 const serverRuntimeDataRoot = process.env.OD_DATA_DIR
   ? path.resolve(projectRoot, process.env.OD_DATA_DIR)
-  : path.join(projectRoot, '.od');
+  : path.join(projectRoot, '.capydesign');
 
 let server: http.Server | undefined;
 let baseUrl: string;

@@ -714,7 +714,7 @@ export const zhTW: Dict = {
   "settings.mcpBuildDaemon": "請先建置守護行程。",
   "settings.mcpNodeMissing": "缺少 Node 執行檔。",
   "settings.mcpBuildHint":
-    "缺少 apps/daemon/dist/cli.js。請執行 `pnpm --filter @open-design/daemon build` 後重新整理。",
+    "缺少 apps/daemon/dist/cli.js。請執行 `pnpm --filter @capydesign/daemon build` 後重新整理。",
   "settings.mcpMethodCli": "設定指令",
   "settings.mcpInstructionCli": "在終端機中執行以下指令：",
   "settings.mcpMethodToml": "TOML 設定檔",
@@ -1433,9 +1433,9 @@ export const zhTW: Dict = {
   "useEverywhere.section.overview.heading":
     "你的 Agent 在哪裡運作，CapyDesign 就在哪裡運作",
   "useEverywhere.section.overview.intro":
-    "CapyDesign 不只是一個視窗 — 它是一個本機特權 daemon（`od`），外加一個 Skills + Design-Systems + Atoms 登錄。一旦它在您的機器上執行，任何程式碼 Agent（Claude Code、Codex、Cursor、OpenCode/openclaw、Hermes、您自己的指令碼）都能透過四個可互換的介面來驅動產生作業、檢視專案並產出設計成品。",
+    "CapyDesign 不只是一個視窗 — 它是一個本機特權 daemon（`capt`），外加一個 Skills + Design-Systems + Atoms 登錄。一旦它在您的機器上執行，任何程式碼 Agent（Claude Code、Codex、Cursor、OpenCode/openclaw、Hermes、您自己的指令碼）都能透過四個可互換的介面來驅動產生作業、檢視專案並產出設計成品。",
   "useEverywhere.section.overview.bullet1":
-    "CLI — 以 `od <command>` 用於無頭指令碼、CI 及 shell 自動化。",
+    "CLI — 以 `capt <command>` 用於無頭指令碼、CI 及 shell 自動化。",
   "useEverywhere.section.overview.bullet2":
     "MCP server — 將 CapyDesign 接成 Model Context Protocol 伺服器，讓任何支援 MCP 的 Agent 都能列出技能、執行情境並讀取成品。",
   "useEverywhere.section.overview.bullet3":
@@ -1452,19 +1452,19 @@ export const zhTW: Dict = {
   "useEverywhere.section.cli.tab": "CLI · od",
   "useEverywhere.section.cli.heading": "從任何 shell 操作 CapyDesign",
   "useEverywhere.section.cli.intro":
-    "`od` 執行檔隨 daemon 一起發佈，與 Claude Code / Codex 執行產生作業時所用的是同一個二進位檔。多數子指令都是精簡的用戶端，會 POST 至本機 daemon，因此無論你是透過 `pnpm tools-dev` 啟動，還是以打包後的應用程式執行，運作方式都相同。",
+    "`capt` 執行檔隨 daemon 一起發佈，與 Claude Code / Codex 執行產生作業時所用的是同一個二進位檔。多數子指令都是精簡的用戶端，會 POST 至本機 daemon，因此無論你是透過 `pnpm tools-dev` 啟動，還是以打包後的應用程式執行，運作方式都相同。",
   "useEverywhere.section.cli.bullet1":
-    "`od`（無參數）— 啟動 daemon 並開啟網頁 UI。",
+    "`capt`（無參數）— 啟動 daemon 並開啟網頁 UI。",
   "useEverywhere.section.cli.bullet2":
-    "`od media generate ...` — 透過統一的媒體協定產生圖片／影片／音訊位元組。",
+    "`capt media generate ...` — 透過統一的媒體協定產生圖片／影片／音訊位元組。",
   "useEverywhere.section.cli.bullet3":
-    "`od run ...` — 從提示 + 技能啟動一次專案執行。",
+    "`capt run ...` — 從提示 + 技能啟動一次專案執行。",
   "useEverywhere.section.cli.bullet4":
-    "`od plugin install <source>` / `od plugin apply <id>` — 安裝並套用社群外掛。",
+    "`capt plugin install <source>` / `capt plugin apply <id>` — 安裝並套用社群外掛。",
   "useEverywhere.section.cli.bullet5":
-    "`od skills list` / `od design-systems list` — 檢視本機可用的項目。",
+    "`capt skills list` / `capt design-systems list` — 檢視本機可用的項目。",
   "useEverywhere.section.cli.bullet6":
-    "`od status` / `od doctor` — 驗證 daemon 健康狀態並偵測您 PATH 上的 Agent CLI。",
+    "`capt status` / `capt doctor` — 驗證 daemon 健康狀態並偵測您 PATH 上的 Agent CLI。",
   "useEverywhere.section.cli.snippet1": "產生影像（委派給已設定的媒體提供者）",
   "useEverywhere.section.cli.snippet2":
     "以無頭模式執行情境外掛，並以 JSON 行的形式串流事件",
@@ -1478,9 +1478,9 @@ export const zhTW: Dict = {
   "useEverywhere.section.mcp.heading":
     "將 CapyDesign 以 MCP 伺服器形式開放給任何程式設計 Agent",
   "useEverywhere.section.mcp.intro":
-    "CapyDesign 隨附一個 Model Context Protocol 伺服器（`od mcp`），讓任何支援 MCP 的用戶端 — Cursor、Claude Code、Antigravity、VS Code Copilot Chat、openclaw、hermes — 都能探索 CapyDesign 工具（列出技能、算繪預覽、產生媒體、執行外掛），而無需手動使用 shell。daemon 透過 `GET /api/mcp/install-info` 為每個主要用戶端發布可直接貼上的安裝程式碼片段。",
+    "CapyDesign 隨附一個 Model Context Protocol 伺服器（`capt mcp`），讓任何支援 MCP 的用戶端 — Cursor、Claude Code、Antigravity、VS Code Copilot Chat、openclaw、hermes — 都能探索 CapyDesign 工具（列出技能、算繪預覽、產生媒體、執行外掛），而無需手動使用 shell。daemon 透過 `GET /api/mcp/install-info` 為每個主要用戶端發布可直接貼上的安裝程式碼片段。",
   "useEverywhere.section.mcp.bullet1":
-    "Stdio 傳輸 — 不需額外連接埠，用戶端直接產生 `od mcp` 程序。",
+    "Stdio 傳輸 — 不需額外連接埠，用戶端直接產生 `capt mcp` 程序。",
   "useEverywhere.section.mcp.bullet2":
     "以 sidecar 模式啟動時，會透過本機 IPC 狀態 socket 自動探索運作中的 daemon URL。",
   "useEverywhere.section.mcp.bullet3":
@@ -1498,7 +1498,7 @@ export const zhTW: Dict = {
   "useEverywhere.section.http.tab": "HTTP API",
   "useEverywhere.section.http.heading": "與 web UI 所用相同的 REST + SSE 介面",
   "useEverywhere.section.http.intro":
-    "本機 daemon 會在 `http://127.0.0.1:7456` 提供 HTTP API（連接埠可設定）。web UI 呼叫的每個端點，你的指令稿同樣可以使用。串流端點（聊天回合、專案執行）會發出 Server-Sent Events，其合約型別定義於 `@open-design/contracts`。",
+    "本機 daemon 會在 `http://127.0.0.1:7456` 提供 HTTP API（連接埠可設定）。web UI 呼叫的每個端點，你的指令稿同樣可以使用。串流端點（聊天回合、專案執行）會發出 Server-Sent Events，其合約型別定義於 `@capydesign/contracts`。",
   "useEverywhere.section.http.bullet1": "`GET /api/health` — daemon 存活狀態。",
   "useEverywhere.section.http.bullet2":
     "`GET /api/skills` 與 `GET /api/design-systems` — 可用的登錄。",
@@ -1517,7 +1517,7 @@ export const zhTW: Dict = {
   "useEverywhere.section.http.snippet3":
     "串流一次聊天回合（SSE — 每一行都相容於 JSON-Lines）",
   "useEverywhere.section.http.footer":
-    "每個請求／回應的純 TypeScript 型別都位於 `@open-design/contracts` 中 — 在您的指令碼中匯入它們，即可享有完整的自動完成，而無需接上產生器。",
+    "每個請求／回應的純 TypeScript 型別都位於 `@capydesign/contracts` 中 — 在您的指令碼中匯入它們，即可享有完整的自動完成，而無需接上產生器。",
   "useEverywhere.section.skills.tab": "技能與無頭模式",
   "useEverywhere.section.skills.heading":
     "適用於任何 Agent 的隨插即用 Skills — 即使 CapyDesign 未在執行也行",
@@ -1530,7 +1530,7 @@ export const zhTW: Dict = {
   "useEverywhere.section.skills.bullet3":
     "每個技能都可宣告連接器、原子元件、設計系統需求，以及供藝廊使用的 `preview` 範例輸出。",
   "useEverywhere.section.skills.bullet4":
-    "無頭模式：PATH 中含有 `od` 的 Agent 可呼叫 `od skills list`，接著執行任何技能；唯讀流程中 daemon 為選用。",
+    "無頭模式：PATH 中含有 `capt` 的 Agent 可呼叫 `capt skills list`，接著執行任何技能；唯讀流程中 daemon 為選用。",
   "useEverywhere.section.skills.bullet5":
     "`pnpm seed:test-projects` 會以預設外掛範例與社群外掛範例演練相同的成品結構，接著將產生的 `index.html` 專案儲存為可重複使用的測試資料。",
   "useEverywhere.section.skills.snippet1":
@@ -5844,7 +5844,7 @@ export const zhTW: Dict = {
   'chat.pluginAction.contributionStarted': '已為 {path} 啟動 CapyDesign 貢獻任務。',
   'chat.pluginAction.aria': '外掛後續操作',
   'chat.pluginAction.title': '外掛已就緒',
-  'chat.pluginAction.subtitle': '將下一步傳送給 Agent，由它執行 od CLI。',
+  'chat.pluginAction.subtitle': '將下一步傳送給 Agent，由它執行 capt CLI。',
   'chat.pluginAction.filesReady': '個人外掛中已有 {count} 個檔案就緒',
   'chat.pluginAction.install': '加入個人外掛',
 };

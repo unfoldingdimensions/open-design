@@ -16,6 +16,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { promises as fsp } from 'node:fs';
+import { resolveDefaultDataDir } from '../daemon-paths.js';
 import {
   adaptAgentSkill,
   adaptClaudePlugin,
@@ -23,14 +24,14 @@ import {
   parseManifest,
   validateSafe,
   type ManifestParseResult,
-} from '@open-design/plugin-runtime';
+} from '@capydesign/plugin-runtime';
 import type {
   InstalledPluginRecord,
   MarketplaceTrust,
   PluginManifest,
   PluginSourceKind,
   TrustTier,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { defaultTrustForRecord, resolveCapabilitiesGranted } from './trust.js';
 import { isInternalBundledStrategyV2 } from './strategy-provenance.js';
 import { getWorkspaceResourceByResourceId } from '../db.js';
@@ -52,7 +53,7 @@ export function registryRootsForDataDir(dataDir: string): RegistryRoots {
 }
 
 export function defaultRegistryRoots(): RegistryRoots {
-  return registryRootsForDataDir(path.resolve(process.env.OD_DATA_DIR ?? path.join(process.cwd(), '.od')));
+  return registryRootsForDataDir(path.resolve(process.env.OD_DATA_DIR ?? resolveDefaultDataDir(process.cwd())));
 }
 
 export interface ScannedPlugin {
@@ -168,7 +169,7 @@ export async function resolvePluginFolder(opts: ResolveOptions): Promise<Resolve
   const sourceKind = opts.sourceKind ?? 'local';
   // Spec §5.3 / trust.ts: a `local` install is implicitly trusted (the user
   // copied the folder here themselves), everything else starts restricted
-  // until an explicit `od plugin trust` flip. Fall back to that source-kind
+  // until an explicit `capt plugin trust` flip. Fall back to that source-kind
   // policy when the caller did not pin a trust tier — previously this was
   // hard-coded to 'restricted', which left local scenario plugins unable to
   // obtain the `pipeline:*` capability they need to run their own pipeline.
@@ -398,7 +399,7 @@ export async function activateWorkspaceTeamPluginIfStillShared(input: {
 /**
  * `workspaceId` is optional and defaults to the pre-workspace-isolation
  * behavior (every live installed plugin, otherwise unfiltered) so every existing caller —
- * `od plugin list`, inventory stats, the bundled-scenario scan in server.ts —
+ * `capt plugin list`, inventory stats, the bundled-scenario scan in server.ts —
  * keeps working unchanged, AS LONG AS THEY OMIT THE ARGUMENT ENTIRELY. A
  * reconciled tombstone is terminal even for these unscoped internal callers.
  * `GET /api/plugins` always passes a second argument (`headerValue(...)`,

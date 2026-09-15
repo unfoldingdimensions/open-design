@@ -2,13 +2,13 @@
 // (entry slice).
 //
 // Stores user-configured federated catalog indexes in
-// `plugin_marketplaces`. The actual `od plugin install <name>` resolution
+// `plugin_marketplaces`. The actual `capt plugin install <name>` resolution
 // through these catalogs lands in Phase 3 alongside the trust UI; this
 // module is the storage + refresh half so the desktop / CLI can already
 // register and inspect catalogs.
 //
 // We intentionally treat the catalog body as opaque JSON in v1 — Zod
-// validation lives in `@open-design/plugin-runtime`'s parser and we only
+// validation lives in `@capydesign/plugin-runtime`'s parser and we only
 // store what the parser returns. Trust default mirrors §9: a freshly
 // added user-supplied marketplace is `restricted` (discovery only)
 // unless `--trust` is passed.
@@ -19,11 +19,11 @@ import type Database from 'better-sqlite3';
 import {
   parseMarketplace,
   type MarketplaceParseResult,
-} from '@open-design/plugin-runtime';
+} from '@capydesign/plugin-runtime';
 import {
   OPEN_DESIGN_PLUGIN_SPEC_VERSION,
   type MarketplaceManifest,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   parsePluginSpecifier,
   resolveMarketplaceEntryVersion,

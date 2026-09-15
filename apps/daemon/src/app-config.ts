@@ -2,7 +2,8 @@
 //
 // The web frontend pushes preferences here via PUT /api/app-config; the
 // daemon persists them to <dataDir>/app-config.json (where dataDir defaults
-// to <projectRoot>/.od but follows OD_DATA_DIR when set, keeping test and
+// to <projectRoot>/.capydesign, falling back to a legacy <projectRoot>/.od when
+// that exists, but follows OD_DATA_DIR when set, keeping test and
 // multi-namespace runs isolated). This survives browser storage resets and
 // origin changes so onboarding and agent selection don't reappear unexpectedly.
 //
@@ -21,9 +22,10 @@ import { readFileSync } from 'node:fs';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { createHash, randomBytes } from 'node:crypto';
 import path from 'node:path';
-import type { OdNextRolloutMode } from '@open-design/contracts';
+import type { OdNextRolloutMode } from '@capydesign/contracts';
 
 import { expandHomePrefix } from './home-expansion.js';
+import { resolveDefaultDataDir } from './daemon-paths.js';
 
 import {
   readInstallationFile,
@@ -47,7 +49,7 @@ export interface PluginEnvKnobs {
   // its run/conversation/project is terminal. Default unset -> unlimited.
   snapshotRetentionDays: number | null;
   // GC worker tick interval. Phase 5 reads this; Phase 1 just exposes the
-  // knob through `od config get` so operators can plan ahead.
+  // knob through `capt config get` so operators can plan ahead.
   snapshotGcIntervalMs: number;
 }
 
@@ -184,7 +186,7 @@ function configBackupFile(dataDir: string): string {
 export function appConfigDir(projectRoot: string, env: NodeJS.ProcessEnv = process.env): string {
   const raw = env.OD_DATA_DIR;
   if (typeof raw !== 'string' || raw.trim().length === 0) {
-    return path.join(projectRoot, '.od');
+    return resolveDefaultDataDir(projectRoot);
   }
   const expanded = expandHomePrefix(raw.trim());
   return path.isAbsolute(expanded) ? expanded : path.resolve(projectRoot, expanded);
@@ -918,7 +920,7 @@ export class InvalidAppConfigValueError extends Error {
  * setting falling back to its default. `odNextStrategyMode` is not a
  * preference — it decides whether OD Next runs at all, and its default is
  * `active`, so dropping it is not a neutral outcome. It revokes an opt-out,
- * which means `od config set odNextStrategyMode of` would put the installation
+ * which means `capt config set odNextStrategyMode of` would put the installation
  * back on OD Next while printing success, and the person who typed it would go
  * on believing they had opted out.
  *

@@ -16,10 +16,10 @@ import { runLiveArtifactsToolCli } from './tools-live-artifacts-cli.js';
 import { runDeliverableSyntaxToolCli } from './tools-deliverable-syntax-cli.js';
 import { splitResearchSubcommand } from './research/cli-args.js';
 import { resolveDaemonUrl } from './daemon-url.js';
-import { SidecarFactory } from '@open-design/sidecar';
-import { APP_KEYS, SIDECAR_MESSAGES } from '@open-design/sidecar-proto';
-import { EXPORT_FORMATS, EXPORT_IMAGE_FORMATS, mediaFailureNextStep } from '@open-design/contracts';
-import type { ArtifactLintFinding, LintArtifactCliResultEnvelope, LintArtifactResponse, LintFailOn } from '@open-design/contracts';
+import { SidecarFactory } from '@capydesign/sidecar';
+import { APP_KEYS, SIDECAR_MESSAGES } from '@capydesign/sidecar-proto';
+import { EXPORT_FORMATS, EXPORT_IMAGE_FORMATS, mediaFailureNextStep } from '@capydesign/contracts';
+import type { ArtifactLintFinding, LintArtifactCliResultEnvelope, LintArtifactResponse, LintFailOn } from '@capydesign/contracts';
 import { buildExportCliRequestBody, buildExportCliResultEnvelope, resolveExportCliDeckMode } from './export-cli-request.js';
 import { exportRoutePath } from './export-cli-routing.js';
 import {
@@ -42,9 +42,9 @@ const RESUME_CONTINUE_PROMPT =
 
 // ---- Subcommand router ----------------------------------------------------
 //
-// `od` is two CLIs glued together:
+// `capt` is two CLIs glued together:
 //   - default mode: starts the daemon + opens the web UI.
-//   - `od media …`: a thin client that POSTs to the running daemon. This
+//   - `capt media …`: a thin client that POSTs to the running daemon. This
 //     is what the code agent invokes from inside a chat to actually
 //     produce image / video / audio bytes (the unifying contract).
 //
@@ -52,7 +52,7 @@ const RESUME_CONTINUE_PROMPT =
 // working unchanged. Subcommand routing is keyword-based; flags are
 // parsed inside each handler.
 
-// Flags accepted by `od media generate`. Whitelisted so a hallucinated
+// Flags accepted by `capt media generate`. Whitelisted so a hallucinated
 // `--length 5` from the LLM fails fast instead of silently no-op'ing
 // while we route a bogus body to the daemon.
 //
@@ -61,7 +61,7 @@ const RESUME_CONTINUE_PROMPT =
 // synchronously during module evaluation, and runMedia references these
 // `const` Sets — leaving them at the bottom of the file would hit the
 // TDZ ("Cannot access 'MEDIA_GENERATE_STRING_FLAGS' before
-// initialization") and crash every `od media …` invocation.
+// initialization") and crash every `capt media …` invocation.
 const MEDIA_GENERATE_STRING_FLAGS = new Set([
   'project',
   'workspace',
@@ -107,7 +107,7 @@ const MCP_BOOLEAN_FLAGS = new Set([
 ]);
 
 // Hoisted next to MCP_*_FLAGS for the same TDZ reason as the MEDIA flags
-// above: `od mcp install <agent>` dispatches through SUBCOMMAND_MAP during
+// above: `capt mcp install <agent>` dispatches through SUBCOMMAND_MAP during
 // top-level module evaluation, and runMcpInstall references these `const`
 // Sets — defining them next to runMcpInstall lower in the file would hit
 // the TDZ.
@@ -194,18 +194,18 @@ const UI_BOOLEAN_FLAGS = new Set([
   'h',
   'json',
   'skip',
-  // Plan §6 Phase 2A.5 — `od ui show --schema` returns just the
+  // Plan §6 Phase 2A.5 — `capt ui show --schema` returns just the
   // surface's JSON Schema (or `null` when the surface declares
   // none). Lets a code agent inspect the contract before piping a
-  // value back through `od ui respond --value-json`.
+  // value back through `capt ui respond --value-json`.
   'schema',
 ]);
 
 // Hoist flag set bindings consumed by handlers reachable through
 // the top-of-file dispatcher. The dispatch block runs synchronously
 // during module load; any const declared further down the file is
-// still in TDZ when the handler executes, so `od status` /
-// `od atoms list` / etc. would crash with `Cannot access X before
+// still in TDZ when the handler executes, so `capt status` /
+// `capt atoms list` / etc. would crash with `Cannot access X before
 // initialization`.
 const DAEMON_STRING_FLAGS = new Set([
   'daemon-url', 'port', 'host',
@@ -217,7 +217,7 @@ const LIBRARY_STRING_FLAGS = new Set([
   'daemon-url', 'query', 'tag', 'workspace', 'workspace-member',
 ]);
 const LIBRARY_BOOLEAN_FLAGS = new Set(['help', 'h', 'json']);
-// `od library …` (OD Library asset registry). Hoisted so the dispatcher can
+// `capt library …` (OD Library asset registry). Hoisted so the dispatcher can
 // parse flags without hitting a temporal-dead-zone on these sets.
 const LIBRARY_ASSET_STRING_FLAGS = new Set([
   'daemon-url', 'kind', 'tag', 'source', 'date', 'query', 'project', 'label', 'out', 'dir',
@@ -265,7 +265,7 @@ const WORKSPACE_STRING_FLAGS = new Set([
   'workspace-type',
 ]);
 const WORKSPACE_BOOLEAN_FLAGS = new Set(['help', 'h', 'json']);
-// `od templates …` mirrors NewProjectPanel / ExamplesTab. Same surface,
+// `capt templates …` mirrors NewProjectPanel / ExamplesTab. Same surface,
 // same /api/templates store. The CLI form is the embeddability contract:
 // external agents (hermes-agent, openclaw, ...) can snapshot, list, or
 // remove user-saved project templates without going through the web UI.
@@ -273,7 +273,7 @@ const TEMPLATES_STRING_FLAGS = new Set([
   'daemon-url', 'name', 'description',
 ]);
 const TEMPLATES_BOOLEAN_FLAGS = new Set(['help', 'h', 'json']);
-// `od deploy …` posts to /api/projects/:id/deploy. The CLI form is the
+// `capt deploy …` posts to /api/projects/:id/deploy. The CLI form is the
 // embeddability contract: external agents can deploy a project file to
 // Vercel or Cloudflare Pages without going through the web UI.
 const DEPLOY_STRING_FLAGS = new Set([
@@ -282,7 +282,7 @@ const DEPLOY_STRING_FLAGS = new Set([
   'workspace', 'workspace-member',
 ]);
 const DEPLOY_BOOLEAN_FLAGS = new Set(['help', 'h', 'json']);
-// `od automation …` mirrors the Automations tab. Same surface, same
+// `capt automation …` mirrors the Automations tab. Same surface, same
 // /api/routines store. The CLI form is the embeddability contract:
 // external agents (hermes-agent, openclaw, etc.) can drive CapyDesign
 // automations headlessly without going through the web UI.
@@ -298,16 +298,16 @@ const AUTOMATION_BOOLEAN_FLAGS = new Set([
 ]);
 const MEMORY_STRING_FLAGS = new Set([
   'daemon-url', 'name', 'description', 'type', 'body', 'body-file',
-  // `od memory profile set` reads structured fields verbatim and/or a prose
+  // `capt memory profile set` reads structured fields verbatim and/or a prose
   // body; `--field "Label=Value"` is repeatable (scanned manually below since
   // parseFlags collapses duplicate keys). `--prompt-file <path|->` mirrors the
-  // long-prose embeddability contract used by `od automation`/`od brand`.
+  // long-prose embeddability contract used by `capt automation`/`capt brand`.
   'field', 'prompt-file', 'assertion', 'check', 'rationale',
-  // `od memory rule suggest` distils annotations into rule proposals: a single
+  // `capt memory rule suggest` distils annotations into rule proposals: a single
   // `--note` plus optional target context, or a `--prompt-file` carrying a JSON
   // array of annotations / newline-separated notes.
   'note', 'target', 'file', 'current-text',
-  // `od memory config` toggles accept true|false values (string, not boolean)
+  // `capt memory config` toggles accept true|false values (string, not boolean)
   // so an agent can set OR clear a hook in one shape: `--profile false`.
   'enabled', 'profile', 'rewrite', 'verify', 'extraction',
 ]);
@@ -334,7 +334,7 @@ const FIGMA_PROJECT_RESOURCE_STRING_FLAGS = new Set([
 const FIGMA_BOOLEAN_FLAGS = new Set([
   'help', 'h', 'json', 'build',
 ]);
-// `od brand …` mirrors the Brands library + New Brand modal. Same surface,
+// `capt brand …` mirrors the Brands library + New Brand modal. Same surface,
 // same /api/brands store. The CLI form is the embeddability contract: an
 // external agent (hermes-agent, openclaw, scripted job) can extract, list,
 // inspect, and remove brands headlessly without rendering the web UI.
@@ -433,14 +433,14 @@ const SUBCOMMAND_MAP = {
 
 function printStrategyHelp() {
   console.log(`Usage:
-  od strategy rollout status [--json] [--daemon-url <url>]
+  capt strategy rollout status [--json] [--daemon-url <url>]
 
 Report which OD Next mode this daemon is running and which authority chose it.
 
 OD Next runs by default; this installation opts out of it here:
 
-  od config set odNextStrategyMode off       Opt out; takes effect next run.
-  od config set odNextStrategyMode active    Opt back in.
+  capt config set odNextStrategyMode off       Opt out; takes effect next run.
+  capt config set odNextStrategyMode active    Opt back in.
 
 Status names the authority in effect (env / app_config / default), which the
 mode alone does not: leaving it unset and saving 'off' produce opposite routes.
@@ -481,12 +481,12 @@ async function runStrategy(args) {
   // removing that lie rather than relocating it.
   if (area === 'rollout' && action === 'reset') {
     console.error(
-      'od strategy rollout reset was removed: the daemon-instance stop latch it '
+      'capt strategy rollout reset was removed: the daemon-instance stop latch it '
       + 'cleared no longer exists, so there is nothing to reset.\n'
       + 'OD Next now runs unless this installation opts out. To opt out:\n'
-      + '  od config set odNextStrategyMode off\n'
+      + '  capt config set odNextStrategyMode off\n'
       + 'To check which authority decides the mode:\n'
-      + '  od strategy rollout status',
+      + '  capt strategy rollout status',
     );
     process.exit(2);
   }
@@ -516,7 +516,7 @@ async function runStrategy(args) {
 }
 
 function printAgentHelp() {
-  console.log(`Usage: od agent setup deepseek-harness [options]
+  console.log(`Usage: capt agent setup deepseek-harness [options]
 
 Install or repair CapyDesign's bundled connection component in the user's
 official DeepSeek Harness installation. The dsh CLI itself is not installed
@@ -578,7 +578,7 @@ const EXPORT_BOOLEAN_FLAGS = new Set(['help', 'h', 'json', 'deck', 'page', 'no-d
 
 function printExportHelp() {
   console.log(`Usage:
-  od export <file> --project <id> --format <fmt> [options]
+  capt export <file> --project <id> --format <fmt> [options]
 
 Programmatic export of an HTML/deck artifact to standalone HTML, PDF, image,
 or PPTX. Runs without model/agent calls. Standalone HTML works in a headless
@@ -598,10 +598,10 @@ Options:
   --daemon-url <url>       Override daemon URL
 
 Examples:
-  od export index.html --project p1 --format pdf --out page.pdf
-  od export index.html --project p1 --format html --out standalone.html
-  od export slide.html --project p1 --format image --image-format png --out slide.png
-  od export deck.html --project p1 --format pptx --out deck.pptx`);
+  capt export index.html --project p1 --format pdf --out page.pdf
+  capt export index.html --project p1 --format html --out standalone.html
+  capt export slide.html --project p1 --format image --image-format png --out slide.png
+  capt export deck.html --project p1 --format pptx --out deck.pptx`);
 }
 
 async function runExport(args) {
@@ -712,7 +712,7 @@ const LINT_FAIL_ON_VALUES = ['p0', 'p1', 'p2', 'none'];
 
 function printLintHelp() {
   console.log(`Usage:
-  od lint <file.html|-> [options]
+  capt lint <file.html|-> [options]
 
 Run the daemon's anti-slop artifact linter (the same checks applied on
 artifact save) against an HTML file, or stdin when the file is \`-\`.
@@ -729,9 +729,9 @@ Options:
   --daemon-url <url>       Override daemon URL
 
 Examples:
-  od lint artifact.html
-  od lint - < artifact.html --json
-  od lint report.html --fail-on p1 --agent-message`);
+  capt lint artifact.html
+  capt lint - < artifact.html --json
+  capt lint report.html --fail-on p1 --agent-message`);
 }
 
 // CLI half of POST /api/artifacts/lint. The endpoint has been live since the
@@ -838,7 +838,7 @@ if (first && SUBCOMMAND_MAP[first]) {
   const rest = [...argv.slice(0, idx), ...argv.slice(idx + 1)];
   await SUBCOMMAND_MAP[first](rest);
   // Respect a non-zero exit code a handler set via process.exitCode (e.g. a
-  // failed `od resource get`); default to 0 when it left it unset.
+  // failed `capt resource get`); default to 0 when it left it unset.
   process.exit(process.exitCode ?? 0);
 }
 
@@ -937,7 +937,7 @@ async function runDirectionsToolCli(args) {
     const spec = formatDirectionSpecText(String(needle));
     if (!spec) {
       console.error(
-        `unknown direction: ${needle}\nRun \`od tools directions\` to list ids.`,
+        `unknown direction: ${needle}\nRun \`capt tools directions\` to list ids.`,
       );
       process.exit(1);
     }
@@ -957,98 +957,98 @@ async function runDirectionsToolCli(args) {
 
 function printRootHelp() {
   console.log(`Usage:
-  od [--port <n>] [--host <addr>] [--no-open]
+  capt [--port <n>] [--host <addr>] [--no-open]
       Start the local daemon and open the web UI.
 
-  od tools live-artifacts <create|list|update|refresh> [options]
+  capt tools live-artifacts <create|list|update|refresh> [options]
       Manage live artifacts through daemon wrapper commands.
 
-  od tools deliverable-syntax check [--json]
+  capt tools deliverable-syntax check [--json]
       Check the current deliverable syntax through the daemon wrapper.
 
-  od tools directions [--id <id> | --label <label>] [--json]
+  capt tools directions [--id <id> | --label <label>] [--json]
       List the built-in design directions, or print one direction's full
       palette / font stacks / posture spec for binding into :root.
 
-  od artifacts create --name <path> --input <file> [--project <id-or-name>]
+  capt artifacts create --name <path> --input <file> [--project <id-or-name>]
       Create a normal project artifact through the local daemon.
 
-  od tools connectors <list|execute|github-design-context> [options]
+  capt tools connectors <list|execute|github-design-context> [options]
       Discover and execute configured connectors.
 
-  od tools design-systems read --path <manifest-declared-path>
+  capt tools design-systems read --path <manifest-declared-path>
       Read active design-system pull-layer files through daemon wrapper commands.
 
-  od mcp live-artifacts
+  capt mcp live-artifacts
       Start the MCP server exposing live-artifact and connector tools.
 
-  od research search --query <text> [--max-sources 5] [--daemon-url <url>]
+  capt research search --query <text> [--max-sources 5] [--daemon-url <url>]
       Run agent-callable Tavily research through the local daemon.
 
-  od plugin <list|info|install|uninstall|apply|doctor|replay|trust> [args]
+  capt plugin <list|info|install|uninstall|apply|doctor|replay|trust> [args]
       Discover, install, and apply plugins through the local daemon.
-  od plugin publish-repo <folder>
+  capt plugin publish-repo <folder>
       Create/update the author's GitHub repo for a local plugin folder.
-  od plugin open-design-pr <folder>
+  capt plugin open-design-pr <folder>
       Push a community-catalog branch and open the CapyDesign PR form.
 
-  od automation <list|get|create|update|run|runs|pause|resume|delete> [args]
+  capt automation <list|get|create|update|run|runs|pause|resume|delete> [args]
       Drive the Automations surface headlessly. Same store as the UI's
       Automations tab, so an external agent (hermes, openclaw, ...) can
       schedule, trigger, or harvest results from a routine without
       opening the web UI.
 
-  od message-center <list|read|read-all> [args]
+  capt message-center <list|read|read-all> [args]
       Read and acknowledge message-center inbox items through the same
       daemon endpoints the bell UI uses.
 
-  od amr <login|status> [args]
+  capt amr <login|status> [args]
       Start Vela browser sign-in or inspect the current Vela account through
       the local CapyDesign daemon.
 
-  od memory tree <list|view|edit|move> [args]
+  capt memory tree <list|view|edit|move> [args]
       Inspect and edit the memory tree that is injected into agent prompts.
 
-  od share <open-design|url> [options]
+  capt share <open-design|url> [options]
       Build localized social-share targets for the CapyDesign repo or a
       deployed project URL. Use --json for scripted integrations.
 
-  od ui <list|show|respond|revoke|prefill> [args]
+  capt ui <list|show|respond|revoke|prefill> [args]
       Read and answer GenUI surfaces (form / choice / confirmation / oauth-prompt) headlessly.
 
-  od chat new --project <id> [--seed-from <cid>] [--fork-after <mid>] [--title "<t>"] [--json]
+  capt chat new --project <id> [--seed-from <cid>] [--fork-after <mid>] [--title "<t>"] [--json]
       Create a Side Chat: a new conversation that inherits another
       conversation's context by copying its messages (--seed-from), optionally
       stopping at one message (--fork-after). Mirrors the web chat fork action.
 
-  od diagnostics export [<path>] [--json]
+  capt diagnostics export [<path>] [--json]
       Bundle daemon/web/desktop logs, machine info, and recent crash reports
       into a zip for support tickets. Same output as Settings → About →
       Export diagnostics.
 
-  od export <file> --project <id> --format <html|pdf|image|pptx> [--out <path>]
+  capt export <file> --project <id> --format <html|pdf|image|pptx> [--out <path>]
       Programmatically export an HTML/deck artifact to HTML, PDF, image, or PPTX
       (no model/agent calls). Mirrors the web Download menu; rasterization uses
       the desktop runtime's bundled Chromium.
 
-  od lint <file.html|-> [--fail-on <p0|p1|p2|none>] [--json]
+  capt lint <file.html|-> [--fail-on <p0|p1|p2|none>] [--json]
       Run the daemon's anti-slop artifact linter against an HTML file or stdin
       (no model/agent calls; headless-safe). Exits 1 when findings meet the
       --fail-on threshold, so it can gate cron/CI render pipelines.
 
   "$OD_NODE_BIN" "$OD_BIN" tools ...
-      Recommended agent-runtime form; avoids relying on user PATH for od or node.
+      Recommended agent-runtime form; avoids relying on user PATH for capt or node.
 
-  od media generate --surface <image|video|audio> --model <id> [opts]
+  capt media generate --surface <image|video|audio> --model <id> [opts]
       Generate a media artifact and write it into the active project.
       Designed to be invoked by a code agent - picks up OD_DAEMON_URL
       and OD_PROJECT_ID from the env that the daemon injected on spawn.
 
-  od media scaffold --composition-dir .hyperframes-cache/<id>
+  capt media scaffold --composition-dir .hyperframes-cache/<id>
       Create a deterministic HyperFrames composition without npx or global
       skill installation, before dispatching it through media generate.
 
-  od mcp [--daemon-url <url>]
+  capt mcp [--daemon-url <url>]
       Run a stdio MCP server that proxies project tool calls to a
       running CapyDesign daemon. Wire it into a coding agent
       (Claude Code, Cursor, VS Code, Zed, Windsurf) in another repo
@@ -1067,20 +1067,20 @@ What the daemon does:
   * serves the chat UI at http://<host>:<port>
   * proxies messages (text + images) to the selected agent via child-process spawn
   * exposes project-scoped media scaffold/generate APIs — the unified path
-     that the agent calls via \`od media scaffold\` and \`od media generate\`.`);
+     that the agent calls via \`capt media scaffold\` and \`capt media generate\`.`);
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od amr …
+// Subcommand: capt amr …
 // ---------------------------------------------------------------------------
 
 async function runAmr(args) {
   const sub = args[0];
   if (!sub || sub === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od amr login [--json]
-  od amr logout [--json]
-  od amr status [--refresh] [--json]
+  capt amr login [--json]
+  capt amr logout [--json]
+  capt amr status [--refresh] [--json]
 
 Options:
   --daemon-url <url>   CapyDesign daemon HTTP base.
@@ -1180,13 +1180,13 @@ Options:
       return;
     }
     default:
-      console.error(`unknown subcommand: od amr ${sub}`);
+      console.error(`unknown subcommand: capt amr ${sub}`);
       process.exit(2);
   }
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od collab …  (team-edition collaboration)
+// Subcommand: capt collab …  (team-edition collaboration)
 // ---------------------------------------------------------------------------
 
 function workspaceHeadersFromExplicitFlags(flags, required = false) {
@@ -1215,18 +1215,18 @@ function workspaceHeadersFromExplicitFlags(flags, required = false) {
 
 function printCollabHelp() {
   console.log(`Usage:
-  od collab status <projectId> --workspace <id> --workspace-member <id> [--json]
-  od collab presence <projectId> --workspace <id> --workspace-member <id> [--json]
-  od collab heartbeat <projectId> --workspace <id> --workspace-member <id> --member <id> [--client-id <id> --sequence <n>] [--name <name>] [--role owner|admin|member] [--json]
-  od collab leave <projectId> --workspace <id> --workspace-member <id> --member <id> [--client-id <id> --sequence <n>] [--json]
-  od collab changed <projectId> --workspace <id> --workspace-member <id> [--json]
-  od collab publish <projectId> --workspace <id> --workspace-member <id> [--json]
-  od collab share <projectId> --workspace <id> --workspace-member <id> [--json]
-  od collab pull <projectId> --workspace <id> --workspace-member <id> [--json]
-  od collab share-resource <design-systems|plugins|skills> <id> --workspace <id> --workspace-member <id> [--json]
-  od collab team-resources <design-systems|plugins|skills> --workspace <id> --workspace-member <id> [--json]
-  od collab share-design-system <designSystemId> --workspace <id> --workspace-member <id> [--json]
-  od collab team-design-systems --workspace <id> --workspace-member <id> [--json]
+  capt collab status <projectId> --workspace <id> --workspace-member <id> [--json]
+  capt collab presence <projectId> --workspace <id> --workspace-member <id> [--json]
+  capt collab heartbeat <projectId> --workspace <id> --workspace-member <id> --member <id> [--client-id <id> --sequence <n>] [--name <name>] [--role owner|admin|member] [--json]
+  capt collab leave <projectId> --workspace <id> --workspace-member <id> --member <id> [--client-id <id> --sequence <n>] [--json]
+  capt collab changed <projectId> --workspace <id> --workspace-member <id> [--json]
+  capt collab publish <projectId> --workspace <id> --workspace-member <id> [--json]
+  capt collab share <projectId> --workspace <id> --workspace-member <id> [--json]
+  capt collab pull <projectId> --workspace <id> --workspace-member <id> [--json]
+  capt collab share-resource <design-systems|plugins|skills> <id> --workspace <id> --workspace-member <id> [--json]
+  capt collab team-resources <design-systems|plugins|skills> --workspace <id> --workspace-member <id> [--json]
+  capt collab share-design-system <designSystemId> --workspace <id> --workspace-member <id> [--json]
+  capt collab team-design-systems --workspace <id> --workspace-member <id> [--json]
 
 Team-edition collaboration: presence overlay + sync trigger. The
 client is authoritative about whether it is in a shared context, so it drives
@@ -1253,13 +1253,13 @@ Options:
   --daemon-url <url>      Override daemon URL.
 
 Examples:
-  od collab presence p1 --workspace team-1 --workspace-member m-42 --json
-  od collab heartbeat p1 --workspace team-1 --workspace-member m-42 --member m-42 --name "Ma Shu" --role member
-  od collab publish p1 --workspace team-1 --workspace-member m-42
-  od collab share-resource plugins my-plugin --workspace team-1 --workspace-member m-42 --json
-  od collab team-resources skills --workspace team-1 --workspace-member m-42 --json
-  od collab share-design-system user:palette-x --workspace team-1 --workspace-member m-42 --json
-  od collab status p1 --workspace team-1 --workspace-member m-42 --json`);
+  capt collab presence p1 --workspace team-1 --workspace-member m-42 --json
+  capt collab heartbeat p1 --workspace team-1 --workspace-member m-42 --member m-42 --name "Ma Shu" --role member
+  capt collab publish p1 --workspace team-1 --workspace-member m-42
+  capt collab share-resource plugins my-plugin --workspace team-1 --workspace-member m-42 --json
+  capt collab team-resources skills --workspace team-1 --workspace-member m-42 --json
+  capt collab share-design-system user:palette-x --workspace team-1 --workspace-member m-42 --json
+  capt collab status p1 --workspace team-1 --workspace-member m-42 --json`);
 }
 
 async function runCollab(args) {
@@ -1396,7 +1396,7 @@ async function runCollab(args) {
         console.log(`materializedVersion\t${body?.materializedVersion ?? '-'}`);
         // Whether this daemon's local files are the project's content at all:
         // true means it holds only an unmaterialized shared-project
-        // placeholder, so an `od files list` here would report an empty
+        // placeholder, so an `capt files list` here would report an empty
         // project that is really still downloading.
         console.log(`awaitingFirstMaterialization\t${body?.awaitingFirstMaterialization === true}`);
         console.log(`syncState\t${body?.syncState ?? '-'}`);
@@ -1461,7 +1461,7 @@ async function runCollab(args) {
       return emit(body, () => console.log('publish requested'));
     }
     default:
-      console.error(`unknown subcommand: od collab ${sub}`);
+      console.error(`unknown subcommand: capt collab ${sub}`);
       process.exit(2);
   }
 }
@@ -1485,7 +1485,7 @@ function readCollabPresenceSessionFlags(flags) {
   }
   return { clientId, sequence };
 }
-// Subcommand: od message-center …
+// Subcommand: capt message-center …
 // ---------------------------------------------------------------------------
 
 async function runMessageCenter(args) {
@@ -1515,7 +1515,7 @@ async function runMessageCenter(args) {
     case 'read-all':
       return runMessageCenterReadAll(flags, base);
     default:
-      console.error(`unknown subcommand: od message-center ${sub}`);
+      console.error(`unknown subcommand: capt message-center ${sub}`);
       printMessageCenterHelp();
       process.exit(2);
   }
@@ -1571,7 +1571,7 @@ async function runMessageCenterList(rawArgs, flags, base) {
 async function runMessageCenterRead(rawArgs, flags, base) {
   const id = positionalArgs(rawArgs, MESSAGE_CENTER_STRING_FLAGS)[0];
   if (!id) {
-    console.error('Usage: od message-center read <id> [--json] [--daemon-url <url>]');
+    console.error('Usage: capt message-center read <id> [--json] [--daemon-url <url>]');
     process.exit(2);
   }
   let resp;
@@ -1619,9 +1619,9 @@ async function runMessageCenterReadAll(flags, base) {
 
 function printMessageCenterHelp() {
   console.log(`Usage:
-  od message-center list [--locale <locale>] [--filter <all|unread|read>] [--limit <n>] [--cursor <token>] [--json] [--daemon-url <url>]
-  od message-center read <id> [--json] [--daemon-url <url>]
-  od message-center read-all [--json] [--daemon-url <url>]
+  capt message-center list [--locale <locale>] [--filter <all|unread|read>] [--limit <n>] [--cursor <token>] [--json] [--daemon-url <url>]
+  capt message-center read <id> [--json] [--daemon-url <url>]
+  capt message-center read-all [--json] [--daemon-url <url>]
 
 Mirrors the message-center inbox surface exposed in the web UI through the
 same /api/integrations/vela/message-center daemon routes.
@@ -1649,7 +1649,7 @@ function safeJsonParse(text) {
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od research …
+// Subcommand: capt research …
 // ---------------------------------------------------------------------------
 
 async function runResearch(args) {
@@ -1659,7 +1659,7 @@ async function runResearch(args) {
     process.exit(sub === 'help' || args.includes('--help') || args.includes('-h') ? 0 : 2);
   }
   if (sub !== 'search') {
-    console.error(`unknown subcommand: od research ${sub}`);
+    console.error(`unknown subcommand: capt research ${sub}`);
     printResearchHelp();
     process.exit(2);
   }
@@ -1716,7 +1716,7 @@ async function runArtifacts(args) {
 
 function printResearchHelp() {
   console.log(`Usage:
-  od research search --query <text> [--max-sources 5] [--daemon-url <url>]
+  capt research search --query <text> [--max-sources 5] [--daemon-url <url>]
 
 Runs Tavily-backed shallow research through the local CapyDesign daemon.
 Output is JSON only on stdout:
@@ -1729,7 +1729,7 @@ Flags:
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od media …
+// Subcommand: capt media …
 // ---------------------------------------------------------------------------
 
 async function runMedia(args) {
@@ -1739,7 +1739,7 @@ async function runMedia(args) {
     return;
   }
   if (sub !== 'generate' && sub !== 'wait' && sub !== 'scaffold') {
-    console.error(`unknown subcommand: od media ${sub}`);
+    console.error(`unknown subcommand: capt media ${sub}`);
     printMediaHelp();
     process.exit(1);
   }
@@ -1851,7 +1851,7 @@ async function runMediaGenerate(rawArgs) {
   // Long-form media prompts (detailed image/video descriptions, program-
   // generated prompts) arrive via --prompt-file <path|-> (stdin) per the CLI
   // contract; readPromptFromFlags prefers an inline --prompt and otherwise reads
-  // the file/stdin, matching od run / od brand / od automation.
+  // the file/stdin, matching capt run / capt brand / capt automation.
   const prompt = await readPromptFromFlags(flags);
 
   const body = {
@@ -1975,7 +1975,7 @@ async function runMediaWait(rawArgs) {
   const taskId = positionalArgs(rawArgs, stringFlags)[0];
   if (!taskId) {
     console.error(
-      'usage: od media wait <taskId> [--since <n>] [--workspace <id> --workspace-member <id>] [--daemon-url <url>]',
+      'usage: capt media wait <taskId> [--since <n>] [--workspace <id> --workspace-member <id>] [--daemon-url <url>]',
     );
     process.exit(2);
   }
@@ -2149,7 +2149,7 @@ function parseFlags(argv, opts = {}) {
   const booleanFlags = opts.boolean instanceof Set ? opts.boolean : new Set();
   const knownFlags = new Set([...stringFlags, ...booleanFlags]);
   // Positionals collected silently; callers that take `<id>` style
-  // positional args (e.g. `od plugin info <id>`) re-scan `argv`
+  // positional args (e.g. `capt plugin info <id>`) re-scan `argv`
   // themselves to pick them up. Strict positional rejection here
   // would break those commands, so we only enforce strict-flag
   // semantics for things that *are* prefixed with `--`.
@@ -2240,8 +2240,8 @@ async function cliDaemonBaseUrl(flags) {
 }
 
 function printMediaHelp() {
-  console.log(`Usage: od media scaffold --composition-dir .hyperframes-cache/<id> [opts]
-       od media generate --surface <image|video|audio> --model <id> [opts]
+  console.log(`Usage: capt media scaffold --composition-dir .hyperframes-cache/<id> [opts]
+       capt media generate --surface <image|video|audio> --model <id> [opts]
        "$OD_NODE_BIN" "$OD_BIN" media generate --surface <image|video|audio> --model <id> [opts]
 
 Scaffold:
@@ -2319,7 +2319,7 @@ files folder so the FileViewer can preview them immediately.`);
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od mcp
+// Subcommand: capt mcp
 // ---------------------------------------------------------------------------
 
 async function runMcp(args) {
@@ -2359,7 +2359,7 @@ async function runMcp(args) {
 }
 
 function printMcpHelp() {
-  console.log(`Usage: od mcp [--daemon-url <url>]
+  console.log(`Usage: capt mcp [--daemon-url <url>]
 
 Run a stdio MCP (Model Context Protocol) server that proxies project
 tool calls to a running CapyDesign daemon. Wire it into a coding agent
@@ -2412,12 +2412,12 @@ for your machine, plus a one-click deeplink for Cursor), open Settings
 for tool calls to succeed.
 
 To register this server into a coding agent's own config automatically:
-  od mcp install <agent> [--uninstall] [--print] [--json] [--daemon-url <url>]
+  capt mcp install <agent> [--uninstall] [--print] [--json] [--daemon-url <url>]
   Agents: ${AGENT_SLUGS.join(' ')}`);
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od mcp install <agent>
+// Subcommand: capt mcp install <agent>
 //
 // Wires this daemon's stdio MCP server into a coding agent's own config.
 // The pure planner (mcp-agent-install.ts) maps a resolved launch spec onto
@@ -2429,7 +2429,7 @@ To register this server into a coding agent's own config automatically:
 // Resolve the canonical launch spec from the running daemon's
 // /api/mcp/install-info (the same payload the Settings → MCP panel and the
 // Codex one-click install use), so every install path configures byte-for-
-// byte the same command. Falls back to a minimal `od mcp --daemon-url`
+// byte the same command. Falls back to a minimal `capt mcp --daemon-url`
 // spec when the daemon is unreachable.
 async function resolveMcpLaunchSpec(flags) {
   const base = await cliDaemonBaseUrl(flags);
@@ -2449,7 +2449,7 @@ async function resolveMcpLaunchSpec(flags) {
     // daemon not running / unreachable — fall through to the minimal spec
   }
   return {
-    command: 'od',
+    command: 'capt',
     args: ['mcp', '--daemon-url', base],
     env: {},
   };
@@ -2646,7 +2646,7 @@ async function runMcpInstall(args) {
 }
 
 function printMcpInstallHelp() {
-  console.log(`Usage: od mcp install <agent> [options]
+  console.log(`Usage: capt mcp install <agent> [options]
 
 Register CapyDesign's stdio MCP server into a coding agent's own config.
 
@@ -2663,11 +2663,11 @@ Options:
 The launch command is resolved from the running daemon's
 /api/mcp/install-info, so the installed entry matches the Settings → MCP
 panel snippet byte-for-byte. Start the daemon first for an exact match;
-otherwise a minimal \`od mcp --daemon-url <url>\` command is used.`);
+otherwise a minimal \`capt mcp --daemon-url <url>\` command is used.`);
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od plugin …
+// Subcommand: capt plugin …
 // ---------------------------------------------------------------------------
 
 // Plan §3.B1 / spec §12.4: CLI structured error helper. Maps a daemon
@@ -2780,13 +2780,13 @@ async function runPlugin(args) {
     case 'open-design-pr': return runPluginCapyDesignPr(rest);
     case 'yank':     return runPluginYank(rest);
     default:
-      console.error(`unknown subcommand: od plugin ${sub}`);
+      console.error(`unknown subcommand: capt plugin ${sub}`);
       printPluginHelp();
       process.exit(2);
   }
 }
 
-// Phase 4 / spec §14.1 — `od plugin scaffold` interactive starter.
+// Phase 4 / spec §14.1 — `capt plugin scaffold` interactive starter.
 //
 // Side-effect: writes a SKILL.md + open-design.json starter under
 // `<targetDir>/<id>/`. Default targetDir is process.cwd() so a code
@@ -2800,7 +2800,7 @@ async function runPluginScaffold(rest) {
   });
   if (rest.length === 0 || flags.help || flags.h) {
     console.log(`Usage:
-  od plugin scaffold --id <id> [--title "<title>"] [--description "<text>"]
+  capt plugin scaffold --id <id> [--title "<title>"] [--description "<text>"]
                      [--task-kind new-generation|code-migration|figma-migration|tune-collab]
                      [--mode <mode>] [--scenario <scenario>]
                      [--out <dir>] [--with-claude-plugin]
@@ -2812,7 +2812,7 @@ Writes <out|cwd>/<id>/{SKILL.md,open-design.json,README.md}.`);
     ? flags.id
     : rest.find((a) => !a.startsWith('-'));
   if (!id) {
-    console.error('Usage: od plugin scaffold --id <id>');
+    console.error('Usage: capt plugin scaffold --id <id>');
     process.exit(2);
   }
   const targetDir = typeof flags.out === 'string' && flags.out.length > 0
@@ -2836,7 +2836,7 @@ Writes <out|cwd>/<id>/{SKILL.md,open-design.json,README.md}.`);
     if (flags.json) return process.stdout.write(JSON.stringify(result, null, 2) + '\n');
     console.log(`[scaffold] ${result.folder}`);
     for (const file of result.files) console.log(`  ${file}`);
-    console.log(`\nNext: od plugin install ${result.folder}`);
+    console.log(`\nNext: capt plugin install ${result.folder}`);
   } catch (err) {
     if (err instanceof ScaffoldError) {
       console.error(`[scaffold] ${err.message}`);
@@ -2846,7 +2846,7 @@ Writes <out|cwd>/<id>/{SKILL.md,open-design.json,README.md}.`);
   }
 }
 
-// Phase 4 / spec §11.5 / plan §3.W1 — `od plugin validate <folder>`.
+// Phase 4 / spec §11.5 / plan §3.W1 — `capt plugin validate <folder>`.
 //
 // Pre-install lint pass against an author's working dir. Optionally
 // fetches the daemon's registry view so skill / DS / atom refs in
@@ -2859,7 +2859,7 @@ async function runPluginValidate(rest) {
   });
   if (flags.help || flags.h || rest.length === 0 || rest[0]?.startsWith('-')) {
     console.log(`Usage:
-  od plugin validate <folder> [--json] [--no-daemon] [--daemon-url <url>]
+  capt plugin validate <folder> [--json] [--no-daemon] [--daemon-url <url>]
 
 Runs the plugin doctor against an unfinished plugin folder before
 install. Validates manifest shape, atom ids, until expressions, and
@@ -2942,7 +2942,7 @@ Exit codes:
   process.exit(result.ok ? 0 : 4);
 }
 
-// Phase 4 / spec §14 / plan §3.X1 — `od plugin pack <folder>`.
+// Phase 4 / spec §14 / plan §3.X1 — `capt plugin pack <folder>`.
 //
 // Produces a gzip-compressed tar archive ready to install via the
 // installer's HTTPS-tarball path. The output path is folder-base +
@@ -2954,11 +2954,11 @@ async function runPluginPack(rest) {
   });
   if (flags.help || flags.h || rest.length === 0 || rest[0]?.startsWith('-')) {
     console.log(`Usage:
-  od plugin pack <folder> [--out <path>] [--json]
+  capt plugin pack <folder> [--out <path>] [--json]
 
 Builds a gzip-compressed tar archive of <folder> at --out (default
 '<folder>/../<basename>-<manifest.version>.tgz'). The archive is the
-exact shape \`od plugin install --source <https://...>\` consumes.
+exact shape \`capt plugin install --source <https://...>\` consumes.
 
 Skipped when packing:
   node_modules / .git / .next / dist / build / out / coverage /
@@ -3011,7 +3011,7 @@ Exit codes:
       console.log(`[pack] out:    ${result.outPath}`);
       console.log(`[pack] files:  ${result.files.length}`);
       console.log(`[pack] bytes:  ${result.bytes}`);
-      console.log(`\nNext: od plugin install --source ${result.outPath}`);
+      console.log(`\nNext: capt plugin install --source ${result.outPath}`);
     }
   } catch (err) {
     console.error(`[pack] failed: ${err?.message ?? err}`);
@@ -3026,7 +3026,7 @@ async function runPluginLogin(rest) {
   });
   if (flags.help || flags.h) {
     console.log(`Usage:
-  od plugin login [--host github.com]
+  capt plugin login [--host github.com]
 
 Wraps GitHub CLI auth for CapyDesign registry publishing. The token stays in gh.`);
     return;
@@ -3048,7 +3048,7 @@ async function runPluginWhoami(rest) {
   });
   if (flags.help || flags.h) {
     console.log(`Usage:
-  od plugin whoami [--host github.com] [--json]
+  capt plugin whoami [--host github.com] [--json]
 
 Shows the GitHub account gh will use for CapyDesign registry publishing.`);
     return;
@@ -3065,7 +3065,7 @@ Shows the GitHub account gh will use for CapyDesign registry publishing.`);
       }, null, 2) + '\n');
       return;
     }
-    console.error(`[plugin whoami] gh is not authenticated for ${host}. Run: od plugin login --host ${host}`);
+    console.error(`[plugin whoami] gh is not authenticated for ${host}. Run: capt plugin login --host ${host}`);
     if (auth.stderr || auth.stdout) console.error(auth.stderr || auth.stdout);
     process.exit(1);
   }
@@ -3162,7 +3162,7 @@ function inferGithubHost(target) {
   }
 }
 
-// Phase 4 / spec §14 — `od plugin export <projectId> --as <target>`.
+// Phase 4 / spec §14 — `capt plugin export <projectId> --as <target>`.
 //
 // Produces a publish-ready folder from the AppliedPluginSnapshot
 // behind a given project (or directly from a snapshot id). Three
@@ -3182,8 +3182,8 @@ async function runPluginExport(rest) {
   });
   if (rest.length === 0 || flags.help || flags.h) {
     console.log(`Usage:
-  od plugin export <projectId> --as od|claude-plugin|agent-skill --out <dir>
-  od plugin export --snapshot-id <id> --as od|claude-plugin|agent-skill --out <dir>
+  capt plugin export <projectId> --as od|claude-plugin|agent-skill --out <dir>
+  capt plugin export --snapshot-id <id> --as od|claude-plugin|agent-skill --out <dir>
 
 The export resolves through the daemon HTTP \`POST /api/applied-plugins/export\`
 endpoint so the running daemon's installed_plugins / applied_plugin_snapshots
@@ -3194,7 +3194,7 @@ view is the single source of truth.`);
   const projectId = flags.project ?? positional ?? null;
   const snapshotId = typeof flags['snapshot-id'] === 'string' ? flags['snapshot-id'] : null;
   if (!projectId && !snapshotId) {
-    console.error('Usage: od plugin export <projectId> --as <target> --out <dir>');
+    console.error('Usage: capt plugin export <projectId> --as <target> --out <dir>');
     process.exit(2);
   }
   const target = String(flags.as ?? 'od');
@@ -3225,22 +3225,22 @@ view is the single source of truth.`);
   for (const f of data.files ?? []) console.log(`  ${f}`);
 }
 
-// Plan §3.B4 / spec §6: `od marketplace …` minimum verbs. Add / list /
+// Plan §3.B4 / spec §6: `capt marketplace …` minimum verbs. Add / list /
 // refresh / remove / trust. The Phase 3 follow-up wires
-// `od plugin install <name>` resolution through these catalogs.
+// `capt plugin install <name>` resolution through these catalogs.
 async function runMarketplace(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od marketplace add     <url> [--trust trusted|restricted]   Register a federated catalog.
-  od marketplace list                                         List registered marketplaces.
-  od marketplace info    <id>                                 Inspect one marketplace + cached manifest.
-  od marketplace plugins <id> [--json]                        List cached plugin entries for one marketplace.
-  od marketplace search  <query> [--json]                     Search cached marketplace entries.
-  od marketplace doctor  [id] [--strict] [--json]             Validate cached marketplace entries.
-  od marketplace login   <id|url> [--host github.com]         Authenticate gh for private GitHub catalogs.
-  od marketplace refresh <id>                                 Re-fetch the manifest.
-  od marketplace remove  <id>                                 Forget a marketplace.
-  od marketplace trust   <id> [--trust trusted|restricted|official]
+  capt marketplace add     <url> [--trust trusted|restricted]   Register a federated catalog.
+  capt marketplace list                                         List registered marketplaces.
+  capt marketplace info    <id>                                 Inspect one marketplace + cached manifest.
+  capt marketplace plugins <id> [--json]                        List cached plugin entries for one marketplace.
+  capt marketplace search  <query> [--json]                     Search cached marketplace entries.
+  capt marketplace doctor  [id] [--strict] [--json]             Validate cached marketplace entries.
+  capt marketplace login   <id|url> [--host github.com]         Authenticate gh for private GitHub catalogs.
+  capt marketplace refresh <id>                                 Re-fetch the manifest.
+  capt marketplace remove  <id>                                 Forget a marketplace.
+  capt marketplace trust   <id> [--trust trusted|restricted|official]
                                                               Update the marketplace trust tier.
 
 Common options:
@@ -3263,7 +3263,7 @@ Common options:
       }
       const rows = data?.marketplaces ?? [];
       if (rows.length === 0) {
-        console.log('No marketplaces registered. Run `od marketplace add <url>`.');
+        console.log('No marketplaces registered. Run `capt marketplace add <url>`.');
         return;
       }
       for (const m of rows) {
@@ -3277,7 +3277,7 @@ Common options:
       // by substring on name + description + tags.
       const query = (rest.find((a) => !a.startsWith('-')) ?? '').toLowerCase();
       if (!query) {
-        console.error('Usage: od marketplace search "<query>" [--tag <tag>]');
+        console.error('Usage: capt marketplace search "<query>" [--tag <tag>]');
         process.exit(2);
       }
       const tag = typeof flags.tag === 'string' ? flags.tag.toLowerCase() : null;
@@ -3323,7 +3323,7 @@ Common options:
     case 'plugins': {
       const id = rest.find((a) => !a.startsWith('-'));
       if (!id) {
-        console.error('Usage: od marketplace plugins <id> [--json]');
+        console.error('Usage: capt marketplace plugins <id> [--json]');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/marketplaces/${encodeURIComponent(id)}/plugins`);
@@ -3398,7 +3398,7 @@ Common options:
     case 'add': {
       const url = rest.find((a) => !a.startsWith('-'));
       if (!url) {
-        console.error('Usage: od marketplace add <url> [--trust trusted|restricted]');
+        console.error('Usage: capt marketplace add <url> [--trust trusted|restricted]');
         process.exit(2);
       }
       const trust = flags.trust ?? 'restricted';
@@ -3422,7 +3422,7 @@ Common options:
       const id = rest.find((a) => !a.startsWith('-')
         && a !== flags.trust);
       if (!id) {
-        console.error(`Usage: od marketplace ${sub} <id>`);
+        console.error(`Usage: capt marketplace ${sub} <id>`);
         process.exit(2);
       }
       let url;
@@ -3450,25 +3450,25 @@ Common options:
       return;
     }
     default:
-      console.error(`unknown subcommand: od marketplace ${sub}`);
+      console.error(`unknown subcommand: capt marketplace ${sub}`);
       process.exit(2);
   }
 }
 
 // Plan §3.A5 / spec §16 Phase 5: operator escape hatch for snapshot GC.
 // Two subcommands:
-//   - `od plugin snapshots list [--project <id>]` — list snapshots
-//   - `od plugin snapshots prune [--before <ts>]` — force-delete expired
+//   - `capt plugin snapshots list [--project <id>]` — list snapshots
+//   - `capt plugin snapshots prune [--before <ts>]` — force-delete expired
 //     (and optionally older-than-cutoff unreferenced) rows.
 async function runPluginSnapshots(args) {
   const sub = args[0];
   if (!sub || sub === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od plugin snapshots list  [--project <id>] [--workspace <id> --workspace-member <id>]
+  capt plugin snapshots list  [--project <id>] [--workspace <id> --workspace-member <id>]
                                                                List applied plugin snapshots.
-  od plugin snapshots show  <snapshotId> [--json]          Print one snapshot's full contents.
-  od plugin snapshots diff  <id-a> <id-b> [--json]         Compare two snapshots field-by-field.
-  od plugin snapshots prune [--before <unix-ms>]           Delete expired (or older-than-cutoff) snapshots.`);
+  capt plugin snapshots show  <snapshotId> [--json]          Print one snapshot's full contents.
+  capt plugin snapshots diff  <id-a> <id-b> [--json]         Compare two snapshots field-by-field.
+  capt plugin snapshots prune [--before <unix-ms>]           Delete expired (or older-than-cutoff) snapshots.`);
     process.exit(args.length === 0 ? 2 : 0);
   }
   const snapshotStringFlags =
@@ -3483,7 +3483,7 @@ async function runPluginSnapshots(args) {
     const positional = args.slice(1).filter((a) => !a.startsWith('-'));
     const id = positional[0];
     if (!id) {
-      console.error('Usage: od plugin snapshots show <snapshotId>');
+      console.error('Usage: capt plugin snapshots show <snapshotId>');
       process.exit(2);
     }
     const url = `${base}/api/applied-plugins/${encodeURIComponent(id)}`;
@@ -3503,7 +3503,7 @@ async function runPluginSnapshots(args) {
   if (sub === 'diff') {
     const positional = args.slice(1).filter((a) => !a.startsWith('-'));
     if (positional.length < 2) {
-      console.error('Usage: od plugin snapshots diff <id-a> <id-b>');
+      console.error('Usage: capt plugin snapshots diff <id-a> <id-b>');
       process.exit(2);
     }
     const [idA, idB] = positional;
@@ -3582,12 +3582,12 @@ async function runPluginSnapshots(args) {
     console.log(`[snapshots] pruned ${data.removed ?? 0} snapshot(s)`);
     return;
   }
-  console.error(`unknown subcommand: od plugin snapshots ${sub}`);
+  console.error(`unknown subcommand: capt plugin snapshots ${sub}`);
   process.exit(2);
 }
 
-// Plan §3.B3: `od plugin run <id>` shorthand. Today this is a thin
-// wrapper around `od plugin apply` + `POST /api/runs` so a code agent
+// Plan §3.B3: `capt plugin run <id>` shorthand. Today this is a thin
+// wrapper around `capt plugin apply` + `POST /api/runs` so a code agent
 // can drive the apply→start→follow loop without two hops.
 async function runPluginRun(rest) {
   const flags = parseFlags(rest, {
@@ -3596,7 +3596,7 @@ async function runPluginRun(rest) {
   });
   const id = positionalArgs(rest, PLUGIN_PROJECT_RESOURCE_STRING_FLAGS)[0];
   if (!id) {
-    console.error('Usage: od plugin run <id> --project <projectId> [--inputs <json>] [--agent <id>] [--message "<text>"] [--grant-caps a,b] [--follow]');
+    console.error('Usage: capt plugin run <id> --project <projectId> [--inputs <json>] [--agent <id>] [--message "<text>"] [--grant-caps a,b] [--follow]');
     process.exit(2);
   }
   if (!flags.project) {
@@ -3642,7 +3642,7 @@ async function runPluginRun(rest) {
     if (runResp.status === 409 && runData?.error?.code === 'capabilities-required') {
       const missing = (runData.error.data?.missing ?? []).join(',');
       console.error(`[run] capabilities required: ${missing}`);
-      console.error(`[run] retry with --grant-caps ${missing} or run \`od plugin trust ${id} --capabilities ${missing}\``);
+      console.error(`[run] retry with --grant-caps ${missing} or run \`capt plugin trust ${id} --capabilities ${missing}\``);
       process.exit(66);
     }
     console.error(`run failed: ${runResp.status} ${JSON.stringify(runData)}`);
@@ -3672,8 +3672,8 @@ function pluginFetch(flags, input, init = {}) {
   return fetch(input, { ...init, headers });
 }
 
-// Plan §3.Y1 — filter knobs on `od plugin list` (and feeds
-// `od plugin search` below). Recognising these as string flags
+// Plan §3.Y1 — filter knobs on `capt plugin list` (and feeds
+// `capt plugin search` below). Recognising these as string flags
 // keeps the parseFlags() argv consumer happy.
 async function runPluginList(rest) {
   const flags = parseFlags(rest, {
@@ -3682,7 +3682,7 @@ async function runPluginList(rest) {
   });
   if (flags.help || flags.h) {
     console.log(`Usage:
-  od plugin list [--task-kind <kind>] [--mode <mode>] [--tag <tag>] \\
+  capt plugin list [--task-kind <kind>] [--mode <mode>] [--tag <tag>] \\
                  [--trust <tier>] [--bundled | --no-bundled] [--json]
 
 Lists installed plugins. Filters AND together: --task-kind=code-migration
@@ -3703,7 +3703,7 @@ Lists installed plugins. Filters AND together: --task-kind=code-migration
   emitPluginList({ entries: filtered, json: !!flags.json, emptyMessage: 'No plugins matched the filter.' });
 }
 
-// Plan §3.Y1 — `od plugin search <query>`.
+// Plan §3.Y1 — `capt plugin search <query>`.
 async function runPluginSearch(rest) {
   const flags = parseFlags(rest, {
     string:  PLUGIN_LIST_FILTER_FLAGS,
@@ -3713,13 +3713,13 @@ async function runPluginSearch(rest) {
   const query = positional[0];
   if (flags.help || flags.h || !query) {
     console.log(`Usage:
-  od plugin search <query> [--task-kind <kind>] [--mode <mode>] \\
+  capt plugin search <query> [--task-kind <kind>] [--mode <mode>] \\
                            [--tag <tag>] [--trust <tier>] \\
                            [--bundled | --no-bundled] [--json]
 
 Free-text search across installed plugins. Matches case-insensitively
 on id / title / description / tags. Combines with the same filter
-flags as 'od plugin list'.`);
+flags as 'capt plugin list'.`);
     process.exit(query ? 0 : 2);
   }
   const data = await fetchPluginList(flags);
@@ -3732,7 +3732,7 @@ flags as 'od plugin list'.`);
   });
 }
 
-// Plan §3.DD1 — `od plugin stats`. Pretty-prints the
+// Plan §3.DD1 — `capt plugin stats`. Pretty-prints the
 // pluginInventoryStats + snapshotInventoryStats aggregation. The
 // daemon-side route owns the SQLite reads; the CLI is a thin
 // formatter.
@@ -3743,7 +3743,7 @@ async function runPluginStats(rest) {
   });
   if (flags.help || flags.h) {
     console.log(`Usage:
-  od plugin stats [--json]
+  capt plugin stats [--json]
 
 Prints an at-a-glance plugin + snapshot inventory:
   - Plugin counts by sourceKind, trust, taskKind.
@@ -3868,7 +3868,7 @@ async function runPluginInfo(rest) {
     && a !== flags.source
     && a !== flags.version);
   if (!id) {
-    console.error('Usage: od plugin info <id-or-marketplace-name> [--version <version|tag|range>] [--json]');
+    console.error('Usage: capt plugin info <id-or-marketplace-name> [--version <version|tag|range>] [--json]');
     process.exit(2);
   }
   const base = (await pluginDaemonUrl(flags)).replace(/\/$/, '');
@@ -3950,7 +3950,7 @@ function resolveCliEntryVersion(entry, range) {
   };
 }
 
-// Plan §3.MM1 — `od plugin manifest <id>`. Prints just the parsed
+// Plan §3.MM1 — `capt plugin manifest <id>`. Prints just the parsed
 // manifest JSON, no wrapper. Useful for plugin authors who want to
 // compare the daemon's view to their on-disk open-design.json
 // without scrolling past the registry record fields (sourceKind /
@@ -3959,7 +3959,7 @@ async function runPluginManifest(rest) {
   const flags = parseFlags(rest, { string: PLUGIN_STRING_FLAGS, boolean: PLUGIN_BOOLEAN_FLAGS });
   const id = rest.find((a) => !a.startsWith('--') && a !== flags['daemon-url'] && a !== flags.source);
   if (!id) {
-    console.error('Usage: od plugin manifest <id>');
+    console.error('Usage: capt plugin manifest <id>');
     process.exit(2);
   }
   const url = `${(await pluginDaemonUrl(flags)).replace(/\/$/, '')}/api/plugins/${encodeURIComponent(id)}`;
@@ -3980,7 +3980,7 @@ async function runPluginManifest(rest) {
   process.stdout.write(JSON.stringify(data.manifest, null, 2) + '\n');
 }
 
-// Plan §3.MM2 — `od plugin sources`. Lists every distinct install
+// Plan §3.MM2 — `capt plugin sources`. Lists every distinct install
 // source string + count of plugins installed from it, ordered by
 // count descending then source ascending. Useful for ops audits
 // ('which github repos do my plugins come from') + for plugin
@@ -4029,11 +4029,11 @@ async function runPluginInstall(rest) {
   const flags = parseFlags(rest, { string: PLUGIN_STRING_FLAGS, boolean: PLUGIN_BOOLEAN_FLAGS });
   const source = typeof flags.source === 'string' ? flags.source : rest.find((a) => !a.startsWith('-'));
   if (!source) {
-    console.error('Usage: od plugin install <source-or-name>\n' +
-      '       od plugin install ./local-folder\n' +
-      '       od plugin install github:owner/repo[@ref][/subpath]\n' +
-      '       od plugin install https://example.com/plugin.tar.gz\n' +
-      '       od plugin install <name>[@version|tag|range]  # resolves through configured marketplaces');
+    console.error('Usage: capt plugin install <source-or-name>\n' +
+      '       capt plugin install ./local-folder\n' +
+      '       capt plugin install github:owner/repo[@ref][/subpath]\n' +
+      '       capt plugin install https://example.com/plugin.tar.gz\n' +
+      '       capt plugin install <name>[@version|tag|range]  # resolves through configured marketplaces');
     process.exit(2);
   }
   const url = `${(await pluginDaemonUrl(flags)).replace(/\/$/, '')}/api/plugins/install`;
@@ -4090,10 +4090,10 @@ async function runPluginInstall(rest) {
   process.exit(exitCode);
 }
 
-// Plan §3.Z2 — `od plugin upgrade <id>`. Re-installs the plugin
+// Plan §3.Z2 — `capt plugin upgrade <id>`. Re-installs the plugin
 // from its recorded source. Streams the same SSE event shape as
 // install, so 'progress' / 'success' / 'error' arrive verbatim.
-// Plan §3.II1 — `od plugin events tail`. Tails the daemon's
+// Plan §3.II1 — `capt plugin events tail`. Tails the daemon's
 // in-memory plugin event ring buffer via SSE. -f keeps the
 // connection open and prints live events; otherwise prints the
 // backlog and exits when the daemon closes the stream.
@@ -4101,10 +4101,10 @@ async function runPluginEvents(rest) {
   const sub = rest[0];
   if (!sub || sub === 'help' || rest.includes('--help') || rest.includes('-h')) {
     console.log(`Usage:
-  od plugin events tail     [-f] [--since <id>] [--kind <k>] [--plugin-id <id>] [--json]
-  od plugin events snapshot [--since <id>] [--kind <k>] [--plugin-id <id>] [--json]
-  od plugin events stats    [--json]
-  od plugin events purge    [--confirm] [--json]    (loopback-only)
+  capt plugin events tail     [-f] [--since <id>] [--kind <k>] [--plugin-id <id>] [--json]
+  capt plugin events snapshot [--since <id>] [--kind <k>] [--plugin-id <id>] [--json]
+  capt plugin events stats    [--json]
+  capt plugin events purge    [--confirm] [--json]    (loopback-only)
 
 Tail / snapshot / stats / purge over the daemon's in-memory
 plugin event ring buffer (capped at 1000 entries; resets on
@@ -4166,7 +4166,7 @@ Lifecycle vocabulary:
   }
 
   if (sub === 'purge') {
-    // Refuse to run without an explicit --confirm so 'od plugin
+    // Refuse to run without an explicit --confirm so 'capt plugin
     // events purge' alone never drops audit data accidentally.
     const purgeFlags = parseFlags(rest.slice(1), {
       string:  new Set(['daemon-url']),
@@ -4213,7 +4213,7 @@ Lifecycle vocabulary:
   }
 
   if (sub !== 'tail') {
-    console.error(`unknown subcommand: od plugin events ${sub}`);
+    console.error(`unknown subcommand: capt plugin events ${sub}`);
     process.exit(2);
   }
   const follow = flags.f === true || flags.follow === true;
@@ -4294,7 +4294,7 @@ Lifecycle vocabulary:
   }
 }
 
-// Plan §3.FF1 — `od plugin verify <pluginId>` CI meta-command.
+// Plan §3.FF1 — `capt plugin verify <pluginId>` CI meta-command.
 //
 // Reads an optional .od-verify.json config from the plugin folder
 // or --config <path> and runs the enabled subset of:
@@ -4315,7 +4315,7 @@ async function runPluginVerify(rest) {
   const id = positional[0];
   if (flags.help || flags.h || !id) {
     console.log(`Usage:
-  od plugin verify <pluginId> [--config <path>] [--json]
+  capt plugin verify <pluginId> [--config <path>] [--json]
 
 CI meta-command. Reads an optional config from
 '<plugin-folder>/.od-verify.json' (or --config <path>) and runs:
@@ -4466,7 +4466,7 @@ Exit codes:
   process.exit(report.passed ? 0 : 4);
 }
 
-// Plan §3.EE1 — `od plugin simulate <pluginId> [-s key=value ...]`.
+// Plan §3.EE1 — `capt plugin simulate <pluginId> [-s key=value ...]`.
 //
 // Walks the plugin's pipeline against caller-supplied signals and
 // reports per-stage convergence (iterations + outcome). No LLM is
@@ -4486,21 +4486,21 @@ async function runPluginSimulate(rest) {
   const id = positional[0];
   if (flags.help || flags.h || !id) {
     console.log(`Usage:
-  od plugin simulate <pluginId> [-s key=value ...] [--cap <n>] [--json]
+  capt plugin simulate <pluginId> [-s key=value ...] [--cap <n>] [--json]
 
 Walks the plugin's pipeline against caller-supplied signals and
 reports per-stage convergence. No LLM is invoked.
 
 Examples:
   # critique-theater stage that exits when score >= 4
-  od plugin simulate my-plugin -s critique.score=5
+  capt plugin simulate my-plugin -s critique.score=5
 
   # build-test devloop where both signals must hold
-  od plugin simulate code-migration \\
+  capt plugin simulate code-migration \\
       -s build.passing=true -s tests.passing=true
 
   # raise the per-stage iteration cap (default 10)
-  od plugin simulate my-plugin -s critique.score=2 --cap 20
+  capt plugin simulate my-plugin -s critique.score=2 --cap 20
 
 Closed signal vocabulary:
   critique.score (number)
@@ -4570,7 +4570,7 @@ Closed signal vocabulary:
   if (result.outcome === 'cap-hit' || result.outcome === 'unparsable') process.exit(4);
 }
 
-// Plan §3.CC1 / §3.DD2 — `od plugin canon <snapshotId>`. Prints the
+// Plan §3.CC1 / §3.DD2 — `capt plugin canon <snapshotId>`. Prints the
 // canonical `## Active plugin` block a snapshot will splice into
 // the system prompt. Useful for understanding what the agent
 // reads + locking byte-equality regression tests against the
@@ -4589,8 +4589,8 @@ async function runPluginCanon(rest) {
   const id = positional[0];
   if (flags.help || flags.h || !id) {
     console.log(`Usage:
-  od plugin canon <snapshotId> [--json]
-  od plugin canon <snapshotId> --check <expected-file>
+  capt plugin canon <snapshotId> [--json]
+  capt plugin canon <snapshotId> --check <expected-file>
 
 Prints the canonical '## Active plugin' / '## Plugin inputs' /
 '## Plugin atoms' block this snapshot would splice into the
@@ -4658,7 +4658,7 @@ fixtures into a plugin's own tests/.`);
   if (!body.endsWith('\n')) process.stdout.write('\n');
 }
 
-// Plan §3.AA1 — `od plugin diff <a> <b>`. Compares two installed
+// Plan §3.AA1 — `capt plugin diff <a> <b>`. Compares two installed
 // plugins (by id) and prints a structured report. Useful for
 // debugging replay invariance + reviewing version bumps.
 async function runPluginDiff(rest) {
@@ -4666,7 +4666,7 @@ async function runPluginDiff(rest) {
   const positional = rest.filter((a) => !a.startsWith('-'));
   if (flags.help || flags.h || positional.length < 2) {
     console.log(`Usage:
-  od plugin diff <id-a> <id-b> [--json]
+  capt plugin diff <id-a> <id-b> [--json]
 
 Compares two installed plugins (or two installs of the same id at
 different versions) and prints every changed field. Output groups
@@ -4720,7 +4720,7 @@ async function runPluginUpgrade(rest) {
   const flags = parseFlags(rest, { string: PLUGIN_STRING_FLAGS, boolean: PLUGIN_BOOLEAN_FLAGS });
   const id = rest.find((a) => !a.startsWith('-') && a !== flags['daemon-url'] && a !== flags.source);
   if (!id) {
-    console.error('Usage: od plugin upgrade <id> [--policy latest|pinned] [--json]');
+    console.error('Usage: capt plugin upgrade <id> [--policy latest|pinned] [--json]');
     process.exit(2);
   }
   const url = `${(await pluginDaemonUrl(flags)).replace(/\/$/, '')}/api/plugins/${encodeURIComponent(id)}/upgrade`;
@@ -4786,7 +4786,7 @@ async function runPluginUninstall(rest) {
   const flags = parseFlags(rest, { string: PLUGIN_STRING_FLAGS, boolean: PLUGIN_BOOLEAN_FLAGS });
   const id = rest.find((a) => !a.startsWith('-') && a !== flags['daemon-url'] && a !== flags.source);
   if (!id) {
-    console.error('Usage: od plugin uninstall <id>');
+    console.error('Usage: capt plugin uninstall <id>');
     process.exit(2);
   }
   const url = `${(await pluginDaemonUrl(flags)).replace(/\/$/, '')}/api/plugins/${encodeURIComponent(id)}/uninstall`;
@@ -4808,7 +4808,7 @@ async function runPluginApply(rest) {
     && a !== flags.project
     && a !== flags['grant-caps']);
   if (!id) {
-    console.error('Usage: od plugin apply <id> [--inputs <json>] [--input k=v ...] [--project <id>] [--grant-caps a,b]');
+    console.error('Usage: capt plugin apply <id> [--inputs <json>] [--input k=v ...] [--project <id>] [--grant-caps a,b]');
     process.exit(2);
   }
   // Plan §3.B2: support both --inputs <json> and repeated --input k=v
@@ -4883,7 +4883,7 @@ async function runPluginDuplicate(rest) {
     && a !== flags['daemon-url']
     && a !== flags.name);
   if (!id) {
-    console.error('Usage: od plugin duplicate <id> [--name "<project name>"] [--json]');
+    console.error('Usage: capt plugin duplicate <id> [--name "<project name>"] [--json]');
     process.exit(2);
   }
   const url = `${(await pluginDaemonUrl(flags)).replace(/\/$/, '')}/api/plugins/${encodeURIComponent(id)}/duplicate-project`;
@@ -4938,11 +4938,11 @@ async function runPluginCandidates(rest) {
   });
   if (!sub || sub === 'help' || flags.help || flags.h) {
     console.log(`Usage:
-  od plugin candidates list --project <projectId> [--json] [--include-dismissed]
+  capt plugin candidates list --project <projectId> [--json] [--include-dismissed]
        --workspace <id> --workspace-member <id>
-  od plugin candidates draft <candidateId> --project <projectId> [--json]
+  capt plugin candidates draft <candidateId> --project <projectId> [--json]
        --workspace <id> --workspace-member <id>
-  od plugin candidates dismiss <candidateId> --project <projectId> [--json]
+  capt plugin candidates dismiss <candidateId> --project <projectId> [--json]
        --workspace <id> --workspace-member <id>
 
 Lists and formalizes persisted skill-to-plugin candidates.`);
@@ -5011,11 +5011,11 @@ Lists and formalizes persisted skill-to-plugin candidates.`);
     else console.error(`[candidate] dismiss failed: ${data?.message ?? JSON.stringify(data)}`);
     process.exit(resp.ok ? 0 : 1);
   }
-  console.error(`unknown subcommand: od plugin candidates ${sub}`);
+  console.error(`unknown subcommand: capt plugin candidates ${sub}`);
   process.exit(2);
 }
 
-// Phase 4 / spec §14.1 — `od plugin publish --to <catalog>`.
+// Phase 4 / spec §14.1 — `capt plugin publish --to <catalog>`.
 //
 // Reads the installed plugin's manifest metadata (or the snapshot's
 // frozen view via --snapshot-id) and prints the catalog submission URL
@@ -5038,9 +5038,9 @@ async function runPluginPublish(rest) {
   });
   if (rest.length === 0 || flags.help || flags.h) {
     console.log(`Usage:
-  od plugin publish <pluginId> --to open-design|anthropics-skills|awesome-agent-skills|clawhub|skills-sh
+  capt plugin publish <pluginId> --to open-design|anthropics-skills|awesome-agent-skills|clawhub|skills-sh
                     [--repo <github-url>] [--snapshot-id <id>] [--open] [--json]
-  od plugin publish <pluginId> --to marketplace-json --catalog ./open-design-marketplace.json --repo <github-url>
+  capt plugin publish <pluginId> --to marketplace-json --catalog ./open-design-marketplace.json --repo <github-url>
 
 The CLI prints the catalog's submission URL + a pre-filled PR body.
 Pass --open to auto-launch the system browser. Use --snapshot-id to
@@ -5053,7 +5053,7 @@ publish from a frozen run snapshot rather than the live installed copy.`);
     && a !== flags['snapshot-id']);
   const target = String(flags.to ?? '');
   if (!id) {
-    console.error('Usage: od plugin publish <pluginId> --to <catalog>');
+    console.error('Usage: capt plugin publish <pluginId> --to <catalog>');
     process.exit(2);
   }
   if (!target) {
@@ -5156,7 +5156,7 @@ async function runPluginPublishRepo(rest) {
   });
   if (rest.length === 0 || flags.help || flags.h) {
     console.log(`Usage:
-  od plugin publish-repo <folder> [--host github.com] [--owner github-login-or-org] [--dry-run] [--json]
+  capt plugin publish-repo <folder> [--host github.com] [--owner github-login-or-org] [--dry-run] [--json]
 
 Creates or updates the public GitHub repository named by the plugin manifest.
 If plugin.repo is missing or uses a placeholder owner, the CLI resolves the
@@ -5166,7 +5166,7 @@ GitHub API as a last resort. It never publishes to placeholder owners.`);
   }
   const folder = rest.find((a) => !a.startsWith('-') && a !== flags.host && a !== flags.owner);
   if (!folder) {
-    console.error('Usage: od plugin publish-repo <folder>');
+    console.error('Usage: capt plugin publish-repo <folder>');
     process.exit(2);
   }
 
@@ -5318,7 +5318,7 @@ async function runPluginCapyDesignPr(rest) {
   });
   if (rest.length === 0 || flags.help || flags.h) {
     console.log(`Usage:
-  od plugin open-design-pr <folder> [--host github.com] [--owner github-login-or-fork-owner] [--dry-run] [--json]
+  capt plugin open-design-pr <folder> [--host github.com] [--owner github-login-or-fork-owner] [--dry-run] [--json]
 
 Copies a local plugin folder into plugins/community/<name>/ on the author's
 fork of nexu-io/open-design, pushes a branch, and opens the PR form with --web.`);
@@ -5326,7 +5326,7 @@ fork of nexu-io/open-design, pushes a branch, and opens the PR form with --web.`
   }
   const folder = rest.find((a) => !a.startsWith('-') && a !== flags.host && a !== flags.owner);
   if (!folder) {
-    console.error('Usage: od plugin open-design-pr <folder>');
+    console.error('Usage: capt plugin open-design-pr <folder>');
     process.exit(2);
   }
   const [{ resolve, join }, fsp, os] = await Promise.all([
@@ -5673,7 +5673,7 @@ async function runPluginYank(rest) {
   });
   if (rest.length === 0 || flags.help || flags.h) {
     console.log(`Usage:
-  od plugin yank <vendor/plugin-name>@<version> --reason "<why>" [--to open-design] [--json]
+  capt plugin yank <vendor/plugin-name>@<version> --reason "<why>" [--to open-design] [--json]
 
 Yanking never deletes metadata or bytes. It opens the registry review flow that
 marks a version unresolvable for new installs while preserving lockfile replay.`);
@@ -5683,7 +5683,7 @@ marks a version unresolvable for new installs while preserving lockfile replay.`
   const reason = typeof flags.reason === 'string' ? flags.reason.trim() : '';
   const parsed = parseCliPluginSpecifier(spec);
   if (!parsed.name || !parsed.range) {
-    console.error('Usage: od plugin yank <vendor/plugin-name>@<version> --reason "<why>"');
+    console.error('Usage: capt plugin yank <vendor/plugin-name>@<version> --reason "<why>"');
     process.exit(2);
   }
   if (!reason) {
@@ -5712,7 +5712,7 @@ marks a version unresolvable for new installs while preserving lockfile replay.`
     }, null, 2),
     '```',
     '',
-    'Generated by `od plugin yank`.',
+    'Generated by `capt plugin yank`.',
   ].join('\n');
   const params = new URLSearchParams({ title, body });
   const payload = {
@@ -5749,7 +5749,7 @@ async function runPluginDoctor(rest) {
   });
   const id = rest.find((a) => !a.startsWith('-') && a !== flags['daemon-url'] && a !== flags.source);
   if (!id) {
-    console.error('Usage: od plugin doctor <id> [--strict] [--json]');
+    console.error('Usage: capt plugin doctor <id> [--strict] [--json]');
     process.exit(2);
   }
   const url = `${(await pluginDaemonUrl(flags)).replace(/\/$/, '')}/api/plugins/${encodeURIComponent(id)}/doctor`;
@@ -5785,12 +5785,12 @@ function safeParseJson(s) {
   try { return JSON.parse(s); } catch { return null; }
 }
 
-// `od plugin replay <runId> --snapshot-id <id>` — re-emit the immutable
+// `capt plugin replay <runId> --snapshot-id <id>` — re-emit the immutable
 // snapshot the original run was launched against, so the caller (or
 // another agent) can re-apply the same plugin against fresh state. Phase
 // 2A keeps replay headless: the CLI prints the snapshot + rerun bundle;
-// the agent restarts the run via `od plugin apply` followed by a normal
-// `od run start`. Future Phase 2C `od plugin run` will collapse this
+// the agent restarts the run via `capt plugin apply` followed by a normal
+// `capt run start`. Future Phase 2C `capt plugin run` will collapse this
 // into a one-shot wrapper.
 async function runPluginReplay(rest) {
   const flags = parseFlags(rest, { string: PLUGIN_STRING_FLAGS, boolean: PLUGIN_BOOLEAN_FLAGS });
@@ -5802,12 +5802,12 @@ async function runPluginReplay(rest) {
     && a !== flags['snapshot-id']
     && a !== flags.capabilities);
   if (!runId) {
-    console.error('Usage: od plugin replay <runId> --snapshot-id <id>');
+    console.error('Usage: capt plugin replay <runId> --snapshot-id <id>');
     process.exit(2);
   }
   const snapshotId = flags['snapshot-id'];
   if (!snapshotId) {
-    console.error('--snapshot-id is required (runs are in-memory in Phase 2A; pass the snapshot id returned by od plugin apply)');
+    console.error('--snapshot-id is required (runs are in-memory in Phase 2A; pass the snapshot id returned by capt plugin apply)');
     process.exit(2);
   }
   const url = `${(await pluginDaemonUrl(flags)).replace(/\/$/, '')}/api/runs/${encodeURIComponent(runId)}/replay`;
@@ -5827,10 +5827,10 @@ async function runPluginReplay(rest) {
   }
   console.log(`[replay] ${data.rerun?.pluginId}@${data.rerun?.pluginVersion} digest=${(data.rerun?.manifestSourceDigest ?? '').slice(0, 12)}…`);
   console.log(`[replay] inputs: ${JSON.stringify(data.rerun?.inputs ?? {})}`);
-  console.log('[replay] re-apply via: od plugin apply ' + data.rerun?.pluginId + ' --inputs ' + JSON.stringify(JSON.stringify(data.rerun?.inputs ?? {})));
+  console.log('[replay] re-apply via: capt plugin apply ' + data.rerun?.pluginId + ' --inputs ' + JSON.stringify(JSON.stringify(data.rerun?.inputs ?? {})));
 }
 
-// `od plugin trust <id> --capabilities <comma-sep>` — flip a plugin's
+// `capt plugin trust <id> --capabilities <comma-sep>` — flip a plugin's
 // capabilities_granted set. Plan §3.A2 / spec §9.1: the CLI is the
 // canonical write surface (invariant I4). The daemon validates the
 // capability vocabulary; unknown / malformed entries surface as
@@ -5845,7 +5845,7 @@ async function runPluginTrust(rest) {
     && a !== flags['snapshot-id']
     && a !== flags.capabilities);
   if (!id) {
-    console.error('Usage: od plugin trust <id> --capabilities connector:figma,connector:notion [--revoke]');
+    console.error('Usage: capt plugin trust <id> --capabilities connector:figma,connector:notion [--revoke]');
     process.exit(2);
   }
   const capsCsv = typeof flags.capabilities === 'string' ? flags.capabilities : '';
@@ -5882,7 +5882,7 @@ async function runPluginTrust(rest) {
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od ui …  (spec §10.3.4 headless GenUI surface inbox)
+// Subcommand: capt ui …  (spec §10.3.4 headless GenUI surface inbox)
 // ---------------------------------------------------------------------------
 
 async function runUi(args) {
@@ -5899,7 +5899,7 @@ async function runUi(args) {
     case 'revoke':  return runUiRevoke(rest);
     case 'prefill': return runUiPrefill(rest);
     default:
-      console.error(`unknown subcommand: od ui ${sub}`);
+      console.error(`unknown subcommand: capt ui ${sub}`);
       printUiHelp();
       process.exit(2);
   }
@@ -5923,7 +5923,7 @@ async function runUiList(rest) {
   if (flags.run) url = `${base}/api/runs/${encodeURIComponent(flags.run)}/genui`;
   else if (flags.project) url = `${base}/api/projects/${encodeURIComponent(flags.project)}/genui`;
   else {
-    console.error('Usage: od ui list --run <runId> | --project <projectId>');
+    console.error('Usage: capt ui list --run <runId> | --project <projectId>');
     process.exit(2);
   }
   const resp = await fetch(url, { headers: uiRequestHeaders(flags) });
@@ -5963,7 +5963,7 @@ async function runUiShow(rest) {
   const runId = flags.run ?? positional[0];
   const surfaceId = flags['snapshot-id'] ? null : positional[flags.run ? 0 : 1];
   if (!runId || !surfaceId) {
-    console.error('Usage: od ui show --run <runId> <surfaceId>');
+    console.error('Usage: capt ui show --run <runId> <surfaceId>');
     process.exit(2);
   }
   const url = `${(await uiDaemonUrl(flags)).replace(/\/$/, '')}/api/runs/${encodeURIComponent(runId)}/genui/${encodeURIComponent(surfaceId)}`;
@@ -5975,7 +5975,7 @@ async function runUiShow(rest) {
   const data = await resp.json();
   // Plan §6 Phase 2A.5 — `--schema` prints the spec's JSON Schema
   // only (null if the surface declares none). Designed to feed
-  // `od ui respond --value-json "$(...)"` in headless / agent flows.
+  // `capt ui respond --value-json "$(...)"` in headless / agent flows.
   if (flags.schema) {
     const schema = data?.spec?.schema ?? null;
     process.stdout.write(JSON.stringify(schema, null, 2) + '\n');
@@ -6001,7 +6001,7 @@ async function runUiRespond(rest) {
   const runId = flags.run ?? positional[0];
   const surfaceId = positional[flags.run ? 0 : 1];
   if (!runId || !surfaceId) {
-    console.error('Usage: od ui respond --run <runId> <surfaceId> [--value <text> | --value-json <json> | --skip]');
+    console.error('Usage: capt ui respond --run <runId> <surfaceId> [--value <text> | --value-json <json> | --skip]');
     process.exit(2);
   }
   let value = null;
@@ -6053,7 +6053,7 @@ async function runUiRevoke(rest) {
   const projectId = flags.project ?? positional[0];
   const surfaceId = positional[flags.project ? 0 : 1];
   if (!projectId || !surfaceId) {
-    console.error('Usage: od ui revoke --project <projectId> <surfaceId>');
+    console.error('Usage: capt ui revoke --project <projectId> <surfaceId>');
     process.exit(2);
   }
   const url = `${(await uiDaemonUrl(flags)).replace(/\/$/, '')}/api/projects/${encodeURIComponent(projectId)}/genui/${encodeURIComponent(surfaceId)}/revoke`;
@@ -6091,7 +6091,7 @@ async function runUiPrefill(rest) {
   const surfaceId = positional[flags.project ? 0 : 1];
   const snapshotId = flags['snapshot-id'];
   if (!projectId || !surfaceId || !snapshotId) {
-    console.error('Usage: od ui prefill --project <projectId> --snapshot-id <id> <surfaceId> [--value <text> | --value-json <json>] [--persist run|conversation|project] [--kind form|choice|confirmation|oauth-prompt]');
+    console.error('Usage: capt ui prefill --project <projectId> --snapshot-id <id> <surfaceId> [--value <text> | --value-json <json>] [--persist run|conversation|project] [--kind form|choice|confirmation|oauth-prompt]');
     process.exit(2);
   }
   let value = null;
@@ -6129,13 +6129,13 @@ async function runUiPrefill(rest) {
 
 function printUiHelp() {
   console.log(`Usage:
-  od ui list  --run <runId>                          List GenUI surfaces for a run.
-  od ui list  --project <projectId>                  List GenUI surfaces for a project.
-  od ui show  --run <runId> <surfaceId> [--schema]   Read a single surface (kind / schema / value). --schema prints just the JSON Schema.
-  od ui respond --run <runId> <surfaceId> [--value <txt> | --value-json <json> | --skip]
+  capt ui list  --run <runId>                          List GenUI surfaces for a run.
+  capt ui list  --project <projectId>                  List GenUI surfaces for a project.
+  capt ui show  --run <runId> <surfaceId> [--schema]   Read a single surface (kind / schema / value). --schema prints just the JSON Schema.
+  capt ui respond --run <runId> <surfaceId> [--value <txt> | --value-json <json> | --skip]
                                                      Answer a pending surface from any process.
-  od ui revoke --project <projectId> <surfaceId>     Invalidate a project-tier cached answer.
-  od ui prefill --project <projectId> --snapshot-id <id> <surfaceId>
+  capt ui revoke --project <projectId> <surfaceId>     Invalidate a project-tier cached answer.
+  capt ui prefill --project <projectId> --snapshot-id <id> <surfaceId>
                 [--value <text> | --value-json <json>] [--persist run|conversation|project]
                                                      Pre-answer a surface so the run never broadcasts it.
 
@@ -6149,53 +6149,53 @@ Common options:
 
 function printPluginHelp() {
   console.log(`Usage:
-  od plugin list [--task-kind <kind>]     List installed plugins (filterable).
-  od plugin search <query> [--tag <t>]    Search installed plugins by id/title/desc/tag.
-  od plugin stats [--json]                Inventory + snapshot health report.
-  od plugin info <id>                     Print a plugin's manifest + trust state as JSON.
-  od plugin manifest <id>                 Print only the parsed manifest JSON (no wrapper).
-  od plugin sources                       List distinct install sources + counts.
-  od plugin install --source <path>       Install a plugin from a local folder (Phase 1).
-  od plugin upgrade <id>                  Re-install a plugin from its recorded source.
-  od plugin uninstall <id>                Remove a plugin from the registry + on-disk staging.
-  od plugin apply <id> [--inputs <json>]  Compute an ApplyResult (preview) for a plugin.
-  od plugin duplicate <id> [--name <n>]   Copy a plugin HTML example into a new project
+  capt plugin list [--task-kind <kind>]     List installed plugins (filterable).
+  capt plugin search <query> [--tag <t>]    Search installed plugins by id/title/desc/tag.
+  capt plugin stats [--json]                Inventory + snapshot health report.
+  capt plugin info <id>                     Print a plugin's manifest + trust state as JSON.
+  capt plugin manifest <id>                 Print only the parsed manifest JSON (no wrapper).
+  capt plugin sources                       List distinct install sources + counts.
+  capt plugin install --source <path>       Install a plugin from a local folder (Phase 1).
+  capt plugin upgrade <id>                  Re-install a plugin from its recorded source.
+  capt plugin uninstall <id>                Remove a plugin from the registry + on-disk staging.
+  capt plugin apply <id> [--inputs <json>]  Compute an ApplyResult (preview) for a plugin.
+  capt plugin duplicate <id> [--name <n>]   Copy a plugin HTML example into a new project
                                           without starting an agent run.
-  od plugin doctor <id>                   Lint a plugin's manifest, atoms and resolved refs.
-  od plugin canon <snapshotId>            Print the canonical system-prompt block for a snapshot.
+  capt plugin doctor <id>                   Lint a plugin's manifest, atoms and resolved refs.
+  capt plugin canon <snapshotId>            Print the canonical system-prompt block for a snapshot.
                                           (--check <file> for byte-equality fixtures.)
-  od plugin simulate <pluginId> [-s k=v]  Walk the plugin's pipeline against caller-supplied
+  capt plugin simulate <pluginId> [-s k=v]  Walk the plugin's pipeline against caller-supplied
                                           signals; report stage convergence + iterations
                                           (no LLM in the loop).
-  od plugin verify <pluginId>             CI meta-command: doctor + simulate + canon --check
+  capt plugin verify <pluginId>             CI meta-command: doctor + simulate + canon --check
                                           driven by an .od-verify.json config in the plugin folder.
-  od plugin events tail [-f] [--kind k]   Tail the in-memory plugin event ring buffer.
-  od plugin events snapshot               One-shot read (filterable, no SSE).
-  od plugin events stats                  Roll-up: counts by kind / pluginId / time range.
-  od plugin events purge                  Drop every event in the buffer (loopback-only).
-  od plugin diff <a> <b> [--json]         Compare two installed plugins by id.
-  od plugin replay <runId> --snapshot-id <id>
+  capt plugin events tail [-f] [--kind k]   Tail the in-memory plugin event ring buffer.
+  capt plugin events snapshot               One-shot read (filterable, no SSE).
+  capt plugin events stats                  Roll-up: counts by kind / pluginId / time range.
+  capt plugin events purge                  Drop every event in the buffer (loopback-only).
+  capt plugin diff <a> <b> [--json]         Compare two installed plugins by id.
+  capt plugin replay <runId> --snapshot-id <id>
                                           Re-emit the immutable snapshot a run launched against.
-  od plugin run <id> --project <id> [--workspace <id> --workspace-member <id>]
+  capt plugin run <id> --project <id> [--workspace <id> --workspace-member <id>]
                                           Apply a plugin and start a project run.
-  od plugin snapshots list --project <id> [--workspace <id> --workspace-member <id>]
+  capt plugin snapshots list --project <id> [--workspace <id> --workspace-member <id>]
                                           List snapshots applied to a project.
-  od plugin trust <id> --capabilities a,b
+  capt plugin trust <id> --capabilities a,b
                                           Stage a capability grant (full mutation lands Phase 3).
-  od plugin validate <folder> [--json]    Lint a plugin folder before installing
+  capt plugin validate <folder> [--json]    Lint a plugin folder before installing
                                           (manifest parse + atom + ref checks).
-  od plugin pack <folder> [--out <path>]  Build a .tgz archive of a plugin
+  capt plugin pack <folder> [--out <path>]  Build a .tgz archive of a plugin
                                           folder for distribution.
-  od plugin candidates list --project <id> [--workspace <id> --workspace-member <id>]
+  capt plugin candidates list --project <id> [--workspace <id> --workspace-member <id>]
                                           List persisted skill-to-plugin candidates.
-  od plugin publish-repo <folder>         Create/update the author's public
+  capt plugin publish-repo <folder>         Create/update the author's public
                                           GitHub repo for a plugin folder.
-  od plugin open-design-pr <folder>       Push a community-catalog branch and
+  capt plugin open-design-pr <folder>       Push a community-catalog branch and
                                           open the nexu-io/open-design PR form.
-  od plugin publish <folder> --to open-design|anthropics-skills|awesome-agent-skills|clawhub|skills-sh
+  capt plugin publish <folder> --to open-design|anthropics-skills|awesome-agent-skills|clawhub|skills-sh
                                           Prepare a registry submission link.
-  od plugin login [--host github.com]      Authenticate registry publishing via gh.
-  od plugin whoami [--host github.com]     Show the gh account used for publishing.
+  capt plugin login [--host github.com]      Authenticate registry publishing via gh.
+  capt plugin whoami [--host github.com]     Show the gh account used for publishing.
 
 Common options:
   --daemon-url <url>   CapyDesign daemon HTTP base (default OD_DAEMON_URL, inherited sidecar discovery, or http://127.0.0.1:7456).
@@ -6206,7 +6206,7 @@ and bare marketplace names resolved through configured registry sources.`);
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od project / od run / od files / od conversation
+// Subcommand: capt project / capt run / capt files / capt conversation
 //
 // Plan §6 Phase 1 follow-up + Phase 2C: thin CLI wrappers over the
 // existing daemon HTTP endpoints (POST /api/projects, POST /api/runs,
@@ -6222,8 +6222,8 @@ async function projectDaemonUrl(flags) {
 
 function printShareUsage() {
   console.log(`Usage:
-  od share open-design [--locale <locale>] [--platform <id>] [--json]
-  od share url --url <https-url> [--title <title>] [--text <text>]
+  capt share open-design [--locale <locale>] [--platform <id>] [--json]
+  capt share url --url <https-url> [--title <title>] [--text <text>]
                [--copy-text <text>] [--locale <locale>] [--platform <id>] [--json]
 
 Platforms:
@@ -6276,7 +6276,7 @@ async function runShare(args) {
     process.exit(2);
   }
   if (body.kind === 'project-html' && !body.url) {
-    console.error('Usage: od share url --url <https-url>');
+    console.error('Usage: capt share url --url <https-url>');
     process.exit(2);
   }
 
@@ -6311,9 +6311,9 @@ async function runShare(args) {
 
 function printFigmaUsage() {
   console.log(`Usage:
-  od figma import --project <id> --file <path.fig> [--notes "<text>"]
+  capt figma import --project <id> --file <path.fig> [--notes "<text>"]
                   [--build] [--prompt "<text>" | --prompt-file <path|->] [--json]
-  od figma import --project <id> --figma-url <url> [--notes "<text>"] [--json]
+  capt figma import --project <id> --figma-url <url> [--notes "<text>"] [--json]
 
 Imports a Figma design into a project. A .fig file is decoded fully offline
 (no Figma account); a Figma URL runs through the od-figma-migration scenario
@@ -6341,7 +6341,7 @@ async function runFigma(args) {
     process.exit(sub ? 0 : 2);
   }
   if (sub !== 'import') {
-    console.error(`unknown subcommand: od figma ${sub}`);
+    console.error(`unknown subcommand: capt figma ${sub}`);
     printFigmaUsage();
     process.exit(2);
   }
@@ -6366,7 +6366,7 @@ async function runFigma(args) {
   }
 
   // Figma URL → the existing migration scenario (OAuth lives in the run
-  // pipeline). Start it through the same /api/runs path `od run start` uses.
+  // pipeline). Start it through the same /api/runs path `capt run start` uses.
   if (figmaUrl && !file) {
     const runBody = {
       projectId: flags.project,
@@ -6437,7 +6437,7 @@ async function runFigma(args) {
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od brand …
+// Subcommand: capt brand …
 //
 // Headless surface for the Brands library. This is the dual-track contract:
 // every capability the Brands UI exposes (extract from a URL, list, inspect,
@@ -6491,7 +6491,7 @@ async function runBrand(args) {
     case 'delete':   return runBrandDelete(rest);
     case 'remove':   return runBrandDelete(rest);
     default:
-      console.error(`unknown subcommand: od brand ${sub}`);
+      console.error(`unknown subcommand: capt brand ${sub}`);
       console.log(BRAND_USAGE);
       process.exit(2);
   }
@@ -6521,7 +6521,7 @@ async function runBrandList(rest) {
   }
   const brands = Array.isArray(data?.brands) ? data.brands : [];
   if (brands.length === 0) {
-    console.log('No brands yet. Extract one with: od brand create <url>');
+    console.log('No brands yet. Extract one with: capt brand create <url>');
     return;
   }
   console.log('# id\tname\tdomain\tstatus');
@@ -6546,8 +6546,8 @@ async function runBrandCreate(rest) {
     if (typeof fromFile === 'string') url = fromFile.trim();
   }
   if (!url) {
-    console.error('Usage: od brand create <url> [--json]\n' +
-      '       od brand create --prompt-file <path|-> [--json]');
+    console.error('Usage: capt brand create <url> [--json]\n' +
+      '       capt brand create --prompt-file <path|-> [--json]');
     process.exit(2);
   }
 
@@ -6574,7 +6574,7 @@ async function runBrandCreate(rest) {
 
   // Extraction is agent-driven: this kickoff reserves the brand + a backing
   // project with the target site open in a browser tab and a seeded prompt.
-  // The agent then runs the chain (measure → synthesize → `od brand finalize`).
+  // The agent then runs the chain (measure → synthesize → `capt brand finalize`).
   const data = await resp.json();
   if (flags.json) {
     process.stdout.write(JSON.stringify({ ok: true, ...data }, null, 2) + '\n');
@@ -6582,7 +6582,7 @@ async function runBrandCreate(rest) {
   }
   process.stderr.write(
     '[brand] extraction project created — open it to run the agent, ' +
-    `then it self-finalizes with: od brand finalize ${data?.id ?? ''}\n`,
+    `then it self-finalizes with: capt brand finalize ${data?.id ?? ''}\n`,
   );
   // Clean stdout result: "<id>\t<projectId>" so jq / cut / xargs can chain.
   console.log(`${data?.id ?? ''}\t${data?.projectId ?? ''}`);
@@ -6598,7 +6598,7 @@ async function runBrandFinalize(rest) {
   }
   const id = positionalArgs(rest, BRAND_STRING_FLAGS)[0];
   if (!id) {
-    console.error('Usage: od brand finalize <id> [--project <projectId>] [--json]');
+    console.error('Usage: capt brand finalize <id> [--project <projectId>] [--json]');
     process.exit(2);
   }
   const base = await cliDaemonBaseUrl(flags);
@@ -6641,7 +6641,7 @@ async function runBrandContinue(rest) {
   }
   const id = positionalArgs(rest, BRAND_STRING_FLAGS)[0];
   if (!id) {
-    console.error('Usage: od brand continue <id> [--json]');
+    console.error('Usage: capt brand continue <id> [--json]');
     process.exit(2);
   }
   const base = await cliDaemonBaseUrl(flags);
@@ -6691,7 +6691,7 @@ async function readFileFlagOrStdin(value) {
   return await readFile(value, 'utf8');
 }
 
-// od brand extract-from-html <id> --html-file <path|-> [--css-file <path>]
+// capt brand extract-from-html <id> --html-file <path|-> [--css-file <path>]
 //   [--base-url <url>] [--json]
 // Re-runs extraction against pre-captured rendered HTML (e.g. a page an external
 // agent already loaded past an anti-bot wall), mirroring the UI's browser-assist
@@ -6706,7 +6706,7 @@ async function runBrandExtractFromHtml(rest) {
   }
   const id = positionalArgs(rest, BRAND_STRING_FLAGS)[0];
   if (!id) {
-    console.error('Usage: od brand extract-from-html <id> --html-file <path|-> '
+    console.error('Usage: capt brand extract-from-html <id> --html-file <path|-> '
       + '[--css-file <path>] [--base-url <url>] [--json]');
     process.exit(2);
   }
@@ -6775,7 +6775,7 @@ async function runBrandPreview(rest) {
   }
   const id = positionalArgs(rest, BRAND_STRING_FLAGS)[0];
   if (!id) {
-    console.error('Usage: od brand preview <id> [--project <projectId>] [--json]');
+    console.error('Usage: capt brand preview <id> [--project <projectId>] [--json]');
     process.exit(2);
   }
   const base = await cliDaemonBaseUrl(flags);
@@ -6817,7 +6817,7 @@ async function runBrandGet(rest) {
   }
   const id = positionalArgs(rest, BRAND_STRING_FLAGS)[0];
   if (!id) {
-    console.error('Usage: od brand get <id> [--json]');
+    console.error('Usage: capt brand get <id> [--json]');
     process.exit(2);
   }
   const base = await cliDaemonBaseUrl(flags);
@@ -6866,7 +6866,7 @@ async function runBrandDelete(rest) {
   }
   const id = positionalArgs(rest, BRAND_STRING_FLAGS)[0];
   if (!id) {
-    console.error('Usage: od brand delete <id> [--json]');
+    console.error('Usage: capt brand delete <id> [--json]');
     process.exit(2);
   }
   const base = await cliDaemonBaseUrl(flags);
@@ -6990,47 +6990,47 @@ async function postImportFolderToDaemon(base, body, baseDir, workspaceHeaders = 
 async function runProject(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od project create [--name "<title>"] [--skill <id>] [--design-system <id>]
+  capt project create [--name "<title>"] [--skill <id>] [--design-system <id>]
                     [--plugin <id>] [--inputs <json>] [--metadata-json <path|->]
                     [--mode design|chat|plan]
-  od project create-design-system <id> [--name "<title>"]
+  capt project create-design-system <id> [--name "<title>"]
                     [--prompt "<text>" | --prompt-file <path|->] [--json]
                     Duplicate a project as a design-system workspace and seed
                     the design-system generation prompt.
-  od project duplicate <id> [--name "<title>"] [--json]
+  capt project duplicate <id> [--name "<title>"] [--json]
                     Duplicate a project and copy its Design Files.
-  od project import <baseDir> [--name "<title>"]
-  od project import-folder <path> [--name "<title>"] [--skill <id>]
+  capt project import <baseDir> [--name "<title>"]
+  capt project import-folder <path> [--name "<title>"] [--skill <id>]
                     [--design-system <id>] [--json]
-  od project list                         List projects.
-  od project info <id>                    Print one project.
-  od project restore-automatic-scenario <id> [--json]
+  capt project list                         List projects.
+  capt project info <id>                    Print one project.
+  capt project restore-automatic-scenario <id> [--json]
                                           Restore the daemon-selected default
                                           scenario with a snapshot CAS guard.
-  od project delete <id>                  Delete a project.
-  od project revoke-public-link <id> --path <file> --url <public-url>
+  capt project delete <id>                  Delete a project.
+  capt project revoke-public-link <id> --path <file> --url <public-url>
                     Revoke a public file link whose local publication record
                     was lost during an older daemon restart or upgrade.
-  od project editors                      List locally-installed editors that
+  capt project editors                      List locally-installed editors that
                                           can open a project (hand-off targets).
-  od project open-in <id> --editor <slug> Open the project's working directory
+  capt project open-in <id> --editor <slug> Open the project's working directory
                                           in the chosen editor (cursor, zed,
                                           vscode, finder, terminal, …).
-  od project handoff <id> --conversation <id> --api-key <key> --model <model>
+  capt project handoff <id> --conversation <id> --api-key <key> --model <model>
                     [--base-url <url>] [--max-tokens <n>]
                     Synthesize a resume-conversation handoff prompt.
-  od project image-agent <id> [get|set <agentId>|unset]
+  capt project image-agent <id> [get|set <agentId>|unset]
                     View or set the project's designated image/vision agent.
                     Image-generation + vision-review requests route to it.
                     <agentId> is any detected agent (agy, claude, codex, …).
-  od project artifact-snapshot list --project <id> --conversation <id>
+  capt project artifact-snapshot list --project <id> --conversation <id>
                     --message <id> [--json]
                     List one chat message's artifact refs — which version each
                     card shows and which one clicking it opens.
-  od project artifact-snapshot inspect <snapshotId> --project <id> [--json]
+  capt project artifact-snapshot inspect <snapshotId> --project <id> [--json]
                     Print one immutable snapshot's metadata (digest, size,
                     capture state, lineage).
-  od project artifact-snapshot export <snapshotId> --project <id> --out <path>
+  capt project artifact-snapshot export <snapshotId> --project <id> --out <path>
                     [--thumbnail] [--json]
                     Write a snapshot's exact historical bytes to a local file.
 
@@ -7046,7 +7046,7 @@ Common options:
   const rest = args.slice(1);
   // Handoff owns its own flag parsing, daemon-URL resolution, and
   // structured fail() output. Dispatch it before the generic project
-  // parser below so a malformed `od project handoff` invocation
+  // parser below so a malformed `capt project handoff` invocation
   // (`--unknown`, `--max-tokens` with no value) hits handoff-cli's
   // machine-readable fail() path instead of throwing out of parseFlags.
   if (sub === 'handoff') {
@@ -7065,15 +7065,15 @@ Common options:
     case 'list': {
       // After 0.18.0's workspace isolation, GET /api/projects is the NO-SCOPE
       // catalog: it only returns projects that were never adopted into a
-      // workspace. Every project `od project import-folder` creates is
-      // immediately workspace-bound, so a headerless `od project list` shows
+      // workspace. Every project `capt project import-folder` creates is
+      // immediately workspace-bound, so a headerless `capt project list` shows
       // an empty list while the UI keeps listing them (#6679). #6595 fixed
       // this for the MCP bridge by resolving the signed-in workspace once
       // and routing to GET /api/workspaces/:id/projects; mirror that here.
       // BOTH the implicit signed-in path AND an explicit
       // --workspace/--workspace-member pair route to the workspace-scoped
       // catalog. The signed-out / non-vela / no-directory cases fall back to
-      // the original headerless catalog so `od project list` still returns
+      // the original headerless catalog so `capt project list` still returns
       // unbound projects there. Passing --workspace to /api/projects does
       // NOT scope it (#6679 repro), so the explicit path needs the same
       // workspace-scoped endpoint as the implicit path.
@@ -7104,7 +7104,7 @@ Common options:
       if (flags.json) return process.stdout.write(JSON.stringify(data, null, 2) + '\n');
       const projects = data?.projects ?? [];
       if (projects.length === 0) {
-        console.log('No projects. Create one with `od project create --name "..."`.');
+        console.log('No projects. Create one with `capt project create --name "..."`.');
         return;
       }
       for (const p of projects) console.log(`${p.id}\t${p.name}\t${p.skillId ?? '-'}`);
@@ -7113,7 +7113,7 @@ Common options:
     case 'info': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od project info <id>');
+        console.error('Usage: capt project info <id>');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/projects/${encodeURIComponent(id)}`, {
@@ -7127,7 +7127,7 @@ Common options:
     case 'restore-automatic-scenario': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od project restore-automatic-scenario <id> [--json]');
+        console.error('Usage: capt project restore-automatic-scenario <id> [--json]');
         process.exit(2);
       }
       const infoResponse = await fetch(`${base}/api/projects/${encodeURIComponent(id)}`, {
@@ -7164,7 +7164,7 @@ Common options:
       }
       if (!id || !filePath || !slug) {
         console.error(
-          'Usage: od project revoke-public-link <id> --path <file> --url <public-url> [--json]',
+          'Usage: capt project revoke-public-link <id> --path <file> --url <public-url> [--json]',
         );
         process.exit(2);
       }
@@ -7236,7 +7236,7 @@ Common options:
     case 'create-design-system': {
       const sourceProjectId = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!sourceProjectId) {
-        console.error('Usage: od project create-design-system <id> [--name "<title>"] [--prompt-file <path|->] [--json]');
+        console.error('Usage: capt project create-design-system <id> [--name "<title>"] [--prompt-file <path|->] [--json]');
         process.exit(2);
       }
       const prompt = await readPromptFromFlags(flags);
@@ -7259,7 +7259,7 @@ Common options:
     case 'duplicate': {
       const sourceProjectId = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!sourceProjectId) {
-        console.error('Usage: od project duplicate <id> [--name "<title>"] [--json]');
+        console.error('Usage: capt project duplicate <id> [--name "<title>"] [--json]');
         process.exit(2);
       }
       const body = {};
@@ -7281,7 +7281,7 @@ Common options:
       const [baseDir] = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const importBaseDir = typeof baseDir === 'string' ? baseDir.trim() : '';
       if (!importBaseDir) {
-        console.error('Usage: od project import <baseDir> [--name "<title>"]');
+        console.error('Usage: capt project import <baseDir> [--name "<title>"]');
         process.exit(2);
       }
       const body = { baseDir: importBaseDir };
@@ -7310,7 +7310,7 @@ Common options:
       const parts = collectCliPositionals(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const folderArg = flags.path ?? flags.dir ?? parts[0];
       if (!folderArg) {
-        console.error('Usage: od project import-folder <path> [--skill <id>] [--design-system <id>]');
+        console.error('Usage: capt project import-folder <path> [--skill <id>] [--design-system <id>]');
         process.exit(2);
       }
       const folderPath = await resolveFolderPathForCli(folderArg);
@@ -7335,7 +7335,7 @@ Common options:
     case 'delete': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od project delete <id>');
+        console.error('Usage: capt project delete <id>');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/projects/${encodeURIComponent(id)}`, {
@@ -7361,12 +7361,12 @@ Common options:
     case 'open-in': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od project open-in <id> --editor <slug>');
+        console.error('Usage: capt project open-in <id> --editor <slug>');
         process.exit(2);
       }
       const editor = typeof flags.editor === 'string' ? flags.editor : '';
       if (!editor) {
-        console.error('--editor <slug> is required. Run `od project editors` to list options.');
+        console.error('--editor <slug> is required. Run `capt project editors` to list options.');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/projects/${encodeURIComponent(id)}/open-in`, {
@@ -7385,14 +7385,14 @@ Common options:
       return;
     }
     case 'image-agent': {
-      // od project image-agent <id> [get|set <agentId>|unset]
+      // capt project image-agent <id> [get|set <agentId>|unset]
       // View or change the project's designated image/vision chat agent
       // (metadata.imageAgentId). The daemon routes image-generation and
       // vision-review requests to this agent; set <agentId> to any detected
       // agent (e.g. agy, claude, codex).
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od project image-agent <id> [get|set <agentId>|unset]');
+        console.error('Usage: capt project image-agent <id> [get|set <agentId>|unset]');
         process.exit(2);
       }
       const action = rest.find((a) => !a.startsWith('-') && a !== id) ?? 'get';
@@ -7432,7 +7432,7 @@ Common options:
       if (action === 'set') {
         const agentId = rest[rest.indexOf('set') + 1];
         if (!agentId || agentId.startsWith('-')) {
-          console.error('Usage: od project image-agent <id> set <agentId>  (agentId from `od agent list`)');
+          console.error('Usage: capt project image-agent <id> set <agentId>  (agentId from `capt agent list`)');
           process.exit(2);
         }
         const patchBody = { metadata: { ...(project?.metadata ?? {}), imageAgentId: agentId } };
@@ -7460,7 +7460,7 @@ Common options:
       const action = rest[0];
       const projectId = String(flags.project ?? '').trim();
       if (!projectId) {
-        console.error('od project artifact-snapshot requires --project <id>');
+        console.error('capt project artifact-snapshot requires --project <id>');
         process.exit(2);
       }
       const scope = `/api/projects/${encodeURIComponent(projectId)}`;
@@ -7468,7 +7468,7 @@ Common options:
         const conversationId = String(flags.conversation ?? '').trim();
         const messageId = String(flags.message ?? '').trim();
         if (!conversationId || !messageId) {
-          console.error('od project artifact-snapshot list requires --conversation <id> --message <id>');
+          console.error('capt project artifact-snapshot list requires --conversation <id> --message <id>');
           process.exit(2);
         }
         const resp = await fetch(
@@ -7497,7 +7497,7 @@ Common options:
       if (action === 'inspect') {
         const snapshotId = String(rest[1] ?? '').trim();
         if (!snapshotId) {
-          console.error('od project artifact-snapshot inspect requires <snapshotId>');
+          console.error('capt project artifact-snapshot inspect requires <snapshotId>');
           process.exit(2);
         }
         const resp = await fetch(
@@ -7519,7 +7519,7 @@ Common options:
         const snapshotId = String(rest[1] ?? '').trim();
         const out = String(flags.out ?? '').trim();
         if (!snapshotId || !out) {
-          console.error('od project artifact-snapshot export requires <snapshotId> --out <path>');
+          console.error('capt project artifact-snapshot export requires <snapshotId> --out <path>');
           process.exit(2);
         }
         const which = flags.thumbnail ? 'thumbnail' : 'content';
@@ -7538,12 +7538,12 @@ Common options:
         console.log(`[project] wrote ${buffer.byteLength} bytes to ${out}`);
         return;
       }
-      console.error('usage: od project artifact-snapshot <list|inspect|export> …');
+      console.error('usage: capt project artifact-snapshot <list|inspect|export> …');
       process.exit(2);
       return;
     }
     default:
-      console.error(`unknown subcommand: od project ${sub}`);
+      console.error(`unknown subcommand: capt project ${sub}`);
       process.exit(2);
   }
 }
@@ -7551,14 +7551,14 @@ Common options:
 async function runWorkspace(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od workspace invite --workspace <id> --member <id> --email <addr> [--role admin|member] [--json]
-  od workspace projects team --workspace <id> --member <id> [--json]
-  od workspace projects list --workspace <id> --member <id> [--view recent|drafts|team|all] [--json]
-  od workspace projects move <projectId> --workspace <id> --member <id> --visibility personal|team [--json]
-  od workspace projects batch-delete --workspace <id> --member <id> --project <id> [--project <id> ...] [--json]
-  od workspace projects batch-move --workspace <id> --member <id> --visibility personal|team --project <id> [--project <id> ...] [--json]
-  od workspace members list --workspace <id> --member <id> [--json]
-  od workspace billing [--workspace-type personal|team --workspace <id>] [--json]
+  capt workspace invite --workspace <id> --member <id> --email <addr> [--role admin|member] [--json]
+  capt workspace projects team --workspace <id> --member <id> [--json]
+  capt workspace projects list --workspace <id> --member <id> [--view recent|drafts|team|all] [--json]
+  capt workspace projects move <projectId> --workspace <id> --member <id> --visibility personal|team [--json]
+  capt workspace projects batch-delete --workspace <id> --member <id> --project <id> [--project <id> ...] [--json]
+  capt workspace projects batch-move --workspace <id> --member <id> --visibility personal|team --project <id> [--project <id> ...] [--json]
+  capt workspace members list --workspace <id> --member <id> [--json]
+  capt workspace billing [--workspace-type personal|team --workspace <id>] [--json]
 
 Common options:
   --daemon-url <url>   CapyDesign daemon HTTP base.
@@ -7571,7 +7571,7 @@ Common options:
   }
   const area = args[0];
   if (!['invite', 'projects', 'members', 'billing'].includes(area)) {
-    console.error(`unknown subcommand: od workspace ${area}`);
+    console.error(`unknown subcommand: capt workspace ${area}`);
     process.exit(2);
   }
   const sub = args[1] ?? 'list';
@@ -7606,7 +7606,7 @@ Common options:
     const emails = repeatableFlagValues(rest, 'email');
     const role = String(flags.role ?? 'member');
     if (emails.length === 0 || !['admin', 'member'].includes(role)) {
-      console.error('Usage: od workspace invite --email <addr> [--role admin|member] [--json]');
+      console.error('Usage: capt workspace invite --email <addr> [--role admin|member] [--json]');
       process.exit(2);
     }
     const body = emails.length === 1
@@ -7641,7 +7641,7 @@ Common options:
       (!workspaceType && workspaceId)
     ) {
       console.error(
-        'Usage: od workspace billing [--workspace-type personal|team --workspace <id>] [--json]',
+        'Usage: capt workspace billing [--workspace-type personal|team --workspace <id>] [--json]',
       );
       process.exit(2);
     }
@@ -7676,7 +7676,7 @@ Common options:
 
   if (area === 'members') {
     if (sub !== 'list') {
-      console.error(`unknown subcommand: od workspace members ${sub}`);
+      console.error(`unknown subcommand: capt workspace members ${sub}`);
       process.exit(2);
     }
     const data = await workspaceContextRequest('/api/workspace/members');
@@ -7782,7 +7782,7 @@ Common options:
       const projectId = positionalArgs(rest, WORKSPACE_STRING_FLAGS)[0];
       const visibility = String(flags.visibility ?? '');
       if (!projectId || !['personal', 'team'].includes(visibility)) {
-        console.error('Usage: od workspace projects move <projectId> --workspace <id> --visibility personal|team [--json]');
+        console.error('Usage: capt workspace projects move <projectId> --workspace <id> --visibility personal|team [--json]');
         process.exit(2);
       }
       const data = await request(`/api/workspaces/${encodeURIComponent(workspaceId)}/projects/${encodeURIComponent(projectId)}/move`, {
@@ -7796,7 +7796,7 @@ Common options:
     }
     case 'batch-delete': {
       if (projectIds.length === 0) {
-        console.error('Usage: od workspace projects batch-delete --workspace <id> --project <id> [--project <id> ...] [--json]');
+        console.error('Usage: capt workspace projects batch-delete --workspace <id> --project <id> [--project <id> ...] [--json]');
         process.exit(2);
       }
       const data = await request(`/api/workspaces/${encodeURIComponent(workspaceId)}/projects/batch-delete`, {
@@ -7811,7 +7811,7 @@ Common options:
     case 'batch-move': {
       const visibility = String(flags.visibility ?? '');
       if (projectIds.length === 0 || !['personal', 'team'].includes(visibility)) {
-        console.error('Usage: od workspace projects batch-move --workspace <id> --visibility personal|team --project <id> [--project <id> ...] [--json]');
+        console.error('Usage: capt workspace projects batch-move --workspace <id> --visibility personal|team --project <id> [--project <id> ...] [--json]');
         process.exit(2);
       }
       const data = await request(`/api/workspaces/${encodeURIComponent(workspaceId)}/projects/batch-move`, {
@@ -7824,7 +7824,7 @@ Common options:
       return;
     }
     default:
-      console.error(`unknown subcommand: od workspace projects ${sub}`);
+      console.error(`unknown subcommand: capt workspace projects ${sub}`);
       process.exit(2);
   }
 }
@@ -7832,27 +7832,27 @@ Common options:
 async function runRun(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od run start --project <projectId> [--conversation <id>] [--message "<text>"]
+  capt run start --project <projectId> [--conversation <id>] [--message "<text>"]
                [--prompt-file <path|->] [--task-execution <id>]
                [--client-request-id <id>]
                [--skill <id>[,<id>]] [--plugin <id>] [--inputs <json>] [--grant-caps a,b]
                [--agent claude|codex|opencode] [--model <id>] [--service-tier <id>]
                [--workspace <id> --workspace-member <id>] [--follow] [--json]
-  od run redesign [--path <folder>] [--message "<text>" | --prompt-file <path|->]
+  capt run redesign [--path <folder>] [--message "<text>" | --prompt-file <path|->]
                [--agent claude] [--model <id>] [--service-tier <id>] [--follow] [--json]
-  od run watch  <runId>                     ND-JSON event stream on stdout.
-  od run cancel <runId>                     Request cancellation.
-  od run steer  <runId> [--message "<text>" | --prompt-file <path|->] [--json]
+  capt run watch  <runId>                     ND-JSON event stream on stdout.
+  capt run cancel <runId>                     Request cancellation.
+  capt run steer  <runId> [--message "<text>" | --prompt-file <path|->] [--json]
                                             Push a message into the turn that is
                                             STILL RUNNING (「引导对话」) instead of
                                             cancelling and resending. Only agents
                                             whose CLI keeps stdin open mid-turn
                                             can take it; the rest refuse with
                                             RUN_STEERING_UNSUPPORTED.
-  od run continue <runId> [--follow]        Continue a resumable failed run.
-  od run list   [--project <id>]            List recent runs.
-  od run info   <runId>                     One run's status.
-  od run result-package <runId> [--json]    Inspect run outputs and workspace
+  capt run continue <runId> [--follow]        Continue a resumable failed run.
+  capt run list   [--project <id>]            List recent runs.
+  capt run info   <runId>                     One run's status.
+  capt run result-package <runId> [--json]    Inspect run outputs and workspace
                                             provenance without applying them.
 
 Common options:
@@ -7889,7 +7889,7 @@ Common options:
     case 'info': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od run info <runId>');
+        console.error('Usage: capt run info <runId>');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/runs/${encodeURIComponent(id)}`, {
@@ -7903,7 +7903,7 @@ Common options:
     case 'result-package': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od run result-package <runId> [--json]');
+        console.error('Usage: capt run result-package <runId> [--json]');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/runs/${encodeURIComponent(id)}/result-package`, {
@@ -7932,7 +7932,7 @@ Common options:
     case 'cancel': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od run cancel <runId>');
+        console.error('Usage: capt run cancel <runId>');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/runs/${encodeURIComponent(id)}/cancel`, {
@@ -7952,7 +7952,7 @@ Common options:
     // B11 「引导对话」. The dual of `cancel`: the turn is NOT stopped, the text is
     // written onto the agent child's still-open stdin so the model reads it
     // mid-turn. Long instructions go through --prompt-file <path|-> so a
-    // heredoc / jq pipeline stays clean (same contract as `od automation`).
+    // heredoc / jq pipeline stays clean (same contract as `capt automation`).
     case 'steer': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       const text = (
@@ -7962,8 +7962,8 @@ Common options:
       ).trim();
       if (!id || !text) {
         console.error(
-          'Usage: od run steer <runId> --message "<text>" [--json]\n'
-          + '       od run steer <runId> --prompt-file <path|-> [--json]',
+          'Usage: capt run steer <runId> --message "<text>" [--json]\n'
+          + '       capt run steer <runId> --prompt-file <path|-> [--json]',
         );
         process.exit(2);
       }
@@ -7983,7 +7983,7 @@ Common options:
     case 'continue': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od run continue <runId> [--message "<text>"] [--follow] [--json]');
+        console.error('Usage: capt run continue <runId> [--message "<text>"] [--follow] [--json]');
         process.exit(2);
       }
       const statusResp = await fetch(`${base}/api/runs/${encodeURIComponent(id)}`, {
@@ -8041,7 +8041,7 @@ Common options:
     case 'watch': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od run watch <runId>');
+        console.error('Usage: capt run watch <runId>');
         process.exit(2);
       }
       await streamRunEvents(base, id, workspaceHeaders);
@@ -8171,7 +8171,7 @@ Common options:
       return;
     }
     default:
-      console.error(`unknown subcommand: od run ${sub}`);
+      console.error(`unknown subcommand: capt run ${sub}`);
       process.exit(2);
   }
 }
@@ -8236,7 +8236,7 @@ async function streamRunEvents(base, initialRunId, workspaceHeaders = {}) {
   }
 }
 
-// `od shell --project <id>` opens an interactive PTY rooted at the project's
+// `capt shell --project <id>` opens an interactive PTY rooted at the project's
 // working directory and attaches to it. This is the CLI parity for the web
 // Terminal tab — both surfaces drive `/api/projects/:id/terminals`. Output
 // streams down over SSE; local keystrokes are POSTed back up to /stdin. When
@@ -8245,7 +8245,7 @@ async function streamRunEvents(base, initialRunId, workspaceHeaders = {}) {
 async function runShell(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od shell --project <projectId> [--shell <path>] [--json]
+  capt shell --project <projectId> [--shell <path>] [--json]
                                   Open an interactive shell in the project's
                                   working directory and attach to it.
 
@@ -8374,21 +8374,21 @@ function parseProjectFileVersionSourceFlag(raw) {
 async function runFiles(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od files list   <projectId>                  List files in a project.
-  od files read   <projectId> <relpath>        Stream file bytes to stdout.
-  od files write  <projectId> <relpath> [< stdin]
+  capt files list   <projectId>                  List files in a project.
+  capt files read   <projectId> <relpath>        Stream file bytes to stdout.
+  capt files write  <projectId> <relpath> [< stdin]
                                                Write content from stdin.
-  od files upload <projectId> <localpath> [--as <relpath>]
+  capt files upload <projectId> <localpath> [--as <relpath>]
                                                Upload a local file.
-  od files delete <projectId> <name>           Delete a project file.
-  od files diff   <projectId> <relpathA> [<relpathB> | --against -]
+  capt files delete <projectId> <name>           Delete a project file.
+  capt files diff   <projectId> <relpathA> [<relpathB> | --against -]
                                                Print a unified diff.
-  od files versions <projectId> <relpath>      List saved HTML versions.
-  od files version-read <projectId> <relpath> <versionId>
+  capt files versions <projectId> <relpath>      List saved HTML versions.
+  capt files version-read <projectId> <relpath> <versionId>
                                                Stream one saved HTML version.
-  od files version-create <projectId> <relpath>
+  capt files version-create <projectId> <relpath>
                                                Save the current HTML as a version.
-  od files version-restore <projectId> <relpath> <versionId>
+  capt files version-restore <projectId> <relpath> <versionId>
                                                Restore a saved HTML as a new current version.
 
 Common options:
@@ -8415,7 +8415,7 @@ Common options:
     case 'list': {
       const id = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od files list <projectId>');
+        console.error('Usage: capt files list <projectId>');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/projects/${encodeURIComponent(id)}/files`, {
@@ -8432,7 +8432,7 @@ Common options:
       const positional = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const [id, rel] = positional;
       if (!id || !rel) {
-        console.error('Usage: od files read <projectId> <relpath>');
+        console.error('Usage: capt files read <projectId> <relpath>');
         process.exit(2);
       }
       const resp = await fetch(
@@ -8448,7 +8448,7 @@ Common options:
       const positional = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const [id, localPath] = positional;
       if (!id || !localPath) {
-        console.error('Usage: od files upload <projectId> <localpath> [--as <relpath>]');
+        console.error('Usage: capt files upload <projectId> <localpath> [--as <relpath>]');
         process.exit(2);
       }
       const buf = readFileSync(localPath);
@@ -8475,7 +8475,7 @@ Common options:
       const positional = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const [id, rel] = positional;
       if (!id || !rel) {
-        console.error('Usage: od files write <projectId> <relpath> [< stdin]');
+        console.error('Usage: capt files write <projectId> <relpath> [< stdin]');
         process.exit(2);
       }
       // Read stdin synchronously into a buffer.
@@ -8508,7 +8508,7 @@ Common options:
       const positional = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const [id, name] = positional;
       if (!id || !name) {
-        console.error('Usage: od files delete <projectId> <name>');
+        console.error('Usage: capt files delete <projectId> <name>');
         process.exit(2);
       }
       const resp = await fetch(
@@ -8524,7 +8524,7 @@ Common options:
       const [id, relA, relB] = positional;
       const against = typeof flags.against === 'string' ? flags.against : null;
       if (!id || !relA || (!relB && !against) || (relB && against)) {
-        console.error('Usage: od files diff <projectId> <relpathA> [<relpathB> | --against -]');
+        console.error('Usage: capt files diff <projectId> <relpathA> [<relpathB> | --against -]');
         process.exit(2);
       }
       const left = await fetchProjectFileText(base, id, relA, workspaceHeaders);
@@ -8541,7 +8541,7 @@ Common options:
       const positional = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const [id, rel] = positional;
       if (!id || !rel) {
-        console.error('Usage: od files versions <projectId> <relpath>');
+        console.error('Usage: capt files versions <projectId> <relpath>');
         process.exit(2);
       }
       const resp = await fetch(
@@ -8568,7 +8568,7 @@ Common options:
       const positional = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const [id, rel, versionId] = positional;
       if (!id || !rel || !versionId) {
-        console.error('Usage: od files version-read <projectId> <relpath> <versionId>');
+        console.error('Usage: capt files version-read <projectId> <relpath> <versionId>');
         process.exit(2);
       }
       const resp = await fetch(
@@ -8585,7 +8585,7 @@ Common options:
       const positional = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const [id, rel] = positional;
       if (!id || !rel) {
-        console.error('Usage: od files version-create <projectId> <relpath> [--prompt <text> | --prompt-file <path|->] [--label <text>] [--source <ai|manual|restore>]');
+        console.error('Usage: capt files version-create <projectId> <relpath> [--prompt <text> | --prompt-file <path|->] [--label <text>] [--source <ai|manual|restore>]');
         process.exit(2);
       }
       const source = parseProjectFileVersionSourceFlag(flags.source);
@@ -8612,7 +8612,7 @@ Common options:
       const positional = positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS);
       const [id, rel, versionId] = positional;
       if (!id || !rel || !versionId) {
-        console.error('Usage: od files version-restore <projectId> <relpath> <versionId> [--prompt <text> | --prompt-file <path|->]');
+        console.error('Usage: capt files version-restore <projectId> <relpath> <versionId> [--prompt <text> | --prompt-file <path|->]');
         process.exit(2);
       }
       const prompt = await readPromptFromFlags(flags);
@@ -8634,7 +8634,7 @@ Common options:
       return;
     }
     default:
-      console.error(`unknown subcommand: od files ${sub}`);
+      console.error(`unknown subcommand: capt files ${sub}`);
       process.exit(2);
   }
 }
@@ -8779,7 +8779,7 @@ function renderDiffLineContent(value) {
   return String(value).replace(/\r/g, '\\r');
 }
 
-// `od templates …` is the headless face of NewProjectPanel /
+// `capt templates …` is the headless face of NewProjectPanel /
 // ExamplesTab — same /api/templates store, same DTO shapes. External
 // agents (hermes-agent, openclaw, custom bots) use these to snapshot a
 // project as a reusable starting point, list everything the user has
@@ -8788,11 +8788,11 @@ function renderDiffLineContent(value) {
 async function runTemplates(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od templates list                                  List user-saved templates.
-  od templates save  <projectId> --name <name>      Snapshot a project's current
+  capt templates list                                  List user-saved templates.
+  capt templates save  <projectId> --name <name>      Snapshot a project's current
                                                     files as a new template.
                      [--description <text>]
-  od templates delete <id>                          Delete a saved template by id.
+  capt templates delete <id>                          Delete a saved template by id.
 
 Common options:
   --daemon-url <url>   CapyDesign daemon HTTP base.
@@ -8812,7 +8812,7 @@ Common options:
   // Extract positional arguments while stepping past `--flag value`
   // pairs for any string-valued template flag. Without this the id has
   // to be the very first token after the sub-verb, so a headless caller
-  // that prefixes shared options (`od templates save --daemon-url ...
+  // that prefixes shared options (`capt templates save --daemon-url ...
   // proj-1 --name Cards`) would hit the missing-id usage path before
   // ever reaching the daemon. Mirrors the `positionalArgs` helper in
   // `runAutomation`.
@@ -8852,7 +8852,7 @@ Common options:
       if (flags.json) return process.stdout.write(JSON.stringify(data, null, 2) + '\n');
       const templates = Array.isArray(data?.templates) ? data.templates : [];
       if (templates.length === 0) {
-        console.log('No templates. Save one with `od templates save <projectId> --name "..."`.');
+        console.log('No templates. Save one with `capt templates save <projectId> --name "..."`.');
         return;
       }
       for (const t of templates) console.log(`${t.id}\t${t.name}`);
@@ -8864,7 +8864,7 @@ Common options:
       // so callers can put shared options before or after the id.
       const projectId = positionalArgs(rest)[0] ?? '';
       if (!projectId) {
-        console.error('Usage: od templates save <projectId> --name <name> [--description <text>]');
+        console.error('Usage: capt templates save <projectId> --name <name> [--description <text>]');
         process.exit(2);
       }
       const name = typeof flags.name === 'string' ? flags.name.trim() : '';
@@ -8910,7 +8910,7 @@ Common options:
     case 'delete': {
       const id = positionalArgs(rest)[0] ?? '';
       if (!id) {
-        console.error('Usage: od templates delete <id>');
+        console.error('Usage: capt templates delete <id>');
         process.exit(2);
       }
       let resp;
@@ -8935,7 +8935,7 @@ Common options:
       return;
     }
     default:
-      console.error(`unknown subcommand: od templates ${sub}`);
+      console.error(`unknown subcommand: capt templates ${sub}`);
       process.exit(2);
   }
 }
@@ -8943,14 +8943,14 @@ Common options:
 async function runConversation(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od conversation new  <projectId> [--title "<title>"] [--seed-from <cid>] [--fork-after <mid>] [--mode design|chat|plan]
+  capt conversation new  <projectId> [--title "<title>"] [--seed-from <cid>] [--fork-after <mid>] [--mode design|chat|plan]
                                            Create a conversation in a project.
                                            --seed-from copies another
                                            conversation's messages in (Side Chat).
                                            --fork-after stops the copy at one
                                            source message.
-  od conversation list <projectId>           List conversations in a project.
-  od conversation info <conversationId>      Print one conversation.
+  capt conversation list <projectId>           List conversations in a project.
+  capt conversation info <conversationId>      Print one conversation.
 
 Common options:
   --daemon-url <url>         CapyDesign daemon HTTP base.
@@ -8978,7 +8978,7 @@ Common options:
     case 'new': {
       const [id] = positionalArgs(rest, conversationStringFlags);
       if (!id) {
-        console.error('Usage: od conversation new <projectId> [--title "<title>"] [--seed-from <cid>] [--fork-after <mid>]');
+        console.error('Usage: capt conversation new <projectId> [--title "<title>"] [--seed-from <cid>] [--fork-after <mid>]');
         process.exit(2);
       }
       const body = {};
@@ -9010,7 +9010,7 @@ Common options:
     case 'list': {
       const id = positionalArgs(rest, conversationStringFlags)[0];
       if (!id) {
-        console.error('Usage: od conversation list <projectId>');
+        console.error('Usage: capt conversation list <projectId>');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/projects/${encodeURIComponent(id)}/conversations`, {
@@ -9024,7 +9024,7 @@ Common options:
     case 'info': {
       const id = rest.find((a) => !a.startsWith('-'));
       if (!id) {
-        console.error('Usage: od conversation info <conversationId>');
+        console.error('Usage: capt conversation info <conversationId>');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/conversations/${encodeURIComponent(id)}`);
@@ -9034,15 +9034,15 @@ Common options:
       return;
     }
     default:
-      console.error(`unknown subcommand: od conversation ${sub}`);
+      console.error(`unknown subcommand: capt conversation ${sub}`);
       process.exit(2);
   }
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od chat  (Side Chat — context-seeded conversations)
+// Subcommand: capt chat  (Side Chat — context-seeded conversations)
 //
-// `od chat new --project <id> [--seed-from <cid>] [--fork-after <mid>] [--title "<t>"] [--json]`
+// `capt chat new --project <id> [--seed-from <cid>] [--fork-after <mid>] [--title "<t>"] [--json]`
 //   Creates a new conversation that inherits another conversation's context
 //   by copying its messages, optionally truncating at one source message.
 //   Mirrors the web chat fork action and POSTs to the same
@@ -9053,7 +9053,7 @@ Common options:
 async function runChat(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od chat new --project <id> [--seed-from <cid>] [--fork-after <mid>] [--title "<title>"] [--mode design|chat|plan] [--json]
+  capt chat new --project <id> [--seed-from <cid>] [--fork-after <mid>] [--title "<title>"] [--mode design|chat|plan] [--json]
                                            Create a Side Chat — a new conversation
                                            that copies in another conversation's
                                            context (--seed-from). Use
@@ -9083,7 +9083,7 @@ Common options:
         ? flags.project
         : positionalArgs(rest, PROJECT_RESOURCE_STRING_FLAGS)[0];
       if (!id) {
-        console.error('Usage: od chat new --project <id> [--seed-from <cid>] [--fork-after <mid>] [--title "<title>"]');
+        console.error('Usage: capt chat new --project <id> [--seed-from <cid>] [--fork-after <mid>] [--title "<title>"]');
         process.exit(2);
       }
       const body = {};
@@ -9119,38 +9119,38 @@ Common options:
       return;
     }
     default:
-      console.error(`unknown subcommand: od chat ${sub}`);
+      console.error(`unknown subcommand: capt chat ${sub}`);
       process.exit(2);
   }
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od daemon  (Phase 1.5 lifecycle, plan §6 / §3.F2)
+// Subcommand: capt daemon  (Phase 1.5 lifecycle, plan §6 / §3.F2)
 //
-// `od daemon start [--headless] [--serve-web] [--port <n>] [--host <addr>]`
+// `capt daemon start [--headless] [--serve-web] [--port <n>] [--host <addr>]`
 //   - --headless: implies --no-open, never tries to launch a browser.
-//                 The default `od` (no subcommand) keeps its
+//                 The default `capt` (no subcommand) keeps its
 //                 desktop-friendly behaviour for back-compat.
 //   - --serve-web: same as --headless but allows the Next.js bundle to
 //                  serve over the existing port. v1 doesn't bundle a
 //                  separate web port; the flag is reserved so downstream
 //                  packaged callers can branch on it.
 //
-// `od daemon status [--json] [--daemon-url <url>]` calls /api/daemon/status.
-// `od daemon stop   [--daemon-url <url>]`         calls POST /api/daemon/shutdown.
+// `capt daemon status [--json] [--daemon-url <url>]` calls /api/daemon/status.
+// `capt daemon stop   [--daemon-url <url>]`         calls POST /api/daemon/shutdown.
 // ---------------------------------------------------------------------------
 
 async function runDaemon(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od daemon start [--headless] [--serve-web] [--port <n>] [--host <addr>] [--no-open]
+  capt daemon start [--headless] [--serve-web] [--port <n>] [--host <addr>] [--no-open]
                                           Start the daemon (Phase 1.5 headless mode).
-  od daemon status [--json] [--daemon-url <url>]
+  capt daemon status [--json] [--daemon-url <url>]
                                           Print the daemon's runtime snapshot.
-  od daemon stop   [--daemon-url <url>]   Send a graceful shutdown signal.
-  od daemon db     status                 Print SQLite path + size + table row counts.
-  od daemon db     verify [--quick]       Run integrity_check + foreign_key_check.
-  od daemon db     vacuum                 Run SQLite VACUUM to reclaim space after deletes.
+  capt daemon stop   [--daemon-url <url>]   Send a graceful shutdown signal.
+  capt daemon db     status                 Print SQLite path + size + table row counts.
+  capt daemon db     verify [--quick]       Run integrity_check + foreign_key_check.
+  capt daemon db     vacuum                 Run SQLite VACUUM to reclaim space after deletes.
 
 Common options:
   --daemon-url <url>   CapyDesign daemon HTTP base.
@@ -9168,24 +9168,24 @@ Common options:
     case 'stop':    return runDaemonStop(flags);
     case 'db':      return runDaemonDb(rest, flags);
     default:
-      console.error(`unknown subcommand: od daemon ${sub}`);
+      console.error(`unknown subcommand: capt daemon ${sub}`);
       process.exit(2);
   }
 }
 
-// Plan §3.GG1 — `od daemon db status`. Prints a SQLite inventory
+// Plan §3.GG1 — `capt daemon db status`. Prints a SQLite inventory
 // (file path, size on disk, schema version, per-table row counts).
 async function runDaemonDb(rest, flags) {
   const sub = rest[0];
   if (!sub || sub === 'help' || rest.includes('--help') || rest.includes('-h')) {
     console.log(`Usage:
-  od daemon db status [--json] [--daemon-url <url>]
-  od daemon db verify [--quick] [--json] [--daemon-url <url>]
-  od daemon db vacuum [--json] [--daemon-url <url>]
+  capt daemon db status [--json] [--daemon-url <url>]
+  capt daemon db verify [--quick] [--json] [--daemon-url <url>]
+  capt daemon db vacuum [--json] [--daemon-url <url>]
 
 status:
   Prints a structured inventory of the daemon's SQLite backend:
-    - file path (under .od/ by default; OD_DATA_DIR overrides)
+    - file path (under .capydesign/ by default; OD_DATA_DIR overrides)
     - size on disk (primary + WAL + SHM)
     - schema version (user_version PRAGMA)
     - per-table row counts (system tables excluded)
@@ -9244,7 +9244,7 @@ vacuum:
     process.exit(data.ok ? 0 : 4);
   }
   if (sub !== 'status') {
-    console.error(`unknown subcommand: od daemon db ${sub}`);
+    console.error(`unknown subcommand: capt daemon db ${sub}`);
     process.exit(2);
   }
   const resp = await fetch(`${base}/api/daemon/db`);
@@ -9345,7 +9345,7 @@ async function runDaemonStop(flags) {
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od atoms / od skills / od design-systems / od craft / od status
+// Subcommand: capt atoms / capt skills / capt design-systems / capt craft / capt status
 //
 // Plan §3.H2 / §3.H3 / spec §12.2 — design-library + status introspection
 // CLI parity. Every UI feature reachable via /api/* gets a CLI mirror
@@ -9359,9 +9359,9 @@ async function libraryDaemonUrl(flags) {
 async function runAtoms(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od atoms list             List first-party atoms (implemented + planned).
-  od atoms show <id>        Print one atom's metadata.
-  od atoms info <id>        Print metadata + the bundled SKILL.md body.
+  capt atoms list             List first-party atoms (implemented + planned).
+  capt atoms show <id>        Print one atom's metadata.
+  capt atoms info <id>        Print metadata + the bundled SKILL.md body.
 
 Common options:
   --daemon-url <url>   CapyDesign daemon HTTP base.
@@ -9387,7 +9387,7 @@ Common options:
     case 'show': {
       const id = rest.find((a) => !a.startsWith('-'));
       if (!id) {
-        console.error('Usage: od atoms show <id>');
+        console.error('Usage: capt atoms show <id>');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/atoms`);
@@ -9404,7 +9404,7 @@ Common options:
     case 'info': {
       const id = rest.find((a) => !a.startsWith('-'));
       if (!id) {
-        console.error('Usage: od atoms info <id>');
+        console.error('Usage: capt atoms info <id>');
         process.exit(2);
       }
       const resp = await fetch(`${base}/api/atoms/${encodeURIComponent(id)}`);
@@ -9430,13 +9430,13 @@ Common options:
       return;
     }
     default:
-      console.error(`unknown subcommand: od atoms ${sub}`);
+      console.error(`unknown subcommand: capt atoms ${sub}`);
       process.exit(2);
   }
 }
 
 function printLibraryHelp() {
-  console.log(`Usage: od library <command> [options]
+  console.log(`Usage: capt library <command> [options]
 
 Commands:
   list                      List library assets. Filters: --kind --tag --source --date
@@ -9516,7 +9516,7 @@ async function runLibrary(args) {
       case 'get': {
         const id = pos[0];
         if (!id) {
-          console.error('Usage: od library get <id>');
+          console.error('Usage: capt library get <id>');
           process.exit(2);
         }
         const resp = await fetch(`${base}/api/library/assets/${encodeURIComponent(id)}`);
@@ -9526,7 +9526,7 @@ async function runLibrary(args) {
       case 'rm': {
         const id = pos[0];
         if (!id) {
-          console.error('Usage: od library rm <id>');
+          console.error('Usage: capt library rm <id>');
           process.exit(2);
         }
         const resp = await fetch(`${base}/api/library/assets/${encodeURIComponent(id)}`, {
@@ -9540,7 +9540,7 @@ async function runLibrary(args) {
       case 'import': {
         const sources = pos;
         if (!sources.length) {
-          console.error('Usage: od library import <file|url> [<file|url> ...]');
+          console.error('Usage: capt library import <file|url> [<file|url> ...]');
           process.exit(2);
         }
         const { readFile } = await import('node:fs/promises');
@@ -9595,11 +9595,11 @@ async function runLibrary(args) {
       case 'apply': {
         const id = pos[0];
         if (!id) {
-          console.error('Usage: od library apply <id> --project <projectId> [--dir <subdir>]');
+          console.error('Usage: capt library apply <id> --project <projectId> [--dir <subdir>]');
           process.exit(2);
         }
         if (!flags.project) {
-          console.error('Usage: od library apply <id> --project <projectId> [--dir <subdir>]');
+          console.error('Usage: capt library apply <id> --project <projectId> [--dir <subdir>]');
           process.exit(2);
         }
         const body = { projectId: flags.project };
@@ -9619,7 +9619,7 @@ async function runLibrary(args) {
       case 'edit-as-page': {
         const id = pos[0];
         if (!id) {
-          console.error('Usage: od library edit-as-page <id>');
+          console.error('Usage: capt library edit-as-page <id>');
           process.exit(2);
         }
         const resp = await fetch(`${base}/api/library/assets/${encodeURIComponent(id)}/edit-as-page`, {
@@ -9636,7 +9636,7 @@ async function runLibrary(args) {
       case 'figma': {
         const id = pos[0];
         if (!id) {
-          console.error('Usage: od library figma <id> [--out <file>]');
+          console.error('Usage: capt library figma <id> [--out <file>]');
           process.exit(2);
         }
         const resp = await fetch(`${base}/api/library/assets/${encodeURIComponent(id)}/figma`);
@@ -9676,7 +9676,7 @@ async function runLibrary(args) {
         return;
       }
       default:
-        console.error(`unknown subcommand: od library ${sub}`);
+        console.error(`unknown subcommand: capt library ${sub}`);
         printLibraryHelp();
         process.exit(2);
     }
@@ -9689,8 +9689,8 @@ async function runLibrary(args) {
 async function runLibraryList(name, args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od ${name} list           List ${name}.
-  od ${name} show <id>      Print one entry.`);
+  capt ${name} list           List ${name}.
+  capt ${name} show <id>      Print one entry.`);
     process.exit(args.length === 0 ? 2 : 0);
   }
   const sub = args[0];
@@ -9721,7 +9721,7 @@ async function runLibraryList(name, args) {
     case 'show': {
       const id = positionalArgs(rest, LIBRARY_STRING_FLAGS)[0];
       if (!id) {
-        console.error(`Usage: od ${name} show <id>`);
+        console.error(`Usage: capt ${name} show <id>`);
         process.exit(2);
       }
       const resp = await fetch(`${base}${apiPath}/${encodeURIComponent(id)}`, {
@@ -9735,12 +9735,12 @@ async function runLibraryList(name, args) {
       return;
     }
     default:
-      console.error(`unknown subcommand: od ${name} ${sub}`);
+      console.error(`unknown subcommand: capt ${name} ${sub}`);
       process.exit(2);
   }
 }
 
-// `od skills` lists; `od skills uninstall <id>` removes a user-installed skill.
+// `capt skills` lists; `capt skills uninstall <id>` removes a user-installed skill.
 // The uninstall arm exists because the Extensions page grew a 卸载 action, and a
 // capability that only one surface can reach is not shippable (AGENTS.md,
 // "Capability exposure (UI/CLI dual-track)"). Bundled skills are refused by the
@@ -9748,12 +9748,12 @@ async function runLibraryList(name, args) {
 async function runSkills(args) {
   if (!args[0] || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od skill install <https://github.com/owner/repo|github:owner/repo|https://…tar.gz|https://…tgz> [--json]
-  od skill list [--workspace <id> --workspace-member <id>]
-  od skill show <id> [--workspace <id> --workspace-member <id>]
-  od skill uninstall <id>
+  capt skill install <https://github.com/owner/repo|github:owner/repo|https://…tar.gz|https://…tgz> [--json]
+  capt skill list [--workspace <id> --workspace-member <id>]
+  capt skill show <id> [--workspace <id> --workspace-member <id>]
+  capt skill uninstall <id>
 
-\`od skills …\` remains an alias for compatibility.`);
+\`capt skills …\` remains an alias for compatibility.`);
     process.exit(args[0] ? 0 : 2);
   }
   if (args[0] === 'install' || args[0] === 'add') return runSkillInstall(args.slice(1));
@@ -9769,7 +9769,7 @@ async function runSkillInstall(rest) {
   const source = positionalArgs(rest, LIBRARY_STRING_FLAGS)[0];
   if (!source) {
     console.error(
-      'Usage: od skill install <https://github.com/owner/repo|github:owner/repo|https://…tar.gz|https://…tgz> [--json] [--daemon-url <url>]',
+      'Usage: capt skill install <https://github.com/owner/repo|github:owner/repo|https://…tar.gz|https://…tgz> [--json] [--daemon-url <url>]',
     );
     process.exit(2);
   }
@@ -9808,7 +9808,7 @@ async function runSkillUninstall(rest) {
   const flags = parseFlags(rest, { string: LIBRARY_STRING_FLAGS, boolean: LIBRARY_BOOLEAN_FLAGS });
   const id = positionalArgs(rest, LIBRARY_STRING_FLAGS)[0];
   if (!id) {
-    console.error('Usage: od skills uninstall <id> [--json] [--daemon-url <url>]');
+    console.error('Usage: capt skills uninstall <id> [--json] [--daemon-url <url>]');
     process.exit(2);
   }
   const base = (await libraryDaemonUrl(flags)).replace(/\/$/, '');
@@ -9845,7 +9845,7 @@ async function runDesignSystems(args) {
   return runLibraryList('design-systems', args);
 }
 
-// od design-systems download <id> [--out <path>] [--json] [--daemon-url <url>]
+// capt design-systems download <id> [--out <path>] [--json] [--daemon-url <url>]
 //
 // Streams GET /api/design-systems/:id/archive — the same self-contained brand
 // .zip (every system file plus a generated SKILLS.md usage guide) the web
@@ -9854,7 +9854,7 @@ async function runDesignSystems(args) {
 async function runDesignSystemDownload(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od design-systems download <id> [--out <path>] [--json] [--daemon-url <url>]
+  capt design-systems download <id> [--out <path>] [--json] [--daemon-url <url>]
 
 Downloads an editable design system as a shareable .zip (all files plus a
 generated SKILLS.md usage guide).
@@ -9868,7 +9868,7 @@ generated SKILLS.md usage guide).
   const workspaceHeaders = workspaceHeadersFromExplicitFlags(flags) ?? {};
   const id = positionalArgs(args, stringFlags)[0];
   if (!id) {
-    console.error('Usage: od design-systems download <id> [--out <path>]');
+    console.error('Usage: capt design-systems download <id> [--out <path>]');
     process.exit(2);
   }
   const base = (await libraryDaemonUrl(flags)).replace(/\/$/, '');
@@ -9909,7 +9909,7 @@ generated SKILLS.md usage guide).
   console.log(`Downloaded ${id} -> ${out} (${buffer.length} bytes)`);
 }
 
-// od design-systems import-local <path> [--name <name>]
+// capt design-systems import-local <path> [--name <name>]
 //   [--import-mode <mode>] [--craft <slug,slug>] [--json] [--daemon-url <url>]
 //
 // Imports a local app/design-system project through the same daemon endpoint as
@@ -9918,8 +9918,8 @@ generated SKILLS.md usage guide).
 async function runDesignSystemImportLocal(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od design-systems import-local <path> [--name <name>] [--import-mode <mode>] [--craft <slugs>] [--json] [--daemon-url <url>]
-  od design-systems import-local --path <path> [--name <name>] [--json]
+  capt design-systems import-local <path> [--name <name>] [--import-mode <mode>] [--craft <slugs>] [--json] [--daemon-url <url>]
+  capt design-systems import-local --path <path> [--name <name>] [--json]
 
 Imports a local project directory as an editable CapyDesign design system.
 
@@ -9934,7 +9934,7 @@ Imports a local project directory as an editable CapyDesign design system.
   const flags = parseFlags(args, { string: stringFlags, boolean: LIBRARY_BOOLEAN_FLAGS });
   const localPath = typeof flags.path === 'string' ? flags.path : positionalArgs(args, stringFlags)[0];
   if (!localPath) {
-    console.error('Usage: od design-systems import-local <path>');
+    console.error('Usage: capt design-systems import-local <path>');
     process.exit(2);
   }
   const pathModule = await import('node:path');
@@ -9944,13 +9944,13 @@ Imports a local project directory as an editable CapyDesign design system.
   return postDesignSystemImport(flags, '/api/design-systems/import/local', body);
 }
 
-// od design-systems import-github <url> [--branch <branch>] [--name <name>]
+// capt design-systems import-github <url> [--branch <branch>] [--name <name>]
 //   [--import-mode <mode>] [--craft <slug,slug>] [--json] [--daemon-url <url>]
 async function runDesignSystemImportGithub(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od design-systems import-github <url> [--branch <branch>] [--name <name>] [--import-mode <mode>] [--craft <slugs>] [--json] [--daemon-url <url>]
-  od design-systems import-github --url <url> [--branch <branch>] [--json]
+  capt design-systems import-github <url> [--branch <branch>] [--name <name>] [--import-mode <mode>] [--craft <slugs>] [--json] [--daemon-url <url>]
+  capt design-systems import-github --url <url> [--branch <branch>] [--json]
 
 Imports a public GitHub repository as an editable CapyDesign design system.
 
@@ -9966,7 +9966,7 @@ Imports a public GitHub repository as an editable CapyDesign design system.
   const flags = parseFlags(args, { string: stringFlags, boolean: LIBRARY_BOOLEAN_FLAGS });
   const url = typeof flags.url === 'string' ? flags.url : positionalArgs(args, stringFlags)[0];
   if (!url) {
-    console.error('Usage: od design-systems import-github <url>');
+    console.error('Usage: capt design-systems import-github <url>');
     process.exit(2);
   }
   const body = designSystemImportRequestBody(flags, {
@@ -10009,7 +10009,7 @@ async function postDesignSystemImport(flags, endpoint, body) {
   }
 }
 
-// od design-systems rebuild-token-contract <id> [--force] [--json]
+// capt design-systems rebuild-token-contract <id> [--force] [--json]
 //
 // Starts the same review-gated token contract rebuild job exposed in the web
 // design-system detail view. Without --force the daemon only queues a job when
@@ -10017,7 +10017,7 @@ async function postDesignSystemImport(flags, endpoint, body) {
 async function runDesignSystemTokenContractRebuild(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od design-systems rebuild-token-contract <id> [--force] [--json] [--daemon-url <url>]
+  capt design-systems rebuild-token-contract <id> [--force] [--json] [--daemon-url <url>]
 
 Starts a review-gated TOKEN_SCHEMA token contract rebuild for an editable imported design system.
 
@@ -10031,7 +10031,7 @@ Starts a review-gated TOKEN_SCHEMA token contract rebuild for an editable import
   });
   const id = positionalArgs(args, LIBRARY_STRING_FLAGS)[0];
   if (!id) {
-    console.error('Usage: od design-systems rebuild-token-contract <id>');
+    console.error('Usage: capt design-systems rebuild-token-contract <id>');
     process.exit(2);
   }
   const base = (await libraryDaemonUrl(flags)).replace(/\/$/, '');
@@ -10052,7 +10052,7 @@ Starts a review-gated TOKEN_SCHEMA token contract rebuild for an editable import
   console.log(`Token contract rebuild not queued for ${id}: ${decision?.reason ?? 'no rebuild needed'}`);
 }
 
-// od design-systems import-shadcn <reference> [--name <name>]
+// capt design-systems import-shadcn <reference> [--name <name>]
 //   [--import-mode <mode>] [--craft <slug,slug>] [--json] [--daemon-url <url>]
 //
 // Imports a shadcn registry item as an editable user design system via
@@ -10063,7 +10063,7 @@ Starts a review-gated TOKEN_SCHEMA token contract rebuild for an editable import
 async function runDesignSystemImportShadcn(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od design-systems import-shadcn <reference> [--name <name>] [--import-mode <mode>] [--craft <slugs>] [--json] [--daemon-url <url>]
+  capt design-systems import-shadcn <reference> [--name <name>] [--import-mode <mode>] [--craft <slugs>] [--json] [--daemon-url <url>]
 
 Imports a shadcn registry item as an CapyDesign design system.
 
@@ -10078,14 +10078,14 @@ Imports a shadcn registry item as an CapyDesign design system.
   const flags = parseFlags(args, { string: stringFlags, boolean: LIBRARY_BOOLEAN_FLAGS });
   const reference = positionalArgs(args, stringFlags)[0];
   if (!reference) {
-    console.error('Usage: od design-systems import-shadcn <reference>');
+    console.error('Usage: capt design-systems import-shadcn <reference>');
     process.exit(2);
   }
   const body = designSystemImportRequestBody(flags, { reference });
   return postDesignSystemImport(flags, '/api/design-systems/import/shadcn', body);
 }
 
-// od design-systems rename <id> --title <new-title> [--json]
+// capt design-systems rename <id> --title <new-title> [--json]
 // Renames an editable (user-created) design system via PATCH
 // /api/design-systems/:id. Built-in systems are read-only and the daemon
 // returns 404, surfaced here as a structured failure. Arg parsing lives in
@@ -10093,15 +10093,15 @@ Imports a shadcn registry item as an CapyDesign design system.
 async function runDesignSystemRename(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od design-systems rename <id> --title <new-title> [--json] [--daemon-url <url>]
-  od design-systems rename <id> "<new title>" [--json]
+  capt design-systems rename <id> --title <new-title> [--json] [--daemon-url <url>]
+  capt design-systems rename <id> "<new title>" [--json]
 
 Renames an editable (user-created) design system. Built-in systems are read-only.`);
     process.exit(args.length === 0 ? 2 : 0);
   }
   const parsed = parseDesignSystemRenameArgs(args);
   if (!parsed) {
-    console.error('Usage: od design-systems rename <id> --title <new-title>');
+    console.error('Usage: capt design-systems rename <id> --title <new-title>');
     process.exit(2);
   }
   const flags = parseFlags(args, {
@@ -10123,17 +10123,17 @@ Renames an editable (user-created) design system. Built-in systems are read-only
 }
 
 async function runStatus(args) {
-  // Alias of `od daemon status`.
+  // Alias of `capt daemon status`.
   return runDaemon(['status', ...args]);
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od diagnostics export <path> [--json]
+// Subcommand: capt diagnostics export <path> [--json]
 //
 // CLI surface for the Settings → About “Export diagnostics” feature. The
 // daemon already exposes the bundle behind a local-loopback HTTP endpoint;
 // this command is a thin shell over that endpoint so headless callers (CI,
-// `od doctor` follow-ups, shell scripts) can collect a support bundle
+// `capt doctor` follow-ups, shell scripts) can collect a support bundle
 // without driving the web UI.
 // ---------------------------------------------------------------------------
 
@@ -10141,7 +10141,7 @@ async function runDiagnostics(args) {
   const sub = args[0];
   if (!sub || sub === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od diagnostics export [<path>] [--output <path>] [--json] [--daemon-url <url>]
+  capt diagnostics export [<path>] [--output <path>] [--json] [--daemon-url <url>]
 
 Bundles daemon/web/desktop logs, machine info, and recent crash reports
 into a zip. The bundle is the same one Settings → About → Export
@@ -10157,7 +10157,7 @@ diagnostics produces.
     process.exit(0);
   }
   if (sub !== 'export') {
-    console.error(`unknown subcommand: od diagnostics ${sub}`);
+    console.error(`unknown subcommand: capt diagnostics ${sub}`);
     process.exit(2);
   }
 
@@ -10169,7 +10169,7 @@ diagnostics produces.
   const base = (await libraryDaemonUrl(flags)).replace(/\/$/, '');
 
   const { DIAGNOSTICS_EXPORT_PATH, DIAGNOSTICS_FILENAME_PREFIX, diagnosticsFileName } =
-    await import('@open-design/diagnostics');
+    await import('@capydesign/diagnostics');
   const fs = await import('node:fs/promises');
   const path = await import('node:path');
 
@@ -10221,7 +10221,7 @@ async function runVersion(args) {
   console.log(version);
 }
 
-// `od whats-new` — CLI mirror of the home-surface post-update highlights
+// `capt whats-new` — CLI mirror of the home-surface post-update highlights
 // card. Prints the current hand-curated "what's new" highlight (or a note
 // when there is none right now), from the same /api/whats-new endpoint the
 // web UI reads.
@@ -10229,7 +10229,7 @@ async function runWhatsNew(args) {
   const flags = parseFlags(args, { string: LIBRARY_STRING_FLAGS, boolean: LIBRARY_BOOLEAN_FLAGS });
   if (flags.help || flags.h) {
     console.log(`Usage:
-  od whats-new [--json]   Print the current release highlight, if any.`);
+  capt whats-new [--json]   Print the current release highlight, if any.`);
     process.exit(0);
   }
   const base = (await libraryDaemonUrl(flags)).replace(/\/$/, '');
@@ -10255,17 +10255,17 @@ async function runWhatsNew(args) {
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od doctor / od config (Phase 4 CLI parity tail).
+// Subcommand: capt doctor / capt config (Phase 4 CLI parity tail).
 //
 // Plan §3.I2 / spec §12.2.
 //
-// `od doctor` — repo-wide diagnostics. Hits /api/daemon/status, lists
+// `capt doctor` — repo-wide diagnostics. Hits /api/daemon/status, lists
 // installed plugins + runs the per-plugin doctor, lists skills /
 // design-systems / craft / atoms. Exits non-zero when any plugin
 // doctor returns ok=false. Useful in CI: a failed exit causes the
 // pipeline to surface plugin-system regressions.
 //
-// `od config get/set/list/unset` — wraps GET/PUT /api/app-config so a
+// `capt config get/set/list/unset` — wraps GET/PUT /api/app-config so a
 // code agent can flip provider keys / orbit settings / pet config
 // without leaving the terminal. JSON values pass through unchanged;
 // scalar strings/numbers/booleans are coerced.
@@ -10275,7 +10275,7 @@ async function runDoctor(args) {
   const flags = parseFlags(args, { string: CONFIG_STRING_FLAGS, boolean: CONFIG_BOOLEAN_FLAGS });
   if (flags.help || flags.h) {
     console.log(`Usage:
-  od doctor [--json]   Print a daemon + plugin + design-library health summary.
+  capt doctor [--json]   Print a daemon + plugin + design-library health summary.
 
 Exit code is non-zero when any installed plugin's doctor returns ok=false
 or the daemon cannot be reached.`);
@@ -10388,12 +10388,12 @@ or the daemon cannot be reached.`);
 async function runConfig(args) {
   if (args.length === 0 || args[0] === 'help' || args.includes('--help') || args.includes('-h')) {
     console.log(`Usage:
-  od config list                      Print the full app config as JSON.
-  od config get <key>                 Print one top-level key.
-  od config set <key> <value>         Set a top-level key (string / number / boolean).
-  od config set <key> --value-json '<json>'
+  capt config list                      Print the full app config as JSON.
+  capt config get <key>                 Print one top-level key.
+  capt config set <key> <value>         Set a top-level key (string / number / boolean).
+  capt config set <key> --value-json '<json>'
                                        Set a key to a JSON value.
-  od config unset <key>               Remove a top-level key.
+  capt config unset <key>               Remove a top-level key.
 
 Common options:
   --daemon-url <url>   CapyDesign daemon HTTP base.
@@ -10430,7 +10430,7 @@ Common options:
     case 'get': {
       const key = rest.find((a) => !a.startsWith('-'));
       if (!key) {
-        console.error('Usage: od config get <key>');
+        console.error('Usage: capt config get <key>');
         process.exit(2);
       }
       const cfg = await fetchConfig();
@@ -10448,7 +10448,7 @@ Common options:
         && a !== flags['value-json']);
       const [key, scalarValue] = positional;
       if (!key) {
-        console.error('Usage: od config set <key> <value> | od config set <key> --value-json <json>');
+        console.error('Usage: capt config set <key> <value> | capt config set <key> --value-json <json>');
         process.exit(2);
       }
       let parsed;
@@ -10478,7 +10478,7 @@ Common options:
     case 'unset': {
       const key = rest.find((a) => !a.startsWith('-'));
       if (!key) {
-        console.error('Usage: od config unset <key>');
+        console.error('Usage: capt config unset <key>');
         process.exit(2);
       }
       const cfg = await fetchConfig();
@@ -10493,13 +10493,13 @@ Common options:
       return;
     }
     default:
-      console.error(`unknown subcommand: od config ${sub}`);
+      console.error(`unknown subcommand: capt config ${sub}`);
       process.exit(2);
   }
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od memory …
+// Subcommand: capt memory …
 //
 // Headless surface for the same editable markdown memory tree shown in
 // Settings. Agents can inspect what will be injected into future prompts,
@@ -10508,54 +10508,54 @@ Common options:
 
 function printMemoryHelp() {
   console.log(`Usage:
-  od memory tree list [--json]
+  capt memory tree list [--json]
       List derived memory-tree folders and entry nodes.
 
-  od memory tree view <id> [--json]
+  capt memory tree view <id> [--json]
       Print one folder node or entry body.
 
-  od memory tree edit <id> [--name <title>] [--description <text>]
+  capt memory tree edit <id> [--name <title>] [--description <text>]
                        [--type user|feedback|project|reference]
                        [--body <markdown> | --body-file <path|->] [--json]
       Patch an editable entry node. Folder nodes are derived from entry types.
 
-  od memory tree move <id> --type user|feedback|project|reference [--json]
+  capt memory tree move <id> --type user|feedback|project|reference [--json]
       Move an entry node to a different memory bucket while preserving its id.
 
-  od memory profile show [--json]
+  capt memory profile show [--json]
       Print the singleton structured user profile (the PRE-loop reads this to
       expand a short query into a brief), or "no profile yet" when unset.
 
-  od memory profile set [--field "Label=Value" ...] [--prompt-file <path|->]
+  capt memory profile set [--field "Label=Value" ...] [--prompt-file <path|->]
                         [--description <text>] [--json]
       Upsert the user_profile entry. --field merges by label into the existing
       profile body; --prompt-file (path or - for stdin) replaces the body
       verbatim. Combine both: --prompt-file seeds the body, --field overrides.
 
-  od memory rule list [--json]
+  capt memory rule list [--json]
       List verified rule memories (name + description). The POST loop enforces
       these as scorecard rubric items.
 
-  od memory rule add --name <name> --assertion <text> --check <text>
+  capt memory rule add --name <name> --assertion <text> --check <text>
                      [--description <text>] [--rationale <text>]
                      [--prompt-file <path|->] [--json]
       Add a rule. The body is "Assertion: …\nCheck: …" (plus an optional
       Rationale line), or the verbatim --prompt-file content when supplied.
 
-  od memory rule suggest --note <text> [--target <label>] [--file <path>]
+  capt memory rule suggest --note <text> [--target <label>] [--file <path>]
                          [--current-text <text>] [--json]
-  od memory rule suggest --prompt-file <path|-> [--json]
+  capt memory rule suggest --prompt-file <path|-> [--json]
       Distil annotations into candidate rule proposals (display-only). Pass one
       annotation via --note, or a JSON array of annotations / one note per line
-      via --prompt-file. Keep one with: od memory rule add.
+      via --prompt-file. Keep one with: capt memory rule add.
 
-  od memory verify [list] [--json]
+  capt memory verify [list] [--json]
       List recent POST self-verify enforcement outcomes (pass/fail/missing) the
       daemon recorded for artifact turns with active rules.
-  od memory verify clear [--json]
+  capt memory verify clear [--json]
       Drop the in-memory verification history.
 
-  od memory config [--enabled true|false] [--extraction true|false]
+  capt memory config [--enabled true|false] [--extraction true|false]
                    [--profile true|false] [--rewrite true|false]
                    [--verify true|false] [--json]
       With no toggle flags, print every memory switch. With flags, PATCH the
@@ -10661,7 +10661,7 @@ async function fetchMemoryEntry(base, id) {
   return data.entry ?? data;
 }
 
-// Read the verbatim prose body for `od memory profile set` / `rule add`.
+// Read the verbatim prose body for `capt memory profile set` / `rule add`.
 // Accepts `--prompt-file <path>` or `--prompt-file -` (stdin). Returns
 // undefined when neither is supplied so the caller can fall back to flags.
 async function readMemoryPromptFile(flags) {
@@ -10684,7 +10684,7 @@ async function readMemoryPromptFile(flags) {
 
 // Collect repeated `--field "Label=Value"` flags from the raw argv slice.
 // parseFlags collapses duplicate keys, so we scan manually like `--input`
-// in `od plugin apply`. Returns an ordered list of {label, value} pairs.
+// in `capt plugin apply`. Returns an ordered list of {label, value} pairs.
 function collectMemoryFieldFlags(rest) {
   const out = [];
   for (let i = 0; i < rest.length; i++) {
@@ -10746,7 +10746,7 @@ function printMemoryProfile(entry) {
   printMemoryEntry(entry);
 }
 
-// `od memory config` reads every switch off GET /api/memory (the master
+// `capt memory config` reads every switch off GET /api/memory (the master
 // `enabled`, the extraction hook `chatExtractionEnabled`, and the three new
 // loop hooks). The new flags may be absent from older daemons / before the
 // route patch lands, so we coalesce missing booleans to a printable dash.
@@ -10769,11 +10769,11 @@ async function runMemory(args) {
     && topic !== 'config'
     && topic !== 'verify'
   ) {
-    console.error(`unknown subcommand: od memory ${topic}`);
+    console.error(`unknown subcommand: capt memory ${topic}`);
     printMemoryHelp();
     process.exit(2);
   }
-  // `od memory config` takes no inner action verb; the others are
+  // `capt memory config` takes no inner action verb; the others are
   // `<topic> <action>` and re-scan positionals below for the verb.
   const rest = args.slice(1);
   let flags;
@@ -10822,7 +10822,7 @@ async function runMemory(args) {
   if (action === 'view') {
     const id = parts[1];
     if (!id) {
-      console.error('Usage: od memory tree view <id>');
+      console.error('Usage: capt memory tree view <id>');
       process.exit(2);
     }
     const treeData = await fetchMemoryTree(base);
@@ -10853,7 +10853,7 @@ async function runMemory(args) {
   if (action === 'edit') {
     const id = parts[1];
     if (!id) {
-      console.error('Usage: od memory tree edit <id> [--name ...] [--description ...] [--type ...] [--body ...|--body-file ...]');
+      console.error('Usage: capt memory tree edit <id> [--name ...] [--description ...] [--type ...] [--body ...|--body-file ...]');
       process.exit(2);
     }
     const body = {};
@@ -10876,7 +10876,7 @@ async function runMemory(args) {
     const id = parts[1];
     const type = flags.type ?? parts[2];
     if (!id || !type) {
-      console.error('Usage: od memory tree move <id> --type user|feedback|project|reference');
+      console.error('Usage: capt memory tree move <id> --type user|feedback|project|reference');
       process.exit(2);
     }
     const data = await patchMemoryTreeNode(base, id, { type });
@@ -10885,12 +10885,12 @@ async function runMemory(args) {
     return;
   }
 
-  console.error(`unknown subcommand: od memory tree ${action}`);
+  console.error(`unknown subcommand: capt memory tree ${action}`);
   printMemoryHelp();
   process.exit(2);
 }
 
-// `od memory profile <show|set>` — the singleton structured user profile the
+// `capt memory profile <show|set>` — the singleton structured user profile the
 // PRE loop (intent gateway) reads to expand a short query into a full brief.
 // Same store as every other memory entry; the well-known id is `user_profile`.
 async function runMemoryProfile(base, rest, flags, writeJson) {
@@ -10909,7 +10909,7 @@ async function runMemoryProfile(base, rest, flags, writeJson) {
     const fields = collectMemoryFieldFlags(rest);
     const promptBody = await readMemoryPromptFile(flags);
     if (fields.length === 0 && typeof promptBody !== 'string') {
-      console.error('Usage: od memory profile set [--field "Label=Value" ...] [--prompt-file <path|->] [--description <text>]');
+      console.error('Usage: capt memory profile set [--field "Label=Value" ...] [--prompt-file <path|->] [--description <text>]');
       process.exit(2);
     }
     const existing = await fetchMemoryEntry(base, PROFILE_ID);
@@ -10950,12 +10950,12 @@ async function runMemoryProfile(base, rest, flags, writeJson) {
     return;
   }
 
-  console.error(`unknown subcommand: od memory profile ${action}`);
+  console.error(`unknown subcommand: capt memory profile ${action}`);
   printMemoryHelp();
   process.exit(2);
 }
 
-// `od memory rule <list|add>` — verified rules (assertion + check) the POST
+// `capt memory rule <list|add>` — verified rules (assertion + check) the POST
 // self-verify loop enforces as scorecard rubric items.
 async function runMemoryRule(base, rest, flags, writeJson) {
   const parts = memoryPositionals(rest);
@@ -10986,7 +10986,7 @@ async function runMemoryRule(base, rest, flags, writeJson) {
   if (action === 'add') {
     const name = flags.name;
     if (typeof name !== 'string' || name.length === 0) {
-      console.error('Usage: od memory rule add --name <name> --assertion <text> --check <text> [--description <text>] [--rationale <text>] [--prompt-file <path|->]');
+      console.error('Usage: capt memory rule add --name <name> --assertion <text> --check <text> [--description <text>] [--rationale <text>] [--prompt-file <path|->]');
       process.exit(2);
     }
     // --prompt-file content becomes the rule body verbatim; otherwise we
@@ -11035,13 +11035,13 @@ async function runMemoryRule(base, rest, flags, writeJson) {
   if (action === 'suggest') {
     // Distil annotations into rule proposals (THREAD 1). Display-only: the
     // daemon never writes; the user Keeps a proposal (web) or pipes it into
-    // `od memory rule add` (CLI) to commit it. Annotations come from a single
+    // `capt memory rule add` (CLI) to commit it. Annotations come from a single
     // --note (+ optional --target/--file/--current-text) or a --prompt-file
     // carrying a JSON array of annotation objects or newline-separated notes.
     const annotations = await collectDistillAnnotations(flags);
     if (annotations.length === 0) {
-      console.error('Usage: od memory rule suggest --note <text> [--target <label>] [--file <path>] [--current-text <text>]');
-      console.error('   or: od memory rule suggest --prompt-file <path|->   (JSON array of annotations, or one note per line)');
+      console.error('Usage: capt memory rule suggest --note <text> [--target <label>] [--file <path>] [--current-text <text>]');
+      console.error('   or: capt memory rule suggest --prompt-file <path|->   (JSON array of annotations, or one note per line)');
       process.exit(2);
     }
     let resp;
@@ -11071,16 +11071,16 @@ async function runMemoryRule(base, rest, flags, writeJson) {
       console.log(`  Check: ${p.check}`);
       if (p.rationale) console.log(`  Rationale: ${p.rationale}`);
     }
-    console.log('\nTo keep one: od memory rule add --name "<name>" --assertion "<...>" --check "<...>"');
+    console.log('\nTo keep one: capt memory rule add --name "<name>" --assertion "<...>" --check "<...>"');
     return;
   }
 
-  console.error(`unknown subcommand: od memory rule ${action}`);
+  console.error(`unknown subcommand: capt memory rule ${action}`);
   printMemoryHelp();
   process.exit(2);
 }
 
-// Collect annotation inputs for `od memory rule suggest` from either a single
+// Collect annotation inputs for `capt memory rule suggest` from either a single
 // --note (+ optional target context) or a --prompt-file. The prompt-file may
 // hold a JSON array of annotation objects, or plain text with one note per
 // line — both keep the --prompt-file embeddability contract clean for jobs
@@ -11133,7 +11133,7 @@ async function collectDistillAnnotations(flags) {
   return annotations;
 }
 
-// `od memory verify <list|clear>` — inspect or wipe the POST self-verify
+// `capt memory verify <list|clear>` — inspect or wipe the POST self-verify
 // enforcement history (THREAD 2). `list` prints recent enforcement outcomes
 // (`pass` / `fail` / `missing`) the daemon recorded for artifact turns with
 // active rules; `clear` drops the in-memory buffer.
@@ -11185,12 +11185,12 @@ async function runMemoryVerify(base, rest, flags, writeJson) {
     return;
   }
 
-  console.error(`unknown subcommand: od memory verify ${action}`);
+  console.error(`unknown subcommand: capt memory verify ${action}`);
   printMemoryHelp();
   process.exit(2);
 }
 
-// `od memory config` — inspect or toggle the master switch + the four hooks.
+// `capt memory config` — inspect or toggle the master switch + the four hooks.
 // No flags ⇒ print every switch (read off GET /api/memory). Toggle flags ⇒
 // PATCH /api/memory/config and print the result. Flags accept true|false.
 async function runMemoryConfig(base, rest, flags, writeJson) {
@@ -11267,7 +11267,7 @@ async function runMemoryConfig(base, rest, flags, writeJson) {
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od automation …
+// Subcommand: capt automation …
 //
 // Headless surface for the Automations tab. This is the dual-track contract:
 // every capability the Automations UI exposes is reachable here so an
@@ -11445,22 +11445,22 @@ async function readPromptFromFlags(flags) {
 
 function printAutomationHelp() {
   console.log(`Usage:
-  od automation template list                                List built-in automation templates.
-  od automation template get <id>                            Print one built-in automation template.
-  od automation source ingest --source-kind <kind> --title <title>
+  capt automation template list                                List built-in automation templates.
+  capt automation template get <id>                            Print one built-in automation template.
+  capt automation source ingest --source-kind <kind> --title <title>
                               [--source-ref <ref>] [--template <id>]
                               [--body <markdown> | --body-file <path|->]
                               [--connector <id>] [--compression off|balanced|aggressive]
                               [--json]
-  od automation source list [--limit 20] [--json]             List ingested source packets.
-  od automation source get <id> [--json]                      Print one source packet.
-  od automation proposal list [--status pending-review]       List self-evolution proposals.
-  od automation proposal get <id>                             Print one proposal.
-  od automation proposal apply <id>                           Apply a reviewable proposal.
-  od automation proposal reject <id> [--reason "<why>"]       Reject a reviewable proposal.
-  od automation list                                         List automations.
-  od automation get <id>                                     Print one automation.
-  od automation create --name "<title>" --prompt "<text>"
+  capt automation source list [--limit 20] [--json]             List ingested source packets.
+  capt automation source get <id> [--json]                      Print one source packet.
+  capt automation proposal list [--status pending-review]       List self-evolution proposals.
+  capt automation proposal get <id>                             Print one proposal.
+  capt automation proposal apply <id>                           Apply a reviewable proposal.
+  capt automation proposal reject <id> [--reason "<why>"]       Reject a reviewable proposal.
+  capt automation list                                         List automations.
+  capt automation get <id>                                     Print one automation.
+  capt automation create --name "<title>" --prompt "<text>"
                        --schedule <spec>
                        [--target new-project|reuse=<projectId>]
                        [--disabled] [--json]
@@ -11468,17 +11468,17 @@ function printAutomationHelp() {
                        [--skill <id>[,<id>]] [--plugin <id>[,<id>]]
                        [--mcp <id>[,<id>]] [--connector <id>[,<id>]]
                        [--agent <id>]
-  od automation update <id> [--name ...] [--prompt ...]
+  capt automation update <id> [--name ...] [--prompt ...]
                             [--schedule ...] [--target ...]
                             [--skill ...] [--plugin ...] [--mcp ...]
                             [--connector ...] [--enabled|--disabled]
                             Patch fields.
-  od automation run <id>                                       Trigger a manual run; prints projectId/conversationId.
-  od automation runs <id> [--limit 10]                         Print run history.
-  od automation crystallize-run <routineId> <runId> [--json]    Turn a succeeded run into skill/memory proposals.
-  od automation pause <id>                                     Mark disabled.
-  od automation resume <id>                                    Mark enabled.
-  od automation delete <id>                                    Remove the automation (history retained).
+  capt automation run <id>                                       Trigger a manual run; prints projectId/conversationId.
+  capt automation runs <id> [--limit 10]                         Print run history.
+  capt automation crystallize-run <routineId> <runId> [--json]    Turn a succeeded run into skill/memory proposals.
+  capt automation pause <id>                                     Mark disabled.
+  capt automation resume <id>                                    Mark enabled.
+  capt automation delete <id>                                    Remove the automation (history retained).
 
 Schedule formats:
   hourly:<minute>                    Every hour at :MM.
@@ -11537,7 +11537,7 @@ async function runAutomation(args) {
   const requireId = (label) => {
     const id = positionalArgs(rest)[0];
     if (!id) {
-      console.error(`Usage: od automation ${label} <id>`);
+      console.error(`Usage: capt automation ${label} <id>`);
       process.exit(2);
     }
     return id;
@@ -11587,7 +11587,7 @@ async function runAutomation(args) {
       if (action === 'get') {
         const id = parts[1];
         if (!id) {
-          console.error('Usage: od automation template get <id>');
+          console.error('Usage: capt automation template get <id>');
           process.exit(2);
         }
         let resp;
@@ -11601,7 +11601,7 @@ async function runAutomation(args) {
         const data = await resp.json();
         return writeJson(flags.json ? data : (data.template ?? data));
       }
-      console.error(`unknown subcommand: od automation template ${action}`);
+      console.error(`unknown subcommand: capt automation template ${action}`);
       printAutomationHelp();
       process.exit(2);
     }
@@ -11613,7 +11613,7 @@ async function runAutomation(args) {
       if (action === 'ingest') {
         const sourceKind = flags['source-kind'] ?? (sub === 'ingest' ? parts[0] : parts[1]);
         if (!sourceKind) {
-          console.error('Usage: od automation source ingest --source-kind <kind> --body-file <path|->');
+          console.error('Usage: capt automation source ingest --source-kind <kind> --body-file <path|->');
           process.exit(2);
         }
         const bodyMarkdown = await readAutomationIngestBody();
@@ -11700,7 +11700,7 @@ async function runAutomation(args) {
       if (action === 'get') {
         const id = parts[1];
         if (!id) {
-          console.error('Usage: od automation source get <id>');
+          console.error('Usage: capt automation source get <id>');
           process.exit(2);
         }
         let resp;
@@ -11713,7 +11713,7 @@ async function runAutomation(args) {
         if (!resp.ok) return structuredHttpFailure(resp);
         return writeJson(await resp.json());
       }
-      console.error(`unknown subcommand: od automation source ${action}`);
+      console.error(`unknown subcommand: capt automation source ${action}`);
       printAutomationHelp();
       process.exit(2);
     }
@@ -11754,7 +11754,7 @@ async function runAutomation(args) {
       if (action === 'get') {
         const id = parts[1];
         if (!id) {
-          console.error('Usage: od automation proposal get <id>');
+          console.error('Usage: capt automation proposal get <id>');
           process.exit(2);
         }
         let resp;
@@ -11770,7 +11770,7 @@ async function runAutomation(args) {
       if (action === 'apply' || action === 'reject') {
         const id = parts[1];
         if (!id) {
-          console.error(`Usage: od automation proposal ${action} <id>`);
+          console.error(`Usage: capt automation proposal ${action} <id>`);
           process.exit(2);
         }
         let resp;
@@ -11795,7 +11795,7 @@ async function runAutomation(args) {
         console.log(`[automation proposal] ${action === 'apply' ? 'applied' : 'rejected'} ${data.proposal?.id ?? id}`);
         return;
       }
-      console.error(`unknown subcommand: od automation proposal ${action}`);
+      console.error(`unknown subcommand: capt automation proposal ${action}`);
       printAutomationHelp();
       process.exit(2);
     }
@@ -11812,7 +11812,7 @@ async function runAutomation(args) {
       if (flags.json) return writeJson(data);
       const routines = data.routines ?? [];
       if (routines.length === 0) {
-        console.log('No automations. Create one with `od automation create --name "..." --prompt "..." --schedule daily:09:00`.');
+        console.log('No automations. Create one with `capt automation create --name "..." --prompt "..." --schedule daily:09:00`.');
         return;
       }
       console.log('# id\tname\tschedule\ttarget\tstatus\tnextRun');
@@ -11872,7 +11872,7 @@ async function runAutomation(args) {
       const routineId = parts[0];
       const runId = parts[1];
       if (!routineId || !runId) {
-        console.error('Usage: od automation crystallize-run <routineId> <runId> [--json]');
+        console.error('Usage: capt automation crystallize-run <routineId> <runId> [--json]');
         process.exit(2);
       }
       let resp;
@@ -12078,14 +12078,14 @@ async function runAutomation(args) {
       return;
     }
     default:
-      console.error(`unknown subcommand: od automation ${sub}`);
+      console.error(`unknown subcommand: capt automation ${sub}`);
       printAutomationHelp();
       process.exit(2);
   }
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: od deploy
+// Subcommand: capt deploy
 // ---------------------------------------------------------------------------
 
 async function runDeploy(args) {
@@ -12097,7 +12097,7 @@ async function runDeploy(args) {
     process.exit(2);
   }
   if (flags.help || flags.h) {
-    console.log(`Usage: od deploy <projectId> --file <fileName> [options]
+    console.log(`Usage: capt deploy <projectId> --file <fileName> [options]
 
 Required:
   <projectId>              Project id to deploy.
@@ -12120,7 +12120,7 @@ Options:
   const positionals = positionalArgs(args, DEPLOY_STRING_FLAGS);
   const projectId = positionals[0] ?? '';
   if (!projectId) {
-    console.error('projectId is required: od deploy <projectId> --file <fileName>');
+    console.error('projectId is required: capt deploy <projectId> --file <fileName>');
     process.exit(2);
   }
 

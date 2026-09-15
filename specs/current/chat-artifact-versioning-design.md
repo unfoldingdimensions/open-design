@@ -68,7 +68,7 @@ daemon 的 artifact diff 能识别创建/修改：小文件用 hash，大文件�
 
 ### 2.3 图片生成/编辑/覆盖链会覆盖原文件
 
-`od media generate` 接受显式 `output`，清洗后直接选为目标相对路径（`apps/daemon/src/media/index.ts:348-357, 488-493`）。生成完成后执行 `writeFile(finalTarget, bytes)`（`apps/daemon/src/media/index.ts:841-867`）。同名文件存在时会被覆盖，没有自动版本副本、历史 blob 或 snapshot ref。
+`capt media generate` 接受显式 `output`，清洗后直接选为目标相对路径（`apps/daemon/src/media/index.ts:348-357, 488-493`）。生成完成后执行 `writeFile(finalTarget, bytes)`（`apps/daemon/src/media/index.ts:841-867`）。同名文件存在时会被覆盖，没有自动版本副本、历史 blob 或 snapshot ref。
 
 自动文件名带时间戳，通常避免碰撞（`apps/daemon/src/media/index.ts:870-875`），但用户或 agent 明确要求“覆盖当前图”时会走同名 `output`，正好触发历史卡漂移。
 
@@ -468,14 +468,14 @@ render 故意不 await（一轮对话不该为了一张缩略图多等几秒）�
 
 消息 GET 由 daemon join `message_artifacts` 投影 `artifactRefs`，不依赖 Web 二次猜测。
 
-### 9.3 `od` CLI
+### 9.3 `capt` CLI
 
 能力不能 UI-only。建议：
 
 ```text
-od project artifact-snapshot list --project <id> [--conversation <id>] --json
-od project artifact-snapshot inspect <snapshotId> --project <id> --json
-od project artifact-snapshot export <snapshotId> --project <id> --out <path> --json
+capt project artifact-snapshot list --project <id> [--conversation <id>] --json
+capt project artifact-snapshot inspect <snapshotId> --project <id> --json
+capt project artifact-snapshot export <snapshotId> --project <id> --out <path> --json
 ```
 
 CLI 调同一 HTTP API，不直接读内部 storage；导出二进制时支持 `--out`，metadata 输出 `--json`。这是检查、外部 agent 嵌入和故障恢复闭环。

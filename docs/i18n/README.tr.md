@@ -108,29 +108,29 @@ Bir projenin Studio alanında konuşma, üretilen dosyalar ve canlı önizleme a
 
 ## Platform Uyumluluğu
 
-> OpenDesign, ana akım kodlama ajanlarının yerel olarak tükettiği **beceriler, bir CLI ve bir MCP sunucusu** olarak sunulur. OD kurulduktan sonra, tek bir `od mcp install <agent>` komutu MCP sunucusunu o ajanın yapılandırmasına bağlar ve aynı araçları herhangi bir ajanın içinden çağırırsınız.
+> OpenDesign, ana akım kodlama ajanlarının yerel olarak tükettiği **beceriler, bir CLI ve bir MCP sunucusu** olarak sunulur. OD kurulduktan sonra, tek bir `capt mcp install <agent>` komutu MCP sunucusunu o ajanın yapılandırmasına bağlar ve aynı araçları herhangi bir ajanın içinden çağırırsınız.
 
 | Kodlama ajanı / platform &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Durum &nbsp;&nbsp; | Tek satırlık MCP sunucusu kurulumu &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Destekleniyor | `od mcp install claude` |
-| [Codex CLI](https://github.com/openai/codex) | ✅ Destekleniyor | `od mcp install codex` |
-| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Destekleniyor | `od mcp install reasonix` |
-| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Destekleniyor | `od mcp install raven` |
-| [Cursor](https://www.cursor.com/cli) | ✅ Destekleniyor | `od mcp install cursor` |
-| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Destekleniyor | `od mcp install copilot` |
-| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Destekleniyor | `od mcp install copilot` |
-| [OpenCode](https://opencode.ai/) | ✅ Destekleniyor | `od mcp install opencode` |
-| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Destekleniyor | `od mcp install openclaw` |
-| [Antigravity](https://antigravity.google) | ✅ Destekleniyor | `od mcp install antigravity` |
-| [Cline](https://github.com/cline/cline) | ✅ Destekleniyor | `od mcp install cline` |
-| [Trae](https://www.trae.ai/) | ✅ Destekleniyor | `od mcp install trae` |
-| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Destekleniyor | `od mcp install kimi` |
-| [Kiro](https://kiro.dev) | ✅ Destekleniyor | `od mcp install kiro` |
-| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Destekleniyor | `od mcp install pi` |
-| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Destekleniyor | `od mcp install vibe` |
-| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Destekleniyor | `od mcp install hermes` |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Destekleniyor | `capt mcp install claude` |
+| [Codex CLI](https://github.com/openai/codex) | ✅ Destekleniyor | `capt mcp install codex` |
+| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Destekleniyor | `capt mcp install reasonix` |
+| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Destekleniyor | `capt mcp install raven` |
+| [Cursor](https://www.cursor.com/cli) | ✅ Destekleniyor | `capt mcp install cursor` |
+| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Destekleniyor | `capt mcp install copilot` |
+| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Destekleniyor | `capt mcp install copilot` |
+| [OpenCode](https://opencode.ai/) | ✅ Destekleniyor | `capt mcp install opencode` |
+| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Destekleniyor | `capt mcp install openclaw` |
+| [Antigravity](https://antigravity.google) | ✅ Destekleniyor | `capt mcp install antigravity` |
+| [Cline](https://github.com/cline/cline) | ✅ Destekleniyor | `capt mcp install cline` |
+| [Trae](https://www.trae.ai/) | ✅ Destekleniyor | `capt mcp install trae` |
+| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Destekleniyor | `capt mcp install kimi` |
+| [Kiro](https://kiro.dev) | ✅ Destekleniyor | `capt mcp install kiro` |
+| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Destekleniyor | `capt mcp install pi` |
+| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Destekleniyor | `capt mcp install vibe` |
+| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Destekleniyor | `capt mcp install hermes` |
 
-Kuru çalıştırma önizlemesi için `od mcp install <agent> --print` · kaldırmak için `--uninstall` · tam liste için `od mcp install --help`.
+Kuru çalıştırma önizlemesi için `capt mcp install <agent> --print` · kaldırmak için `--uninstall` · tam liste için `capt mcp install --help`.
 
 <p align="center">
   <img src="https://repo-assets.open-design.ai/resources/images/coding-agents.png" alt="The 25 coding-agent CLIs OpenDesign supports — Claude Code · Codex · OpenCode · Hermes · Antigravity · Vela · Grok Build · Kimi · Cursor Agent · Qwen · Qoder · GitHub Copilot · Pi · Kiro · Kilo · Mistral Vibe · DeepSeek · Reasonix · Aider · Amp · CodeBuddy · Mimo · AtomCode · Devin · Trae" width="100%" />
@@ -292,7 +292,7 @@ OpenDesign'ı GUI'yi hiç açmadan kullanabilirsiniz — Claude Code, Codex, Cur
 
 ```bash
 # One-line install into the agent you're using:
-od mcp install <agent>
+capt mcp install <agent>
 # <agent> = claude | codex | reasonix | raven | cursor | copilot | openclaw | antigravity
 #         | pi | vibe | hermes | cline | kimi | kiro | trae | opencode
 ```
@@ -353,14 +353,14 @@ OpenDesign bir **stdio MCP sunucusu** ve ajan başına **kurulum betikleri** sun
 
 ```bash
 # One-line install (16+ CLIs supported):
-od mcp install <agent>
+capt mcp install <agent>
 
 # Then the agent can:
-od project list --json
-od files list <project-id> --json
-od files read <project-id> <relative-path>
-od plugin list --json
-od skills list --json
+capt project list --json
+capt files list <project-id> --json
+capt files read <project-id> <relative-path>
+capt plugin list --json
+capt skills list --json
 ```
 
 **Neden MCP?** Her yinelemede bir zip dosyasını dışa aktarıp yeniden eklemek akışı bozar. MCP, tasarım kaynağını doğrudan ortaya çıkarır — ajan her zaman canlı dosyayı görür.
@@ -461,20 +461,20 @@ Ayrıca topluluk eklentileri için [`plugins/community/`](../../plugins/communit
 
 ### Eklentileri kullanma
 
-Eklentiler **web UI** ve **`od` CLI** arasında tam eşitliktedir — aynı `/api/plugins` uç noktaları, hangisi uygunsa onu seçin.
+Eklentiler **web UI** ve **`capt` CLI** arasında tam eşitliktedir — aynı `/api/plugins` uç noktaları, hangisi uygunsa onu seçin.
 
 **Masaüstü / web uygulamasında:** pazar yerine göz atmak için **Plugin** sayfasını açın ve **Install**'a tıklayın; bir projenin Studio'su içinde, eklentiler tıklayarak uyguladığınız composer çipleri olarak görünür (bildirdikleri girdilerle birlikte).
 
 **Komut satırında** (UI olmadan çalışır — bu, harici ajanların kullandığı yoldur):
 
 ```bash
-od plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
-od plugin search "landing page"      # search by keyword
-od plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
-od plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
-od plugin apply od-default --input brief="a one-page pitch for our seed round"
-od plugin upgrade od-default         # upgrade
-od plugin uninstall od-default       # uninstall
+capt plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
+capt plugin search "landing page"      # search by keyword
+capt plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
+capt plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
+capt plugin apply od-default --input brief="a one-page pitch for our seed round"
+capt plugin upgrade od-default         # upgrade
+capt plugin uninstall od-default       # uninstall
 ```
 
 Her komut `--json` destekler, böylece onu `jq` / `xargs` aracılığıyla otomasyona aktarabilirsiniz.
@@ -497,8 +497,8 @@ Temel alanlar `specVersion`, `name`, `version`, yalnızca Agent Skill sunulduğu
 Yerel olarak iskeletle + doğrula:
 
 ```bash
-od plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
-od plugin validate ./my-plugin                          # check manifest / file layout
+capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
+capt plugin validate ./my-plugin                          # check manifest / file layout
 pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 ```
 
@@ -507,7 +507,7 @@ Tam alan kümesi ve çalışma zamanı sözleşmesi → [`plugins/spec/SPEC.md`]
 ### Bir eklentiye katkıda bulunma
 
 1. Eklenti klasörünü [`plugins/community/`](../../plugins/community/) içine (üçüncü taraf eklentiler) veya — onu OpenDesign ile birlikte paketlenmiş olarak sunmak için — [`plugins/_official/`](../../plugins/_official/) içindeki eşleşen katmana bırakın.
-2. Doğrulamayı geçin: `od plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
+2. Doğrulamayı geçin: `capt plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
 3. PR'ı [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) içindeki şablonu kullanarak doldurun (kimlik, sürüm, hat, mod, yetenekler, tetikleme örnekleri; görsel eklentiler için bir ekran görüntüsü / önizleme ekleyin).
 4. Harici bir kayda yayınlamak için (skills.sh / ClawHub / bağımsız GitHub) → [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -573,8 +573,8 @@ Tam mimari → [`docs/architecture.md`](../../docs/architecture.md). Beceri prot
 - [x] Paketlenmiş Electron derlemeleri — macOS (Apple Silicon + Intel) + Windows (x64) + Linux AppImage (isteğe bağlı hat)
 - [ ] Yorum modu cerrahi düzenlemeler — kısmen sunuldu; güvenilir hedefli yamalama devam ediyor
 - [ ] AI tarafından yayılan ayar paneli UX'i — henüz uygulanmadı
-- [ ] `DESIGN.md` ile bir projeyi iskeletlemek için `npx od init`
-- [ ] Plugin SDK + `od plugin {add,list,remove,test,publish}` CLI
+- [ ] `DESIGN.md` ile bir projeyi iskeletlemek için `npx capt init`
+- [ ] Plugin SDK + `capt plugin {add,list,remove,test,publish}` CLI
 - [ ] Figma / Pencil → React / Next / Vue taşıma eklentileri (alpha)
 - [ ] Mevcut kod tabanını yenileme eklentisi (bir git deposu + `DESIGN.md` dosyasına yönlendirin)
 

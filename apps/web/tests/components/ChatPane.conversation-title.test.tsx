@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ChatPane } from '../../src/components/ChatPane';
 import { trackRunFailedToastSurfaceView } from '../../src/analytics/events';
-import type { RunFailureDetail } from '@open-design/contracts';
+import type { RunFailureDetail } from '@capydesign/contracts';
 import type { AppConfig, ChatMessage, Conversation } from '../../src/types';
 
 const translate = (key: string, vars?: Record<string, string | number>) => {

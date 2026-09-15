@@ -21,8 +21,8 @@ import {
   validateLauncherRuntimeDescriptor,
   type LauncherAttemptDescriptor,
   type LauncherTargetSelection,
-} from "@open-design/launcher-proto";
-import { releaseChannelFromNamespace, releaseChannelFromVersion } from "@open-design/release";
+} from "@capydesign/launcher-proto";
+import { releaseChannelFromNamespace, releaseChannelFromVersion } from "@capydesign/release";
 
 import type { PackagedConfig, PackagedWebOutputMode, RawPackagedConfig } from "./config.js";
 import type { PackagedNamespacePaths } from "./paths.js";

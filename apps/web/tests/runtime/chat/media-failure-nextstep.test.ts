@@ -13,7 +13,7 @@
  *      下面有专门的反向对照。
  */
 import { describe, expect, it } from 'vitest';
-import type { PersistedAgentEvent, ProjectMediaTask } from '@open-design/contracts';
+import type { PersistedAgentEvent, ProjectMediaTask } from '@capydesign/contracts';
 import { buildTurnBlocks } from '../../../src/runtime/chat/build-turn-blocks';
 import type { ExecutionShell, ImageRow, ShellItem } from '../../../src/runtime/chat/contract';
 
@@ -28,7 +28,7 @@ function rowOf(mediaTasks: ProjectMediaTask[]): ImageRow {
         kind: 'tool_use',
         id: 'g1',
         name: 'Bash',
-        input: { command: 'od media generate a && od media generate b' },
+        input: { command: 'capt media generate a && capt media generate b' },
         startedAt: 0,
       } as PersistedAgentEvent,
     ],

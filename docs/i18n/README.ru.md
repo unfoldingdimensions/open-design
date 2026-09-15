@@ -108,29 +108,29 @@ OpenDesign превращает этот цикл в **файловую сист
 
 ## Совместимость с платформами
 
-> OpenDesign поставляется как **навыки, CLI и MCP-сервер**, которые мейнстримные кодинг-агенты потребляют нативно. После установки OD одна команда `od mcp install <agent>` подключает MCP-сервер в конфигурацию этого агента, и вы вызываете одни и те же инструменты изнутри любого агента.
+> OpenDesign поставляется как **навыки, CLI и MCP-сервер**, которые мейнстримные кодинг-агенты потребляют нативно. После установки OD одна команда `capt mcp install <agent>` подключает MCP-сервер в конфигурацию этого агента, и вы вызываете одни и те же инструменты изнутри любого агента.
 
 | Кодинг-агент / платформа &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Статус &nbsp;&nbsp; | Установка MCP-сервера одной строкой &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Поддерживается | `od mcp install claude` |
-| [Codex CLI](https://github.com/openai/codex) | ✅ Поддерживается | `od mcp install codex` |
-| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Поддерживается | `od mcp install reasonix` |
-| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Поддерживается | `od mcp install raven` |
-| [Cursor](https://www.cursor.com/cli) | ✅ Поддерживается | `od mcp install cursor` |
-| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Поддерживается | `od mcp install copilot` |
-| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Поддерживается | `od mcp install copilot` |
-| [OpenCode](https://opencode.ai/) | ✅ Поддерживается | `od mcp install opencode` |
-| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Поддерживается | `od mcp install openclaw` |
-| [Antigravity](https://antigravity.google) | ✅ Поддерживается | `od mcp install antigravity` |
-| [Cline](https://github.com/cline/cline) | ✅ Поддерживается | `od mcp install cline` |
-| [Trae](https://www.trae.ai/) | ✅ Поддерживается | `od mcp install trae` |
-| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Поддерживается | `od mcp install kimi` |
-| [Kiro](https://kiro.dev) | ✅ Поддерживается | `od mcp install kiro` |
-| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Поддерживается | `od mcp install pi` |
-| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Поддерживается | `od mcp install vibe` |
-| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Поддерживается | `od mcp install hermes` |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Поддерживается | `capt mcp install claude` |
+| [Codex CLI](https://github.com/openai/codex) | ✅ Поддерживается | `capt mcp install codex` |
+| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Поддерживается | `capt mcp install reasonix` |
+| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Поддерживается | `capt mcp install raven` |
+| [Cursor](https://www.cursor.com/cli) | ✅ Поддерживается | `capt mcp install cursor` |
+| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Поддерживается | `capt mcp install copilot` |
+| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Поддерживается | `capt mcp install copilot` |
+| [OpenCode](https://opencode.ai/) | ✅ Поддерживается | `capt mcp install opencode` |
+| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Поддерживается | `capt mcp install openclaw` |
+| [Antigravity](https://antigravity.google) | ✅ Поддерживается | `capt mcp install antigravity` |
+| [Cline](https://github.com/cline/cline) | ✅ Поддерживается | `capt mcp install cline` |
+| [Trae](https://www.trae.ai/) | ✅ Поддерживается | `capt mcp install trae` |
+| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Поддерживается | `capt mcp install kimi` |
+| [Kiro](https://kiro.dev) | ✅ Поддерживается | `capt mcp install kiro` |
+| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Поддерживается | `capt mcp install pi` |
+| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Поддерживается | `capt mcp install vibe` |
+| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Поддерживается | `capt mcp install hermes` |
 
-`od mcp install <agent> --print` для предпросмотра без изменений · `--uninstall` для удаления · полный список через `od mcp install --help`.
+`capt mcp install <agent> --print` для предпросмотра без изменений · `--uninstall` для удаления · полный список через `capt mcp install --help`.
 
 <p align="center">
   <img src="https://repo-assets.open-design.ai/resources/images/coding-agents.png" alt="25 CLI кодинг-агента, которые поддерживает OpenDesign — Claude Code · Codex · OpenCode · Hermes · Antigravity · Vela · Grok Build · Kimi · Cursor Agent · Qwen · Qoder · GitHub Copilot · Pi · Kiro · Kilo · Mistral Vibe · DeepSeek · Reasonix · Aider · Amp · CodeBuddy · Mimo · AtomCode · Devin · Trae" width="100%" />
@@ -292,7 +292,7 @@ OpenDesign (OD) — это открытая альтернатива. Тот ж�
 
 ```bash
 # Установка одной командой в агент, которым вы пользуетесь:
-od mcp install <agent>
+capt mcp install <agent>
 # <agent> = claude | codex | reasonix | raven | cursor | copilot | openclaw | antigravity
 #         | pi | vibe | hermes | cline | kimi | kiro | trae | opencode
 
@@ -300,9 +300,9 @@ od mcp install <agent>
 curl -fsSL https://open-design.ai/install.sh | sh -s <agent>
 ```
 
-`install.sh` — тонкая shell-обертка вокруг `od mcp install`. Она нужна, чтобы hosted URL возвращал shell-скрипт вместо HTML-fallback лендинга и быстро падал, если ваша оболочка находит не OpenDesign, а другой бинарник `od`.
+`install.sh` — тонкая shell-обертка вокруг `capt mcp install`. Она нужна, чтобы hosted URL возвращал shell-скрипт вместо HTML-fallback лендинга и быстро падал, если ваша оболочка находит не OpenDesign, а другой бинарник `capt`.
 
-> **Пользователям WSL2:** если CLI ваших кодинг-агентов запускаются внутри WSL2, сначала выполните шаги из [`гайда по настройке WSL2`](../../docs/wsl-setup.md). Linux-команда `/usr/bin/od` может перекрывать команду `od` из OpenDesign.
+> **Пользователям WSL2:** если CLI ваших кодинг-агентов запускаются внутри WSL2, сначала выполните шаги из [`гайда по настройке WSL2`](../../docs/wsl-setup.md). Linux-команда `/usr/bin/od` может перекрывать команду `capt` из OpenDesign.
 
 Затем, внутри агента:
 
@@ -362,14 +362,14 @@ OpenDesign поставляет **stdio MCP-сервер** и **скрипты �
 
 ```bash
 # Установка одной командой (поддерживается 16+ CLI):
-od mcp install <agent>
+capt mcp install <agent>
 
 # После этого агент может:
-od project list --json
-od files list <project-id> --json
-od files read <project-id> <relative-path>
-od plugin list --json
-od skills list --json
+capt project list --json
+capt files list <project-id> --json
+capt files read <project-id> <relative-path>
+capt plugin list --json
+capt skills list --json
 ```
 
 **Почему MCP?** Экспорт и повторное прикрепление zip на каждой итерации ломает поток. MCP открывает дизайн-источник напрямую — агент всегда видит живой файл.
@@ -472,20 +472,20 @@ od skills list --json
 
 ### Использование плагинов
 
-Плагины полностью равнозначны в **веб-UI** и **`od` CLI** — те же эндпоинты `/api/plugins`, выбирайте, что удобнее.
+Плагины полностью равнозначны в **веб-UI** и **`capt` CLI** — те же эндпоинты `/api/plugins`, выбирайте, что удобнее.
 
 **В десктопном / веб-приложении:** откройте страницу **Plugin**, чтобы просмотреть маркетплейс и нажать **Install**; внутри Studio проекта плагины появляются как чипы композера, по которым вы кликаете для применения (с входами, которые они декларируют).
 
 **В командной строке** (работает без UI — это путь, который используют внешние агенты):
 
 ```bash
-od plugin list                       # список установленных плагинов (фильтры --task-kind / --mode / --tag)
-od plugin search "landing page"      # поиск по ключевым словам
-od plugin info od-default            # метаданные, входы и возможности плагина
-od plugin install od-figma-migration # установка из registry; также принимает ./local-folder или ссылку https://…
-od plugin apply od-default --input brief="одностраничный питч для нашего seed-раунда"
-od plugin upgrade od-default         # обновление
-od plugin uninstall od-default       # удаление
+capt plugin list                       # список установленных плагинов (фильтры --task-kind / --mode / --tag)
+capt plugin search "landing page"      # поиск по ключевым словам
+capt plugin info od-default            # метаданные, входы и возможности плагина
+capt plugin install od-figma-migration # установка из registry; также принимает ./local-folder или ссылку https://…
+capt plugin apply od-default --input brief="одностраничный питч для нашего seed-раунда"
+capt plugin upgrade od-default         # обновление
+capt plugin uninstall od-default       # удаление
 ```
 
 Каждая команда поддерживает `--json`, так что вы можете пропускать вывод через `jq` / `xargs` в автоматизацию.
@@ -508,8 +508,8 @@ my-plugin/
 Создайте каркас + проверьте локально:
 
 ```bash
-od plugin scaffold --id my-plugin --title "My Plugin"   # сгенерировать каркас
-od plugin validate ./my-plugin                          # проверить манифест и структуру файлов
+capt plugin scaffold --id my-plugin --title "My Plugin"   # сгенерировать каркас
+capt plugin validate ./my-plugin                          # проверить манифест и структуру файлов
 pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 ```
 
@@ -518,7 +518,7 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 ### Вклад в виде плагина
 
 1. Поместите папку плагина в [`plugins/community/`](../../plugins/community/) (сторонние плагины), или — чтобы поставлять его вместе с OpenDesign — в соответствующий уровень [`plugins/_official/`](../../plugins/_official/).
-2. Пройдите валидацию: `od plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
+2. Пройдите валидацию: `capt plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
 3. Заполните PR, используя шаблон в [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) (ID, версия, линия, режим, возможности, примеры триггеров; приложите скриншот / предпросмотр для визуальных плагинов).
 4. Чтобы опубликовать во внешнем реестре (skills.sh / ClawHub / отдельный GitHub) → [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -588,8 +588,8 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 - [x] Упакованные сборки Electron — macOS (Apple Silicon + Intel) + Windows (x64) + Linux AppImage (опциональная линия)
 - [ ] Хирургические правки в режиме комментариев — частично выпущено; надёжное точечное патчинг в процессе
 - [ ] UX панели настроек, выдаваемой ИИ — ещё не реализовано
-- [ ] `npx od init` для создания каркаса проекта с `DESIGN.md`
-- [ ] Plugin SDK + CLI `od plugin {add,list,remove,test,publish}`
+- [ ] `npx capt init` для создания каркаса проекта с `DESIGN.md`
+- [ ] Plugin SDK + CLI `capt plugin {add,list,remove,test,publish}`
 - [ ] Плагины миграции Figma / Pencil → React / Next / Vue (alpha)
 - [ ] Плагин обновления существующей кодовой базы (направить на git-репозиторий + `DESIGN.md`)
 

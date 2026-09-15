@@ -29,7 +29,7 @@
  * 渲染面的断言在 `tests/components/chat/live-row-elapsed.test.tsx`。
  */
 import { describe, expect, it } from 'vitest';
-import type { PersistedAgentEvent, ProjectMediaTask } from '@open-design/contracts';
+import type { PersistedAgentEvent, ProjectMediaTask } from '@capydesign/contracts';
 import { buildTurnBlocks } from '../../../src/runtime/chat/build-turn-blocks';
 import { groupThinking, type ThoughtsGroup } from '../../../src/runtime/chat/group-thinking';
 import type {
@@ -301,7 +301,7 @@ describe('生图批次行也带实时耗时(产品 2026-09-03)', () => {
 
   it('事件已经到、但图还没出完:同样有数,不用等全部 `endedAt`', () => {
     const events: PersistedAgentEvent[] = [
-      { kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'od media generate --prompt a' }, startedAt: T0 } as PersistedAgentEvent,
+      { kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'capt media generate --prompt a' }, startedAt: T0 } as PersistedAgentEvent,
     ];
     const row = imageRows({
       events, runStatus: 'running', startedAtMs: T0, nowMs: T0 + 42_000,
@@ -320,8 +320,8 @@ describe('生图批次行也带实时耗时(产品 2026-09-03)', () => {
      */
     const rows = imageRows({
       events: [
-        { kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'od media generate --prompt a' }, startedAt: T0 } as PersistedAgentEvent,
-        { kind: 'tool_use', id: 'g2', name: 'Bash', input: { command: 'od media generate --prompt b' }, startedAt: T0 + 20_000 } as PersistedAgentEvent,
+        { kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'capt media generate --prompt a' }, startedAt: T0 } as PersistedAgentEvent,
+        { kind: 'tool_use', id: 'g2', name: 'Bash', input: { command: 'capt media generate --prompt b' }, startedAt: T0 + 20_000 } as PersistedAgentEvent,
       ],
       runStatus: 'running', startedAtMs: T0, nowMs: T0 + 50_000,
       mediaTasks: [
@@ -350,7 +350,7 @@ describe('生图批次行也带实时耗时(产品 2026-09-03)', () => {
      */
     const settled = (nowMs: number) => imageRows({
       events: [
-        { kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'od media generate --prompt a' }, startedAt: T0 } as PersistedAgentEvent,
+        { kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'capt media generate --prompt a' }, startedAt: T0 } as PersistedAgentEvent,
         { kind: 'tool_result', toolUseId: 'g1', content: '{"status":"done","path":"a.png"}', isError: false, completedAt: T0 + 18_000 } as PersistedAgentEvent,
       ],
       runStatus: 'running', startedAtMs: T0, nowMs,

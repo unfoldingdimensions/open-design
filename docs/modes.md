@@ -102,7 +102,7 @@ Project panel.
   under `design-templates/` and are listed through `/api/design-templates`;
   functional capabilities live under `skills/` and are listed through
   `/api/skills`.
-- Keep user-facing capabilities reachable through both the web UI and `od` CLI,
+- Keep user-facing capabilities reachable through both the web UI and `capt` CLI,
   following the repository-wide dual-track rule in the root `AGENTS.md`.
 
 ## Related implementation

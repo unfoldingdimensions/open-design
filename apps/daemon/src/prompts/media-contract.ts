@@ -6,7 +6,7 @@
  *
  * The contract is the unifying primitive: for media surfaces the agent
  * does NOT fabricate bytes inside `<artifact>` (it can't — bytes are
- * binary). Instead it shells out to a single command — `od media
+ * binary). Instead it shells out to a single command — `capt media
  * generate` — that the daemon dispatches per (surface, model). The
  * daemon writes the resulting file into the project and the FileViewer
  * picks it up automatically. Tool output retains the operational details;
@@ -23,7 +23,7 @@ import {
   IMAGE_MODELS,
   VIDEO_MODELS,
 } from '../media/models.js';
-import type { ByokMediaDefaults, MediaExecutionPolicy, MediaSurface } from '@open-design/contracts';
+import type { ByokMediaDefaults, MediaExecutionPolicy, MediaSurface } from '@capydesign/contracts';
 
 function fmtList(ids: string[]): string {
   return ids.map((id) => `\`${id}\``).join(', ');

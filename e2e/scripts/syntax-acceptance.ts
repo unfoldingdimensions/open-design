@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs, promisify } from 'node:util';
-import { DELIVERABLE_SYNTAX_FINALIZATION_REASONS, DELIVERABLE_SYNTAX_SAFE_FIX_RULES } from '@open-design/contracts';
+import { DELIVERABLE_SYNTAX_FINALIZATION_REASONS, DELIVERABLE_SYNTAX_SAFE_FIX_RULES } from '@capydesign/contracts';
 import { createToolsDevSuite, e2eWorkspaceRoot } from '../lib/tools-dev/runtime.ts';
 import { runToolsDevJson } from '../lib/tools-dev/cli.ts';
 
@@ -482,7 +482,7 @@ try {
     } catch { throw new Error(`AMR_AUTH_BLOCKED: Vela profile ${values.profile} is not authenticated/reachable`); }
   }
   console.log('Building current worktree and dependencies (no --skip-build).');
-  await command('pnpm', ['--filter', '@open-design/daemon...', '--workspace-concurrency=4', 'build'], 'build.log', 600_000);
+  await command('pnpm', ['--filter', '@capydesign/daemon...', '--workspace-concurrency=4', 'build'], 'build.log', 600_000);
   report.build = {
     serverSha256: hash(await readFile(path.join(workspace, 'apps/daemon/dist/server.js'))),
     finalizerSha256: hash(await readFile(path.join(workspace, 'apps/daemon/dist/artifacts/deliverable-syntax-finalization.js'))),

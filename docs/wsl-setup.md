@@ -1,7 +1,7 @@
 # WSL2 Setup Guide
 
 Use this guide when your coding-agent CLIs run inside WSL2. In that setup,
-install and run OpenDesign from WSL as well so the agent CLI, `od` command,
+install and run OpenDesign from WSL as well so the agent CLI, `capt` command,
 daemon, Node modules, and credentials all come from the same Linux environment.
 
 For native Windows PowerShell setup, use
@@ -11,8 +11,8 @@ For native Windows PowerShell setup, use
 
 - Clone OpenDesign inside WSL2.
 - Install Node `~24` and the repo-pinned pnpm (`10.33.2`) inside WSL2.
-- Put a WSL-native `od` wrapper before `/usr/bin` on `PATH`.
-- Start the daemon from WSL with `od --no-open`.
+- Put a WSL-native `capt` wrapper before `/usr/bin` on `PATH`.
+- Start the daemon from WSL with `capt --no-open`.
 - Install MCP entries from the same WSL shell.
 
 Do not assume the Windows desktop app's daemon is the right daemon for WSL
@@ -39,16 +39,16 @@ mise trust
 mise install
 ```
 
-## 2. Fix the `od` command collision
+## 2. Fix the `capt` command collision
 
 Linux already ships `/usr/bin/od` (octal dump). If that binary wins on `PATH`,
-commands such as `od mcp install claude` fail with file-not-found messages for
+commands such as `capt mcp install claude` fail with file-not-found messages for
 `mcp`, `install`, and the agent name.
 
 Check what your shell resolves:
 
 ```bash
-type -a od
+type -a capt
 ```
 
 If `/usr/bin/od` appears before OpenDesign, create a wrapper in `~/.local/bin`
@@ -57,31 +57,31 @@ and make sure that directory is first on `PATH`:
 ```bash
 mkdir -p ~/.local/bin
 
-cat > ~/.local/bin/od <<'EOF'
+cat > ~/.local/bin/capt <<'EOF'
 #!/usr/bin/env bash
 repo="$HOME/tools/open-design"
 cd "$repo" || exit 127
 
 if command -v mise >/dev/null 2>&1; then
-  exec mise exec -- pnpm exec od "$@"
+  exec mise exec -- pnpm exec capt "$@"
 fi
 
-exec corepack pnpm exec od "$@"
+exec corepack pnpm exec capt "$@"
 EOF
 
-chmod +x ~/.local/bin/od
+chmod +x ~/.local/bin/capt
 export PATH="$HOME/.local/bin:$PATH"
 hash -r
-type -a od
+type -a capt
 ```
 
 Expected first result:
 
 ```text
-od is /home/<user>/.local/bin/od
+capt is /home/<user>/.local/bin/capt
 ```
 
-`od.exe` is not a reliable workaround from WSL. It may resolve to a Windows
+`capt.exe` is not a reliable workaround from WSL. It may resolve to a Windows
 coreutils binary instead of OpenDesign, especially on machines with Windows
 coreutils installed.
 
@@ -91,7 +91,7 @@ Run the daemon from the same WSL environment that your agent CLIs use:
 
 ```bash
 cd ~/tools/open-design
-od --no-open
+capt --no-open
 ```
 
 In another WSL terminal, verify it is reachable:
@@ -120,11 +120,11 @@ Leave the daemon terminal running while using MCP integrations.
 From WSL, run the installer for each agent CLI you use:
 
 ```bash
-od mcp install claude
-od mcp install opencode
-od mcp install codex
-od mcp install antigravity
-od mcp install copilot
+capt mcp install claude
+capt mcp install opencode
+capt mcp install codex
+capt mcp install antigravity
+capt mcp install copilot
 ```
 
 The installer writes to the agent config locations for the current WSL user,

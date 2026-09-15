@@ -9,8 +9,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import type { ConnectorDetail } from '@open-design/contracts';
-import type { CapyDesignHostProjectImportSuccess } from '@open-design/host';
+import type { ConnectorDetail } from '@capydesign/contracts';
+import type { CapyDesignHostProjectImportSuccess } from '@capydesign/host';
 import { modalOverlay, modalContent } from '../motion';
 import { useT } from '../i18n';
 import type {

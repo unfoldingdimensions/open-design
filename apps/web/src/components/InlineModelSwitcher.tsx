@@ -18,14 +18,14 @@ import {
   type Dispatch,
   type SetStateAction,
 } from 'react';
-import type { AmrWalletSnapshot } from '@open-design/contracts';
-import { VisuallyHidden } from '@open-design/components';
+import type { AmrWalletSnapshot } from '@capydesign/contracts';
+import { VisuallyHidden } from '@capydesign/components';
 import { useT } from '../i18n';
 import {
   agentIdToTracking,
   byokProtocolToTracking,
   modelIdForTracking,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import { useAnalytics } from '../analytics/provider';
 import {
   amrHandoffDeviceId,

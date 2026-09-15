@@ -10,7 +10,7 @@ import type {
   AnalyticsPublisherClass,
   TrackingRuntimeType,
 } from '../public-params.js';
-import type { ReleaseChannel } from '@open-design/release';
+import type { ReleaseChannel } from '@capydesign/release';
 import type { ArtifactOriginEntrySurface, ArtifactOriginStatus } from '../../api/files.js';
 import type { AgentDiagnosticReason, AgentDiagnosticSeverity } from '../../api/registry.js';
 import type { TrackingDesignSystemEditSurface, TrackingDesignSystemKind, TrackingDesignSystemLengthBucket, TrackingDesignSystemOrigin, TrackingDesignSystemRunEntryFrom } from './design-systems.js';

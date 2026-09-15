@@ -5,7 +5,7 @@ import {
   type NormalizedAgentObservationV1,
   type OdNextRuntimeCapabilitySnapshotV1,
   type CapyDesignPlanContractV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import {
   evaluateOdNextExecutionEligibility,

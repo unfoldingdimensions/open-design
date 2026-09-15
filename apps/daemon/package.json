@@ -1,12 +1,12 @@
 {
-  "name": "@open-design/daemon",
+  "name": "@capydesign/daemon",
   "version": "0.22.1",
   "private": true,
   "type": "module",
   "main": "./dist/cli.js",
   "types": "./dist/cli.d.ts",
   "bin": {
-    "od": "./bin/od.mjs"
+    "capt": "./bin/capt.mjs"
   },
   "exports": {
     ".": {
@@ -29,24 +29,24 @@
     "daemon": "pnpm run build && node dist/cli.js --no-open",
     "dev": "pnpm run build && node dist/cli.js --no-open",
     "start": "pnpm run build && node dist/cli.js",
-    "pretest": "pnpm --filter '@open-design/daemon^...' --workspace-concurrency=4 --if-present run build",
+    "pretest": "pnpm --filter '@capydesign/daemon^...' --workspace-concurrency=4 --if-present run build",
     "test": "vitest run -c vitest.config.ts",
-    "typecheck": "pnpm --filter @open-design/contracts build && pnpm --filter @open-design/registry-protocol build && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit"
+    "typecheck": "pnpm --filter @capydesign/contracts build && pnpm --filter @capydesign/registry-protocol build && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit"
   },
   "dependencies": {
     "@babel/parser": "7.29.3",
     "@ffmpeg-installer/ffmpeg": "1.1.0",
     "@modelcontextprotocol/sdk": "1.29.0",
-    "@open-design/agui-adapter": "workspace:*",
-    "@open-design/contracts": "workspace:*",
-    "@open-design/diagnostics": "workspace:*",
-    "@open-design/launcher-proto": "workspace:*",
-    "@open-design/platform": "workspace:*",
-    "@open-design/plugin-runtime": "workspace:*",
-    "@open-design/registry-protocol": "workspace:*",
-    "@open-design/release": "workspace:*",
-    "@open-design/sidecar": "workspace:*",
-    "@open-design/sidecar-proto": "workspace:*",
+    "@capydesign/agui-adapter": "workspace:*",
+    "@capydesign/contracts": "workspace:*",
+    "@capydesign/diagnostics": "workspace:*",
+    "@capydesign/launcher-proto": "workspace:*",
+    "@capydesign/platform": "workspace:*",
+    "@capydesign/plugin-runtime": "workspace:*",
+    "@capydesign/registry-protocol": "workspace:*",
+    "@capydesign/release": "workspace:*",
+    "@capydesign/sidecar": "workspace:*",
+    "@capydesign/sidecar-proto": "workspace:*",
     "@opentelemetry/api": "1.9.1",
     "acorn": "8.15.0",
     "better-sqlite3": "12.10.0",

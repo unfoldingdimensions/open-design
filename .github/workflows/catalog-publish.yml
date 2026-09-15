@@ -63,7 +63,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build tools-release
-        run: pnpm --filter @open-design/tools-release build
+        run: pnpm --filter @capydesign/tools-release build
 
       - name: Export catalog
         env:
@@ -120,7 +120,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build tools-release
-        run: pnpm --filter @open-design/tools-release build
+        run: pnpm --filter @capydesign/tools-release build
 
       - name: Download snapshot artifact
         uses: actions/download-artifact@v4

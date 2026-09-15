@@ -2,9 +2,9 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import type { SidecarStamp, SidecarStopResult } from "@open-design/sidecar";
-import { APP_KEYS, SIDECAR_SOURCES } from "@open-design/sidecar-proto";
-import type { StopProcessesResult, stopProcesses, waitForProcessExit } from "@open-design/platform";
+import type { SidecarStamp, SidecarStopResult } from "@capydesign/sidecar";
+import { APP_KEYS, SIDECAR_SOURCES } from "@capydesign/sidecar-proto";
+import type { StopProcessesResult, stopProcesses, waitForProcessExit } from "@capydesign/platform";
 import { describe, expect, it, vi } from "vitest";
 
 import { exitPackagedLauncherForExistingDesktop, inspectExistingDesktopForLauncher, waitForLauncherAfterQuit } from "../src/launcher-after-quit.js";

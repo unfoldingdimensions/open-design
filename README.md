@@ -113,27 +113,27 @@ Inside a project's Studio, the conversation, generated files, and live preview s
 
 | Coding agent / platform &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Status &nbsp;&nbsp; | Quick setup &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Supported | `od mcp install claude` |
-| [Claude Desktop](https://claude.ai/download) | ✅ Supported¹ | `od mcp install claude-desktop` |
-| [Codex CLI](https://github.com/openai/codex) | ✅ Supported | `od mcp install codex` |
-| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Supported | `od mcp install reasonix` |
-| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | ✅ Native runtime | `od agent setup deepseek-harness` |
-| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Supported | `od mcp install raven` |
-| [Cursor](https://www.cursor.com/cli) | ✅ Supported | `od mcp install cursor` |
-| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Supported | `od mcp install copilot` |
-| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Supported | `od mcp install copilot` |
-| [OpenCode](https://opencode.ai/) | ✅ Supported | `od mcp install opencode` |
-| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Supported | `od mcp install openclaw` |
-| [Antigravity](https://antigravity.google) | ✅ Supported | `od mcp install antigravity` |
-| [Cline](https://github.com/cline/cline) | ✅ Supported | `od mcp install cline` |
-| [Trae](https://www.trae.ai/) | ✅ Supported | `od mcp install trae` |
-| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Supported | `od mcp install kimi` |
-| [Kiro](https://kiro.dev) | ✅ Supported | `od mcp install kiro` |
-| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Supported | `od mcp install pi` |
-| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Supported | `od mcp install vibe` |
-| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Supported | `od mcp install hermes` |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Supported | `capt mcp install claude` |
+| [Claude Desktop](https://claude.ai/download) | ✅ Supported¹ | `capt mcp install claude-desktop` |
+| [Codex CLI](https://github.com/openai/codex) | ✅ Supported | `capt mcp install codex` |
+| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Supported | `capt mcp install reasonix` |
+| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | ✅ Native runtime | `capt agent setup deepseek-harness` |
+| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Supported | `capt mcp install raven` |
+| [Cursor](https://www.cursor.com/cli) | ✅ Supported | `capt mcp install cursor` |
+| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Supported | `capt mcp install copilot` |
+| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Supported | `capt mcp install copilot` |
+| [OpenCode](https://opencode.ai/) | ✅ Supported | `capt mcp install opencode` |
+| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Supported | `capt mcp install openclaw` |
+| [Antigravity](https://antigravity.google) | ✅ Supported | `capt mcp install antigravity` |
+| [Cline](https://github.com/cline/cline) | ✅ Supported | `capt mcp install cline` |
+| [Trae](https://www.trae.ai/) | ✅ Supported | `capt mcp install trae` |
+| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Supported | `capt mcp install kimi` |
+| [Kiro](https://kiro.dev) | ✅ Supported | `capt mcp install kiro` |
+| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Supported | `capt mcp install pi` |
+| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Supported | `capt mcp install vibe` |
+| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Supported | `capt mcp install hermes` |
 
-For DeepSeek Harness, install the official `dsh` CLI first, then select it in OpenDesign or run `od agent setup deepseek-harness` to install/repair OD's connection component. For MCP integrations: `od mcp install <agent> --print` for a dry-run preview · `--uninstall` to remove · full list with `od mcp install --help`.
+For DeepSeek Harness, install the official `dsh` CLI first, then select it in OpenDesign or run `capt agent setup deepseek-harness` to install/repair OD's connection component. For MCP integrations: `capt mcp install <agent> --print` for a dry-run preview · `--uninstall` to remove · full list with `capt mcp install --help`.
 
 ¹ Automatic MCP configuration for Claude Desktop is currently supported on macOS and Windows only.
 
@@ -296,14 +296,14 @@ After install: the app auto-detects every coding-agent CLI on your `PATH`, loads
 You can use OpenDesign without ever opening the GUI — call it as a skill, plugin, or MCP server inside Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi, and more.
 
 If you installed the macOS desktop app via the DMG or Homebrew cask, your shell
-may still resolve `od` to Apple's built-in `/usr/bin/od` octal-dump utility. In
+may still resolve `capt` to Apple's built-in `/usr/bin/od` octal-dump utility. In
 that case, open **Settings → MCP server** in the desktop app and copy the
 client-specific snippet; it uses absolute paths and does not rely on the bare
-`od` command.
+`capt` command.
 
 ```bash
 # One-line install into the agent you're using:
-od mcp install <agent>
+capt mcp install <agent>
 # <agent> = claude | codex | reasonix | raven | cursor | copilot | openclaw
 #         | antigravity | pi | vibe | hermes | cline | kimi | kiro
 #         | trae | opencode
@@ -312,12 +312,12 @@ od mcp install <agent>
 curl -fsSL https://open-design.ai/install.sh | sh -s <agent>
 ```
 
-`install.sh` is a thin shell wrapper around `od mcp install`; it exists so the
+`install.sh` is a thin shell wrapper around `capt mcp install`; it exists so the
 hosted URL returns shell instead of the landing-page HTML fallback and fails
-fast if your shell resolves a non-Open-Design `od` binary.
+fast if your shell resolves a non-Open-Design `capt` binary.
 
 > **macOS / WSL2 users:** `/usr/bin/od` is a system octal-dump command and can
-> shadow OpenDesign's `od` command. Desktop-app users should prefer the
+> shadow OpenDesign's `capt` command. Desktop-app users should prefer the
 > **Settings → MCP server** snippet; WSL2 users should follow the
 > [`WSL2 setup guide`](docs/wsl-setup.md) first.
 
@@ -382,19 +382,19 @@ OpenDesign ships a **stdio MCP server** and per-agent **install scripts**. Any M
 
 ```bash
 # One-line install (16+ CLIs supported):
-od mcp install <agent>
+capt mcp install <agent>
 
 # Then the agent can:
-od project list --json
-od files list <project-id> --json
-od files read <project-id> <relative-path>
-od plugin list --json
-od skills list --json
+capt project list --json
+capt files list <project-id> --json
+capt files read <project-id> <relative-path>
+capt plugin list --json
+capt skills list --json
 ```
 
 **Why MCP?** Exporting and re-attaching a zip every iteration breaks flow. MCP exposes the design source directly — the agent always sees the live file.
 
-**For an agent starting from scratch,** the installer places `~/.config/<agent>/open-design.json` (or the platform equivalent) plus a copy-paste MCP snippet. Cursor gets a one-click deeplink; Claude Code gets a `claude mcp add-json` one-liner; every other agent gets JSON in the schema its config expects. On macOS desktop installs, prefer that Settings snippet over typing bare `od mcp install <agent>` in Terminal, because `/usr/bin/od` may win on PATH. Full per-agent flow → **Settings → MCP server** in the desktop app, or [`docs/agent-adapters.md`](docs/agent-adapters.md).
+**For an agent starting from scratch,** the installer places `~/.config/<agent>/open-design.json` (or the platform equivalent) plus a copy-paste MCP snippet. Cursor gets a one-click deeplink; Claude Code gets a `claude mcp add-json` one-liner; every other agent gets JSON in the schema its config expects. On macOS desktop installs, prefer that Settings snippet over typing bare `capt mcp install <agent>` in Terminal, because `/usr/bin/od` may win on PATH. Full per-agent flow → **Settings → MCP server** in the desktop app, or [`docs/agent-adapters.md`](docs/agent-adapters.md).
 
 **Security model.** Read-only by default, the daemon binds to `127.0.0.1`, and SSRF is blocked at the proxy edge. LAN exposure requires an explicit `OD_BIND_HOST` plus `OD_ALLOWED_ORIGINS`. Connector credentials and live-artifact preview routes stay loopback-only regardless.
 
@@ -492,20 +492,20 @@ Also [`plugins/community/`](plugins/community/) for community plugins and [`plug
 
 ### Using plugins
 
-Plugins are at full parity across the **web UI** and the **`od` CLI** — same `/api/plugins` endpoints, pick whichever fits.
+Plugins are at full parity across the **web UI** and the **`capt` CLI** — same `/api/plugins` endpoints, pick whichever fits.
 
 **In the desktop / web app:** open the **Plugin** page to browse the marketplace and click **Install**; inside a project's Studio, plugins appear as composer chips you click to apply (with the inputs they declare).
 
 **On the command line** (runs without a UI — this is the path external agents use):
 
 ```bash
-od plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
-od plugin search "landing page"      # search by keyword
-od plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
-od plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
-od plugin apply od-default --input brief="a one-page pitch for our seed round"
-od plugin upgrade od-default         # upgrade
-od plugin uninstall od-default       # uninstall
+capt plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
+capt plugin search "landing page"      # search by keyword
+capt plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
+capt plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
+capt plugin apply od-default --input brief="a one-page pitch for our seed round"
+capt plugin upgrade od-default         # upgrade
+capt plugin uninstall od-default       # uninstall
 ```
 
 Every command supports `--json`, so you can pipe it through `jq` / `xargs` into automation.
@@ -528,9 +528,9 @@ Core `open-design.json` fields: `specVersion` (currently `1.0.0`), `name` (stabl
 Scaffold + validate locally:
 
 ```bash
-od plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
-od plugin validate ./my-plugin                          # check manifest / file layout
-pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
+capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
+capt plugin validate ./my-plugin                          # check manifest / file layout
+pnpm guard && pnpm --filter @capydesign/plugin-runtime typecheck
 ```
 
 Full field set and runtime contract → [`plugins/spec/SPEC.md`](plugins/spec/SPEC.md); developing a plugin with a coding agent → [`plugins/spec/AGENT-DEVELOPMENT.md`](plugins/spec/AGENT-DEVELOPMENT.md); copy-paste minimal templates → [`plugins/spec/examples/`](plugins/spec/examples/).
@@ -538,7 +538,7 @@ Full field set and runtime contract → [`plugins/spec/SPEC.md`](plugins/spec/SP
 ### Contributing a plugin
 
 1. Drop the plugin folder into [`plugins/community/`](plugins/community/) (third-party plugins), or — to ship it bundled with OpenDesign — into the matching tier of [`plugins/_official/`](plugins/_official/).
-2. Pass validation: `od plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
+2. Pass validation: `capt plugin validate`, `pnpm guard`, `pnpm --filter @capydesign/plugin-runtime typecheck`.
 3. Fill the PR using the template in [`plugins/spec/CONTRIBUTING.md`](plugins/spec/CONTRIBUTING.md) (ID, version, lane, mode, capabilities, trigger examples; attach a screenshot / preview for visual plugins).
 4. To publish to an external registry (skills.sh / ClawHub / standalone GitHub) → [`plugins/spec/PUBLISHING-REGISTRIES.md`](plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -610,8 +610,8 @@ Full architecture → [`docs/architecture.md`](docs/architecture.md). Skill prot
 - [ ] Published Linux desktop release (optional lane) — tracked in [#4368](https://github.com/nexu-io/open-design/issues/4368)
 - [ ] Comment-mode surgical edits — partially shipped; reliable targeted patching in progress
 - [ ] AI-emitted tweaks panel UX — not yet implemented
-- [ ] `npx od init` to scaffold a project with `DESIGN.md`
-- [ ] Plugin SDK + `od plugin {add,list,remove,test,publish}` CLI
+- [ ] `npx capt init` to scaffold a project with `DESIGN.md`
+- [ ] Plugin SDK + `capt plugin {add,list,remove,test,publish}` CLI
 - [ ] Figma / Pencil → React / Next / Vue migration plugins (alpha)
 - [ ] Refresh-existing-codebase plugin (point at a git repo + `DESIGN.md`)
 
@@ -664,7 +664,7 @@ gh issue develop <number>   # create a branch and worktree
 
 # 3. Make the change, run the checks
 pnpm guard && pnpm typecheck
-pnpm --filter @open-design/<package> test
+pnpm --filter @capydesign/<package> test
 
 # 4. Open the PR
 gh pr create --fill

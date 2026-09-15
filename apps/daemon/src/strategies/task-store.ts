@@ -17,7 +17,7 @@ import {
   type StrategyInputStageV2,
   type StrategyOutcomeV2,
   type StrategyRouteV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type Database from 'better-sqlite3';
 
 import { getSnapshot } from '../plugins/snapshots.js';

@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { installMockCapyDesignHost } from '@open-design/host/testing';
+import { installMockCapyDesignHost } from '@capydesign/host/testing';
 import { advanceWorkspaceAccountGeneration } from '../../src/collab/workspace-identity';
 import {
   buildWorkspacePermissions,
   buildWorkspaceSeatSummary,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import {
   cancelConnectorAuthorization,

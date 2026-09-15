@@ -10,8 +10,8 @@
 // existing imports (`BrandLogo`, `hostnameOf`) keep working.
 
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from '@open-design/components';
-import type { BrandSummary } from '@open-design/contracts';
+import { Button } from '@capydesign/components';
+import type { BrandSummary } from '@capydesign/contracts';
 import { useT } from '../i18n';
 import { navigate } from '../router';
 import { useAnalytics } from '../analytics/provider';

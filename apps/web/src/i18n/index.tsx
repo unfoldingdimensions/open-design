@@ -28,7 +28,7 @@ import { uk } from './locales/uk';
 import { tr } from './locales/tr';
 import { th } from './locales/th';
 import { it } from './locales/it';
-import { getCapyDesignHost } from '@open-design/host';
+import { getCapyDesignHost } from '@capydesign/host';
 import { LOCALES, type Dict, type Locale } from './types';
 
 export { LOCALES, LOCALE_LABEL } from './types';

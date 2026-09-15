@@ -22,25 +22,25 @@ import {
   DECK_SLIDE_SELECTOR,
   DECK_STRUCTURED_SLIDE_SELECTOR,
   injectDeckStageFallback,
-} from '@open-design/contracts/runtime/deck-stage-fallback';
+} from '@capydesign/contracts/runtime/deck-stage-fallback';
 import {
   DECK_PROTOCOL_VERSION,
   DECK_READY_MESSAGE_TYPE,
-} from '@open-design/contracts/runtime/deck-protocol';
+} from '@capydesign/contracts/runtime/deck-protocol';
 import {
   buildPreviewBaseHrefBridge,
   buildPreviewObservabilityBridge,
-} from '@open-design/contracts/runtime/preview-observability';
+} from '@capydesign/contracts/runtime/preview-observability';
 import {
   PREVIEW_RUNTIME_STATE_LIMITS,
   PREVIEW_RUNTIME_STATE_VERSION,
-} from '@open-design/contracts/runtime/preview-runtime-state';
+} from '@capydesign/contracts/runtime/preview-runtime-state';
 import {
   PREVIEW_REDIRECT_GUARD_MAX_HOPS,
   PREVIEW_REDIRECT_GUARD_SELF_REFRESH_MIN_DELAY_MS,
   PREVIEW_REDIRECT_GUARD_WINDOW_MS,
   PREVIEW_REDIRECT_LOOP_MESSAGE,
-} from '@open-design/contracts/runtime/preview-guards';
+} from '@capydesign/contracts/runtime/preview-guards';
 
 import {
   endOfTag,
@@ -48,14 +48,14 @@ import {
   findRealTagEnd,
   findRealTagOffset,
   HTML_TAG_PATTERNS,
-} from '@open-design/contracts/runtime/html-injection-points';
+} from '@capydesign/contracts/runtime/html-injection-points';
 
 export {
   PREVIEW_REDIRECT_GUARD_MAX_HOPS,
   PREVIEW_REDIRECT_GUARD_SELF_REFRESH_MIN_DELAY_MS,
   PREVIEW_REDIRECT_GUARD_WINDOW_MS,
   PREVIEW_REDIRECT_LOOP_MESSAGE,
-} from '@open-design/contracts/runtime/preview-guards';
+} from '@capydesign/contracts/runtime/preview-guards';
 
 import {
   buildManualEditBridge,
@@ -3053,7 +3053,7 @@ function injectDeckStageShadowChromeHiding(doc: string): string {
 
 // Screens keydown listeners for keyboard slide navigation by their source
 // text, the same way odMaybeHandlesSlideMessages screens message listeners:
-// od bridges and artifact shortcut helpers register keydown listeners of
+// capt bridges and artifact shortcut helpers register keydown listeners of
 // their own, and counting those would put every deck on the key-probe path.
 // Shared between the head-start registry hook and the deck bridge's own
 // addEventListener patches.
@@ -3102,7 +3102,7 @@ function injectDeckKeydownRegistryHook(doc: string): string {
 }
 
 // Whether the artifact ships its own keyboard slide navigation, judged from
-// the artifact source. Must be evaluated BEFORE any od bridge is injected:
+// the artifact source. Must be evaluated BEFORE any capt bridge is injected:
 // injected bridges (preview focus guard, edit bridge) register keydown
 // listeners of their own, and matching those would put every deck on the
 // key-probe path. Requiring a navigation-key token alongside the keydown

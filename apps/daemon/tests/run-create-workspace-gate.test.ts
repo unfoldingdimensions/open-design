@@ -33,7 +33,7 @@ import { workspaceContextFromDirectoryItem } from '../src/collab/vela-workspace-
 import { registerRunRoutes } from '../src/routes/runs.js';
 import { connectorService } from '../src/connectors/service.js';
 import { upsertInstalledPlugin } from '../src/plugins/registry.js';
-import { strategyPackageHashFromDigests } from '@open-design/plugin-runtime';
+import { strategyPackageHashFromDigests } from '@capydesign/plugin-runtime';
 import {
   finalizeStrategyPlanningTurn,
   prepareStrategyRequest,

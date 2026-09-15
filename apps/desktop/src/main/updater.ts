@@ -19,10 +19,10 @@ import {
   downloadCopyAndClear,
   type ManagedDownloadChecksum,
   type ManagedDownloadProgress,
-} from "@open-design/download";
+} from "@capydesign/download";
 import {
   LAUNCHER_SCHEMA_VERSION,
-} from "@open-design/launcher-proto";
+} from "@capydesign/launcher-proto";
 import {
   DESKTOP_UPDATE_ACTIONS,
   DESKTOP_UPDATE_MODES,
@@ -35,7 +35,7 @@ import {
   type DesktopUpdateReinstallSnapshot,
   type DesktopUpdateStatusSnapshot,
   type DesktopUpdateState,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 import {
   markInstallerObservationOpenFailed,
   writePendingInstallerObservation,

@@ -1,7 +1,7 @@
 import {
   DELIVERABLE_SYNTAX_REPAIR_SCHEMA,
   type DeliverableSyntaxRepairState as ContractDeliverableSyntaxRepairState,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type { DeliverableSyntaxResult } from './deliverable-syntax.js';
 
 export const DEFAULT_DELIVERABLE_SYNTAX_REPAIR_MAX_ATTEMPTS = 3;

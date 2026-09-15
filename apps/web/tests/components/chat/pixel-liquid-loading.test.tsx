@@ -13,7 +13,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render as rtlRender, screen } from '@testing-library/react';
 import type { ReactElement } from 'react';
-import type { PersistedAgentEvent } from '@open-design/contracts';
+import type { PersistedAgentEvent } from '@capydesign/contracts';
 import { I18nProvider } from '../../../src/i18n';
 import { ExecutionShell } from '../../../src/components/chat/ExecutionShell';
 import { ArtifactCards, FileOpsSummary } from '../../../src/components/FileOpsSummary';
@@ -33,7 +33,7 @@ function partiallyGeneratedShell(): ShellData {
       kind: 'tool_use',
       id: 'g1',
       name: 'Bash',
-      input: { command: 'od media generate a && od media generate b && od media generate c && od media generate d' },
+      input: { command: 'capt media generate a && capt media generate b && capt media generate c && capt media generate d' },
       startedAt: 0,
     },
     { kind: 'tool_result', toolUseId: 'g1', content: [gen('a.png'), failed()].join('\n'), isError: false },

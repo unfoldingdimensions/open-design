@@ -1,8 +1,8 @@
 import { copyFile, mkdir, readFile, readdir, realpath, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { extractComponentsManifest } from '@open-design/contracts/design-systems/components-manifest';
-import { renderDesignTokensJson, renderTailwindV4Css } from '@open-design/contracts/design-systems/derived-token-outputs';
+import { extractComponentsManifest } from '@capydesign/contracts/design-systems/components-manifest';
+import { renderDesignTokensJson, renderTailwindV4Css } from '@capydesign/contracts/design-systems/derived-token-outputs';
 import {
   buildDesignTokenContract,
   buildReportWithSelfCheck,
@@ -102,6 +102,7 @@ const IGNORED_DIRS = new Set([
   '.next',
   '.nuxt',
   '.od',
+  '.capydesign',
   '.tmp',
   'build',
   'coverage',

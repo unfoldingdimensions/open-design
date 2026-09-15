@@ -6,8 +6,8 @@ import {
   type ReactNode,
   type SetStateAction,
 } from 'react';
-import type { ChatSessionMode, ConnectorDetail } from '@open-design/contracts';
-import type { CapyDesignHostProjectImportSuccess } from '@open-design/host';
+import type { ChatSessionMode, ConnectorDetail } from '@capydesign/contracts';
+import type { CapyDesignHostProjectImportSuccess } from '@capydesign/host';
 import {
   DEFAULT_AUDIO_MODEL,
   DEFAULT_IMAGE_MODEL,
@@ -52,7 +52,7 @@ type EntryCreateProjectInput = Omit<CreateInput, 'metadata'> & {
   pluginType?: string;
   appliedPluginSnapshotId?: string;
   pluginInputs?: Record<string, unknown>;
-  automaticStrategyTaskProfile?: import('@open-design/contracts').ProjectScenarioTaskProfile;
+  automaticStrategyTaskProfile?: import('@capydesign/contracts').ProjectScenarioTaskProfile;
   conversationMode?: ChatSessionMode;
   autoSendFirstMessage?: boolean;
   requestId?: string;
@@ -80,7 +80,7 @@ interface Props {
   // detecting/skeleton state while the cold-start agent stream is in flight.
   agentsLoading?: boolean;
   amrLoggedIn?: boolean | null;
-  amrSessionState?: import('@open-design/contracts').AmrSessionState;
+  amrSessionState?: import('@capydesign/contracts').AmrSessionState;
   /** Forwarded to EntryShell for personal free campaign audience resolution. */
   amrAccountPlan?: string | null;
   // Execution / model-switching context forwarded to the EntryShell so the

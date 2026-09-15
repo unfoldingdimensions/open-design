@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   OD_NEXT_BUNDLE_ECHO_GUARD_V2,
   serializeOdNextPromptBundleV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   composeChatAgentTextPayload,
   resolveOdNextRequestUserPrompt,

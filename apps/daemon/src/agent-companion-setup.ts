@@ -4,11 +4,11 @@ import { access, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promise
 import path from 'node:path';
 import { promisify } from 'node:util';
 
-import { createPackageManagerInvocation } from '@open-design/platform';
+import { createPackageManagerInvocation } from '@capydesign/platform';
 import type {
   AgentCompanionSetupAction,
   AgentCompanionSetupResponse,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { agentCliEnvForAgent, readAppConfig } from './app-config.js';
 import { detectAgent } from './runtimes/detection.js';
@@ -24,7 +24,7 @@ import {
 const execFileAsync = promisify(execFile);
 const DSH_AGENT_ID = 'deepseek-harness';
 const DSH_RUNTIME_RESOURCE_DIRECTORY = path.join('agent-runtimes', 'deepseek-harness');
-const DSH_RUNTIME_PACKAGE_NAME = '@open-design/dsh-runtime';
+const DSH_RUNTIME_PACKAGE_NAME = '@capydesign/dsh-runtime';
 
 type RuntimeManifest = {
   file: string;

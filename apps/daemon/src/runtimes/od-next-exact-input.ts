@@ -1,4 +1,4 @@
-import { parseOdNextPromptBundleV2 } from '@open-design/contracts';
+import { parseOdNextPromptBundleV2 } from '@capydesign/contracts';
 
 export const OD_NEXT_EXACT_INPUT_MAP_VERSION =
   'open-design.od-next-exact-input-map/v2' as const;
@@ -509,7 +509,7 @@ export const OD_NEXT_SEMANTIC_REQUEST_FACT_MAP_V1 = [
     id: 'headless_message_fallback',
     classification: 'initial_bundle',
     producer: 'request',
-    source: 'od run start --message -> ChatRequest.message when currentPrompt is absent',
+    source: 'capt run start --message -> ChatRequest.message when currentPrompt is absent',
     owner: 'Task 02 user_first_prompt serializer',
     textTarget: 'user_first_prompt',
     note: 'Compatibility fallback only when currentPrompt is not an own property; explicit null or empty never falls back.',

@@ -76,7 +76,7 @@ export const AppliedPluginSnapshotSchema = z.object({
   // Internal, nullable strategy content identity. Legacy and ordinary plugin
   // snapshots omit this field; daemon persistence stores SQL NULL.
   strategy:             AppliedStrategyBindingV2Schema.nullable().optional(),
-  // Apply-pipeline status — flips to 'stale' when `od plugin doctor` detects
+  // Apply-pipeline status — flips to 'stale' when `capt plugin doctor` detects
   // a digest drift after an upgrade. Snapshots are never rewritten in place.
   status: z.enum(['fresh', 'stale']).default('fresh'),
 });

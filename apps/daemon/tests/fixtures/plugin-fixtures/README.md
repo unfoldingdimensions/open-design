@@ -5,7 +5,7 @@ Declarative plugin fixtures used by Phase 1 plugin-system tests
 
 Each subfolder is a self-contained OpenDesign plugin (per
 `docs/plugins-spec.md` §5) ready to be passed to
-`od plugin install --source <path>`.
+`capt plugin install --source <path>`.
 
 - `sample-plugin/` — minimal `open-design.json` + companion `SKILL.md`.
   The sidecar has primary precedence; the `SKILL.md` exists so the

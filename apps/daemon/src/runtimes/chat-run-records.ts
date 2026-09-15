@@ -13,7 +13,7 @@ import type {
   ChatRunStatusResponse,
   ProjectMetadata as ContractProjectMetadata,
   StrategyTaskProjectionV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type { AnalyticsContext } from '../analytics.js';
 import type { RunArtifactBaseline } from '../run-artifact-fs.js';
 import type {

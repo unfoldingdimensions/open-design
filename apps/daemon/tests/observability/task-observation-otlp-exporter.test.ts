@@ -1,7 +1,7 @@
 import {
   normalizeAgentObservationV1,
   type NormalizedAgentObservationV1,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { describe, expect, it, vi } from 'vitest';
 
 import {

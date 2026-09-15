@@ -1,9 +1,9 @@
 // Plan §3.BB2 — diffSnapshots() pure helper.
 
 import { describe, expect, it } from 'vitest';
-import type { AppliedPluginSnapshot } from '@open-design/contracts';
+import type { AppliedPluginSnapshot } from '@capydesign/contracts';
 import { diffSnapshots } from '../src/plugins/snapshot-diff.js';
-import { strategyPackageHashFromDigests } from '@open-design/plugin-runtime';
+import { strategyPackageHashFromDigests } from '@capydesign/plugin-runtime';
 
 const make = (over: Partial<AppliedPluginSnapshot> = {}): AppliedPluginSnapshot => ({
   snapshotId: 'snap-1',

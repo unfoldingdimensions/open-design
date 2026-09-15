@@ -1,5 +1,5 @@
 import { cac } from "cac";
-import type { ReleaseChannel } from "@open-design/release";
+import type { ReleaseChannel } from "@capydesign/release";
 
 import {
   DEFAULT_COLLAB_CLOUD_PORT,

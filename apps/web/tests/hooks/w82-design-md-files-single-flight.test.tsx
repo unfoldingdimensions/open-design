@@ -26,7 +26,7 @@ import {
   buildWorkspacePermissions,
   buildWorkspaceSeatSummary,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { useDesignMdState } from '../../src/hooks/useDesignMdState';
 import { fetchProjectFiles } from '../../src/providers/registry';

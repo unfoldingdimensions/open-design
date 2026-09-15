@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { isSameWorkspacePrincipal } from '@open-design/contracts';
+import { isSameWorkspacePrincipal } from '@capydesign/contracts';
 import type {
   ProjectVisibility,
   ProjectWorkspaceScope,
   ProjectWorkspaceScopeResponse,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   WORKSPACE_CONTEXT_REFRESH_EVENT,
 } from './useWorkspaceContext';

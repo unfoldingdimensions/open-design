@@ -12,7 +12,7 @@ import {
   type ProjectSyncIntentEvent,
   type TeamProject,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   ProjectContentTransferToken,
 } from '../collab/project-content-transfer-state.js';
@@ -59,7 +59,7 @@ import { readVelaControlApiContext } from '../integrations/vela.js';
 import { isAbortedOperationError } from '../integrations/aborted-error.js';
 import { readProjectManifest } from '../project-locations.js';
 import { redactSecrets } from '../redact.js';
-import { findRealElementRange, HTML_TAG_PATTERNS } from '@open-design/contracts/runtime/html-injection-points';
+import { findRealElementRange, HTML_TAG_PATTERNS } from '@capydesign/contracts/runtime/html-injection-points';
 
 /** The fields register-on-pull reads out of a pulled project's manifest. */
 export interface PulledProjectManifest {
@@ -571,7 +571,7 @@ function encodePublicFileUrlPath(filePath: string): string {
  * workspace can address (`workspaceContextHasTeamIdentity`). A personal or
  * signed-out session — and a team session whose context read momentarily fails —
  * lands here. Ship a sentence alongside the code so every surface that is not
- * the web UI (the `od` CLI, embedding agents) states the reason instead of
+ * the web UI (the `capt` CLI, embedding agents) states the reason instead of
  * echoing `WORKSPACE_IDENTITY_REQUIRED` at a human. The web UI localizes the
  * code itself; see `publicFilePublishFailureKey` in apps/web.
  */
@@ -1348,7 +1348,7 @@ export function registerCollabSyncRoutes(
               code: PUBLIC_FILE_MANUAL_REVOKE_REQUIRED,
               message:
                 `The public link remains active at ${publication.url}. `
-                + 'Run od project revoke-public-link with this project, file path, and URL.',
+                + 'Run capt project revoke-public-link with this project, file path, and URL.',
               data: {
                 projectId,
                 ...publication,

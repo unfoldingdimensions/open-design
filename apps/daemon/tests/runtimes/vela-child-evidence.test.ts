@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { ChildEvidenceCoverageV1Schema } from '@open-design/contracts';
+import { ChildEvidenceCoverageV1Schema } from '@capydesign/contracts';
 
 import { safeTaskObservationRuntimeVersions } from '../../src/observability/task-observation-aggregation.js';
 import {

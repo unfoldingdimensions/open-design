@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, isAbsolute, join, resolve } from "node:path";
@@ -16,11 +17,23 @@ export function resolveSeededAppConfigPaths(config: ToolPackConfig): SeededAppCo
   const configuredDataDir = process.env.OD_DATA_DIR?.trim();
   const sourceDataDir = configuredDataDir
     ? resolveProjectRelativePath(configuredDataDir, config.workspaceRoot)
-    : join(config.workspaceRoot, ".od");
+    : resolveDefaultDataDir(config.workspaceRoot);
   return {
     sourcePath: join(sourceDataDir, "app-config.json"),
     targetPath: join(config.roots.runtime.namespaceRoot, "data", "app-config.json"),
   };
+}
+
+// Mirrors the daemon's resolveDefaultDataDir (apps/daemon/src/daemon-paths.ts):
+// prefer the rebranded `.capydesign`, fall back to an existing legacy `.od`,
+// else default to `.capydesign`. Kept local because tools/pack must not import
+// daemon internals; `.od` is never deleted or migrated.
+function resolveDefaultDataDir(workspaceRoot: string): string {
+  const preferred = join(workspaceRoot, ".capydesign");
+  if (existsSync(preferred)) return preferred;
+  const legacy = join(workspaceRoot, ".od");
+  if (existsSync(legacy)) return legacy;
+  return preferred;
 }
 
 export async function seedPackagedAppConfig(config: ToolPackConfig): Promise<void> {

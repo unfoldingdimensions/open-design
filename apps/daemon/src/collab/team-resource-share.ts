@@ -7,7 +7,7 @@
 import type {
   WorkspaceCollabContext,
   WorkspaceDirectoryItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   contextToResourceHubPrincipal,
   type ResourceHubPrincipal,

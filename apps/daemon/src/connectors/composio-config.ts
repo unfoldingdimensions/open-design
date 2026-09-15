@@ -1,6 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { resolveDefaultDataDir } from '../daemon-paths.js';
+
 export interface ComposioConfig {
   apiKey: string;
   authConfigIds: Record<string, string>;
@@ -11,7 +13,7 @@ export interface PublicComposioConfig {
   apiKeyTail: string;
 }
 
-let configFilePath = path.join(process.cwd(), '.od', 'connectors', 'composio-config.json');
+let configFilePath = path.join(resolveDefaultDataDir(process.cwd()), 'connectors', 'composio-config.json');
 
 export function configureComposioConfigStore(dataDir: string): void {
   configFilePath = path.join(dataDir, 'connectors', 'composio-config.json');

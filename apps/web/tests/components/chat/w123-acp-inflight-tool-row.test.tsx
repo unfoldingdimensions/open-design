@@ -40,11 +40,11 @@ const TOOL_ID = 'acp-7f3c91ed2b405610';
 /**
  * 一条会跑很久的命令。
  *
- * ⚠️ 故意**不用**真语料里那条 `od media generate` —— 生图命令有自己的渲染分支
+ * ⚠️ 故意**不用**真语料里那条 `capt media generate` —— 生图命令有自己的渲染分支
  * (`readImageCall` → `ImageRow`),整行不再是工具行。拿它当夹具的话,下面
  * 「只有一行工具行」会一直是空的,断言全部真空通过。
  */
-const COMMAND = 'pnpm --filter @open-design/web build';
+const COMMAND = 'pnpm --filter @capydesign/web build';
 
 /* ── SSE 录音夹(照抄 w120-inflight-write-line-count.test.tsx)────────── */
 

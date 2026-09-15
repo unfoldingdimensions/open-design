@@ -14,7 +14,7 @@ import {
   type DaemonStatusSnapshot,
   type RegisterWebUrlResult,
   type WebStatusSnapshot,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 import {
   getSidecarStatus,
   invokeSidecar,
@@ -23,13 +23,13 @@ import {
   type SpawnedSidecar,
   type SidecarStamp,
   type SidecarRuntimeContext,
-} from "@open-design/sidecar";
+} from "@capydesign/sidecar";
 import {
   mergeProxyAwareEnv,
   resolveSystemProxyEnv,
   wellKnownUserToolchainBins,
-} from "@open-design/platform";
-import { releaseChannelFromNamespace, releaseChannelFromVersion } from "@open-design/release";
+} from "@capydesign/platform";
+import { releaseChannelFromNamespace, releaseChannelFromVersion } from "@capydesign/release";
 
 import type { PackagedWebOutputMode } from "./config.js";
 import type { PackagedNamespacePaths } from "./paths.js";
@@ -576,7 +576,7 @@ function extractPort(url: string): string {
 // reach even when the inherited PATH from launchd / a desktop launcher is
 // stripped down to nothing. The user-toolchain portion of the search list
 // (Homebrew, npm globals, nvm/fnm/mise, cargo, ...) lives in
-// @open-design/platform's wellKnownUserToolchainBins so the daemon
+// @capydesign/platform's wellKnownUserToolchainBins so the daemon
 // resolver and this PATH builder cannot drift again. See issue #442.
 const PACKAGED_POSIX_SYSTEM_BINS = ["/usr/bin", "/bin", "/usr/sbin", "/sbin"] as const;
 
@@ -902,9 +902,9 @@ export async function startPackagedSidecars(
   let webSupervisor: { close(): Promise<void> } | null = null;
 
   const daemonSidecarEntry =
-    options.daemonSidecarEntry ?? resolveSidecarEntry("@open-design/daemon", "sidecar");
+    options.daemonSidecarEntry ?? resolveSidecarEntry("@capydesign/daemon", "sidecar");
   const webSidecarEntry =
-    options.webSidecarEntry ?? resolveSidecarEntry("@open-design/web", "sidecar");
+    options.webSidecarEntry ?? resolveSidecarEntry("@capydesign/web", "sidecar");
   const prewarmLog = (message: string): void => {
     void appendSidecarLifecycleLog(join(paths.logsRoot, "launcher", "latest.log"), message);
   };

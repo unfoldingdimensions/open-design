@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import type { ProcessSnapshot, StopProcessesResult } from "@open-design/platform";
+import type { ProcessSnapshot, StopProcessesResult } from "@capydesign/platform";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {

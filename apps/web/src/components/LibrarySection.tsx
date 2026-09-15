@@ -14,7 +14,7 @@
 // the action bar or with Delete / Backspace.
 
 import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import type { ChatAttachment, DesignSystemSummary, LibraryAsset } from '@open-design/contracts';
+import type { ChatAttachment, DesignSystemSummary, LibraryAsset } from '@capydesign/contracts';
 import {
   applyLibraryAsset,
   deleteLibraryAsset,
@@ -32,7 +32,7 @@ import { useInView } from './plugins-home/useInView';
 import { navigate } from '../router';
 import { setPendingDesignSystemCreateEntry } from '../analytics/ds-create-entry';
 import { setComposerSeed, setDesignSystemAssetSeed, setHomeComposerAssetSeed } from '../state/libraryHandoff';
-import { Button, Dialog, DialogDescription, DialogFooter, DialogTitle } from '@open-design/components';
+import { Button, Dialog, DialogDescription, DialogFooter, DialogTitle } from '@capydesign/components';
 import { Icon } from './Icon';
 import {
   KindIcon,
@@ -1321,7 +1321,7 @@ export function LibrarySection({ active, onOpenProject }: Props) {
           <p>{t('library.emptyTitle')}</p>
           <p className={styles.emptyHint}>
             {t('library.emptyHintBefore')}{' '}
-            <code>od library import &lt;file&gt;</code>
+            <code>capt library import &lt;file&gt;</code>
             {t('library.emptyHintAfter')}
           </p>
         </div>

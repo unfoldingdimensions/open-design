@@ -9,12 +9,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const platformMocks = vi.hoisted(() => ({
   listProcessSnapshots: vi.fn(),
   stopProcesses: vi.fn(),
-  actualListProcessSnapshots: null as null | typeof import('@open-design/platform').listProcessSnapshots,
-  actualStopProcesses: null as null | typeof import('@open-design/platform').stopProcesses,
+  actualListProcessSnapshots: null as null | typeof import('@capydesign/platform').listProcessSnapshots,
+  actualStopProcesses: null as null | typeof import('@capydesign/platform').stopProcesses,
 }));
 
-vi.mock('@open-design/platform', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@open-design/platform')>();
+vi.mock('@capydesign/platform', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@capydesign/platform')>();
   platformMocks.actualListProcessSnapshots = actual.listProcessSnapshots;
   platformMocks.actualStopProcesses = actual.stopProcesses;
   platformMocks.listProcessSnapshots.mockImplementation(actual.listProcessSnapshots);
@@ -32,10 +32,10 @@ afterEach(() => {
   platformMocks.listProcessSnapshots.mockReset();
   platformMocks.stopProcesses.mockReset();
   platformMocks.listProcessSnapshots.mockImplementation(
-    platformMocks.actualListProcessSnapshots as typeof import('@open-design/platform').listProcessSnapshots,
+    platformMocks.actualListProcessSnapshots as typeof import('@capydesign/platform').listProcessSnapshots,
   );
   platformMocks.stopProcesses.mockImplementation(
-    platformMocks.actualStopProcesses as typeof import('@open-design/platform').stopProcesses,
+    platformMocks.actualStopProcesses as typeof import('@capydesign/platform').stopProcesses,
   );
 });
 

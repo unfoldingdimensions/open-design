@@ -41,7 +41,7 @@ export function registerDeployRoutes(app: Express, ctx: RegisterDeployRoutesDeps
       if (!isDeployProviderId(providerId)) {
         return sendApiError(res, 400, 'BAD_REQUEST', 'unsupported deploy provider');
       }
-      /** @type {import('@open-design/contracts').DeployConfigResponse} */
+      /** @type {import('@capydesign/contracts').DeployConfigResponse} */
       const body = publicDeployConfigForProvider(providerId, await readDeployConfig(providerId));
       res.json(body);
     } catch (err: any) {
@@ -57,7 +57,7 @@ export function registerDeployRoutes(app: Express, ctx: RegisterDeployRoutesDeps
       if (!isDeployProviderId(providerId)) {
         return sendApiError(res, 400, 'BAD_REQUEST', 'unsupported deploy provider');
       }
-      /** @type {import('@open-design/contracts').DeployConfigResponse} */
+      /** @type {import('@capydesign/contracts').DeployConfigResponse} */
       const body = await writeDeployConfig(providerId, input);
       res.json(body);
     } catch (err: any) {
@@ -67,7 +67,7 @@ export function registerDeployRoutes(app: Express, ctx: RegisterDeployRoutesDeps
 
   app.get('/api/deploy/cloudflare-pages/zones', async (_req, res) => {
     try {
-      /** @type {import('@open-design/contracts').CloudflarePagesZonesResponse} */
+      /** @type {import('@capydesign/contracts').CloudflarePagesZonesResponse} */
       const body = await listCloudflarePagesZones(await readDeployConfig(CLOUDFLARE_PAGES_PROVIDER_ID));
       res.json(body);
     } catch (err: any) {
@@ -86,7 +86,7 @@ export function registerDeployRoutes(app: Express, ctx: RegisterDeployRoutesDeps
         return sendApiError(res, 404, 'PROJECT_NOT_FOUND', 'project not found');
       }
       if (!await ctx.authorizeProjectRequest(req, res, req.params.id, { mode: 'read' })) return;
-      /** @type {import('@open-design/contracts').ProjectDeploymentsResponse} */
+      /** @type {import('@capydesign/contracts').ProjectDeploymentsResponse} */
       const body = { deployments: publicDeployments(listDeployments(db, req.params.id)) };
       res.json(body);
     } catch (err: any) {
@@ -169,7 +169,7 @@ export function registerDeployRoutes(app: Express, ctx: RegisterDeployRoutesDeps
             projectId: req.params.id,
           });
       const now = Date.now();
-      /** @type {import('@open-design/contracts').DeployProjectFileResponse} */
+      /** @type {import('@capydesign/contracts').DeployProjectFileResponse} */
       const body = upsertDeployment(db, {
         id: prior?.id ?? randomUUID(),
         projectId: req.params.id,
@@ -223,7 +223,7 @@ export function registerDeployRoutes(app: Express, ctx: RegisterDeployRoutesDeps
       }
       const preflightProject = getProject(db, req.params.id);
       if (!await ctx.authorizeProjectRequest(req, res, req.params.id, { mode: 'read' })) return;
-      /** @type {import('@open-design/contracts').DeployPreflightResponse} */
+      /** @type {import('@capydesign/contracts').DeployPreflightResponse} */
       const body = await prepareDeployPreflight(
         PROJECTS_DIR,
         req.params.id,
@@ -294,7 +294,7 @@ export function registerDeploymentCheckRoutes(app: Express, ctx: RegisterDeploym
         if (existing.providerId === CLOUDFLARE_PAGES_PROVIDER_ID && existing.cloudflarePages?.pagesDev?.url) {
           const checked = await checkCloudflarePagesDeploymentLinks(existing);
           const now = Date.now();
-          /** @type {import('@open-design/contracts').CheckDeploymentLinkResponse} */
+          /** @type {import('@capydesign/contracts').CheckDeploymentLinkResponse} */
           const body = upsertDeployment(db, {
             ...existing,
             ...checked,
@@ -308,7 +308,7 @@ export function registerDeploymentCheckRoutes(app: Express, ctx: RegisterDeploym
           : existing.url;
         const result = await checkDeploymentUrl(checkUrl);
         const now = Date.now();
-        /** @type {import('@open-design/contracts').CheckDeploymentLinkResponse} */
+        /** @type {import('@capydesign/contracts').CheckDeploymentLinkResponse} */
         const body = upsertDeployment(db, {
           ...existing,
           url: checkUrl || existing.url,

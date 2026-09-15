@@ -52,9 +52,9 @@ pnpm --filter @open-design/plugin-runtime typecheck
 如果 daemon CLI 已构建：
 
 ```bash
-od plugin validate ./path/to/plugin
-od plugin install ./path/to/plugin
-od plugin apply <plugin-id> --input key=value
+capt plugin validate ./path/to/plugin
+capt plugin install ./path/to/plugin
+capt plugin apply <plugin-id> --input key=value
 ```
 
 ## 兼容性承诺

@@ -77,10 +77,10 @@ without code churn.
    all 19 files under `apps/web/src/i18n/locales/`. The locale files
    carry complete dictionaries rather than inheriting missing keys from
    English.
-3. Run `pnpm --filter @open-design/web exec vitest run tests/components/Theater`
+3. Run `pnpm --filter @capydesign/web exec vitest run tests/components/Theater`
    before pushing. The suite has 100+ cases pinning the reducer
    shape, SSE validation, host lifecycle, and component renders.
-4. Visual regression: run `pnpm --filter @open-design/e2e test:ui:extended`
+4. Visual regression: run `pnpm --filter @capydesign/e2e test:ui:extended`
    with `--update-snapshots` after any CSS change in
    `apps/web/src/styles/viewer/theater.css`'s `.theater-*` block.
 

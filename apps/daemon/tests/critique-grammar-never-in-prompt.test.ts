@@ -41,7 +41,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-import { renderActiveStageBlocks } from '@open-design/contracts';
+import { renderActiveStageBlocks } from '@capydesign/contracts';
 import { composeSystemPrompt } from '../src/prompts/system.js';
 import { atomsForPrompt, CRITIQUE_THEATER_ATOM_ID } from '../src/plugins/critique-prompt-gate.js';
 

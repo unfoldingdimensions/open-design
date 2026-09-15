@@ -39,7 +39,7 @@ import type {
   MarketplaceTrust,
   PluginSourceKind,
   TrustTier,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type Database from 'better-sqlite3';
 import { recordPluginEvent } from './events.js';
 import { upsertPluginLockfileEntry } from './lockfile.js';
@@ -839,7 +839,7 @@ export async function* installFromLocalFolder(
 
   // Plan §3.II1 / §3.JJ1 — emit 'plugin.installed' OR
   // 'plugin.upgraded' (per opts.eventKind) so ops dashboards +
-  // `od plugin events tail` see the operation land in the in-
+  // `capt plugin events tail` see the operation land in the in-
   // memory ring buffer. Best-effort; recordPluginEvent never
   // throws.
   recordPluginEvent({

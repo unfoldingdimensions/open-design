@@ -8,7 +8,7 @@ import {
   type DeliverableSyntaxToolResponse,
   type DeliverableSyntaxValidationEvidence,
   type ProjectMetadata,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import {
   checkDeliverableSyntax,

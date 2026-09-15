@@ -3,7 +3,7 @@ import {
   workspaceContextHasTeamIdentity,
   type PublicFileManualRevokeRequiredData,
   type PublicProjectFilePublication,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { boundedRequestErrorCode } from '../analytics/workspace';
 import type {
   ConnectorAuthConfigPrepareResponse,
@@ -35,7 +35,7 @@ import type {
   SocialShareRequest,
   SocialShareResponse,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   AgentInfo,
   AppVersionInfo,
@@ -88,7 +88,7 @@ import { GENERIC_DEPLOY_ENVELOPE_CODES } from '../analytics/deploy-error-code';
 import {
   isCapyDesignHostAvailable,
   openHostExternalUrl,
-} from '@open-design/host';
+} from '@capydesign/host';
 import {
   coalescedGet,
   evictCoalescedGet,
@@ -2179,8 +2179,8 @@ export async function fetchProjectFiles(
   }
 }
 
-export type ProjectDesignTokenSuggestion = import('@open-design/contracts').ProjectDesignTokenSuggestion;
-export type ProjectDesignTokenSuggestionProp = import('@open-design/contracts').ProjectDesignTokenSuggestionProp;
+export type ProjectDesignTokenSuggestion = import('@capydesign/contracts').ProjectDesignTokenSuggestion;
+export type ProjectDesignTokenSuggestionProp = import('@capydesign/contracts').ProjectDesignTokenSuggestionProp;
 
 export async function fetchProjectDesignTokenSuggestions(
   projectId: string,
@@ -3380,7 +3380,7 @@ export async function dirExists(path: string): Promise<boolean> {
 // Global most-recently-used working directories (the local folders the user
 // grants the agent read-only awareness of). Persisted in the daemon's
 // app-config so they survive browser resets and are shared across projects
-// and the `od` CLI. Returns most-recent-first.
+// and the `capt` CLI. Returns most-recent-first.
 export async function fetchRecentLinkedDirs(): Promise<string[]> {
   try {
     // `/api/recent-dirs` returns the list pruned to folders that still exist
@@ -3460,14 +3460,14 @@ export async function replaceProjectWorkingDir(
 // editors on demand (PATH probe + macOS bundle scan), and the POST
 // endpoint spawns the chosen app with the project's resolvedDir.
 export async function fetchHostEditors(): Promise<
-  import('@open-design/contracts').HostEditorsResponse
+  import('@capydesign/contracts').HostEditorsResponse
 > {
   return coalescedGet(
     'host-editors',
     async () => {
       const resp = await fetch('/api/editors');
       if (!resp.ok) throw new Error(`GET /api/editors failed: ${resp.status}`);
-      return (await resp.json()) as import('@open-design/contracts').HostEditorsResponse;
+      return (await resp.json()) as import('@capydesign/contracts').HostEditorsResponse;
     },
     IN_FLIGHT_SHARE_ONLY_MS,
   );
@@ -3475,9 +3475,9 @@ export async function fetchHostEditors(): Promise<
 
 export async function openProjectInEditor(
   projectId: string,
-  editorId: import('@open-design/contracts').HostEditorId,
+  editorId: import('@capydesign/contracts').HostEditorId,
   workspaceContext?: WorkspaceCollabContext | null,
-): Promise<import('@open-design/contracts').OpenProjectInEditorResponse> {
+): Promise<import('@capydesign/contracts').OpenProjectInEditorResponse> {
   const resp = await fetch(
     `/api/projects/${encodeURIComponent(projectId)}/open-in`,
     {
@@ -3493,7 +3493,7 @@ export async function openProjectInEditor(
     const body = await readApiErrorBody(resp);
     throw new Error(body.message);
   }
-  return (await resp.json()) as import('@open-design/contracts').OpenProjectInEditorResponse;
+  return (await resp.json()) as import('@capydesign/contracts').OpenProjectInEditorResponse;
 }
 
 export async function fetchDesignSystemPreview(
@@ -3719,8 +3719,8 @@ import type {
   LibraryIngestResponse,
   LibraryPairingStartResponse,
   LibrarySyncResponse,
-} from '@open-design/contracts';
-import { LIBRARY_UPLOAD_MAX_BYTES, isLibraryUploadMimeAllowed } from '@open-design/contracts';
+} from '@capydesign/contracts';
+import { LIBRARY_UPLOAD_MAX_BYTES, isLibraryUploadMimeAllowed } from '@capydesign/contracts';
 
 /** Raw bytes URL for a library asset (image src / download href). */
 export function libraryAssetRawUrl(id: string): string {

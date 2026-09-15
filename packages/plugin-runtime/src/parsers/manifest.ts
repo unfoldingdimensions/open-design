@@ -2,7 +2,7 @@ import {
   OPEN_DESIGN_PLUGIN_SPEC_VERSION,
   PluginManifestSchema,
   type PluginManifest,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 export interface ManifestParseSuccess {
   ok: true;

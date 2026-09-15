@@ -1,4 +1,4 @@
-import type { CapyDesignHostProjectImportResult } from '@open-design/host';
+import type { CapyDesignHostProjectImportResult } from '@capydesign/host';
 
 /**
  * Best-effort flattening of the `details` field that the

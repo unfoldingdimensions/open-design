@@ -29,12 +29,12 @@
     "typecheck": "pnpm -r --workspace-concurrency=4 --if-present run typecheck && tsc -p scripts/tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@open-design/components": "workspace:*",
-    "@open-design/daemon": "workspace:*",
-    "@open-design/tools-dev": "workspace:*",
-    "@open-design/tools-pack": "workspace:*",
-    "@open-design/tools-release": "workspace:*",
-    "@open-design/tools-serve": "workspace:*",
+    "@capydesign/components": "workspace:*",
+    "@capydesign/daemon": "workspace:*",
+    "@capydesign/tools-dev": "workspace:*",
+    "@capydesign/tools-pack": "workspace:*",
+    "@capydesign/tools-release": "workspace:*",
+    "@capydesign/tools-serve": "workspace:*",
     "@types/node": "20.19.39",
     "tsx": "4.22.3",
     "typescript": "5.9.3",

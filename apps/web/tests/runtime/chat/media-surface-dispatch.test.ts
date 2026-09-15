@@ -20,7 +20,7 @@
  * 说了它没说过的话。
  */
 import { describe, expect, it } from 'vitest';
-import type { PersistedAgentEvent, ProjectMediaTask } from '@open-design/contracts';
+import type { PersistedAgentEvent, ProjectMediaTask } from '@capydesign/contracts';
 import { buildTurnBlocks } from '../../../src/runtime/chat/build-turn-blocks';
 import type { ExecutionShell, ImageRow, ShellItem } from '../../../src/runtime/chat/contract';
 
@@ -84,7 +84,7 @@ describe('OPEND-2625 · 媒体行要如实报出它是哪一类', () => {
   it('terminal tool_use 结算的音频批:任务上的 surface 是权威', () => {
     const blocks = buildTurnBlocks({
       events: [
-        bash('t1', 'od media generate --surface audio --model minimax-tts --prompt "读一段"'),
+        bash('t1', 'capt media generate --surface audio --model minimax-tts --prompt "读一段"'),
         bashResult('t1', '{"status":"done","file":{"name":"line.mp3"}}'),
       ],
       mediaTasks: [
@@ -109,7 +109,7 @@ describe('OPEND-2625 · 媒体行要如实报出它是哪一类', () => {
   it('一条任务都还没轮询到:命令行上的 --surface 就是证据', () => {
     const blocks = buildTurnBlocks({
       events: [
-        bash('t1', 'od media generate --surface video --model vela/doubao-seedance-2-0-260128 --prompt "一段镜头"'),
+        bash('t1', 'capt media generate --surface video --model vela/doubao-seedance-2-0-260128 --prompt "一段镜头"'),
         bashResult('t1', '{"status":"done","file":{"name":"shot.mp4"}}'),
       ],
       mediaTasks: [],
@@ -134,9 +134,9 @@ describe('OPEND-2625 · 媒体行要如实报出它是哪一类', () => {
   it('两类批并行在飞、任务交错到达:各自那一批一格都不许丢', () => {
     const blocks = buildTurnBlocks({
       events: [
-        bash('t1', 'od media generate --surface image --count 2 --model gpt-image-2 --prompt "两张封面"'),
+        bash('t1', 'capt media generate --surface image --count 2 --model gpt-image-2 --prompt "两张封面"'),
         bashResult('t1', '{"status":"done"}'),
-        bash('t2', 'od media generate --surface audio --count 2 --model minimax-tts --prompt "两段旁白"'),
+        bash('t2', 'capt media generate --surface audio --count 2 --model minimax-tts --prompt "两段旁白"'),
         bashResult('t2', '{"status":"done"}'),
       ],
       // 交错:图 → 音 → 图 → 音,正是两批并行时轮询看到的顺序
@@ -160,9 +160,9 @@ describe('OPEND-2625 · 媒体行要如实报出它是哪一类', () => {
   it('两次不同类型的连续调用不许合成一行 —— 合了就有一半在说谎', () => {
     const blocks = buildTurnBlocks({
       events: [
-        bash('t1', 'od media generate --surface image --model gpt-image-2 --prompt "一张封面"'),
+        bash('t1', 'capt media generate --surface image --model gpt-image-2 --prompt "一张封面"'),
         bashResult('t1', '{"status":"done","file":{"name":"cover.png"}}'),
-        bash('t2', 'od media generate --surface audio --model minimax-tts --prompt "读一段"'),
+        bash('t2', 'capt media generate --surface audio --model minimax-tts --prompt "读一段"'),
         bashResult('t2', '{"status":"done","file":{"name":"line.mp3"}}'),
       ],
       mediaTasks: [],

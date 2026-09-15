@@ -1,4 +1,4 @@
-// `od mcp` - stdio MCP server that proxies project tool calls to the
+// `capt mcp` - stdio MCP server that proxies project tool calls to the
 // running daemon's HTTP API. Lets a coding agent in a *different* repo
 // (Claude Code, Cursor, Zed) pull files from a local CapyDesign
 // project and create project-scoped artifacts without the
@@ -35,7 +35,7 @@ import {
   buildProjectRawFileUrl,
   type McpAnalyticsContextResponse,
   type WorkspaceProjectsResponse,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { randomUUID } from 'node:crypto';
 
 import { postCreateArtifactRequest } from './artifacts/create.js';
@@ -2314,7 +2314,7 @@ async function writeFile(
   const encoding = args.encoding === 'base64' ? 'base64' : 'utf8';
   // No `artifact: true` and no `overwrite: false`: the route then takes
   // the default writeProjectFile path, which overwrites the target. This
-  // is the exact shape `od files write` uses (see apps/daemon/src/cli.ts).
+  // is the exact shape `capt files write` uses (see apps/daemon/src/cli.ts).
   const url = `${baseUrl}/api/projects/${encodeURIComponent(id)}/files`;
   const resp = await fetch(url, {
     method: 'POST',
@@ -3096,7 +3096,7 @@ async function getFile(
   const mime = ((resp.headers.get('content-type') || 'application/octet-stream').split(';')[0] ?? 'application/octet-stream').trim();
   if (!isTextualMime(mime)) {
     return errorResult(
-      `file at "${relPath}" has mime "${mime}"; binary content is not yet supported by od mcp. Use list_files to inspect its metadata.`,
+      `file at "${relPath}" has mime "${mime}"; binary content is not yet supported by capt mcp. Use list_files to inspect its metadata.`,
     );
   }
   const text = await resp.text();

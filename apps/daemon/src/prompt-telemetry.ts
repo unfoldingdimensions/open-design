@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 
-import type { StrategyInputStageV2 } from '@open-design/contracts';
+import type { StrategyInputStageV2 } from '@capydesign/contracts';
 
 import { redactSecrets } from './redact.js';
 import type { StrategyTaskFinalTextIdentity } from './strategies/task-store.js';

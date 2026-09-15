@@ -290,7 +290,7 @@ describe('OD Next controlled rollout', () => {
     // What this replaces. OD Next used to carry a stop latch: a run that hit a
     // contract failure wrote a row that disabled the strategy for the whole
     // daemon instance, outranked the saved mode, survived restart, and could
-    // only be lifted by an operator running `od strategy rollout reset`.
+    // only be lifted by an operator running `capt strategy rollout reset`.
     //
     // The field regression that made the case against it: two vague prompts
     // made one agent emit a clarification state carrying a premature

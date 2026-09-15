@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { evaluateRuntimeEvidenceGraphV1 } from '@open-design/contracts';
+import { evaluateRuntimeEvidenceGraphV1 } from '@capydesign/contracts';
 import { describe, expect, it } from 'vitest';
 
 import { buildStructuredMainRunObservationV1 } from '../../src/observability/main-run-observation.js';

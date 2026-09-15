@@ -1,4 +1,4 @@
-// Contract test for the `od deploy` CLI surface. Verifies that the subcommand
+// Contract test for the `capt deploy` CLI surface. Verifies that the subcommand
 // is registered in SUBCOMMAND_MAP, that flags are parsed correctly, and that
 // exactly the right HTTP body is sent to POST /api/projects/:id/deploy.
 //
@@ -132,7 +132,7 @@ const STUB_DEPLOYMENT = {
   updatedAt: 1_700_000_000_001,
 };
 
-describe('od deploy CLI', () => {
+describe('capt deploy CLI', () => {
   let stub: StubServer;
 
   beforeAll(async () => {

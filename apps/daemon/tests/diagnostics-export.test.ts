@@ -13,8 +13,8 @@ import {
   SIDECAR_MODES,
   SIDECAR_SOURCES,
   type LegacySidecarRuntimeLayout,
-} from '@open-design/sidecar-proto';
-import type { SidecarRuntimeContext } from '@open-design/sidecar';
+} from '@capydesign/sidecar-proto';
+import type { SidecarRuntimeContext } from '@capydesign/sidecar';
 
 import {
   STANDALONE_LAUNCH_WARNING,
@@ -88,7 +88,7 @@ describe('diagnostics export handler — non-sidecar launch', () => {
   });
 
   // Reviewer-requested regression spec: `runDaemonCliStartup()` calls
-  // `startDaemonRuntime()` without a runtime context, so plain `od` users
+  // `startDaemonRuntime()` without a runtime context, so plain `capt` users
   // hit the diagnostics handler with `options.runtime == null`. The bundle
   // must still produce a valid zip AND surface a manifest warning that
   // file-based logs were not captured, so the operator can tell the

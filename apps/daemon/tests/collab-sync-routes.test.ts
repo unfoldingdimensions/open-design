@@ -16,7 +16,7 @@ import {
   buildWorkspacePermissions,
   buildWorkspaceSeatSummary,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { runVelaResourceCommand } from '../src/collab/vela-cli-resource-adapter.js';
 import {
   createCollabRuntime,
@@ -1681,7 +1681,7 @@ describe('collab sync routes', () => {
     // The display read behind `/api/workspace/projects/team` is served from a
     // 3s SWR entry, so invalidation is part of the mutation contract now. The
     // `/api/workspaces/:id/projects` move path already invalidates; this route
-    // — the one `od project share` and CollabDemoView drive — did not, so a
+    // — the one `capt project share` and CollabDemoView drive — did not, so a
     // catalog GET right after sharing could answer with the pre-share list
     // until the freshness window expired or a hub event happened to arrive.
     const invalidateTeamProjectCatalog = vi.fn();
@@ -1955,7 +1955,7 @@ describe('collab sync routes', () => {
     // The gate was widened, not removed. A signed-out caller (or a context read
     // that came back empty) has no id to publish under and no member id to own
     // the resource with, so all three handlers still refuse it — and must ship a
-    // human-readable reason alongside the code, since the `od` CLI and embedding
+    // human-readable reason alongside the code, since the `capt` CLI and embedding
     // agents surface the body verbatim. The sentence now says SIGN IN; telling a
     // personal user to "switch to a team workspace" is no longer true.
     const resolveProjectDir = vi.fn(() => {

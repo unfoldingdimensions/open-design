@@ -9,7 +9,7 @@ import {
   type OdNextPromptBundleHeadV2,
   type OdNextPromptBundleRecipeIdentityV2,
   type OdNextStrategyRequestRecipeV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import {
   detectDeckIntentSignal,
@@ -62,7 +62,7 @@ import { daemonOwnedOdNextPlanningCatalog } from './resolver.js';
 type SqliteDb = Parameters<typeof getProject>[0];
 type IntentSignals = ReturnType<typeof latchConversationIntentSignals>;
 
-// Keep this header grammar aligned with parseFormAnswers in @open-design/contracts.
+// Keep this header grammar aligned with parseFormAnswers in @capydesign/contracts.
 const FORM_ANSWERS_HEADER_RE =
   /^\s*\[form answers(?:\s*[\u2014\-:]\s*([^\]\r\n]+))?\]\s*(?:\r?\n|$)/i;
 

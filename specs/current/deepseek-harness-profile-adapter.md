@@ -132,7 +132,7 @@ is immediate and no prompt or reinstall occurs. If `dsh` itself is absent,
 DeepSeek Harness remains in the installable-agent group and points users to the
 official installer.
 
-The Web UI and `od agent setup deepseek-harness --json` call the same local-only
+The Web UI and `capt agent setup deepseek-harness --json` call the same local-only
 daemon endpoint. The CLI setup command is explicit rather than being triggered
 by agent selection. Credential setup remains outside this first release.
 
@@ -384,7 +384,7 @@ OD receives only:
 
 An environment credential is reported as configured and read-only. The secret
 is never returned, masked, logged, placed in argv, or stored in OD app config.
-The Web UI and `od` CLI will call the same local daemon endpoint; CLI key input
+The Web UI and `capt` CLI will call the same local daemon endpoint; CLI key input
 comes from stdin or an explicit key file.
 
 ## 12. Models and MCP
@@ -448,7 +448,7 @@ malformed-frame, request ownership, resume-id, and terminal-result rules.
 
 The complete design is ready when:
 
-- profile installation/repair is available through both Web and `od` CLI;
+- profile installation/repair is available through both Web and `capt` CLI;
 - a compatible user-installed `dsh` and OD profile are discovered accurately;
 - cold resume, structured events, model discovery, MCP, Todo/subagent status,
   credential delegation, and cancellation pass shared fixtures;

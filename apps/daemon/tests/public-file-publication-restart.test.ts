@@ -8,7 +8,7 @@ import {
   buildWorkspacePermissions,
   buildWorkspaceSeatSummary,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { createCollabRuntime, type CollabRuntime } from '../src/collab/runtime.js';
 import {
   createSqlitePublicFilePublicationStore,
@@ -225,7 +225,7 @@ describe('public file publication restart lifecycle', () => {
       },
     });
     expect((publish.body.error as { message: string }).message).toContain(
-      'od project revoke-public-link',
+      'capt project revoke-public-link',
     );
     expect((publish.body.error as { message: string }).message).toContain(
       'https://hub.example.test/api/v1/public/snapshots/manual-revoke-slug/files/index.html',

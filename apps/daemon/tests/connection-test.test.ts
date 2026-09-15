@@ -9,14 +9,14 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { Socks5ProxyAgent } from 'undici';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import * as platform from '@open-design/platform';
+import * as platform from '@capydesign/platform';
 
 const { resolveSystemProxyEnvMock } = vi.hoisted(() => ({
   resolveSystemProxyEnvMock: vi.fn(() => ({})),
 }));
 
-vi.mock('@open-design/platform', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@open-design/platform')>()),
+vi.mock('@capydesign/platform', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@capydesign/platform')>()),
   resolveSystemProxyEnv: resolveSystemProxyEnvMock,
 }));
 

@@ -10,7 +10,7 @@ import {
   type SetStateAction,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { Dialog } from '@open-design/components';
+import { Dialog } from '@capydesign/components';
 import {
   PLUGIN_SHARE_ACTION_PLUGIN_IDS,
   resolveLocalizedText,
@@ -20,7 +20,7 @@ import {
   type PluginSourceKind,
   type SkillSummary,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   fetchSkills,
   importSkill,
@@ -49,7 +49,7 @@ import {
   stableAnalyticsRequestErrorCode,
   workspaceAnalyticsDimensions,
 } from '../analytics/workspace';
-import type { TrackingWorkspaceScope } from '@open-design/contracts/analytics';
+import type { TrackingWorkspaceScope } from '@capydesign/contracts/analytics';
 import {
   addPluginMarketplace,
   applyPlugin,
@@ -4112,7 +4112,7 @@ function buildAvailableInstallCommand(
   version: string,
 ): string {
   const suffix = version && version !== 'latest' ? `@${version}` : '';
-  return `od plugin install ${entry.name}${suffix}`;
+  return `capt plugin install ${entry.name}${suffix}`;
 }
 
 function buildAvailablePluginProvenance({

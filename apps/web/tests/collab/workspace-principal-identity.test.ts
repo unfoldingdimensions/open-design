@@ -6,7 +6,7 @@ import {
   workspacePrincipalKey,
   type CollabMemberRole,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { workspaceIdentityCacheKey } from '../../src/collab/workspace-identity';
 

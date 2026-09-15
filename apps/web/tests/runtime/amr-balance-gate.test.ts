@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { AmrWalletSnapshot } from '@open-design/contracts';
+import type { AmrWalletSnapshot } from '@capydesign/contracts';
 import {
   AMR_HARD_BLOCK_BALANCE_USD,
   HOME_AMR_BALANCE_RETRY_DELAYS_MS,

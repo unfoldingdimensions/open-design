@@ -19,10 +19,10 @@ import type {
   CapyDesignHostUpdaterOpenDialogRequest,
   CapyDesignHostUpdaterStatusListener,
   CapyDesignHostUpdaterStatusSnapshot,
-} from '@open-design/host';
+} from '@capydesign/host';
 
-const OPEN_DESIGN_HOST_GLOBAL: typeof import('@open-design/host').OPEN_DESIGN_HOST_GLOBAL = '__od__';
-const OPEN_DESIGN_HOST_VERSION: typeof import('@open-design/host').OPEN_DESIGN_HOST_VERSION = 2;
+const OPEN_DESIGN_HOST_GLOBAL: typeof import('@capydesign/host').OPEN_DESIGN_HOST_GLOBAL = '__od__';
+const OPEN_DESIGN_HOST_VERSION: typeof import('@capydesign/host').OPEN_DESIGN_HOST_VERSION = 2;
 const UPDATER_STATUS_EVENT = 'od:update:status-changed';
 const UPDATER_OPEN_DIALOG_EVENT = 'od:update:open-dialog';
 const APP_CONFIG_CHANGED_IPC_CHANNEL = 'od:app-config-changed';
@@ -31,7 +31,7 @@ const PREVIEW_NAVIGATION_FAILURE_IPC_CHANNEL = 'od:preview-navigation-failed';
 
 // Mirror of the argv prefix used by main's `applyOsLocaleSwitch` and
 // runtime's `additionalArguments`. Duplicated literal on purpose: the
-// preload bundle must not pull in `@open-design/desktop/main` (it
+// preload bundle must not pull in `@capydesign/desktop/main` (it
 // transitively requires non-electron node modules that the sandboxed
 // preload can't load).
 const OS_LOCALE_ARG_PREFIX = '--od-os-locale=';

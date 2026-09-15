@@ -6,7 +6,7 @@
 // the renderer.
 
 import { useEffect, useState } from 'react';
-import type { CapyDesignGithubRepoResponse } from '@open-design/contracts';
+import type { CapyDesignGithubRepoResponse } from '@capydesign/contracts';
 
 const API = '/api/github/open-design';
 const REPO = 'https://github.com/nexu-io/open-design';

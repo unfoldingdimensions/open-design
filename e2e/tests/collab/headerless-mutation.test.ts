@@ -84,7 +84,7 @@ function workspaceHeaders(input: {
   };
 }
 
-/** Exactly what `od project create` sends: a body, and no workspace identity. */
+/** Exactly what `capt project create` sends: a body, and no workspace identity. */
 async function createHeaderless(webUrl: string, name: string): Promise<string> {
   const created = await requestJson<CreatedProject>(webUrl, '/api/projects', {
     body: {
@@ -138,13 +138,13 @@ async function readScope(webUrl: string, projectId: string): Promise<ProjectWork
 
 const execFileAsync = promisify(execFile);
 
-/** The real `od` entrypoint, driven as an external agent would. */
+/** The real `capt` entrypoint, driven as an external agent would. */
 const OD_BIN = fileURLToPath(
-  new URL('../../../apps/daemon/bin/od.mjs', import.meta.url),
+  new URL('../../../apps/daemon/bin/capt.mjs', import.meta.url),
 );
 
 /**
- * Run a real `od` subcommand against this runtime's daemon. Resolves with the
+ * Run a real `capt` subcommand against this runtime's daemon. Resolves with the
  * exit code and stdout/stderr instead of throwing, so a failure can be asserted
  * on rather than crashing the test.
  */
@@ -169,14 +169,14 @@ async function od(
 
 describe('local project mutations do not require remote Workspace authority', () => {
   test(
-    'create then duplicate with no workspace headers — the od CLI shape',
+    'create then duplicate with no workspace headers — the capt CLI shape',
     { timeout: 300_000 },
     async () => {
       const suite = await createSmokeSuite('collab-headerless-mutation');
 
       await suite.with.toolsDev(
         async ({ webUrl }) => {
-          // --- THE BUG. Both calls are headerless, exactly like `od`.
+          // --- THE BUG. Both calls are headerless, exactly like `capt`.
           const own = await createHeaderless(webUrl, 'Headerless own project');
 
           const scope = await readScope(webUrl, own);
@@ -336,7 +336,7 @@ describe('local project mutations do not require remote Workspace authority', ()
           ]);
           expect(
             cli.code,
-            `od must work signed out: ${cli.stderr || cli.stdout}`,
+            `capt must work signed out: ${cli.stderr || cli.stdout}`,
           ).toBe(0);
         },
         {
@@ -351,12 +351,12 @@ describe('local project mutations do not require remote Workspace authority', ()
   );
 
   // The dual-track contract, pinned through the real binary rather than by
-  // intent. `AGENTS.md` makes `od` the embeddability surface external agents
+  // intent. `AGENTS.md` makes `capt` the embeddability surface external agents
   // drive CapyDesign through, and there was no test anywhere exercising a CLI
   // project mutation — which is why a 401 on every CLI-created project shipped
   // to this branch unnoticed.
   test(
-    'the real od binary can create a project and then duplicate it',
+    'the real capt binary can create a project and then duplicate it',
     { timeout: 300_000 },
     async () => {
       const suite = await createSmokeSuite('collab-headerless-mutation-cli');
@@ -372,11 +372,11 @@ describe('local project mutations do not require remote Workspace authority', ()
             'CLI dual-track project',
             '--json',
           ]);
-          expect(created.code, `od project create failed: ${created.stderr}`).toBe(0);
+          expect(created.code, `capt project create failed: ${created.stderr}`).toBe(0);
           const projectId = (JSON.parse(created.stdout) as CreatedProject).project.id;
 
-          // `od` attaches no `x-od-workspace-*` headers on this path — only
-          // `od workspace …` builds those — so this is the headerless shape by
+          // `capt` attaches no `x-od-workspace-*` headers on this path — only
+          // `capt workspace …` builds those — so this is the headerless shape by
           // construction, not by test contrivance.
           const duplicated = await od(daemonUrl, [
             'project',
@@ -388,7 +388,7 @@ describe('local project mutations do not require remote Workspace authority', ()
           ]);
           expect(
             duplicated.code,
-            `od project duplicate failed: ${duplicated.stderr || duplicated.stdout}`,
+            `capt project duplicate failed: ${duplicated.stderr || duplicated.stdout}`,
           ).toBe(0);
           expect(JSON.parse(duplicated.stdout).project.id).not.toBe(projectId);
         },

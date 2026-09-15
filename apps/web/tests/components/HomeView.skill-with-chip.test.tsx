@@ -3,7 +3,7 @@
 import { act } from 'react';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { SkillSummary } from '@open-design/contracts';
+import type { SkillSummary } from '@capydesign/contracts';
 
 vi.mock('../../src/components/home-hero/PlaceholderCarousel', () => ({
   PlaceholderCarousel: () => null,

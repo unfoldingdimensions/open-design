@@ -9,12 +9,12 @@ import {
   invokeSidecar,
   stopSidecar,
   type SidecarStamp,
-} from "@open-design/sidecar";
+} from "@capydesign/sidecar";
 import {
   createStandaloneGenerationBinding,
   sha256Hex,
   type GenerationRecord,
-} from "@open-design/standalone";
+} from "@capydesign/standalone";
 
 import { repoRoot, terminalRoot } from "./helpers.js";
 

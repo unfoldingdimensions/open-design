@@ -54,7 +54,8 @@ const residualSkippedDirectories = new Set([
   ".cursor",
   ".git",
   ".od",
-  ".od-e2e",
+  ".capydesign",
+  ".capydesign-e2e",
   ".opencode",
   // Local agent deepwork/worktree scratch (git-ignored; not product source).
   ".slim",
@@ -85,8 +86,8 @@ const residualAllowedExactPaths = new Set([
   // executed directly by Node and are not loaded by the app runtime.
   "scripts/import-prompt-templates.mjs",
   "scripts/postinstall.mjs",
-  // Checked-in bin shim so pnpm can link `od` before daemon dist output exists.
-  "apps/daemon/bin/od.mjs",
+  // Checked-in bin shim so pnpm can link `capt` before daemon dist output exists.
+  "apps/daemon/bin/capt.mjs",
   "apps/packaged/esbuild.config.mjs",
   // Browser service workers must be served as JavaScript files.
   "apps/web/public/od-notifications-sw.js",
@@ -165,7 +166,7 @@ const residualAllowedPathPrefixes = [
   "e2e/reports/html/",
   "e2e/reports/playwright-html-report/",
   "e2e/reports/test-results/",
-  "e2e/ui/.od-data/",
+  "e2e/ui/.capydesign-data/",
   "e2e/ui/reports/playwright-html-report/",
   "e2e/ui/reports/test-results/",
   "e2e/ui/test-results/",
@@ -352,7 +353,7 @@ function isAllowedDependencySpec(spec: string): boolean {
 // reproducible. A peer range aimed at a third-party host is the opposite
 // case — the host's version is chosen by the user, so an exact peer means
 // any host upgrade leaves the peer unsatisfiable and the plugin refuses to
-// install at all. `@open-design/dsh-runtime` hit exactly that: pinned to a
+// install at all. `@capydesign/dsh-runtime` hit exactly that: pinned to a
 // single DeepSeek Harness release candidate, it became uninstallable the
 // moment the upstream shipped the next one.
 //
@@ -531,7 +532,7 @@ async function checkPackageDependencySpecs(): Promise<boolean> {
 }
 
 const testLayoutScopedDirectories = ["apps", "packages", "tools"];
-const testLayoutSkippedDirectories = new Set([".next", ".od-data", "dist", "node_modules", "out", "reports", "test-results"]);
+const testLayoutSkippedDirectories = new Set([".next", ".capydesign-data", "dist", "node_modules", "out", "reports", "test-results"]);
 
 function isTestFile(fileName: string): boolean {
   return /\.test\.tsx?$/.test(fileName);
@@ -623,7 +624,7 @@ async function checkTestLayout(): Promise<boolean> {
 }
 
 const e2ePackageJsonPath = path.join(repoRoot, "e2e", "package.json");
-const e2eSkippedDirectories = new Set([".od-data", "node_modules", "reports", "test-results"]);
+const e2eSkippedDirectories = new Set([".capydesign-data", "node_modules", "reports", "test-results"]);
 const e2eAllowedScripts = [
   "test",
   "test:p0",
@@ -660,6 +661,7 @@ async function collectRepositoryFiles(directory: string, skippedDirectoryNames =
 const productNeutralitySkippedDirectories = new Set([
   ".git",
   ".od",
+  ".capydesign",
   ".tmp",
   "dist",
   "node_modules",
@@ -853,7 +855,7 @@ async function checkE2eLayout(): Promise<boolean> {
   return true;
 }
 
-const webTestSkippedDirectories = new Set([".od-data", "reports", "test-results"]);
+const webTestSkippedDirectories = new Set([".capydesign-data", "reports", "test-results"]);
 
 async function checkWebTestLayout(): Promise<boolean> {
   const violations: string[] = [];
@@ -891,9 +893,9 @@ const webImportIsolationSkippedDirectories = new Set([
   "test-results",
 ]);
 const webImportIsolationForbiddenPackages = [
-  "@open-design/platform",
-  "@open-design/sidecar",
-  "@open-design/sidecar-proto",
+  "@capydesign/platform",
+  "@capydesign/sidecar",
+  "@capydesign/sidecar-proto",
 ];
 const webImportIsolationForbiddenDaemonRoots = [
   "apps/daemon/src",
@@ -997,7 +999,7 @@ function webImportIsolationViolationReason(fromRepositoryPath: string, specifier
   if (!resolvedPath) return null;
 
   if (webImportIsolationForbiddenDaemonRoots.some((root) => isPathOrDescendant(resolvedPath, root))) {
-    return "apps/web must use daemon HTTP APIs or @open-design/contracts instead of daemon private source";
+    return "apps/web must use daemon HTTP APIs or @capydesign/contracts instead of daemon private source";
   }
 
   if (webImportIsolationForbiddenPackageRoots.some((root) => isPathOrDescendant(resolvedPath, root))) {
@@ -1106,7 +1108,7 @@ async function checkToolsLayout(): Promise<boolean> {
 
 const stylePolicySkippedDirectories = new Set([
   ".next",
-  ".od-data",
+  ".capydesign-data",
   "dist",
   "node_modules",
   "out",
@@ -1380,13 +1382,13 @@ async function checkStylePolicy(): Promise<boolean> {
 // lands inside the author's string and silently truncates their page.
 //
 // That defect reappeared in six separate files because each one hand-rolled its
-// own lookup. `@open-design/contracts/runtime/html-injection-points` is now the
+// own lookup. `@capydesign/contracts/runtime/html-injection-points` is now the
 // single implementation, and this check is what keeps the next one from being
 // written: a grep-driven sweep already missed an entire app once.
 // ---------------------------------------------------------------------------
 
 const htmlBoundaryOwnerPath = "packages/contracts/src/runtime/html-injection-points.ts";
-const htmlBoundarySkippedDirectories = new Set([".git", ".od", ".tmp", "dist", "node_modules", "out", "test-results"]);
+const htmlBoundarySkippedDirectories = new Set([".git", ".od", ".capydesign", ".tmp", "dist", "node_modules", "out", "test-results"]);
 const htmlBoundaryCheckedPathPrefixes = [
   "apps/daemon/src/",
   "apps/desktop/src/",

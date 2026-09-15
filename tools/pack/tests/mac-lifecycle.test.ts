@@ -5,8 +5,8 @@ import { join } from "node:path";
 import type { ChildProcess } from "node:child_process";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { DesktopStatusSnapshot } from "@open-design/sidecar-proto";
-import type { SidecarStopResult } from "@open-design/sidecar";
+import type { DesktopStatusSnapshot } from "@capydesign/sidecar-proto";
+import type { SidecarStopResult } from "@capydesign/sidecar";
 
 import type { ToolPackConfig } from "@/config/index.js";
 import { resolveMacPaths } from "@/mac/paths.js";
@@ -23,7 +23,7 @@ const collectProcessTreePids = vi.fn(
     rootPids.filter((pid): pid is number => typeof pid === "number"),
 );
 const listProcessSnapshots = vi.fn(async () => [] as Array<{ command: string; pid: number; ppid: number }>);
-const matchesStampedProcess = vi.fn<typeof import("@open-design/platform").matchesStampedProcess>(() => false);
+const matchesStampedProcess = vi.fn<typeof import("@capydesign/platform").matchesStampedProcess>(() => false);
 const stopProcesses = vi.fn(async (pids: number[]) => ({ remainingPids: [], stoppedPids: pids }));
 const spawnLoggedProcess = vi.fn(async ({ env }: { env: NodeJS.ProcessEnv }) => {
   return Object.assign(new EventEmitter(), {
@@ -67,8 +67,8 @@ const stopSidecars = vi.fn(async (requests: Array<{ options?: Record<string, num
   };
 });
 
-vi.mock("@open-design/sidecar", async () => ({
-  ...(await vi.importActual<typeof import("@open-design/sidecar")>("@open-design/sidecar")),
+vi.mock("@capydesign/sidecar", async () => ({
+  ...(await vi.importActual<typeof import("@capydesign/sidecar")>("@capydesign/sidecar")),
   findSidecarProcesses,
   getSidecarStatus,
   convergeSidecarLaunch,
@@ -76,7 +76,7 @@ vi.mock("@open-design/sidecar", async () => ({
   stopSidecars,
 }));
 
-vi.mock("@open-design/platform", () => ({
+vi.mock("@capydesign/platform", () => ({
   collectProcessTreePids,
   createProcessStampArgs: vi.fn(() => []),
   isProcessAlive: vi.fn(() => true),

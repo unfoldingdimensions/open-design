@@ -1,6 +1,7 @@
 // SQLite-backed persistence for projects, conversations, messages, and the
 // per-project set of open workspace tabs. The on-disk project folder under
-// .od/projects/<id>/ is still the single owner of the user's actual files
+// .capydesign/projects/<id>/ (or a legacy .od/projects/<id>/) is still the
+// single owner of the user's actual files
 // (HTML artifacts, sketches, uploads); this database tracks the metadata
 // that used to live in localStorage.
 
@@ -14,7 +15,7 @@ import type {
   OdNextDevicePlatformV1,
   ProjectBrowserWorkspaceTab,
   ProjectTabsState,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   eventsEndedWithUnfinishedWork,
   isTodoWriteToolName,
@@ -22,8 +23,9 @@ import {
   stripArtifactFocusMarkers,
   stripDoneMarkers,
   stripNextStepMarkers,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { migrateCollabSyncSnapshots } from './collab/sync-snapshot-store.js';
+import { resolveDefaultDataDir } from './daemon-paths.js';
 import { migrateCommentRelayOutbox } from './collab/comment-relay-outbox.js';
 import { migratePublicFilePublications } from './collab/public-file-publication-store.js';
 import { migrateAmrTerminalReportOutbox } from './storage/amr-terminal-report-outbox.js';
@@ -67,7 +69,7 @@ function rows(value: unknown[]): DbRow[] {
 }
 
 export function openDatabase(projectRoot: string, { dataDir }: { dataDir?: string } = {}): SqliteDb {
-  const dir = dataDir ? path.resolve(dataDir) : path.join(projectRoot, '.od');
+  const dir = dataDir ? path.resolve(dataDir) : resolveDefaultDataDir(projectRoot);
   const file = path.join(dir, 'app.sqlite');
   if (dbInstance && dbFile === file) return dbInstance;
   if (dbInstance) closeDatabase();

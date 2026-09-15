@@ -8,7 +8,7 @@ import {
   workspaceContextDetailLine,
   workspaceContextKindLabel,
 } from '../../src/components/workspace-context';
-import type { WorkspaceContextItem } from '@open-design/contracts';
+import type { WorkspaceContextItem } from '@capydesign/contracts';
 
 afterEach(cleanup);
 

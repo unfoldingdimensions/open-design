@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import express from 'express';
-import { SIDECAR_ENV } from '@open-design/sidecar-proto';
+import { SIDECAR_ENV } from '@capydesign/sidecar-proto';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { isLocalSameOrigin } from '../src/origin-validation.js';
 import { buildMcpInstallPayload } from '../src/mcp-install-info.js';
@@ -198,8 +198,8 @@ describe('GET /api/mcp/install-info', () => {
     expect(res.status).toBe(200);
     const body = await readInstallInfo(res);
     expect(body.command).toBe(process.execPath);
-    // Direct `od` launches have no inherited sidecar client; the snippet bakes the
-    // URL so the spawned `od mcp` reaches the right port without any
+    // Direct `capt` launches have no inherited sidecar client; the snippet bakes the
+    // URL so the spawned `capt mcp` reaches the right port without any
     // discovery.
     expect(body.args).toEqual([cliPath, 'mcp', '--daemon-url', `http://127.0.0.1:${port}`]);
     // env always carries OD_DATA_DIR (issue #848); no sidecar keys in

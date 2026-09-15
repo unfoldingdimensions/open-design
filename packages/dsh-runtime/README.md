@@ -1,4 +1,4 @@
-# @open-design/dsh-runtime
+# @capydesign/dsh-runtime
 
 Profile bundle that lets OpenDesign drive a user-installed DeepSeek Harness
 through a strict JSONL stdio protocol. It does not ship the `dsh` executable,
@@ -13,14 +13,14 @@ the `open-design` profile. OpenDesign does not download or install `dsh`.
 Repository developers can perform the equivalent operation manually:
 
 ```sh
-pnpm --filter @open-design/dsh-runtime build
+pnpm --filter @capydesign/dsh-runtime build
 pnpm -C packages/dsh-runtime pack --pack-destination <temporary-directory>
 dsh plugin --profile open-design add <temporary-directory>/open-design-dsh-runtime-0.1.0.tgz
 dsh --profile open-design --probe
 dsh --profile open-design --models
 ```
 
-The daemon and `od agent setup deepseek-harness --json` use the same setup
+The daemon and `capt agent setup deepseek-harness --json` use the same setup
 endpoint as the UI. Setup is always explicit on the first incompatible
 selection; cancelling does not select the agent or mutate the Harness profile.
 

@@ -5,7 +5,7 @@ import {
   StrategyRuntimeStateV2Schema,
   type CapyDesignPlanContractV2,
   type StrategyRuntimeStateV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 export type OdNextProtocolReasonCode =
   | 'od_next_protocol_machine_block_malformed'

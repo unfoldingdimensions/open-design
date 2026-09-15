@@ -8,11 +8,11 @@
 // a collapsed disclosure.
 
 import { useEffect, useState, type ReactNode } from 'react';
-import { Button } from '@open-design/components';
+import { Button } from '@capydesign/components';
 import type {
   InstalledPluginRecord,
   PluginConnectorRef,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   applyPlugin,
   resolvedWorkspaceContextForWrite,

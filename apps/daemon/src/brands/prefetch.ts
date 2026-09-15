@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { harvestFonts, type FontFile } from "./fonts.js";
 import { fetchExternalBrandAsset } from "./safe-fetch.js";
-import { findRealElementRange, findRealTagOffset, HTML_TAG_PATTERNS } from '@open-design/contracts/runtime/html-injection-points';
+import { findRealElementRange, findRealTagOffset, HTML_TAG_PATTERNS } from '@capydesign/contracts/runtime/html-injection-points';
 
 /**
  * Deterministic brand-material prefetch. Given a site URL, fetch the HTML +

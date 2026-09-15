@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { InstalledPluginRecordSchema } from '@open-design/contracts';
+import { InstalledPluginRecordSchema } from '@capydesign/contracts';
 
 import { PluginDetailView } from '../../src/components/PluginDetailView';
 import { I18nProvider } from '../../src/i18n';
@@ -190,7 +190,7 @@ describe('PluginDetailView curated installed-extension layout', () => {
     const advanced = screen.getByTestId('plugin-meta-advanced');
     expect(advanced).not.toHaveAttribute('open');
     expect(within(advanced).getByText('MIT')).toBeTruthy();
-    expect(within(advanced).getByText('od plugin install open-design/research-suite')).toBeTruthy();
+    expect(within(advanced).getByText('capt plugin install open-design/research-suite')).toBeTruthy();
 
     expect(screen.getByTestId('plugin-detail-preview-iframe').getAttribute('src'))
       .toBe('/api/plugins/research-suite/preview');

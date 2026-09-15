@@ -13,7 +13,7 @@ import { useT } from '../i18n';
 import type {
   GenUISurfaceSpec,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { workspaceResourceUrl } from '../collab/workspace-identity';
 
 export interface PendingSurface {
@@ -183,7 +183,7 @@ export function GenUISurfaceRenderer(props: Props) {
   //     { kind: 'genui:respond', value } envelope. Other messages are
   //     ignored.
   //   - The capability gate (`genui:custom-component`) was enforced at
-  //     install time by `od plugin doctor`; the renderer trusts the
+  //     install time by `capt plugin doctor`; the renderer trusts the
   //     manifest's `component` field and falls back to the default
   //     when missing.
   //

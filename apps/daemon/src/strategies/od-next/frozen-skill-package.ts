@@ -152,7 +152,7 @@ export function resolveSelectedCatalogSkills(input: {
  * before capture rather than each producing a package of its own: the package
  * identity is a digest over the whole selection list, and two packages would
  * mean two identities for one task. `skills` come from the Skill catalogue
- * (the composer's @-mention popover, `od run --skill`); `sources` are
+ * (the composer's @-mention popover, `capt run --skill`); `sources` are
  * skill-like folders the caller resolved itself (an official example card).
  *
  * Order is authority order, and it survives into `skill_names` and into the

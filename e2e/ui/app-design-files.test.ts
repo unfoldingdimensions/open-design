@@ -9,7 +9,7 @@ import { T } from '@/timeouts';
 import {
   PREVIEW_WHITE_SCREEN_CONFIRMATION_MS,
   PREVIEW_WHITE_SCREEN_TIMEOUT_MS,
-} from '@open-design/contracts/runtime/preview-observability';
+} from '@capydesign/contracts/runtime/preview-observability';
 
 const STORAGE_KEY = 'open-design:config';
 const TINY_PNG_B64 =

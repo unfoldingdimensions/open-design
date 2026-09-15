@@ -11,8 +11,8 @@
 // "use the system automatic scenario" on a project that had never left it.
 
 import { describe, expect, it } from 'vitest';
-import { defaultScenarioPluginIdForProjectMetadata } from '@open-design/contracts';
-import type { ProjectMetadata } from '@open-design/contracts';
+import { defaultScenarioPluginIdForProjectMetadata } from '@capydesign/contracts';
+import type { ProjectMetadata } from '@capydesign/contracts';
 import { CREATE_RAIL_ORDER, HOME_HERO_CHIPS } from '../../src/components/home-hero/chips';
 
 function railChip(chipId: string) {

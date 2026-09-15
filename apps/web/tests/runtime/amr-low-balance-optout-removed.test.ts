@@ -27,7 +27,7 @@
 //   · 零余额 + 没有遗留位 → 同样硬拦(证明拦住不是位造成的)
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { AmrWalletSnapshot } from '@open-design/contracts';
+import type { AmrWalletSnapshot } from '@capydesign/contracts';
 import { checkAmrBalanceGate } from '../../src/runtime/amr-balance-gate';
 import {
   fetchAmrWalletSnapshot,

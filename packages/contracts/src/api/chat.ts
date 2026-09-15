@@ -139,7 +139,7 @@ export interface ChatRequest {
    * decided by the DAEMON, not the caller. `evaluateResumeInvalidation` also
    * compares the stored model / cwd / resume cursor, none of which a caller can
    * see: the chat client checks `resumable` + agent identity, and
-   * `od run continue` checks only `resumable`. So a caller can legitimately ask
+   * `capt run continue` checks only `resumable`. So a caller can legitimately ask
    * to continue a turn the daemon then refuses to resume (changing the model in
    * Settings between the failure and the click is the common path).
    *
@@ -151,7 +151,7 @@ export interface ChatRequest {
    * Callers that already ship the full rendered transcript in `message` (the
    * web client, which sends the transcript AND `currentPrompt`) do not need
    * this — their context survives either branch. Callers that send only the
-   * directive (`od run continue`, external agents driving the daemon) do.
+   * directive (`capt run continue`, external agents driving the daemon) do.
    */
   resumeContinuation?: boolean;
   systemPrompt?: string;
@@ -185,7 +185,7 @@ export interface ChatRequest {
   byokProvider?: ByokChatProviderConfig;
   /**
    * Run-scoped BYOK media defaults selected in the chat UI. The daemon uses
-   * these to guide OpenCode-backed `od media generate` calls for this run only.
+   * these to guide OpenCode-backed `capt media generate` calls for this run only.
    */
   byokMediaDefaults?: ByokMediaDefaults;
   /** UI locale selected by the client, used by prompt composition for user-visible generated UI. */

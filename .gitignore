@@ -16,10 +16,11 @@ out/
 # Holds app.sqlite (project metadata), projects/<id>/ (per-project artifacts,
 # the agent's CWD), and artifacts/ (one-off renders). Never commit.
 .od
-.od-e2e
+.capydesign
+.capydesign-e2e
 test-results
 playwright-report
-e2e/.od-data
+e2e/.capydesign-data
 e2e/playwright-report
 e2e/reports/html
 e2e/reports/playwright-html-report
@@ -27,7 +28,7 @@ e2e/reports/test-results
 e2e/reports/results.json
 e2e/reports/junit.xml
 e2e/reports/latest.md
-e2e/ui/.od-data
+e2e/ui/.capydesign-data
 e2e/ui/reports
 e2e/ui/test-results
 apps/web/playwright/

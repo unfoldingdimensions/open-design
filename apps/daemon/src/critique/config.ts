@@ -1,5 +1,5 @@
-import { defaultCritiqueConfig, FALLBACK_POLICIES } from '@open-design/contracts/critique';
-import type { CritiqueConfig } from '@open-design/contracts/critique';
+import { defaultCritiqueConfig, FALLBACK_POLICIES } from '@capydesign/contracts/critique';
+import type { CritiqueConfig } from '@capydesign/contracts/critique';
 
 /**
  * Load CritiqueConfig from process.env. Keys map 1:1 to OD_CRITIQUE_*.

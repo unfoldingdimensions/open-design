@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
-import { DECK_STRUCTURED_SLIDE_SELECTOR } from '@open-design/contracts/runtime/deck-stage-fallback';
+import { DECK_STRUCTURED_SLIDE_SELECTOR } from '@capydesign/contracts/runtime/deck-stage-fallback';
 import { buildSrcdoc } from '../../src/runtime/srcdoc';
 
 const deckHtml = `<!doctype html>

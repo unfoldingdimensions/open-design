@@ -8,7 +8,7 @@
  * better-sqlite3 又是同步的,所以同进程内它就是原子的:同一秒点两下 fork
  * 拿到的是 (1) 和 (2),不会双双撞成 (1)。
  *
- * 顺带白拿了 CLI 那条路(`od conversation new --seed-from` / `od chat new --fork-after`)——
+ * 顺带白拿了 CLI 那条路(`capt conversation new --seed-from` / `capt chat new --fork-after`)——
  * 它们本来就不传 title,以前建出来是无名会话,现在跟 UI 一样有编号。
  *
  * 客户端显式传了 title 就照传的来:重命名、导入、以及任何「我知道我要叫什么」的

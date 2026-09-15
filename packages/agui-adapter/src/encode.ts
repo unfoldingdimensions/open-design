@@ -8,7 +8,7 @@
 import type {
   GenUISurfaceEvent,
   PluginPipelineStageEvent,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   AGUIAgentMessageEvent,
   AGUIEvent,

@@ -44,7 +44,7 @@ import {
   renderMediaGenerationContract,
 } from './media-contract.js';
 import { renderPanelPrompt } from './panel.js';
-import { defaultCritiqueConfig, type CritiqueConfig } from '@open-design/contracts/critique';
+import { defaultCritiqueConfig, type CritiqueConfig } from '@capydesign/contracts/critique';
 import {
   composeOdNextStrategyRequestPromptV2,
   executionProfileFromStreamFormat,
@@ -57,7 +57,7 @@ import {
   type MediaExecutionPolicy,
   type MediaSurface,
   type OdNextStrategyRequestRecipeV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 // Prepended first in every composed prompt so it wins precedence over all
 // later sections, including skill bodies and user/project instructions.
@@ -449,7 +449,7 @@ This project was created through the daemon API with \`skipDiscoveryBrief: true\
 // already holds in .od/media-config.json.
 // Kept deliberately compact: this hint ships on EVERY non-media project
 // (the vast majority never generate media), so the worked generate→wait
-// bash recipe lives in `od media help` (printMediaHelp in cli.ts) and the
+// bash recipe lives in `capt media help` (printMediaHelp in cli.ts) and the
 // CLI's own stderr handoff guidance instead of the prompt. The hint only
 // needs to (1) route the agent to the dispatcher instead of provider APIs,
 // (2) state the handoff/exit-code semantics, and (3) pin the behavioral
@@ -739,7 +739,7 @@ export interface ComposeInput {
    * from `planToolNoteForRuntime(agentId, streamFormat)` a few lines down, and
    * a caller that passes nothing gets exactly today's behaviour there. It is an
    * input rather than a second internal derivation so this composer and its
-   * `@open-design/contracts` mirror stay byte-identical for identical inputs —
+   * `@capydesign/contracts` mirror stay byte-identical for identical inputs —
    * the parity that `tests/plugins-strategy-recipe.test.ts` pins.
    */
   planToolNote?: string | null | undefined;
@@ -946,7 +946,7 @@ export function composeSystemPrompt({
   // Everything below this early return is the legacy stack; OD Next runs never
   // reach it. Their content comes from
   // `plugins/_official/scenarios/od-next-strategy/assets/**` plus the
-  // TypeScript in `@open-design/contracts` `od-next-strategy.ts`, which is
+  // TypeScript in `@capydesign/contracts` `od-next-strategy.ts`, which is
   // where OD Next carries host runtime contracts. The two sides share no
   // composition floor, so a rule added below holds only for the runs that take
   // this branch, and eligibility is re-evaluated per run
@@ -1074,7 +1074,7 @@ export function composeSystemPrompt({
   const deckFrameworkDirective = renderDeckFrameworkDirective(resolvedExecutionProfile);
 
   // API/BYOK mode (streamFormat === 'plain'): mirrors the same fix from
-  // `@open-design/contracts`'s composer. The daemon hits this path for
+  // `@capydesign/contracts`'s composer. The daemon hits this path for
   // any plain-stream adapter (e.g. DeepSeek), so without pinning the
   // override above DISCOVERY_AND_PHILOSOPHY here too, those daemon
   // agents still emit the `<todo-list>` / `[读取 X]` pseudo-tool
@@ -1147,7 +1147,7 @@ export function composeSystemPrompt({
     // fingerprint stays cacheable).
     if (!activeDesignSystemBody) {
       // Slim carries only the id+label index and the agent pulls the chosen
-      // direction's full spec via `od tools directions --id <id>` — but ONLY
+      // direction's full spec via `capt tools directions --id <id>` — but ONLY
       // on filesystem runs. text_artifact runs (BYOK/plain adapters) have no
       // tools to dereference the index, so they keep the full inline library
       // like classic; anything less tells them to bind palettes they cannot
@@ -1435,7 +1435,7 @@ export function composeSystemPrompt({
     if (runtimeDefaultsHint) parts.push(runtimeDefaultsHint);
   } else if (mediaHintSignal ?? true) {
     // Non-media projects (prototype, deck, etc.): inject a lightweight hint
-    // so the agent uses `od media generate` if the user asks for an image/video
+    // so the agent uses `capt media generate` if the user asks for an image/video
     // mid-session, rather than hunting for provider API keys in the environment.
     // Gated on the media-intent signal: most conversations never mention
     // media, and the transcript-scanned signal flips the hint on for the
@@ -1657,7 +1657,7 @@ If the rules below tell you to plan with TodoWrite, write the plan as prose inst
 // after this override (see `isAskMode` gating in composeSystemPrompt) — so this
 // block is the whole behavioral charter for the turn and must read as
 // self-contained, not as a preface that overrides "rules below". Keep it
-// BYTE-IDENTICAL to the @open-design/contracts copy so a daemon chat and a
+// BYTE-IDENTICAL to the @capydesign/contracts copy so a daemon chat and a
 // BYOK/API chat behave the same.
 const CHAT_MODE_OVERRIDE = `# Ask mode — bare conversation (this is the whole charter for this turn)
 

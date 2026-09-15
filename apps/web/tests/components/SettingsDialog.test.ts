@@ -24,9 +24,9 @@ import {
   updateCurrentApiProtocolConfig,
 } from '../../src/components/SettingsDialog';
 import { deriveUpdaterModel } from '../../src/lib/updater';
-import type { CapyDesignHostUpdaterStatusSnapshot } from '@open-design/host';
+import type { CapyDesignHostUpdaterStatusSnapshot } from '@capydesign/host';
 import type { AppConfig, AppVersionInfo, ConnectionTestResponse } from '../../src/types';
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 
 const originalFetch = globalThis.fetch;
 

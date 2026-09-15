@@ -14,7 +14,7 @@
 import {
   parsePreviewObservabilityMessage,
   type PreviewObservabilityMessage,
-} from '@open-design/contracts/runtime/preview-observability';
+} from '@capydesign/contracts/runtime/preview-observability';
 import { reportSafetyEvent } from '../analytics/error-tracking';
 import { scrubFilePath } from '../analytics/scrub';
 
@@ -142,7 +142,7 @@ function prunePreviewMessageBuffer(): void {
  * The analytics event answers "how often"; this answers "what happened on this
  * machine". On desktop only warn/error console entries are persisted to
  * `renderer.log` (apps/desktop/src/main/runtime.ts), and that file is one of
- * the sources `od diagnostics export` bundles — so a user who hits the empty
+ * the sources `capt diagnostics export` bundles — so a user who hits the empty
  * deck can hand over an export that already contains the measurement, without
  * having to reproduce it while someone watches.
  *

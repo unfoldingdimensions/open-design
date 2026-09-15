@@ -26,7 +26,7 @@ import {
   type RegisterDesktopAuthResult,
   type LegacySidecarRuntimeLayout,
   type WebStatusSnapshot,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 import { dirname, join } from "node:path";
 
 import {
@@ -35,7 +35,7 @@ import {
   SidecarFactory,
   type SidecarClient,
   type SidecarRuntimeContext,
-} from "@open-design/sidecar";
+} from "@capydesign/sidecar";
 
 import { createDesktopRuntime, type DesktopRuntime } from "./runtime.js";
 import { dispatchInviteDeeplink, registerInviteDeeplink } from "./invite-deeplink.js";

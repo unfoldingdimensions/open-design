@@ -42,7 +42,7 @@ export const CHAT_SCROLL_FORENSICS_SUMMARY_FILE = 'chat-scroll-forensics.json';
 export const NO_RENDERER_CAPTURE_NOTE =
   'No chat-scroll capture was posted by a renderer in this daemon session. The '
   + 'capture is pushed by the web app when someone clicks Export logs, so a bundle '
-  + 'produced from the desktop Help menu, from `od diagnostics export`, or from a '
+  + 'produced from the desktop Help menu, from `capt diagnostics export`, or from a '
   + 'browser that never had the app open will not contain one. Ask for a re-export '
   + 'from the in-app Export logs button while the stuck chat is still on screen.';
 

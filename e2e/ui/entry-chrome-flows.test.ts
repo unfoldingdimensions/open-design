@@ -6,7 +6,7 @@ import { openHomeTemplateMenu } from '@/playwright/home-hero';
 import type {
   WorkspaceCollabContext,
   WorkspaceDirectoryItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type { Page, Request } from '@playwright/test';
 import {
   applyStandardMocks,

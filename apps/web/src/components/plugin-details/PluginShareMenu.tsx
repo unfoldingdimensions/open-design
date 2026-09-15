@@ -4,7 +4,7 @@
 // identify, audit, or embed a plugin:
 //
 //   - Copy plugin id          (raw `<id>` for paste-into-yaml)
-//   - Copy install command    (`od plugin install <ref>`)
+//   - Copy install command    (`capt plugin install <ref>`)
 //   - Copy README badge       (CapyDesign powered, includes link)
 //   - Open source on GitHub   (when the source is a github repo)
 //   - Open homepage           (when manifest.homepage is set)
@@ -16,12 +16,12 @@
 // toast confirms every copy action so the user trusts the click landed.
 
 import { useEffect, useRef, useState } from 'react';
-import type { InstalledPluginRecord } from '@open-design/contracts';
+import type { InstalledPluginRecord } from '@capydesign/contracts';
 import { Icon } from '../Icon';
 import { useT } from '../../i18n';
 import { copyToClipboard } from '../../lib/copy-to-clipboard';
 import { derivePluginSourceLinks } from '../../runtime/plugin-source';
-import { pluginShareUrl } from '@open-design/contracts';
+import { pluginShareUrl } from '@capydesign/contracts';
 
 const PUBLIC_OPEN_DESIGN_MARKETPLACE_ID = 'official';
 const PUBLIC_COMMUNITY_MARKETPLACE_ID = 'community';
@@ -68,12 +68,12 @@ export function buildPluginInstallCommand(record: InstalledPluginRecord): string
   // provenance preserved it; sourceMarketplaceId names the catalog,
   // not the plugin package.
   if (typeof record.sourceMarketplaceEntryName === 'string') {
-    return `od plugin install ${record.sourceMarketplaceEntryName}`;
+    return `capt plugin install ${record.sourceMarketplaceEntryName}`;
   }
   if (record.sourceKind === 'marketplace' && typeof record.sourceMarketplaceId === 'string') {
-    return `od plugin install ${record.sourceMarketplaceId}`;
+    return `capt plugin install ${record.sourceMarketplaceId}`;
   }
-  return `od plugin install ${record.source}`;
+  return `capt plugin install ${record.source}`;
 }
 
 export function buildPluginShareUrl(record: InstalledPluginRecord): string | null {

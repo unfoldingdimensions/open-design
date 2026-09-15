@@ -231,7 +231,7 @@ describe('server route inventory', () => {
     ];
     // Website Clone agents use these project-scoped routes to ask the daemon
     // to launch system Chrome outside their process sandbox. This is also the
-    // headless `od` CLI path, so it must remain registered without Electron.
+    // headless `capt` CLI path, so it must remain registered without Electron.
     const browserSessionRouteKeys = [
       'POST /api/projects/:id/browser-sessions',
       'DELETE /api/projects/:id/browser-sessions/:sessionId',

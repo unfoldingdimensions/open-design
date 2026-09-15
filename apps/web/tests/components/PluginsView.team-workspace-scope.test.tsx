@@ -5,7 +5,7 @@ import type {
   InstalledPluginRecord,
   SkillSummary,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PluginsView } from '../../src/components/PluginsView';

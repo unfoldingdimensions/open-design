@@ -17,12 +17,12 @@ export interface AgentGuideOptions {
   /**
    * Launch spec returned by `/api/mcp/install-info`. When present, MCP
    * snippets use this absolute command/args/env tuple instead of assuming
-   * an `od` binary exists on PATH.
+   * an `capt` binary exists on PATH.
    */
   mcpInstallInfo?: AgentGuideMcpInstallInfo | null;
   /**
-   * Optional `od` binary path / hint. When provided we mention it in the
-   * setup checklist so the agent knows whether to run `od …` directly or
+   * Optional `capt` binary path / hint. When provided we mention it in the
+   * setup checklist so the agent knows whether to run `capt …` directly or
    * spawn the packaged binary.
    */
   cliHint?: string;
@@ -53,7 +53,7 @@ export function buildAgentGuideMarkdown(options: AgentGuideOptions = {}): string
   lines.push(
     'You are a coding agent (Claude Code, Codex, Cursor, openclaw, hermes, or similar). ' +
       'The user wants CapyDesign wired into your workflow. CapyDesign is a local ' +
-      'privileged daemon (`od`) plus a Skills + Design-Systems registry that exposes ' +
+      'privileged daemon (`capt`) plus a Skills + Design-Systems registry that exposes ' +
       'four interchangeable surfaces: CLI, HTTP API, MCP, and Skills.',
   );
   lines.push('');
@@ -75,7 +75,7 @@ export function buildAgentGuideMarkdown(options: AgentGuideOptions = {}): string
   lines.push('   If it 404s or times out, ask the user to run `pnpm tools-dev` (dev) or open the CapyDesign app (packaged).');
   lines.push('');
   if (installInfo) {
-    lines.push('2. Use this daemon-reported MCP server config. Do not replace it with a bare `od` command:');
+    lines.push('2. Use this daemon-reported MCP server config. Do not replace it with a bare `capt` command:');
     lines.push('');
     lines.push('   ```json');
     lines.push(indent(buildMcpServerConfigSnippet(installInfo), '   '));
@@ -83,17 +83,17 @@ export function buildAgentGuideMarkdown(options: AgentGuideOptions = {}): string
     lines.push('');
     lines.push(`   This config came from \`${daemonUrl}/api/mcp/install-info\` and preserves the absolute command, args, and env needed by packaged installs.`);
   } else {
-    lines.push('2. Detect available agent CLIs and confirm `od` is on PATH:');
+    lines.push('2. Detect available agent CLIs and confirm `capt` is on PATH:');
     lines.push('');
     lines.push('   ```bash');
-    lines.push('   od doctor');
-    lines.push('   od status --json');
+    lines.push('   capt doctor');
+    lines.push('   capt status --json');
     lines.push('   ```');
   }
   lines.push('');
   if (options.cliHint) {
     lines.push('');
-    lines.push(`   The user reported \`od\` at: \`${options.cliHint}\``);
+    lines.push(`   The user reported \`capt\` at: \`${options.cliHint}\``);
   }
   lines.push('');
   lines.push('3. Pull the MCP install snippet (use it instead of hand-writing `mcpServers` config):');
@@ -112,7 +112,7 @@ export function buildAgentGuideMarkdown(options: AgentGuideOptions = {}): string
   lines.push('');
   lines.push('   ```bash');
   lines.push(`   curl -s ${daemonUrl}/api/skills | jq '.skills | length'`);
-  lines.push('   od skills list --json');
+  lines.push('   capt skills list --json');
   lines.push('   ```');
   lines.push('');
 
@@ -154,7 +154,7 @@ export function agentGuideSnippetUsesMcpInstallInfo(snippet: CodeSnippet): boole
   return (
     snippet.language === 'json' &&
     snippet.body.includes('"mcpServers"') &&
-    snippet.body.includes('"command": "od"')
+    snippet.body.includes('"command": "capt"')
   );
 }
 

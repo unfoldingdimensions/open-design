@@ -12,10 +12,10 @@ import {
 
 function policyFor(name: string): ToolBuildMetadataPolicy {
   return {
-    buildCommand: `pnpm --filter @open-design/${name} build`,
+    buildCommand: `pnpm --filter @capydesign/${name} build`,
     distEntries: ["dist/index.mjs"],
     inputs: ["src", "package.json", "esbuild.config.mjs", "tsconfig.json"],
-    packageName: `@open-design/${name}`,
+    packageName: `@capydesign/${name}`,
     toolName: name,
   };
 }

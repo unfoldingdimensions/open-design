@@ -25,7 +25,7 @@ const KIMI_REMOVED_IN = '0.37.0';
 const liveArtifacts = {
   name: 'open-design-live-artifacts',
   type: 'stdio',
-  command: 'od',
+  command: 'capt',
   args: ['mcp', 'live-artifacts'],
   env: [{ name: 'ELECTRON_RUN_AS_NODE', value: '1' }],
 };
@@ -83,9 +83,9 @@ describe('acpBuildAcceptsStdioMcp — Kimi version boundary', () => {
 describe('isAcpStdioMcpServer', () => {
   it('classifies both stdio spellings the same way', () => {
     // ACP treats a missing `type` as stdio, and Kimi 0.37+ rejects both.
-    expect(isAcpStdioMcpServer({ name: 'a', command: 'od' })).toBe(true);
-    expect(isAcpStdioMcpServer({ name: 'a', type: 'stdio', command: 'od' })).toBe(true);
-    expect(isAcpStdioMcpServer({ name: 'a', type: null, command: 'od' })).toBe(true);
+    expect(isAcpStdioMcpServer({ name: 'a', command: 'capt' })).toBe(true);
+    expect(isAcpStdioMcpServer({ name: 'a', type: 'stdio', command: 'capt' })).toBe(true);
+    expect(isAcpStdioMcpServer({ name: 'a', type: null, command: 'capt' })).toBe(true);
   });
 
   it('leaves the transports a rejecting build still accepts', () => {
@@ -127,7 +127,7 @@ describe('withholdStdioMcpServersForBuild', () => {
   });
 
   it('names an unnamed withheld entry rather than dropping it silently', () => {
-    const result = withholdStdioMcpServersForBuild([{ command: 'od' }], {
+    const result = withholdStdioMcpServersForBuild([{ command: 'capt' }], {
       reportedVersion: '0.38.0',
       removedInVersion: KIMI_REMOVED_IN,
     });

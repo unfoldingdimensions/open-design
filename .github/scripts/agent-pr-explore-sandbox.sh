@@ -1113,8 +1113,8 @@ docker run -d \
       pnpm install --frozen-lockfile
 
       echo "== prebuild =="
-      pnpm --filter @open-design/daemon build
-      pnpm --filter @open-design/tools-dev build
+      pnpm --filter @capydesign/daemon build
+      pnpm --filter @capydesign/tools-dev build
 
       if [ "${OD_DETERMINISTIC_VERIFIER}" = "web-static-export" ]; then
         echo "== deterministic verifier: web-static-export =="
@@ -1122,7 +1122,7 @@ docker run -d \
         (
           set -euo pipefail
           rm -rf apps/web/out apps/web/.next
-          OD_WEB_OUTPUT_MODE=server sh -lc '"'"'OD_WEB_OUTPUT_MODE= pnpm --filter @open-design/web build && test -d apps/web/out'"'"'
+          OD_WEB_OUTPUT_MODE=server sh -lc '"'"'OD_WEB_OUTPUT_MODE= pnpm --filter @capydesign/web build && test -d apps/web/out'"'"'
           test -f apps/web/out/index.html
         ) > /artifacts/deterministic-verifier.log 2>&1
         verifier_status=$?
@@ -1212,7 +1212,7 @@ This PR changes the web deployment/static-export path rather than an interactive
 
 \`\`\`bash
 rm -rf apps/web/out apps/web/.next
-OD_WEB_OUTPUT_MODE=server sh -c 'OD_WEB_OUTPUT_MODE= pnpm --filter @open-design/web build && test -d apps/web/out'
+OD_WEB_OUTPUT_MODE=server sh -c 'OD_WEB_OUTPUT_MODE= pnpm --filter @capydesign/web build && test -d apps/web/out'
 test -f apps/web/out/index.html
 \`\`\`
 

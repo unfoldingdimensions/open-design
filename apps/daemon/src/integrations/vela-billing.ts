@@ -6,7 +6,7 @@ import type {
   WorkspaceBillingSummary,
   WorkspaceTeamBillingPlanId,
   WorkspaceWalletBalance,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { runVelaCommand } from './vela-command.js';
 
 // A-lane billing 收口. Instead of the daemon holding billing credentials, it

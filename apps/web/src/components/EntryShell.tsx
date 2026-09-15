@@ -33,8 +33,8 @@ import {
   type RunContextSelection,
   type ProjectScenarioTaskProfile,
   type WorkspaceProjectSummary,
-} from '@open-design/contracts';
-import type { CapyDesignHostProjectImportSuccess } from '@open-design/host';
+} from '@capydesign/contracts';
+import type { CapyDesignHostProjectImportSuccess } from '@capydesign/host';
 import { useAnalytics } from '../analytics/provider';
 import {
   trackHomeNavClick,
@@ -70,8 +70,8 @@ import type {
   TrackingOnboardingCompletionResult,
   TrackingOnboardingCompletionType,
   TrackingCliProviderId,
-} from '@open-design/contracts/analytics';
-import { agentIdToTracking } from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
+import { agentIdToTracking } from '@capydesign/contracts/analytics';
 import { useI18n, useT } from '../i18n';
 import { navigate, useRoute } from '../router';
 import type {
@@ -141,7 +141,7 @@ import {
 import type { OnboardingEntry } from '../onboarding/onboarding-entry';
 import type { PluginUseAction } from './plugins-home/useActions';
 import { Icon } from './Icon';
-import { Button } from '@open-design/components';
+import { Button } from '@capydesign/components';
 import {
   defaultAgentModelId,
   effectiveAgentModelChoice,
@@ -281,7 +281,7 @@ type OnboardingRuntimeTestState =
 // `display` based on `--compact-topbar` breakpoint (900px).
 
 // Default scenario plugin for each project kind/intent. The mapping
-// lives in `@open-design/contracts` so the daemon's `/api/projects`
+// lives in `@capydesign/contracts` so the daemon's `/api/projects`
 // and `/api/runs` fallbacks resolve to the same plugin id when no
 // `pluginId` is on the request body — plan §3.3 of
 // `specs/current/plugin-driven-flow-plan.md`.
@@ -477,7 +477,7 @@ interface Props {
   // During a transient Cloud outage it prevents the rail from presenting a
   // still-signed-in user as signed out.
   amrLoggedIn?: boolean | null;
-  amrSessionState?: import('@open-design/contracts').AmrSessionState;
+  amrSessionState?: import('@capydesign/contracts').AmrSessionState;
   /**
    * vela login-status account/user plan (ACCOUNT-scoped). Used for personal
    * workspaces so a confirmed free account is not stuck as campaign audience

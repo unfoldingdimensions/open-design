@@ -3,7 +3,7 @@ import { constants as fsConstants } from 'node:fs';
 import { open } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { ProjectExampleBinding, ProjectMetadata } from '@open-design/contracts';
+import type { ProjectExampleBinding, ProjectMetadata } from '@capydesign/contracts';
 
 /**
  * Upper bound for the example manifest the daemon digests at bind time.

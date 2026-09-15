@@ -13,7 +13,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from 'react-dom';
-import { Button } from '@open-design/components';
+import { Button } from '@capydesign/components';
 import { ThinkingOrb } from './composer/ThinkingOrb';
 import { useI18n } from '../i18n';
 import { localizePluginDescription, localizePluginTitle } from './plugins-home/localization';
@@ -35,7 +35,7 @@ import {
 import type {
   ComposerBarClickProps,
   DesignToolboxClickProps,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import { deriveUploadCohort } from '../analytics/upload-tracking';
 import { notifyCompletionFeedbackGesture } from '../utils/notifications';
 import { projectRawUrl, uploadProjectFiles, openFolderDialog, fetchRecentLinkedDirs, pushRecentLinkedDir, dirExists, applyLibraryAsset, fetchLibraryAssetElementHtml } from "../providers/registry";
@@ -48,7 +48,7 @@ import { fetchMcpServers } from "../state/mcp";
 import type { McpServerConfig, McpTemplate } from "../state/mcp";
 import { listPlugins } from "../state/projects";
 import type { AppConfig, ChatAttachment, ChatCommentAttachment, Project, ProjectFile, ProjectMetadata, SkillSummary } from "../types";
-import { DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID } from '@open-design/contracts';
+import { DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID } from '@capydesign/contracts';
 import type {
   ContextItem,
   AppliedPluginSnapshot,
@@ -61,7 +61,7 @@ import type {
   RunContextSelection,
   WorkspaceCollabContext,
   WorkspaceContextItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { buildVisualAnnotationAttachment, commentTargetDisplayName } from '../comments';
 import { Icon, type IconName } from "./Icon";
 import { ChatCloseIcon, ChatFileIcon, ChatSendArrowIcon } from "./chat/primitives/icons";
@@ -74,7 +74,7 @@ import {
   type ProjectReferenceSelection,
 } from './ProjectReferenceModal';
 import { assetTitle, elementMetaOf } from './LibraryAssetMeta';
-import type { LibraryAsset, LibraryElementMeta } from '@open-design/contracts';
+import type { LibraryAsset, LibraryElementMeta } from '@capydesign/contracts';
 import {
   DESIGN_TOOLBOX_ACTIONS,
   designToolboxActionBadge,

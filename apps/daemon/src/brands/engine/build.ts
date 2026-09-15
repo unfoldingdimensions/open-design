@@ -34,7 +34,7 @@ import { seedFromBrand, seedFromMaterial } from "./seed.js";
 import { tokensToJson, tokensToCssVars, tokensToThemeJson } from "./export.js";
 import { renderKitPage } from "./kit.js";
 import { renderArtifact, renderArtifactGallery, brandFontAssets } from "./artifacts/index.js";
-import { findRealTagEnd, HTML_TAG_PATTERNS } from '@open-design/contracts/runtime/html-injection-points';
+import { findRealTagEnd, HTML_TAG_PATTERNS } from '@capydesign/contracts/runtime/html-injection-points';
 
 // ─────────────────────────── slug ───────────────────────────────────────────
 
@@ -138,7 +138,7 @@ Everything below is *derived* — no token here was hand-authored.
 
 The whole system is regenerated from \`brand.json\` and optional
 \`brand.json.seed\` overrides. Persist authored overrides there, then run
-\`od brand finalize <brand-id>\` — every downstream token, component and artifact
+\`capt brand finalize <brand-id>\` — every downstream token, component and artifact
 follows. Do not edit \`system/seed.json\` directly; finalize replaces it.
 
 - **Change the brand color:** edit the accent role or \`seed.colorPrimary\` in \`brand.json\`.

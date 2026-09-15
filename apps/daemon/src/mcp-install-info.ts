@@ -8,7 +8,7 @@
 // Side effects (the fs.existsSync probes, process.execPath, the
 // ELECTRON_RUN_AS_NODE env read, OD_DATA_DIR resolution, sidecar client
 // detection) all stay in the caller. This module is intentionally pure
-// and free of @open-design/sidecar-proto so it can be unit-tested
+// and free of @capydesign/sidecar-proto so it can be unit-tested
 // without booting the daemon.
 
 export interface BuildMcpInstallPayloadInputs {
@@ -21,7 +21,7 @@ export interface BuildMcpInstallPayloadInputs {
   dataDir: string;
   electronAsNode: boolean;
   /** True when the daemon was bootstrapped as a sidecar and the
-   *  spawned `od mcp` should discover the live URL through its inherited
+   *  spawned `capt mcp` should discover the live URL through its inherited
    *  sidecar client instead of a baked --daemon-url. */
   isSidecarMode: boolean;
   /** Opaque sidecar client env entries the
@@ -70,7 +70,7 @@ export function buildMcpInstallPayload(
   // MCP process writes to the same directory the daemon already uses
   // even when the IDE that launched it (Antigravity, VS Code, etc.)
   // does not inherit the packaged app's environment. Without this,
-  // `od mcp` falls back to `<cwd>/.od/...` which is the read-only
+  // `capt mcp` falls back to `<cwd>/.od/...` which is the read-only
   // macOS app bundle for packaged installs and trips EPERM. Issue #848.
   const env: Record<string, string> = {
     OD_DATA_DIR: inputs.dataDir,
@@ -79,9 +79,9 @@ export function buildMcpInstallPayload(
   if (inputs.electronAsNode) {
     env.ELECTRON_RUN_AS_NODE = '1';
   }
-  // Sidecar mode: omit --daemon-url so the spawned `od mcp` discovers
+  // Sidecar mode: omit --daemon-url so the spawned `capt mcp` discovers
   // the live URL through its inherited client on every spawn, surviving
-  // ephemeral-port restarts. Direct `od --port X` launches have no
+  // ephemeral-port restarts. Direct `capt --port X` launches have no
   // socket and need the URL baked.
   const args = inputs.isSidecarMode
     ? [inputs.cliPath, 'mcp']

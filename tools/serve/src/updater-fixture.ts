@@ -9,7 +9,7 @@ import {
   isReleaseChannel,
   releaseMetadataVersionFields,
   type ReleaseChannel,
-} from "@open-design/release";
+} from "@capydesign/release";
 
 type UpdaterFixtureChannel = ReleaseChannel;
 

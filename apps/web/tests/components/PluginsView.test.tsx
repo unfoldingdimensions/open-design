@@ -2,7 +2,7 @@
 
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { InstalledPluginRecord, PluginSourceKind, TrustTier } from '@open-design/contracts';
+import type { InstalledPluginRecord, PluginSourceKind, TrustTier } from '@capydesign/contracts';
 import { PluginsView } from '../../src/components/PluginsView';
 import {
   addPluginMarketplace,
@@ -541,13 +541,13 @@ describe('PluginsView', () => {
       target: { value: '1.1.0' },
     });
     expect(within(dialog).getByTestId('plugins-available-install-command').textContent)
-      .toContain('od plugin install remote-plugin@1.1.0');
+      .toContain('capt plugin install remote-plugin@1.1.0');
     expect(within(dialog).getByTestId('plugins-available-provenance').textContent)
       .toContain('github:owner/repo@v1.1.0 · sha256:previous');
 
     fireEvent.click(within(dialog).getByRole('button', { name: 'Copy install command' }));
     await waitFor(() =>
-      expect(writeText).toHaveBeenCalledWith('od plugin install remote-plugin@1.1.0'),
+      expect(writeText).toHaveBeenCalledWith('capt plugin install remote-plugin@1.1.0'),
     );
 
     fireEvent.click(within(dialog).getByTestId('plugins-available-details-install-remote-plugin'));

@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import {
   evaluateRuntimeEvidenceGraphV1,
   normalizeAgentObservationV1,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { adaptRuntimeChildObservationsV1 } from '../../src/observability/runtime-child-observations.js';

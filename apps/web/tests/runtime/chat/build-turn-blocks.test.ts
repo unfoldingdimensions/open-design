@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { PersistedAgentEvent } from '@open-design/contracts';
+import type { PersistedAgentEvent } from '@capydesign/contracts';
 import { buildTurnBlocks } from '../../../src/runtime/chat/build-turn-blocks';
 import { isExpandable, isStruck } from '../../../src/runtime/chat/contract';
 import type { ExecutionShell, ProseBlock, TodoSegment, ToolRow, TurnBlock } from '../../../src/runtime/chat/contract';
@@ -586,7 +586,7 @@ describe('生图落行(D3 的唯一例外)', () => {
   it('要出几张是从命令里数出来的,不等结果', () => {
     // 调用还没回来 —— 换成别的工具这一行根本不该出现(D3),生图必须出
     const blocks = buildTurnBlocks({
-      events: [{ kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'od media generate a && od media generate b && od media generate c && od media generate d' } }],
+      events: [{ kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'capt media generate a && capt media generate b && capt media generate c && capt media generate d' } }],
     });
     const row = nth(images(nth(shells(blocks), 0).items), 0);
     expect(row.total).toBe(4);
@@ -596,7 +596,7 @@ describe('生图落行(D3 的唯一例外)', () => {
 
   it('逐行读结果:出了几张、砸了几张、图在哪', () => {
     const blocks = buildTurnBlocks({
-      events: call('g1', 'Bash', { command: 'od media generate x && od media generate y && od media generate z' },
+      events: call('g1', 'Bash', { command: 'capt media generate x && capt media generate y && capt media generate z' },
         { content: [ok('a.png'), bad(), ok('b.png')].join('\n') }),
       ...done(),
     });
@@ -606,9 +606,9 @@ describe('生图落行(D3 的唯一例外)', () => {
     expect(row.pending).toBe(false);
   });
 
-  it('读取 od media generate 的真实成功 envelope', () => {
+  it('读取 capt media generate 的真实成功 envelope', () => {
     const blocks = buildTurnBlocks({
-      events: call('g1', 'Bash', { command: 'od media generate x' }, {
+      events: call('g1', 'Bash', { command: 'capt media generate x' }, {
         content: JSON.stringify({ file: { name: 'actual-output.png', size: 42, kind: 'image', mime: 'image/png' } }),
       }),
       ...done(),
@@ -650,7 +650,7 @@ describe('生图落行(D3 的唯一例外)', () => {
         kind: 'tool_use',
         id: 'g1',
         name: 'Bash',
-        input: { command: 'od media generate a && od media generate b && od media generate c && od media generate d' },
+        input: { command: 'capt media generate a && capt media generate b && capt media generate c && capt media generate d' },
       }],
       mediaTasks: [
         { taskId: 'm1', runId: 'run', status: 'done', surface: 'image', startedAt: 100, endedAt: 500, elapsed: 0, progress: [], progressCount: 0, file: { name: 'one.png' } },
@@ -697,7 +697,7 @@ describe('生图落行(D3 的唯一例外)', () => {
     const blocks = buildTurnBlocks({
       events: [
         ...todo('todo-1', [['生成配套插图', 'in_progress']]),
-        { kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'od media generate a' } },
+        { kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'capt media generate a' } },
       ],
       mediaTasks: [
         { taskId: 'm1', runId: 'run', status: 'running', surface: 'image', startedAt: 100, endedAt: null, elapsed: 0, progress: [], progressCount: 0 },
@@ -717,7 +717,7 @@ describe('生图落行(D3 的唯一例外)', () => {
       events: call(
         'g1',
         'Bash',
-        { command: 'od media generate a && od media generate b' },
+        { command: 'capt media generate a && capt media generate b' },
         { content: JSON.stringify({ taskId: 'm1', status: 'failed', error: { message: 'provider failed' } }) },
       ),
       mediaTasks: [
@@ -732,7 +732,7 @@ describe('生图落行(D3 的唯一例外)', () => {
 
   it('parse 不动的行用正则兜住 status', () => {
     const blocks = buildTurnBlocks({
-      events: call('g1', 'Bash', { command: 'od media generate x' }, { content: '{"status": "succeeded", "path": ' }),
+      events: call('g1', 'Bash', { command: 'capt media generate x' }, { content: '{"status": "succeeded", "path": ' }),
       ...done(),
     });
     expect(nth(images(nth(shells(blocks), 0).items), 0).done).toBe(1);
@@ -741,10 +741,10 @@ describe('生图落行(D3 的唯一例外)', () => {
   it('连续的生图调用并成一行;隔着别的调用就另起一行(S19 现行口径)', () => {
     const blocks = buildTurnBlocks({
       events: [
-        ...call('g1', 'Bash', { command: 'od media generate a' }, { content: ok('a.png') }),
-        ...call('g2', 'Bash', { command: 'od media generate b' }, { content: ok('b.png') }),
+        ...call('g1', 'Bash', { command: 'capt media generate a' }, { content: ok('a.png') }),
+        ...call('g2', 'Bash', { command: 'capt media generate b' }, { content: ok('b.png') }),
         ...call('t1', 'Read', { file_path: 'x.css' }),
-        ...call('g3', 'Bash', { command: 'od media generate c' }, { content: ok('c.png') }),
+        ...call('g3', 'Bash', { command: 'capt media generate c' }, { content: ok('c.png') }),
       ],
       ...done(),
     });
@@ -755,7 +755,7 @@ describe('生图落行(D3 的唯一例外)', () => {
 
   it('一条状态都读不出来:命令报错就整组算失败', () => {
     const blocks = buildTurnBlocks({
-      events: call('g1', 'Bash', { command: 'od media generate a && od media generate b' },
+      events: call('g1', 'Bash', { command: 'capt media generate a && capt media generate b' },
         { content: 'error: image provider is required', isError: true }),
       ...done(),
     });
@@ -767,7 +767,7 @@ describe('生图落行(D3 的唯一例外)', () => {
     const blocks = buildTurnBlocks({
       // 假的 grep 输出。路径故意不落在 docs/ 下:那是 certain-exempt 面,
       // 哪怕只是字符串,守卫也会当成「闸道代码依赖了文档」(scripts/check-certain-exempt-consumption.ts)
-      events: call('g1', 'Bash', { command: 'grep -rn "od media generate" notes/' }, { content: 'notes/a.md:3: od media generate' }),
+      events: call('g1', 'Bash', { command: 'grep -rn "capt media generate" notes/' }, { content: 'notes/a.md:3: capt media generate' }),
       ...done(),
     });
     const items = nth(shells(blocks), 0).items;
@@ -777,7 +777,7 @@ describe('生图落行(D3 的唯一例外)', () => {
 
   it('查用法不算生图', () => {
     const blocks = buildTurnBlocks({
-      events: call('g1', 'Bash', { command: 'od media generate --help' }, { content: 'Usage: od media generate' }),
+      events: call('g1', 'Bash', { command: 'capt media generate --help' }, { content: 'Usage: capt media generate' }),
       ...done(),
     });
     expect(images(nth(shells(blocks), 0).items)).toHaveLength(0);

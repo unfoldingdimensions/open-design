@@ -5,8 +5,8 @@ import type Database from 'better-sqlite3';
 import type {
   SkillPluginCandidate,
   SkillPluginCandidateSourceRef,
-} from '@open-design/contracts';
-import { OPEN_DESIGN_PLUGIN_SPEC_VERSION } from '@open-design/contracts';
+} from '@capydesign/contracts';
+import { OPEN_DESIGN_PLUGIN_SPEC_VERSION } from '@capydesign/contracts';
 import { validatePluginFolder, flattenValidationDiagnostics } from './validate.js';
 
 type SqliteDb = Database.Database;

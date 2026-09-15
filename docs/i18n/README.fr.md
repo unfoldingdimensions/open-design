@@ -112,27 +112,27 @@ Dans le Studio d'un projet, la conversation, les fichiers générés et la prév
 
 | Agent de code / plateforme &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Statut &nbsp;&nbsp; | Configuration rapide &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Pris en charge | `od mcp install claude` |
-| [Claude Desktop](https://claude.ai/download) | ✅ Pris en charge¹ | `od mcp install claude-desktop` |
-| [Codex CLI](https://github.com/openai/codex) | ✅ Pris en charge | `od mcp install codex` |
-| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Pris en charge | `od mcp install reasonix` |
-| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | ✅ Runtime natif | `od agent setup deepseek-harness` |
-| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Pris en charge | `od mcp install raven` |
-| [Cursor](https://www.cursor.com/cli) | ✅ Pris en charge | `od mcp install cursor` |
-| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Pris en charge | `od mcp install copilot` |
-| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Pris en charge | `od mcp install copilot` |
-| [OpenCode](https://opencode.ai/) | ✅ Pris en charge | `od mcp install opencode` |
-| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Pris en charge | `od mcp install openclaw` |
-| [Antigravity](https://antigravity.google) | ✅ Pris en charge | `od mcp install antigravity` |
-| [Cline](https://github.com/cline/cline) | ✅ Pris en charge | `od mcp install cline` |
-| [Trae](https://www.trae.ai/) | ✅ Pris en charge | `od mcp install trae` |
-| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Pris en charge | `od mcp install kimi` |
-| [Kiro](https://kiro.dev) | ✅ Pris en charge | `od mcp install kiro` |
-| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Pris en charge | `od mcp install pi` |
-| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Pris en charge | `od mcp install vibe` |
-| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Pris en charge | `od mcp install hermes` |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Pris en charge | `capt mcp install claude` |
+| [Claude Desktop](https://claude.ai/download) | ✅ Pris en charge¹ | `capt mcp install claude-desktop` |
+| [Codex CLI](https://github.com/openai/codex) | ✅ Pris en charge | `capt mcp install codex` |
+| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Pris en charge | `capt mcp install reasonix` |
+| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | ✅ Runtime natif | `capt agent setup deepseek-harness` |
+| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Pris en charge | `capt mcp install raven` |
+| [Cursor](https://www.cursor.com/cli) | ✅ Pris en charge | `capt mcp install cursor` |
+| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Pris en charge | `capt mcp install copilot` |
+| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Pris en charge | `capt mcp install copilot` |
+| [OpenCode](https://opencode.ai/) | ✅ Pris en charge | `capt mcp install opencode` |
+| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Pris en charge | `capt mcp install openclaw` |
+| [Antigravity](https://antigravity.google) | ✅ Pris en charge | `capt mcp install antigravity` |
+| [Cline](https://github.com/cline/cline) | ✅ Pris en charge | `capt mcp install cline` |
+| [Trae](https://www.trae.ai/) | ✅ Pris en charge | `capt mcp install trae` |
+| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Pris en charge | `capt mcp install kimi` |
+| [Kiro](https://kiro.dev) | ✅ Pris en charge | `capt mcp install kiro` |
+| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Pris en charge | `capt mcp install pi` |
+| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Pris en charge | `capt mcp install vibe` |
+| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Pris en charge | `capt mcp install hermes` |
 
-Pour DeepSeek Harness, installez d'abord la CLI officielle `dsh`, puis sélectionnez-la dans OpenDesign ou lancez `od agent setup deepseek-harness` pour installer ou réparer le composant de connexion d'OD. Pour les intégrations MCP : `od mcp install <agent> --print` affiche un aperçu sans modification · `--uninstall` supprime l'intégration · `od mcp install --help` donne la liste complète.
+Pour DeepSeek Harness, installez d'abord la CLI officielle `dsh`, puis sélectionnez-la dans OpenDesign ou lancez `capt agent setup deepseek-harness` pour installer ou réparer le composant de connexion d'OD. Pour les intégrations MCP : `capt mcp install <agent> --print` affiche un aperçu sans modification · `--uninstall` supprime l'intégration · `capt mcp install --help` donne la liste complète.
 
 ¹ La configuration automatique du serveur MCP pour Claude Desktop est actuellement prise en charge uniquement sur macOS et Windows.
 
@@ -294,11 +294,11 @@ Après l'installation : l'application détecte automatiquement chaque CLI d'agen
 
 Vous pouvez utiliser OpenDesign sans jamais ouvrir l'interface graphique — appelez-le en tant que skill, plugin ou serveur MCP à l'intérieur de Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi, et bien d'autres.
 
-Si vous avez installé l'application macOS via le DMG ou le cask Homebrew, votre shell peut encore associer `od` à l'utilitaire système de représentation octale `/usr/bin/od`. Dans ce cas, ouvrez **Settings → MCP server** dans l'application et copiez l'extrait correspondant à votre client : il utilise des chemins absolus et ne dépend pas de la commande `od` seule.
+Si vous avez installé l'application macOS via le DMG ou le cask Homebrew, votre shell peut encore associer `capt` à l'utilitaire système de représentation octale `/usr/bin/od`. Dans ce cas, ouvrez **Settings → MCP server** dans l'application et copiez l'extrait correspondant à votre client : il utilise des chemins absolus et ne dépend pas de la commande `capt` seule.
 
 ```bash
 # One-line install into the agent you're using:
-od mcp install <agent>
+capt mcp install <agent>
 # <agent> = claude | codex | reasonix | raven | cursor | copilot | openclaw
 #         | antigravity | pi | vibe | hermes | cline | kimi | kiro
 #         | trae | opencode
@@ -307,7 +307,7 @@ od mcp install <agent>
 curl -fsSL https://open-design.ai/install.sh | sh -s <agent>
 ```
 
-`install.sh` est un simple script d'enveloppe pour `od mcp install` : l'URL hébergée renvoie ainsi un script shell plutôt que la page d'accueil HTML. Le script s'arrête immédiatement si le shell trouve un exécutable `od` qui n'appartient pas à OpenDesign.
+`install.sh` est un simple script d'enveloppe pour `capt mcp install` : l'URL hébergée renvoie ainsi un script shell plutôt que la page d'accueil HTML. Le script s'arrête immédiatement si le shell trouve un exécutable `capt` qui n'appartient pas à OpenDesign.
 
 > **Utilisateurs de macOS / WSL2 :** la commande système `/usr/bin/od` peut masquer celle d'OpenDesign. Dans l'application de bureau, privilégiez l'extrait de **Settings → MCP server** ; sous WSL2, commencez par le [guide de configuration WSL2](../wsl-setup.md).
 
@@ -369,19 +369,19 @@ OpenDesign livre un **serveur MCP en stdio** et des **scripts d'installation** p
 
 ```bash
 # One-line install (16+ CLIs supported):
-od mcp install <agent>
+capt mcp install <agent>
 
 # Then the agent can:
-od project list --json
-od files list <project-id> --json
-od files read <project-id> <relative-path>
-od plugin list --json
-od skills list --json
+capt project list --json
+capt files list <project-id> --json
+capt files read <project-id> <relative-path>
+capt plugin list --json
+capt skills list --json
 ```
 
 **Pourquoi MCP ?** Exporter et rattacher un zip à chaque itération casse le flux. MCP expose directement la source de design — l'agent voit toujours le fichier en direct.
 
-**Pour un agent partant de zéro,** l'installeur place `~/.config/<agent>/open-design.json` (ou l'équivalent de la plateforme) plus un extrait MCP à copier-coller. Cursor obtient un deeplink en un clic ; Claude Code obtient une ligne `claude mcp add-json` ; chaque autre agent obtient du JSON dans le schéma attendu par sa configuration. Sur une installation macOS de bureau, privilégiez cet extrait dans Settings plutôt que la commande `od mcp install <agent>` seule dans le terminal : `/usr/bin/od` peut être prioritaire dans le `PATH`. Flux complet par agent → **Settings → MCP server** dans l'application de bureau, ou [`docs/agent-adapters.md`](../../docs/agent-adapters.md).
+**Pour un agent partant de zéro,** l'installeur place `~/.config/<agent>/open-design.json` (ou l'équivalent de la plateforme) plus un extrait MCP à copier-coller. Cursor obtient un deeplink en un clic ; Claude Code obtient une ligne `claude mcp add-json` ; chaque autre agent obtient du JSON dans le schéma attendu par sa configuration. Sur une installation macOS de bureau, privilégiez cet extrait dans Settings plutôt que la commande `capt mcp install <agent>` seule dans le terminal : `/usr/bin/od` peut être prioritaire dans le `PATH`. Flux complet par agent → **Settings → MCP server** dans l'application de bureau, ou [`docs/agent-adapters.md`](../../docs/agent-adapters.md).
 
 **Modèle de sécurité.** En lecture seule par défaut, le daemon se lie à `127.0.0.1`, et la SSRF est bloquée à la périphérie du proxy. L'exposition au réseau local nécessite un `OD_BIND_HOST` explicite plus `OD_ALLOWED_ORIGINS`. Les identifiants de connecteurs et les routes d'aperçu d'artefacts en direct restent en loopback uniquement, quoi qu'il en soit.
 
@@ -481,20 +481,20 @@ Voir aussi [`plugins/community/`](../../plugins/community/) pour les plugins com
 
 ### Utiliser les plugins
 
-Les plugins sont à parité totale entre l'**interface web** et le **CLI `od`** — les mêmes points de terminaison `/api/plugins`, choisissez celui qui convient.
+Les plugins sont à parité totale entre l'**interface web** et le **CLI `capt`** — les mêmes points de terminaison `/api/plugins`, choisissez celui qui convient.
 
 **Dans l'application de bureau / web :** ouvrez la page **Plugin** pour parcourir la marketplace et cliquez sur **Install** ; à l'intérieur du Studio d'un projet, les plugins apparaissent comme des chips dans le compositeur sur lesquelles vous cliquez pour les appliquer (avec les entrées qu'ils déclarent).
 
 **En ligne de commande** (s'exécute sans interface — c'est la voie qu'utilisent les agents externes) :
 
 ```bash
-od plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
-od plugin search "landing page"      # search by keyword
-od plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
-od plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
-od plugin apply od-default --input brief="a one-page pitch for our seed round"
-od plugin upgrade od-default         # upgrade
-od plugin uninstall od-default       # uninstall
+capt plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
+capt plugin search "landing page"      # search by keyword
+capt plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
+capt plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
+capt plugin apply od-default --input brief="a one-page pitch for our seed round"
+capt plugin upgrade od-default         # upgrade
+capt plugin uninstall od-default       # uninstall
 ```
 
 Chaque commande prend en charge `--json`, vous pouvez donc la canaliser via `jq` / `xargs` dans votre automatisation.
@@ -517,8 +517,8 @@ Champs principaux de `open-design.json` : `specVersion` (actuellement `1.0.0`), 
 Échafaudez + validez localement :
 
 ```bash
-od plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
-od plugin validate ./my-plugin                          # check manifest / file layout
+capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
+capt plugin validate ./my-plugin                          # check manifest / file layout
 pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 ```
 
@@ -527,7 +527,7 @@ Ensemble complet des champs et contrat d'exécution → [`plugins/spec/SPEC.md`]
 ### Contribuer un plugin
 
 1. Déposez le dossier du plugin dans [`plugins/community/`](../../plugins/community/) (plugins tiers), ou — pour le livrer empaqueté avec OpenDesign — dans le tier correspondant de [`plugins/_official/`](../../plugins/_official/).
-2. Passez la validation : `od plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
+2. Passez la validation : `capt plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
 3. Remplissez la PR à l'aide du modèle dans [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) (ID, version, voie, mode, capacités, exemples de déclencheurs ; joignez une capture d'écran / un aperçu pour les plugins visuels).
 4. Pour publier sur un registre externe (skills.sh / ClawHub / GitHub autonome) → [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -598,8 +598,8 @@ Architecture complète → [`docs/architecture.md`](../../docs/architecture.md).
 - [x] Builds Electron packagés — macOS (Apple Silicon + Intel) + Windows (x64) + AppImage Linux (voie optionnelle)
 - [ ] Éditions chirurgicales en mode commentaire — partiellement livré ; patching ciblé fiable en cours
 - [ ] UX du panneau de réglages émis par l'IA — pas encore implémenté
-- [ ] `npx od init` pour échafauder un projet avec un `DESIGN.md`
-- [ ] SDK de plugins + CLI `od plugin {add,list,remove,test,publish}`
+- [ ] `npx capt init` pour échafauder un projet avec un `DESIGN.md`
+- [ ] SDK de plugins + CLI `capt plugin {add,list,remove,test,publish}`
 - [ ] Plugins de migration Figma / Pencil → React / Next / Vue (alpha)
 - [ ] Plugin de rafraîchissement de base de code existante (pointer vers un dépôt git + un `DESIGN.md`)
 

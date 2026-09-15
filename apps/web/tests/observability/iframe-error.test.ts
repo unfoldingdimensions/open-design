@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { PREVIEW_OBSERVABILITY_MESSAGE_TYPE } from '@open-design/contracts/runtime/preview-observability';
+import { PREVIEW_OBSERVABILITY_MESSAGE_TYPE } from '@capydesign/contracts/runtime/preview-observability';
 
 const { reportSafetyEvent } = vi.hoisted(() => ({
   reportSafetyEvent: vi.fn(),
@@ -244,7 +244,7 @@ describe('preview iframe observability', () => {
 
   // The reporter asked to be able to find the cause from an exported log, not
   // only from a dashboard. On desktop only console warn/error reach
-  // renderer.log, and that file is what `od diagnostics export` bundles, so the
+  // renderer.log, and that file is what `capt diagnostics export` bundles, so the
   // measurement has to be written at warn level with everything needed to read
   // it standalone.
   it('writes one greppable warn line so the diagnostics export carries it', () => {

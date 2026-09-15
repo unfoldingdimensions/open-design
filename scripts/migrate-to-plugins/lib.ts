@@ -214,7 +214,7 @@ export async function pathExists(p: string): Promise<boolean> {
 }
 
 // Write a manifest with a key order that keeps the diff human-readable:
-// identity → metadata → compat → od → end. Inside `od`, we keep the
+// identity → metadata → compat → od → end. Inside `capt`, we keep the
 // taxonomy (kind/taskKind/mode/scenario/surface) first so a reviewer can
 // understand the plugin's category before drilling into pipeline/inputs.
 const TOP_ORDER = [

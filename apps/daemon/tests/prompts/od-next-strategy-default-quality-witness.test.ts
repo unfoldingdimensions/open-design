@@ -8,12 +8,12 @@ import {
   type AppliedPluginSnapshot,
   type PluginManifest,
   type PluginPipeline,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   parseManifest,
   resolveAppliedPipeline,
   type ScenarioRegistryEntry,
-} from '@open-design/plugin-runtime';
+} from '@capydesign/plugin-runtime';
 import { composeSystemPrompt } from '../../src/prompts/system.js';
 import { loadAtomBodies } from '../../src/plugins/atom-bodies.js';
 import { registerBundledPlugins } from '../../src/plugins/bundled.js';

@@ -186,10 +186,10 @@ jobs:
         run: |
           set -euo pipefail
           pnpm install --frozen-lockfile
-          pnpm --filter @open-design/platform build
-          pnpm --filter @open-design/sidecar build
-          pnpm --filter @open-design/standalone build
-          pnpm --filter @open-design/closure build
+          pnpm --filter @capydesign/platform build
+          pnpm --filter @capydesign/sidecar build
+          pnpm --filter @capydesign/standalone build
+          pnpm --filter @capydesign/closure build
           mkdir -p "$RUNNER_TEMP/exact-node"
           python3 - <<'PY'
           import hashlib, json, os, urllib.request

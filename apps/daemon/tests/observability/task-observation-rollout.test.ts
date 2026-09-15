@@ -3,11 +3,11 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 
-import { strategyPackageHashFromDigests } from '@open-design/plugin-runtime';
+import { strategyPackageHashFromDigests } from '@capydesign/plugin-runtime';
 import {
   OD_NEXT_REQUEST_TURN_SCHEMA_V1,
   type CapyDesignPlanContractV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import Database from 'better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

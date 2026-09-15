@@ -1,7 +1,7 @@
 import {
   buildWorkspacePermissions,
   buildWorkspaceSeatSummary,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   CollabMemberRole,
   WorkspaceBillingState,
@@ -10,7 +10,7 @@ import type {
   WorkspaceMemberStatus,
   WorkspaceProviderMode,
   WorkspaceType,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { resolveEffectiveVelaConsoleOrigin } from '../integrations/vela-console-origin.js';
 
 // The daemon's single B-integration point . Presence + sync need the

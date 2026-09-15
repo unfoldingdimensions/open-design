@@ -2,7 +2,7 @@ import type {
   WorkspaceCollabContext,
   WorkspaceInvalidationEventName,
   WorkspaceInvalidationSsePayload,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   useEventStream,
   type EventStreamActiveReason,

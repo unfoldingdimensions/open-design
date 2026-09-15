@@ -21,8 +21,8 @@ import { tmpdir } from 'node:os';
 import { delimiter, dirname, join, posix } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { SidecarStamp } from '@open-design/sidecar';
-import { APP_KEYS } from '@open-design/sidecar-proto';
+import type { SidecarStamp } from '@capydesign/sidecar';
+import { APP_KEYS } from '@capydesign/sidecar-proto';
 
 import {
   buildPackagedDaemonSpawnEnv,

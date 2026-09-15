@@ -1,7 +1,7 @@
 import {
   DESKTOP_UPDATE_STATES,
   type DesktopUpdateStatusSnapshot,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 
 import type { DesktopUpdater, DesktopUpdaterLogger } from "../updater.js";
 

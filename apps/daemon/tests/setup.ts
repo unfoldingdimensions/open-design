@@ -50,6 +50,6 @@ process.env.OPEN_DESIGN_VELA_TELEMETRY ??= 'off';
 
 // Publish/share endpoints shell out through OD_NODE_BIN + OD_BIN (dist/cli.js).
 // Build the CLI artifact once per vitest process so package tests do not depend
-// on a prior manual `pnpm --filter @open-design/daemon build`.
+// on a prior manual `pnpm --filter @capydesign/daemon build`.
 ensureDaemonCliBuilt();
 process.env.OD_DAEMON_CLI_PATH = daemonCliDist;

@@ -1,7 +1,7 @@
 import {
   composeOdNextStrategyContinuationV2,
   type StrategyTaskProjectionV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type Database from 'better-sqlite3';
 
 import type {

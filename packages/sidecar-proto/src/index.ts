@@ -1,4 +1,4 @@
-import { RELEASE_CHANNELS, type ReleaseChannel } from "@open-design/release";
+import { RELEASE_CHANNELS, type ReleaseChannel } from "@capydesign/release";
 
 export const APP_KEYS = Object.freeze({
   DAEMON: "daemon",
@@ -64,7 +64,7 @@ export const SIDECAR_STAMP_FIELDS = ["app", "mode", "namespace", "ipc", "source"
 export const SIDECAR_DEFAULTS = Object.freeze({
   host: "127.0.0.1",
   ipcBase: "/tmp/open-design/ipc",
-  namespace: "default",
+  namespace: "capydesign",
   projectTmpDirName: ".tmp",
   windowsPipePrefix: "open-design",
 } as const);
@@ -370,7 +370,7 @@ export type DesktopExportArtifactImageFormat = "png" | "jpeg";
 /**
  * What the caller wants out of the renderer — stated, not inferred.
  *
- * `full_page_export` is the historical `od export` product: measure the
+ * `full_page_export` is the historical `capt export` product: measure the
  * document, grow the surface to its full scroll height, and hand back one tall
  * image (or a paginated PDF). Its cost scales with page length, by design.
  *
@@ -409,7 +409,7 @@ export type DesktopArtifactCaptureErrorCode =
 
 // Generic programmatic export (PDF / image). The desktop renderer writes
 // the result to a temporary file and returns its path; the daemon streams those
-// bytes to the HTTP caller (the `od export` CLI), then removes the temp file.
+// bytes to the HTTP caller (the `capt export` CLI), then removes the temp file.
 export type DesktopExportArtifactInput = {
   baseHref?: string;
   /**
@@ -691,7 +691,7 @@ export type ShutdownResult = {
 
 /**
  * Legacy runtime-layout descriptor retained for the generic path/bootstrap
- * contract. This is not sidecar process identity: `@open-design/sidecar` owns
+ * contract. This is not sidecar process identity: `@capydesign/sidecar` owns
  * the authoritative five-field argv stamp, and IPC is private transport state.
  */
 export type LegacySidecarRuntimeLayout = {

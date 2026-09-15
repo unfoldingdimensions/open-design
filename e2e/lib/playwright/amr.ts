@@ -3,7 +3,7 @@ import { expect } from '@playwright/test';
 import type {
   WorkspaceCollabContext,
   WorkspaceDirectoryItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { ensureRailOpen } from './rail.js';
 import { T } from '@/timeouts';
 

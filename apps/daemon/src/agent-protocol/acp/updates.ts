@@ -4,7 +4,7 @@
  * event-shape diagnostics. Depends on acp/types, acp/json, and the vela-errors
  * integration; consumed exclusively by acp/session.ts.
  */
-import { isTodoWriteToolName } from '@open-design/contracts';
+import { isTodoWriteToolName } from '@capydesign/contracts';
 import { createHash } from 'node:crypto';
 import type { JsonObject } from './types.js';
 import { asObject, acpValueKind, objectKeys, extractAcpUpdateText } from './json.js';

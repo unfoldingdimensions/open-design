@@ -20,7 +20,7 @@ function packagePath(target: string): string {
   return join(packageRoot, target.replace(/^\.\//, ''));
 }
 
-describe('@open-design/contracts package runtime shape', () => {
+describe('@capydesign/contracts package runtime shape', () => {
   it('exports built JavaScript instead of TypeScript source files', () => {
     const pkg = readPackageJson();
 
@@ -67,14 +67,14 @@ describe('@open-design/contracts package runtime shape', () => {
   });
 
   it('makes runtime exports importable through package exports', async () => {
-    const contracts = await import('@open-design/contracts');
-    const amrWallet = await import('@open-design/contracts/api/amrWallet');
-    const connectionTest = await import('@open-design/contracts/api/connectionTest');
-    const research = await import('@open-design/contracts/api/research');
-    const handoff = await import('@open-design/contracts/api/handoff');
-    const critique = await import('@open-design/contracts/critique');
-    const deckStageFallback = await import('@open-design/contracts/runtime/deck-stage-fallback');
-    const deckProtocol = await import('@open-design/contracts/runtime/deck-protocol');
+    const contracts = await import('@capydesign/contracts');
+    const amrWallet = await import('@capydesign/contracts/api/amrWallet');
+    const connectionTest = await import('@capydesign/contracts/api/connectionTest');
+    const research = await import('@capydesign/contracts/api/research');
+    const handoff = await import('@capydesign/contracts/api/handoff');
+    const critique = await import('@capydesign/contracts/critique');
+    const deckStageFallback = await import('@capydesign/contracts/runtime/deck-stage-fallback');
+    const deckProtocol = await import('@capydesign/contracts/runtime/deck-protocol');
 
     expect(contracts.composeSystemPrompt).toEqual(expect.any(Function));
     expect(contracts.exampleHealthResponse).toEqual({ ok: true, service: 'daemon' });

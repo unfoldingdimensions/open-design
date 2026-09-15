@@ -90,11 +90,11 @@ jobs:
           fi
       - name: Prebuild workspace type declarations
         run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/desktop build
-          pnpm --filter @open-design/web build:sidecar
+          pnpm --filter @capydesign/daemon build
+          pnpm --filter @capydesign/desktop build
+          pnpm --filter @capydesign/web build:sidecar
       - name: Run E2E Vitest
-        run: pnpm --filter @open-design/e2e test
+        run: pnpm --filter @capydesign/e2e test
   daemon_unit_tests:
     name: Daemon tests (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
@@ -121,7 +121,7 @@ jobs:
       - name: Run daemon test shard
         env:
           OD_WATCHER_TEST_DEBUG: "1"
-        run: pnpm --filter @open-design/daemon test --shard=${{ matrix.shard }}/4
+        run: pnpm --filter @capydesign/daemon test --shard=${{ matrix.shard }}/4
   verify:
     name: Verify build (typecheck + tests)
     runs-on: ubuntu-latest
@@ -146,8 +146,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build daemon and desktop (typecheck dependencies)
         run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/desktop build
+          pnpm --filter @capydesign/daemon build
+          pnpm --filter @capydesign/desktop build
       - name: Typecheck workspaces
         run: pnpm -r --workspace-concurrency=4 --if-present run typecheck
       - name: Check repository layout policies

@@ -247,7 +247,7 @@ describe("postinstall script contract", () => {
     const targets = postinstallBuildTargetList();
     expect(missingBuildTargets).toEqual([]);
     expect(missingTsconfigs).toEqual([]);
-    expect(dependencySpecifier(rootManifest, "@open-design/daemon")).toBe("workspace:*");
+    expect(dependencySpecifier(rootManifest, "@capydesign/daemon")).toBe("workspace:*");
     expect(targets.indexOf("packages/release")).toBeGreaterThanOrEqual(0);
     expect(targets.indexOf("packages/contracts")).toBeGreaterThanOrEqual(0);
     expect(targets.indexOf("packages/release")).toBeLessThan(targets.indexOf("packages/contracts"));
@@ -257,16 +257,16 @@ describe("postinstall script contract", () => {
   it("[P2] skips absent tsconfig targets in partial install contexts on the default path", () => {
     const sandbox = createSandbox();
     try {
-      writeTarget(sandbox, "packages/release", { name: "@open-design/release" });
+      writeTarget(sandbox, "packages/release", { name: "@capydesign/release" });
       writeTarget(sandbox, "packages/contracts", {
-        dependencies: { "@open-design/release": "workspace:*" },
-        name: "@open-design/contracts",
+        dependencies: { "@capydesign/release": "workspace:*" },
+        name: "@capydesign/contracts",
       });
       writeTarget(sandbox, "packages/components", {
-        dependencies: { "@open-design/contracts": "workspace:*" },
-        name: "@open-design/components",
+        dependencies: { "@capydesign/contracts": "workspace:*" },
+        name: "@capydesign/components",
       });
-      writeTarget(sandbox, "apps/daemon", { name: "@open-design/daemon", tsconfig: false });
+      writeTarget(sandbox, "apps/daemon", { name: "@capydesign/daemon", tsconfig: false });
       const invocationLog = writePnpmStub(sandbox);
 
       const result = runFixturePostinstall(sandbox, { OPEN_DESIGN_POSTINSTALL_CONCURRENCY: "" });
@@ -288,16 +288,16 @@ describe("postinstall script contract", () => {
   it("[P2] preserves workspace dependency ordering when postinstall builds in parallel", () => {
     const sandbox = createSandbox();
     try {
-      writeTarget(sandbox, "packages/release", { name: "@open-design/release" });
+      writeTarget(sandbox, "packages/release", { name: "@capydesign/release" });
       writeTarget(sandbox, "packages/contracts", {
-        dependencies: { "@open-design/release": "workspace:*" },
-        name: "@open-design/contracts",
+        dependencies: { "@capydesign/release": "workspace:*" },
+        name: "@capydesign/contracts",
       });
       writeTarget(sandbox, "packages/components", {
-        dependencies: { "@open-design/contracts": "workspace:*" },
-        name: "@open-design/components",
+        dependencies: { "@capydesign/contracts": "workspace:*" },
+        name: "@capydesign/components",
       });
-      writeTarget(sandbox, "packages/download", { name: "@open-design/download" });
+      writeTarget(sandbox, "packages/download", { name: "@capydesign/download" });
       const invocationLog = writePnpmStub(sandbox);
 
       const result = runFixturePostinstall(sandbox, { OPEN_DESIGN_POSTINSTALL_CONCURRENCY: "2" });
@@ -316,7 +316,7 @@ describe("postinstall script contract", () => {
   it("[P2] rebuilds better-sqlite3 when the native addon cannot load", () => {
     const sandbox = createSandbox();
     try {
-      writeTarget(sandbox, "apps/daemon", { name: "@open-design/daemon", tsconfig: false });
+      writeTarget(sandbox, "apps/daemon", { name: "@capydesign/daemon", tsconfig: false });
       const addonDirectory = join(sandbox, "apps/daemon/node_modules/better-sqlite3");
       mkdirSync(addonDirectory, { recursive: true });
       writeFileSync(join(addonDirectory, "package.json"), '{"name":"better-sqlite3","main":"index.cjs"}\n');
@@ -330,7 +330,7 @@ describe("postinstall script contract", () => {
       expect(result.status, String(result.stderr)).toBe(0);
       expect(result.stdout).toContain("postinstall: rebuilding better-sqlite3");
       expect(readStubEvents(invocationLog)).toContainEqual({
-        args: ["--filter", "@open-design/daemon", "rebuild", "better-sqlite3"],
+        args: ["--filter", "@capydesign/daemon", "rebuild", "better-sqlite3"],
         event: "start",
         target: "",
       });

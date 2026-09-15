@@ -32,7 +32,7 @@ describe('OpenAI-compatible media providers', () => {
   beforeEach(async () => {
     root = await mkdtemp(path.join(tmpdir(), 'od-openai-compatible-media-'));
     projectRoot = path.join(root, 'project-root');
-    projectsRoot = path.join(projectRoot, '.od', 'projects');
+    projectsRoot = path.join(projectRoot, '.capydesign', 'projects');
     await mkdir(projectsRoot, { recursive: true });
     delete process.env.OD_IMAGEROUTER_API_KEY;
     delete process.env.OD_CUSTOM_IMAGE_API_KEY;
@@ -89,7 +89,7 @@ describe('OpenAI-compatible media providers', () => {
   });
 
   async function writeConfig(data: unknown) {
-    const file = path.join(projectRoot, '.od', 'media-config.json');
+    const file = path.join(projectRoot, '.capydesign', 'media-config.json');
     await mkdir(path.dirname(file), { recursive: true });
     await writeFile(file, JSON.stringify(data), 'utf8');
   }

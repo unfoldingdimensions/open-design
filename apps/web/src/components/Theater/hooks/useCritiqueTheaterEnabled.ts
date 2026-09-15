@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import { workspaceProjectHeaders } from '../../../collab/workspace-identity';
 
 const STORAGE_KEY = 'open-design:config';

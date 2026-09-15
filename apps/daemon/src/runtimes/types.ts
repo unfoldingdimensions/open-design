@@ -1,7 +1,7 @@
 import type { ExecFileOptions } from 'node:child_process';
-import type { AgentDiagnostic, ModelMetadata } from '@open-design/contracts';
+import type { AgentDiagnostic, ModelMetadata } from '@capydesign/contracts';
 
-export type { AgentDiagnostic } from '@open-design/contracts';
+export type { AgentDiagnostic } from '@capydesign/contracts';
 
 export type RuntimeEnv = NodeJS.ProcessEnv | Record<string, string>;
 
@@ -280,7 +280,7 @@ export type RuntimeAgentDef = {
   // null or the synthetic 'default'. Used by adapters whose CLI rejects
   // 'default' (e.g. AMR / vela) so an operator can swap the hardcoded
   // fallback without a code change — set the env var on the daemon
-  // process when launching `tools-dev` / `od` daemon. The value must be
+  // process when launching `tools-dev` / `capt` daemon. The value must be
   // present in the daemon's `process.env`; Settings-UI per-agent env
   // values only reach the spawned child and are NOT consulted here.
   defaultModelEnvVar?: string;

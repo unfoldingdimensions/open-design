@@ -21,7 +21,7 @@ import {
   releaseChannelDescriptor,
   releaseMetadataVersionFields,
   type CountedReleaseChannel,
-} from "@open-design/release";
+} from "@capydesign/release";
 import {
   parseReleaseNotePublication,
   releaseNoteMetadataFromPublication,

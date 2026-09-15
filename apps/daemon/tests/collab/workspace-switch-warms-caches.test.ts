@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import express from 'express';
 import http from 'node:http';
-import { buildWorkspacePermissions, buildWorkspaceSeatSummary } from '@open-design/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary } from '@capydesign/contracts';
 import type {
   WorkspaceCollabContext,
   WorkspaceDirectoryItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   registerCollabContextRoutes,
   type RegisterCollabContextRoutesDeps,

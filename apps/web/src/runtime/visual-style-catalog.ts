@@ -76,7 +76,7 @@ export type VisualStyleFoundationDirectionId =
  * The image catalogue offers finer-grained visual bets than the five
  * CSS-ready direction foundations available to agents. Keep the relationship
  * explicit so a submitted card can carry both its stable Host id and the
- * foundation id that `od tools directions --id …` can resolve.
+ * foundation id that `capt tools directions --id …` can resolve.
  */
 export function visualStyleFoundationDirectionId(
   variant: VisualStyleVariant,

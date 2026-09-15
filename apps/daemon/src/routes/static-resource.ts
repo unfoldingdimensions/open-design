@@ -5,8 +5,8 @@ import fs from 'node:fs';
 import type {
   DesignSystemTokenContractRebuildJobResponse,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
-import { TeamResourceCopyForbiddenError } from '@open-design/contracts';
+} from '@capydesign/contracts';
+import { TeamResourceCopyForbiddenError } from '@capydesign/contracts';
 import {
   enforceTeamResourceCopyAllowed,
   type TeamResourceStateProvider,
@@ -65,7 +65,7 @@ import {
   type SkillInstallErrorCode,
 } from '../services/skill-installation.js';
 import type { RouteDeps } from '../server-context.js';
-import { findRealElementRange, HTML_TAG_PATTERNS } from '@open-design/contracts/runtime/html-injection-points';
+import { findRealElementRange, HTML_TAG_PATTERNS } from '@capydesign/contracts/runtime/html-injection-points';
 
 export interface RegisterAtomRoutesDeps {
   db: Database.Database;
@@ -164,7 +164,7 @@ export function registerStaticResourceRoutes(app: Express, ctx: RegisterStaticRe
   };
   // Stamp a freshly imported/installed skill with the caller's workspace, the
   // same moment plugin install does (`installOrUpgradePlugin` in server.ts).
-  // A caller with no workspace headers (`od skill import`, a not-logged-in
+  // A caller with no workspace headers (`capt skill import`, a not-logged-in
   // web session) leaves the skill unbound — visible everywhere, same as
   // every skill imported before this shipped ("no retroactive tagging").
   const bindImportedSkillToWorkspace = (

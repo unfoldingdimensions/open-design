@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ChangeEvent, type KeyboardEvent, type ReactNode } from 'react';
-import { Button, Textarea } from '@open-design/components';
+import { Button, Textarea } from '@capydesign/components';
 import type {
   ConnectorConnectResponse,
   ConnectorDetail,
@@ -7,7 +7,7 @@ import type {
   DesignSystemSummary,
   LibraryAsset,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { streamViaDaemon } from '../providers/daemon';
 import {
   connectConnector,
@@ -115,7 +115,7 @@ import {
   designSystemModuleType,
   designSystemRepoHostFromUrl,
   designSystemTotalSizeBucket,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import type {
   DesignSystemsCreateClickProps,
   TrackingDesignSystemCreateEntryFrom,
@@ -129,7 +129,7 @@ import type {
   TrackingDesignSystemStatusAction,
   TrackingDesignSystemStatusValue,
   TrackingDesignSystemsEntryFrom,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import { useI18n } from '../i18n';
 import { useWorkspaceContext } from '../collab/useWorkspaceContext';
 import { workspaceIdentityCacheKey } from '../collab/workspace-identity';

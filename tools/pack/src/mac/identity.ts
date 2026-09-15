@@ -1,9 +1,9 @@
-import { SIDECAR_DEFAULTS } from "@open-design/sidecar-proto";
+import { SIDECAR_DEFAULTS } from "@capydesign/sidecar-proto";
 import {
   releaseChannelFromNamespace,
   releaseChannelFromVersion,
   releaseInstallIdentity,
-} from "@open-design/release";
+} from "@capydesign/release";
 
 import type { ToolPackConfig } from "../config/index.js";
 import { PRODUCT_NAME } from "./constants.js";
@@ -26,7 +26,7 @@ export function resolveMacInstallIdentity(config: Pick<ToolPackConfig, "namespac
   const channel = releaseChannelFromVersion(config.appVersion)
     ?? releaseChannelFromNamespace(config.namespace, SIDECAR_DEFAULTS.namespace);
   const channelIdentity = channel == null
-    ? { appId: "io.open-design.desktop", productName: PRODUCT_NAME }
+    ? { appId: "io.capydesign.desktop", productName: PRODUCT_NAME }
     : releaseInstallIdentity(channel);
   const publicAppBundleName = `${channelIdentity.productName}.app`;
   const systemAppBundleName = channel != null

@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, Dispatch, SetStateAction } from 'react';
-import { Button, VisuallyHidden } from '@open-design/components';
+import { Button, VisuallyHidden } from '@capydesign/components';
 import type {
   AmrWalletSnapshot,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
-import { validateBaseUrl } from '@open-design/contracts/api/connectionTest';
+} from '@capydesign/contracts';
+import { validateBaseUrl } from '@capydesign/contracts/api/connectionTest';
 import {
   agentIdToTracking,
   byokProtocolToTracking,
   executionModeToTracking,
   settingsSectionToTracking,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import { useAnalytics } from '../analytics/provider';
 import { byokErrorCode } from '../analytics/byok-error-code';
 import {
@@ -8217,9 +8217,9 @@ function MediaProvidersSection({
 // Important: every snippet uses absolute paths to the daemon's current
 // Node-compatible runtime and built cli.js, fetched at runtime. macOS
 // and Linux ship a system /usr/bin/od (octal-dump) that shadows any
-// `od` we might add to PATH, and most CapyDesign users run from
-// source where `od` is not installed globally. The installer panel
-// must NOT reference bare `od`.
+// `capt` we might add to PATH, and most CapyDesign users run from
+// source where `capt` is not installed globally. The installer panel
+// must NOT reference bare `capt`.
 type McpClientId =
   | 'claude'
   | 'codex'
@@ -8576,7 +8576,7 @@ function IntegrationsSection() {
   }, [pickerOpen]);
 
   // Pull the absolute paths to node + cli.js from the running daemon
-  // so snippets work even when `od` isn't on PATH (the realistic
+  // so snippets work even when `capt` isn't on PATH (the realistic
   // case for source clones, plus macOS/Linux ship a /usr/bin/od that
   // shadows any global install). Fetched on mount; if the daemon is
   // unreachable we surface a clear error instead of a half-built

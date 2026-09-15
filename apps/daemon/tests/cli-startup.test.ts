@@ -20,7 +20,7 @@ describe('CLI startup boundaries', () => {
     ['config', ['config', 'get', 'apiProtocol', '--daemon-url', 'http://127.0.0.1:9']],
     ['diagnostics', ['diagnostics', 'export', '--daemon-url', 'http://127.0.0.1:9']],
     ['amr', ['amr', 'status', '--daemon-url', 'http://127.0.0.1:9']],
-  ])('initializes flag constants before dispatching od %s', async (_name, args) => {
+  ])('initializes flag constants before dispatching capt %s', async (_name, args) => {
     let output = '';
     try {
       const result = await execFileAsync(
@@ -44,7 +44,7 @@ describe('CLI startup boundaries', () => {
     expect(output).not.toContain('AMR_STRING_FLAGS');
   });
 
-  it('keeps od daemon start alive until SIGTERM and reports the actual listening port', async () => {
+  it('keeps capt daemon start alive until SIGTERM and reports the actual listening port', async () => {
     const root = await mkdtemp(join(tmpdir(), 'od-cli-daemon-start-'));
     const dataDir = join(root, 'data');
     await mkdir(dataDir);

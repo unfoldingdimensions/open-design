@@ -1,4 +1,4 @@
-import { mediaFailureNextStep } from '@open-design/contracts';
+import { mediaFailureNextStep } from '@capydesign/contracts';
 
 import type { MediaTaskError } from './tasks.js';
 

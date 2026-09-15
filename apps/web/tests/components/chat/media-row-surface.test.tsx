@@ -3,7 +3,7 @@
  * OPEND-2625:音频 / 视频的媒体行不许长成生图行。
  *
  * 真机(Beta 0.21.1-beta.7,Media generation 项目)上,一次
- * `od media generate --surface audio --model minimax-tts` 在执行记录里写的是
+ * `capt media generate --surface audio --model minimax-tts` 在执行记录里写的是
  * `Generating illustrations · 1 images`,而且那一格摆的是 `<img src=…mp3>` ——
  * 浏览器加载不动,于是给用户一枚破图,读起来像「生成失败了」。
  *

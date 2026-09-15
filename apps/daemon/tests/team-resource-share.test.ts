@@ -11,7 +11,7 @@ import {
 import type {
   WorkspaceCollabContext,
   WorkspaceDirectoryItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type { ResourceHubPrincipal } from '../src/collab/resource-principal.js';
 
 const unreachableRun = async (): Promise<string> => {

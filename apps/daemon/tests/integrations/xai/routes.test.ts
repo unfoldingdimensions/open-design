@@ -358,7 +358,7 @@ describe('xai-routes', () => {
     // Pre-stage a stored xAI key the way Settings → Grok would.
     const { mkdir, writeFile } = await import('node:fs/promises');
     const { default: pathMod } = await import('node:path');
-    const cfgPath = pathMod.join(projectRoot, '.od', 'media-config.json');
+    const cfgPath = pathMod.join(projectRoot, '.capydesign', 'media-config.json');
     await mkdir(pathMod.dirname(cfgPath), { recursive: true });
     await writeFile(
       cfgPath,
@@ -457,7 +457,7 @@ describe('xai-routes', () => {
   it('POST /api/xai/search surfaces upstream errors as 502', async () => {
     const { mkdir, writeFile } = await import('node:fs/promises');
     const { default: pathMod } = await import('node:path');
-    const cfgPath = pathMod.join(projectRoot, '.od', 'media-config.json');
+    const cfgPath = pathMod.join(projectRoot, '.capydesign', 'media-config.json');
     await mkdir(pathMod.dirname(cfgPath), { recursive: true });
     await writeFile(
       cfgPath,

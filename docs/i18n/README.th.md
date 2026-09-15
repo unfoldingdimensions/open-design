@@ -108,29 +108,29 @@ OpenDesign คือสิ่งที่เกิดขึ้นเมื่อ
 
 ## ความเข้ากันได้ของแพลตฟอร์ม
 
-> OpenDesign มาพร้อม **skills, CLI และ MCP server** ที่ coding agent กระแสหลักใช้งานได้แบบ native. เมื่อติดตั้ง OD แล้ว คำสั่งเดียว `od mcp install <agent>` จะเชื่อม MCP server เข้ากับ config ของ agent นั้น และคุณเรียกใช้ tools เดียวกันจากใน agent ใดก็ได้.
+> OpenDesign มาพร้อม **skills, CLI และ MCP server** ที่ coding agent กระแสหลักใช้งานได้แบบ native. เมื่อติดตั้ง OD แล้ว คำสั่งเดียว `capt mcp install <agent>` จะเชื่อม MCP server เข้ากับ config ของ agent นั้น และคุณเรียกใช้ tools เดียวกันจากใน agent ใดก็ได้.
 
 | Coding agent / platform &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Status &nbsp;&nbsp; | One-line MCP server install &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Supported | `od mcp install claude` |
-| [Codex CLI](https://github.com/openai/codex) | ✅ Supported | `od mcp install codex` |
-| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Supported | `od mcp install reasonix` |
-| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Supported | `od mcp install raven` |
-| [Cursor](https://www.cursor.com/cli) | ✅ Supported | `od mcp install cursor` |
-| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Supported | `od mcp install copilot` |
-| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Supported | `od mcp install copilot` |
-| [OpenCode](https://opencode.ai/) | ✅ Supported | `od mcp install opencode` |
-| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Supported | `od mcp install openclaw` |
-| [Antigravity](https://antigravity.google) | ✅ Supported | `od mcp install antigravity` |
-| [Cline](https://github.com/cline/cline) | ✅ Supported | `od mcp install cline` |
-| [Trae](https://www.trae.ai/) | ✅ Supported | `od mcp install trae` |
-| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Supported | `od mcp install kimi` |
-| [Kiro](https://kiro.dev) | ✅ Supported | `od mcp install kiro` |
-| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Supported | `od mcp install pi` |
-| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Supported | `od mcp install vibe` |
-| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Supported | `od mcp install hermes` |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Supported | `capt mcp install claude` |
+| [Codex CLI](https://github.com/openai/codex) | ✅ Supported | `capt mcp install codex` |
+| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Supported | `capt mcp install reasonix` |
+| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Supported | `capt mcp install raven` |
+| [Cursor](https://www.cursor.com/cli) | ✅ Supported | `capt mcp install cursor` |
+| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Supported | `capt mcp install copilot` |
+| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Supported | `capt mcp install copilot` |
+| [OpenCode](https://opencode.ai/) | ✅ Supported | `capt mcp install opencode` |
+| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Supported | `capt mcp install openclaw` |
+| [Antigravity](https://antigravity.google) | ✅ Supported | `capt mcp install antigravity` |
+| [Cline](https://github.com/cline/cline) | ✅ Supported | `capt mcp install cline` |
+| [Trae](https://www.trae.ai/) | ✅ Supported | `capt mcp install trae` |
+| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Supported | `capt mcp install kimi` |
+| [Kiro](https://kiro.dev) | ✅ Supported | `capt mcp install kiro` |
+| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Supported | `capt mcp install pi` |
+| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Supported | `capt mcp install vibe` |
+| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Supported | `capt mcp install hermes` |
 
-ใช้ `od mcp install <agent> --print` เพื่อ preview แบบ dry-run · ใช้ `--uninstall` เพื่อลบ · ดูรายการเต็มด้วย `od mcp install --help`.
+ใช้ `capt mcp install <agent> --print` เพื่อ preview แบบ dry-run · ใช้ `--uninstall` เพื่อลบ · ดูรายการเต็มด้วย `capt mcp install --help`.
 
 <p align="center">
   <img src="https://repo-assets.open-design.ai/resources/images/coding-agents.png" alt="CLI coding-agent 25 ตัวที่ OpenDesign รองรับ — Claude Code · Codex · OpenCode · Hermes · Antigravity · Vela · Grok Build · Kimi · Cursor Agent · Qwen · Qoder · GitHub Copilot · Pi · Kiro · Kilo · Mistral Vibe · DeepSeek · Reasonix · Aider · Amp · CodeBuddy · Mimo · AtomCode · Devin · Trae" width="100%" />
@@ -352,11 +352,11 @@ OpenDesign ship **stdio MCP server** และ **install scripts** สำหร�
 curl -fsSL https://open-design.ai/install.sh | sh -s <agent>
 
 # Then the agent can:
-od project list --json
-od files list <project-id> --json
-od files read <project-id> <relative-path>
-od plugin list --json
-od skills list --json
+capt project list --json
+capt files list <project-id> --json
+capt files read <project-id> <relative-path>
+capt plugin list --json
+capt skills list --json
 ```
 
 **ทำไมต้อง MCP?** การ export แล้ว attach zip ใหม่ทุก iteration ทำให้ flow สะดุด. MCP เปิด source ของ design โดยตรง — agent เห็นไฟล์ live เสมอ.
@@ -457,20 +457,20 @@ Re-import library ผ่าน [`scripts/sync-design-systems.ts`](../../scripts/
 
 ### การใช้ plugins
 
-Plugins มี parity เต็มระหว่าง **web UI** และ **`od` CLI** — ใช้ `/api/plugins` endpoints เดียวกัน เลือกทางที่เหมาะกับคุณ.
+Plugins มี parity เต็มระหว่าง **web UI** และ **`capt` CLI** — ใช้ `/api/plugins` endpoints เดียวกัน เลือกทางที่เหมาะกับคุณ.
 
 **ใน desktop / web app:** เปิดหน้า **Plugin** เพื่อ browse marketplace แล้วคลิก **Install**; ภายใน Studio ของ project, plugins จะปรากฏเป็น composer chips ที่คุณคลิกเพื่อ apply (พร้อม inputs ที่ประกาศไว้).
 
 **บน command line** (รันได้โดยไม่ใช้ UI — เป็น path ที่ external agents ใช้):
 
 ```bash
-od plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
-od plugin search "landing page"      # search by keyword
-od plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
-od plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
-od plugin apply od-default --input brief="a one-page pitch for our seed round"
-od plugin upgrade od-default         # upgrade
-od plugin uninstall od-default       # uninstall
+capt plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
+capt plugin search "landing page"      # search by keyword
+capt plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
+capt plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
+capt plugin apply od-default --input brief="a one-page pitch for our seed round"
+capt plugin upgrade od-default         # upgrade
+capt plugin uninstall od-default       # uninstall
 ```
 
 ทุก command รองรับ `--json` จึง pipe ผ่าน `jq` / `xargs` เข้า automation ได้.
@@ -493,8 +493,8 @@ Field หลักของ `open-design.json`: `specVersion` (ปัจจุ�
 Scaffold + validate ในเครื่อง:
 
 ```bash
-od plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
-od plugin validate ./my-plugin                          # check manifest / file layout
+capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
+capt plugin validate ./my-plugin                          # check manifest / file layout
 pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 ```
 
@@ -503,7 +503,7 @@ Field set และ runtime contract เต็ม → [`plugins/spec/SPEC.md`](.
 ### การ contribute plugin
 
 1. วาง plugin folder ใน [`plugins/community/`](../../plugins/community/) (third-party plugins), หรือ — ถ้าจะ ship bundled กับ OpenDesign — วางใน tier ที่ตรงกันของ [`plugins/_official/`](../../plugins/_official/).
-2. ผ่าน validation: `od plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
+2. ผ่าน validation: `capt plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
 3. กรอก PR ด้วย template ใน [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) (ID, version, lane, mode, capabilities, trigger examples; แนบ screenshot / preview สำหรับ visual plugins).
 4. ถ้าจะ publish ไป registry ภายนอก (skills.sh / ClawHub / standalone GitHub) → [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -570,8 +570,8 @@ Architecture เต็ม → [`docs/architecture.md`](../../docs/architecture.m
 - [x] Packaged Electron builds — macOS (Apple Silicon + Intel) + Windows (x64) + Linux AppImage (optional lane)
 - [ ] Comment-mode surgical edits — ship บางส่วนแล้ว; reliable targeted patching กำลังทำอยู่
 - [ ] AI-emitted tweaks panel UX — ยังไม่ implement
-- [ ] `npx od init` เพื่อ scaffold project พร้อม `DESIGN.md`
-- [ ] Plugin SDK + `od plugin {add,list,remove,test,publish}` CLI
+- [ ] `npx capt init` เพื่อ scaffold project พร้อม `DESIGN.md`
+- [ ] Plugin SDK + `capt plugin {add,list,remove,test,publish}` CLI
 - [ ] Figma / Pencil → React / Next / Vue migration plugins (alpha)
 - [ ] Refresh-existing-codebase plugin (ชี้ไปที่ git repo + `DESIGN.md`)
 

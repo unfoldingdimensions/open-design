@@ -1,4 +1,4 @@
-// Contract test for the `od lint` CLI surface. Keeps the UI / API / CLI
+// Contract test for the `capt lint` CLI surface. Keeps the UI / API / CLI
 // triple wired together (AGENTS.md "Capability exposure"): the CLI must
 // drive the same POST /api/artifacts/lint endpoint the web layer uses,
 // with --json support for headless agents.
@@ -17,7 +17,7 @@ import { dirname, join, resolve as pathResolve } from 'node:path';
 import { promisify } from 'node:util';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import type { ArtifactLintFinding } from '@open-design/contracts';
+import type { ArtifactLintFinding } from '@capydesign/contracts';
 
 const execFileP = promisify(execFile);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -160,7 +160,7 @@ async function reserveAndReleasePort(): Promise<number> {
   });
 }
 
-describe('od lint CLI entrypoint', () => {
+describe('capt lint CLI entrypoint', () => {
   let stub: StubServer;
   let fixtureDir: string;
   let cleanFile: string;
@@ -287,7 +287,7 @@ describe('od lint CLI entrypoint', () => {
 
   it('is discoverable from the root help output', async () => {
     const run = await runCli(['--help']);
-    expect(run.stdout).toContain('od lint <file.html|->');
+    expect(run.stdout).toContain('capt lint <file.html|->');
     expect(run.stdout).toContain('--fail-on');
   });
 });

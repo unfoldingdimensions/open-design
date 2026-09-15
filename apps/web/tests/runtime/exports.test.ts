@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { installMockCapyDesignHost } from '@open-design/host/testing';
+import { installMockCapyDesignHost } from '@capydesign/host/testing';
 import {
   archiveFilenameFrom,
   archiveRootFromFilePath,

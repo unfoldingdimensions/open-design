@@ -1,7 +1,7 @@
 import type {
   CapyDesignPlanContractV2,
   StrategyInputStageV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import type { OdNextComplexRuntimeEvidence } from './complex-production.js';
 import { resolveDaemonOwnedOdNextComplexRuntimeEvidence } from './complex-runtime-evidence.js';

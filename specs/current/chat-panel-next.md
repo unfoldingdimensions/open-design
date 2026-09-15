@@ -178,7 +178,7 @@ flowchart TD
 | 清单 | 2 次 `TodoWrite`:开头全 pending,118s 后两条 completed | 清单期间内容大多在 pending 阶段就发生了——「收进当前进行中的 todo」在没有 in_progress 的清单上落不到任何一条,按 D29 ④ 走壳层 |
 
 | claude(`claude-brief.jsonl`,两轮,755s) | 工具耗时 p50 218ms / p90 636ms;两次工具之间 p50 57s / p90 330s;文本 delta 间隔 p50 1.4s | claude 的 `tool_use` 在 assistant 消息到达时发出、`tool_result` 在执行完才到,耗时是真的;但同一条 assistant 消息里并发的几次调用,结果会同批到达 → 后面几条算出 0ms,所以 <100ms 一律不显示 |
-| claude(`claude-shop.jsonl`,两轮带附件,1645.5s) | 工具耗时 p50 159ms / p90 542ms;两次工具之间 p50 10.4s / p90 123.7s;文本 delta 间隔 p50 1.4s | 68+ 次工具调用、`od media generate` 四次全部失败(本地没配生图 provider)→ 组件 12「部分失败」态的真实样本;附件(两图一文)随第二轮发出 |
+| claude(`claude-shop.jsonl`,两轮带附件,1645.5s) | 工具耗时 p50 159ms / p90 542ms;两次工具之间 p50 10.4s / p90 123.7s;文本 delta 间隔 p50 1.4s | 68+ 次工具调用、`capt media generate` 四次全部失败(本地没配生图 provider)→ 组件 12「部分失败」态的真实样本;附件(两图一文)随第二轮发出 |
 
 > **thinking 全是空串**:三条 claude 录制的 `thinking_delta` 共 1167 条,delta 全为 `""`;首条 thinking 与首条 text / tool 之间隔 4s(claude-shop)到 34s(claude-brief)。daemon 原样透传,空串来自 claude-code(`--include-partial-messages` 下只发「在想」的节拍,不发内容)。这意味着:壳头的「思考中」只能由事件驱动(W11),而 thinking 正文(组件 13)在 claude 上**永远没有内容**,只有 opencode(不吐 thinking)之外的少数 agent 才可能有。S21 待设计答复。
 | claude(`claude-ask.jsonl`,两轮,74s) | agent 真的发了 `<question-form>`(JSON:`description` / `submitLabel` / 每题 `label` `type` `required` `defaultValue`,每个选项带 `label` + `description`);第二轮回答后又发了一份(textarea + radio + checkbox) | 组件 5 的真实数据形态;**选项的 `description` 设计卡上没有落点**(S18);`thinking_delta` 大量是空串,空 delta 不能成段 |
@@ -905,7 +905,7 @@ color: inherit; font-size: var(--font-size-13) }`。我们的全局 `button`(`st
 | S16 | 意图澄清已回答(5):多选只勾 1 条时是一句话形态还是逐条形态;多选 0 项时「已选 0」没画;勾「自己填」没写字时「下一步」是否置灰 | 待答 | wangchenglong | 组件 5 |
 | S17 | Plan 卡步骤「取消」态类名:CSS 只有 `.is-skip`;Plan 卡全做完时收起胶囊写什么,没画 | 待答 | wangchenglong | 组件 6 |
 | S18 | 意图澄清(5)的真实表单里每个选项带一句 `description`(真实录制 `claude-ask` 可见),设计卡的选项只有一行标签,说明文字没有落点;表单级 `description` / `submitLabel` 同样没画 | 选项下加一行浅色说明 / 忽略 description / 标签后用 · 接 | wangchenglong | 组件 5 |
-| S19 | 生图计数行的聚合粒度:设计稿只画了一行「生成配套插图 2/4」,真实录制里 agent 是**多次**调 `od media generate`(claude-shop:1 + 4 + 4 三组,中间隔着别的工具调用)。模拟器现在把同一段落里**连续**的生图调用合并成一行(1/1、4/4、4/4 三行),隔开的不合并;`--help` 调用不算;解析不出状态且命令报错的整组算失败 | 按连续段合并(模拟器现状)/ 整轮合并成一行 / 每次调用一行 | wangchenglong + 产品 | 组件 12、B8 生图计数行 |
+| S19 | 生图计数行的聚合粒度:设计稿只画了一行「生成配套插图 2/4」,真实录制里 agent 是**多次**调 `capt media generate`(claude-shop:1 + 4 + 4 三组,中间隔着别的工具调用)。模拟器现在把同一段落里**连续**的生图调用合并成一行(1/1、4/4、4/4 三行),隔开的不合并;`--help` 调用不算;解析不出状态且命令报错的整组算失败 | 按连续段合并(模拟器现状)/ 整轮合并成一行 / 每次调用一行 | wangchenglong + 产品 | 组件 12、B8 生图计数行 |
 | S20 | **没有内容的 todo 行**怎么画:agent 常在同一份 TodoWrite 里把几条一起关掉(opencode 真实 trace:第 2 份清单直接把 1/2/3 标 completed,2、3 从没「进行中」过,名下没有任何输出)。设计稿只画了有内容的 todo(折叠头 + 子项)和正在跑的 todo;扁平卡里的 `.tool` 行被定义为「上一个步骤的子项」缩进 22px(稿 1453 行),拿它画无内容 todo 会读成上一条的子项(用户 2026-08-21 截图:「计划中还有计划」)。模拟器现按兄弟 todo 的折叠头同级摆放、不可展开、无 chevron(`sim-leaf`)。**已答(用户)**:划线 + 不可展开,见 D35 | 已答 | wangchenglong | 组件 7/8,B8,§5.3 |
 | S21 | **「思考中」但一个字都没有**怎么画:claude 经 daemon 送到前端的 `thinking_delta` 全是空串(真实录制 claude-brief 510/510、claude-shop 640/640、claude-ask 17/17;daemon `claude-stream.ts` 对 thinking 原样透传,空串来自 claude-code 本身 —— 它只告诉你「在想」,不给内容)。claude-brief 从 9.2s 想到 43.3s 才开口,这 34s 里设计稿只有「进行中」空态可用,「思考中」头从来出不来。设计稿的思考中永远带正文 + 箭头。模拟器现按:空壳 + 收到过 thinking → 头换「思考中」(composing 球 + 扫光 + 三点),无箭头无正文;正文 / 工具一到撤回「进行中」 | 头换思考中、无箭头(模拟器现状)/ 仍显示进行中 / 思考中 + 「内容不可见」脚注 | wangchenglong | 组件 7 头部状态,B8,D21 |
 | S8 | 命令行**没有 description 时怎么画**。8/20 21:02 版在组件 7 给了「执行 <命令> 耗时」单行(`.fn` 是命令,aria「查看 … 的输出」),但输出在哪里看没画;组件 11 的折叠块(人话标题 + 命令与输出正文)仍在 | 有 description → 组件 11 折叠块;没有 → 组件 7 单行(输出暂不可见)。**我的默认:就这样**;剩下要问的只是「单行的输出点开在哪里看」 | wangchenglong | `ToolRow` |
@@ -970,7 +970,7 @@ color: inherit; font-size: var(--font-size-13) }`。我们的全局 `button`(`st
 | T32 | **取词加入对话需要一条新的注释契约**:现有 `ChatCommentAttachment` 的字段全是预览 iframe 里的元素批注(`elementId` / `selector` / `pagePosition` / `htmlHint`),装不下「某条回答里的一段文字」 | 扩 `ChatCommentSelectionKind` 加 `'text'` 并把 iframe 专用字段改可选(我的默认)/ 另起一条 `ChatTextSelectionAttachment` 通道 | 产品 + 后端 | 组件 23 第 65–69 格;方案见 `chat-panel-text-selection-plan.md` |
 
 
-| T33 | **「继续未完成任务」的便捷入口没了**。B17 让钉卡退场(已执行),那颗按钮随之消失。**2026-08-25 复核后降级**:查了它到底做什么 —— 它把未完成的 todo 拼成一段提示词**当作新消息发出去**,所以用户自己打一句话、或走 `od chat` 都能达到同样效果;`od run continue` 也在(语义是续跑 run,不完全相同)。**这是便捷入口的损失,不是能力回退** —— 我一开始把它升成阻塞级,判重了 | 放进执行记录壳 / 放进回合状态行 15-6 那一行 / 放进下一步引导 / 确认不要这个快捷方式 | 产品 + 设计 | 组件 7 / 15;**不再阻塞提测**,但用户会觉得少了个东西 |
+| T33 | **「继续未完成任务」的便捷入口没了**。B17 让钉卡退场(已执行),那颗按钮随之消失。**2026-08-25 复核后降级**:查了它到底做什么 —— 它把未完成的 todo 拼成一段提示词**当作新消息发出去**,所以用户自己打一句话、或走 `capt chat` 都能达到同样效果;`capt run continue` 也在(语义是续跑 run,不完全相同)。**这是便捷入口的损失,不是能力回退** —— 我一开始把它升成阻塞级,判重了 | 放进执行记录壳 / 放进回合状态行 15-6 那一行 / 放进下一步引导 / 确认不要这个快捷方式 | 产品 + 设计 | 组件 7 / 15;**不再阻塞提测**,但用户会觉得少了个东西 |
 
 
 | ~~T34~~ | **已结(D50)**。~~一轮里会出现两个「已完成」的执行记录壳~~。这是 D29 ① / ② 的必然结果(第一张钉顶的壳 + 清单一到多出第二张),真实页面上两个都收着、文案一样,读起来像重复了一次 | 保持(按 D29)/ 第一张壳没内容时不渲染 / 两张合成一张 | 产品 + 设计 | 组件 7;真实运行时目视发现 |
@@ -986,7 +986,7 @@ color: inherit; font-size: var(--font-size-13) }`。我们的全局 `button`(`st
 |---|---|---|---|
 | 「任务已手动终止」文案 | `docs/design/chat-sim/sim.js:82` | 设计稿没有这句;原文是「已手动暂停任务」(4117 行)与状态词「已手动停止」(2643 行) | 改模拟器为设计稿原文 |
 | `ThumbPlaceholder` 注释「画版式骨架而非灰色色块」 | `primitives/contract.ts` | 新稿 951–956 行明说「一块纯灰,不画界面细节」,这是旧稿残留 | 只改注释,props 不动 |
-| `ShellItem` 的 `plan` / `image` 两种条目 | `runtime/chat/contract.ts` | §5 规格里没有对应产出规则;`image` 的触发路径**已在真实录制 `claude-shop` 里查到**:agent 用 Bash 跑 `od media generate …`,结果是逐行 JSON(每行一个 `status`),本地没配 provider 时三组共 9 次全失败 | `plan` 继续搁置(S9);`image` 的产出规则待 S3 + S19 拍板后写进 §5 |
+| `ShellItem` 的 `plan` / `image` 两种条目 | `runtime/chat/contract.ts` | §5 规格里没有对应产出规则;`image` 的触发路径**已在真实录制 `claude-shop` 里查到**:agent 用 Bash 跑 `capt media generate …`,结果是逐行 JSON(每行一个 `status`),本地没配 provider 时三组共 9 次全失败 | `plan` 继续搁置(S9);`image` 的产出规则待 S3 + S19 拍板后写进 §5 |
 | 设计稿组件 14 状态标题与 DOM 矛盾 | `chat/AGENTS.md` §6 已记 | 标题写「其余收进⋯」,DOM 三动作全摆卡面 | 以说明文字为准,已记 |
 | `--chat-select-ink` 暗色值 | `ChatRoot.module.css` | 设计稿只给了亮色 #353535,暗色没给 | 暗色同值,注释标明「设计未给」 |
 | 场景稿 `.flow > :first-child { margin-top: auto }`(内容没填满时整段贴底)写成**无条件** | 场景稿 3932 行;注释称「真实产品 .chat-log.is-balanced-transcript 也是这么做的」 | 产品只在 `!loading && !streaming && !hasActiveRunMessage` 时才加该类(`ChatPane.tsx:1728`),流式中不贴底;无条件贴底会让流式时上面的内容一行行往上顶(用户在模拟器里看到「思考中往上蹦」) | 模拟器与实现都按产品条件来;告知设计这条注释与产品不符 |

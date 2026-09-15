@@ -1,4 +1,4 @@
-import { isReleaseChannel, parseReleaseVersion } from "@open-design/release";
+import { isReleaseChannel, parseReleaseVersion } from "@capydesign/release";
 
 import {
   RELEASE_NOTE_DEFAULT_LOCALE,

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { buildProjectRawFileUrl } from '@open-design/contracts';
+import { buildProjectRawFileUrl } from '@capydesign/contracts';
 
 import { handleMcpToolCall, localMcpToolDefinitions } from '../src/mcp.js';
 import { _resetMcpWorkspaceContextCacheForTests } from '../src/mcp-workspace-context.js';

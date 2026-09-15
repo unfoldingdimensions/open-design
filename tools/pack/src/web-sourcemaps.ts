@@ -32,7 +32,7 @@
 // Scope
 // -----
 // Only the packaged (mac/win/linux Electron) path is covered here. The OSS
-// `od` CLI distribution path serves `apps/web/out/_next/static/chunks/`
+// `capt` CLI distribution path serves `apps/web/out/_next/static/chunks/`
 // directly and is not currently used by any release artifact; it can be
 // added later if the OSS audience reports symbolication needs.
 
@@ -40,7 +40,7 @@ import { existsSync } from "node:fs";
 import { readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 
-import { createPackageManagerInvocation } from "@open-design/platform";
+import { createPackageManagerInvocation } from "@capydesign/platform";
 
 import type { ToolPackConfig } from "./config/index.js";
 import { execFileAsync } from "./mac/commands.js";

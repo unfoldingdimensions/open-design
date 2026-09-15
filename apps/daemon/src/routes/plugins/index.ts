@@ -6,8 +6,8 @@ import type {
   Project,
   ProjectMetadata,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
-import { TeamResourceCopyForbiddenError } from '@open-design/contracts';
+} from '@capydesign/contracts';
+import { TeamResourceCopyForbiddenError } from '@capydesign/contracts';
 import {
   duplicatePluginExampleIntoProject,
   PluginDuplicateProjectError,

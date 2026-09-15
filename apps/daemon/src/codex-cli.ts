@@ -9,7 +9,7 @@
 // is a thin spawn() wrapper with a 30s timeout.
 
 import { spawn } from 'node:child_process';
-import { createCommandInvocation, type CommandInvocation } from '@open-design/platform';
+import { createCommandInvocation, type CommandInvocation } from '@capydesign/platform';
 import { resolveAgentBin } from './runtimes/resolution.js';
 
 export interface CodexRunnerResult {

@@ -38,7 +38,7 @@ import {
   buildWorkspaceSeatSummary,
   type PreviewComment,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type { ComponentProps, ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

@@ -9,8 +9,8 @@ import {
   type NormalizedAgentObservationV1,
   type OdNextRuntimeCapabilitySnapshotV1,
   type CapyDesignPlanContractV2,
-} from '@open-design/contracts';
-import { strategyPackageHashFromDigests } from '@open-design/plugin-runtime';
+} from '@capydesign/contracts';
+import { strategyPackageHashFromDigests } from '@capydesign/plugin-runtime';
 import type Database from 'better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 

@@ -18,7 +18,7 @@ interface CapturedRequest {
   headers: http.IncomingHttpHeaders;
 }
 
-describe('od plugin exact workspace transport', () => {
+describe('capt plugin exact workspace transport', () => {
   const requests: CapturedRequest[] = [];
   let server: http.Server;
   let baseUrl: string;

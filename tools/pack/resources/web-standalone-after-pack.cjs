@@ -782,8 +782,8 @@ async function pruneRootNext(appNodeModulesRoot, platformName) {
   }
 
   await removePathAndRecord(
-    path.join(appNodeModulesRoot, "@open-design", "web", ".next", "standalone"),
-    "root @open-design/web standalone output",
+    path.join(appNodeModulesRoot, "@capydesign", "web", ".next", "standalone"),
+    "root @capydesign/web standalone output",
     removedPaths,
   );
 
@@ -915,12 +915,12 @@ async function smokeHyperframesCli(
 async function pruneRootWebPackage(appNodeModulesRoot, platformName) {
   if (platformName !== "win32") return [];
 
-  const webPackageRoot = path.join(appNodeModulesRoot, "@open-design", "web");
+  const webPackageRoot = path.join(appNodeModulesRoot, "@capydesign", "web");
   const removedPaths = [];
   for (const entry of [".next", "app", "next.config.ts", "public", "src"]) {
     await removePathAndRecord(
       path.join(webPackageRoot, entry),
-      "root @open-design/web standalone-safe package residue",
+      "root @capydesign/web standalone-safe package residue",
       removedPaths,
     );
   }
@@ -928,12 +928,12 @@ async function pruneRootWebPackage(appNodeModulesRoot, platformName) {
 }
 
 async function auditRootWebPackage(appNodeModulesRoot) {
-  const webPackageRoot = path.join(appNodeModulesRoot, "@open-design", "web");
+  const webPackageRoot = path.join(appNodeModulesRoot, "@capydesign", "web");
   const packageJsonPath = path.join(webPackageRoot, "package.json");
   const sidecarEntryPath = path.join(webPackageRoot, "dist", "sidecar", "index.js");
   for (const requiredPath of [packageJsonPath, sidecarEntryPath]) {
     if (!(await pathExists(requiredPath))) {
-      throw new Error(`[tools-pack web-standalone] root @open-design/web audit missing: ${requiredPath}`);
+      throw new Error(`[tools-pack web-standalone] root @capydesign/web audit missing: ${requiredPath}`);
     }
   }
   return {

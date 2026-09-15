@@ -1,4 +1,4 @@
-// Red spec for issue #6540: `od media wait` (and `od media generate`'s poll)
+// Red spec for issue #6540: `capt media wait` (and `capt media generate`'s poll)
 // must not lose the final JSON line on process.exit().
 //
 // Root cause: in `pollUntilDoneOrBudget()` the done/failed/interrupted/handoff
@@ -37,8 +37,8 @@
 // branch flushes stderr before exiting.
 //
 // Known gaps (deliberately not covered):
-//   - handoff / still-running budget exhaustion (`od media wait` runs a real
-//     120s budget, `od media generate` 25s). Waiting for the budget to elapse
+//   - handoff / still-running budget exhaustion (`capt media wait` runs a real
+//     120s budget, `capt media generate` 25s). Waiting for the budget to elapse
 //     is not viable in a test, so the still-running exit path (exit 2/0) is
 //     not exercised here.
 //   - 404 / fetch-error (exit 3) paths write only small lines to stderr, which
@@ -150,7 +150,7 @@ function parseStdoutLine(stdout: string): unknown {
   return parsed;
 }
 
-describe('od media wait stdout flush before exit', () => {
+describe('capt media wait stdout flush before exit', () => {
   it('done branch: delivers the complete final JSON line when stdout is a pipe', async () => {
     waitResponse = { status: 'done', file: sentFile };
     const { code, stdout, stderr } = await runMediaWait('task-done');

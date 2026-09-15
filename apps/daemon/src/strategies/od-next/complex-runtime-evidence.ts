@@ -2,7 +2,7 @@ import {
   OdNextRuntimeCapabilitySnapshotV1Schema,
   type CapyDesignPlanContractV2,
   type StrategyInputStageV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { buildStructuredMainRunObservationV1 } from '../../observability/main-run-observation.js';
 import { adaptRuntimeChildObservationsV1 } from '../../observability/runtime-child-observations.js';

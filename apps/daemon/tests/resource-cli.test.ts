@@ -10,7 +10,7 @@ vi.mock('../src/integrations/vela-command.js', () => ({
 
 import { runResource } from '../src/resource-cli.js';
 
-describe('od resource Vela compatibility entry point', () => {
+describe('capt resource Vela compatibility entry point', () => {
   beforeEach(() => {
     process.exitCode = undefined;
     runVelaCommandMock.mockReset();
@@ -53,7 +53,7 @@ describe('od resource Vela compatibility entry point', () => {
     expect(runVelaCommandMock).toHaveBeenCalledWith(['resource', '--help']);
   });
 
-  it('surfaces Vela errors as a failed od command', async () => {
+  it('surfaces Vela errors as a failed capt command', async () => {
     runVelaCommandMock.mockRejectedValue(new Error('profile is not logged in'));
     const error = vi.spyOn(console, 'error').mockImplementation(() => {});
 

@@ -100,12 +100,12 @@ describe('resolveDaemonPrewarmTargets', () => {
   it('includes the bundled node binary, the daemon dist dir and the bundled plugins', () => {
     const targets = resolveDaemonPrewarmTargets({
       nodeCommand: '/res/open-design/bin/node',
-      daemonSidecarEntry: '/res/app/node_modules/@open-design/daemon/dist/sidecar/index.js',
+      daemonSidecarEntry: '/res/app/node_modules/@capydesign/daemon/dist/sidecar/index.js',
       resourceRoot: '/res/open-design',
     });
     expect(targets).toEqual([
       { kind: 'file', path: '/res/open-design/bin/node' },
-      { kind: 'dir', path: '/res/app/node_modules/@open-design/daemon/dist' },
+      { kind: 'dir', path: '/res/app/node_modules/@capydesign/daemon/dist' },
       { kind: 'dir', path: '/res/open-design/plugins' },
     ]);
   });
@@ -113,11 +113,11 @@ describe('resolveDaemonPrewarmTargets', () => {
   it('omits the node binary when the sidecar would run under Electron-as-node', () => {
     const targets = resolveDaemonPrewarmTargets({
       nodeCommand: null,
-      daemonSidecarEntry: '/res/app/node_modules/@open-design/daemon/dist/sidecar/index.js',
+      daemonSidecarEntry: '/res/app/node_modules/@capydesign/daemon/dist/sidecar/index.js',
       resourceRoot: '/res/open-design',
     });
     expect(targets).toEqual([
-      { kind: 'dir', path: '/res/app/node_modules/@open-design/daemon/dist' },
+      { kind: 'dir', path: '/res/app/node_modules/@capydesign/daemon/dist' },
       { kind: 'dir', path: '/res/open-design/plugins' },
     ]);
   });
@@ -125,18 +125,18 @@ describe('resolveDaemonPrewarmTargets', () => {
   it('omits the plugins dir when the resource root is unknown', () => {
     const targets = resolveDaemonPrewarmTargets({
       nodeCommand: '/res/open-design/bin/node',
-      daemonSidecarEntry: '/res/app/node_modules/@open-design/daemon/dist/sidecar/index.js',
+      daemonSidecarEntry: '/res/app/node_modules/@capydesign/daemon/dist/sidecar/index.js',
       resourceRoot: null,
     });
     expect(targets).toEqual([
       { kind: 'file', path: '/res/open-design/bin/node' },
-      { kind: 'dir', path: '/res/app/node_modules/@open-design/daemon/dist' },
+      { kind: 'dir', path: '/res/app/node_modules/@capydesign/daemon/dist' },
     ]);
   });
 });
 
 describe('resolveWebPrewarmTargets', () => {
-  const entry = '/res/app/node_modules/@open-design/web/dist/sidecar/index.js';
+  const entry = '/res/app/node_modules/@capydesign/web/dist/sidecar/index.js';
 
   it('covers the web sidecar, Next server chunks and framework server code in server mode', () => {
     // next/dist/compiled (~107 MB) is intentionally excluded: only a small
@@ -148,8 +148,8 @@ describe('resolveWebPrewarmTargets', () => {
       resolveNextPackageRoot: () => '/res/app/node_modules/next',
     });
     expect(targets).toEqual([
-      { kind: 'dir', path: '/res/app/node_modules/@open-design/web/dist/sidecar' },
-      { kind: 'dir', path: '/res/app/node_modules/@open-design/web/.next/server' },
+      { kind: 'dir', path: '/res/app/node_modules/@capydesign/web/dist/sidecar' },
+      { kind: 'dir', path: '/res/app/node_modules/@capydesign/web/.next/server' },
       { kind: 'dir', path: '/res/app/node_modules/next/dist/server' },
     ]);
   });
@@ -170,8 +170,8 @@ describe('resolveWebPrewarmTargets', () => {
       resolveNextPackageRoot: () => null,
     });
     expect(targets).toEqual([
-      { kind: 'dir', path: '/res/app/node_modules/@open-design/web/dist/sidecar' },
-      { kind: 'dir', path: '/res/app/node_modules/@open-design/web/.next/server' },
+      { kind: 'dir', path: '/res/app/node_modules/@capydesign/web/dist/sidecar' },
+      { kind: 'dir', path: '/res/app/node_modules/@capydesign/web/.next/server' },
     ]);
   });
 

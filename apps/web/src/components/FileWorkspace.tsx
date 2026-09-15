@@ -10,9 +10,9 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
-import { Button } from '@open-design/components';
+import { Button } from '@capydesign/components';
 import { createPortal } from 'react-dom';
-import type { DesignSystemEditClickProps, TrackingArtifactKind, TrackingProjectKind } from '@open-design/contracts/analytics';
+import type { DesignSystemEditClickProps, TrackingArtifactKind, TrackingProjectKind } from '@capydesign/contracts/analytics';
 import { useAnalytics } from '../analytics/provider';
 import {
   trackFileManagerClick,
@@ -110,7 +110,7 @@ import {
   type LocalizedText,
   type WorkspaceCollabContext,
   type WorkspaceContextItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   notifyTeamProjectsChanged,
   TEAM_PROJECTS_CHANGED_EVENT,

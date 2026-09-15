@@ -2,8 +2,8 @@ import type {
   AppliedStrategyBindingV2,
   InstalledPluginRecord,
   PluginPipeline,
-} from '@open-design/contracts';
-import { OD_NEXT_PROMPT_STAGE_CONTRACT_V2 } from '@open-design/contracts';
+} from '@capydesign/contracts';
+import { OD_NEXT_PROMPT_STAGE_CONTRACT_V2 } from '@capydesign/contracts';
 import { validateBundledStrategyActivationV2 } from './strategy-provenance.js';
 
 export class InvalidOdNextStrategyPipelineV2Error extends Error {

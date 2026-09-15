@@ -23,7 +23,7 @@ import { fetchProviderModels } from '../providers/provider-models';
 import {
   canReachWorkspaceBillingEntrance,
   workspaceBillingAuthorityContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type { AgentInfo, AppConfig, ExecMode, ProviderModelOption } from '../types';
 import {
   canUpgradeVelaPlan,

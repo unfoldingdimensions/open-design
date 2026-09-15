@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
   WorkspaceBillingResponse,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { resetCoalescedGet } from '../src/lib/coalesced-get';
 import {

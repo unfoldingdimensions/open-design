@@ -1,9 +1,9 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Dialog, DialogDescription, DialogFooter, DialogTitle } from '@open-design/components';
-import { createTabToTracking } from '@open-design/contracts/analytics';
-import { isCapyDesignHostAvailable, pickHostWorkingDir } from '@open-design/host';
-import type { CapyDesignHostProjectImportSuccess } from '@open-design/host';
+import { Dialog, DialogDescription, DialogFooter, DialogTitle } from '@capydesign/components';
+import { createTabToTracking } from '@capydesign/contracts/analytics';
+import { isCapyDesignHostAvailable, pickHostWorkingDir } from '@capydesign/host';
+import type { CapyDesignHostProjectImportSuccess } from '@capydesign/host';
 import { useAnalytics } from '../analytics/provider';
 import {
   trackDesignSystemApplyResult,
@@ -11,12 +11,12 @@ import {
   trackNewProjectModalSurfaceView,
   trackNewProjectModalTabClick,
 } from '../analytics/events';
-import type { ConnectorDetail } from '@open-design/contracts';
+import type { ConnectorDetail } from '@capydesign/contracts';
 import type {
   TrackingDesignSystemApplyTargetKind,
   TrackingDesignSystemOrigin,
   TrackingDesignSystemStatusValue,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 
 import { useI18n, useT } from '../i18n';
 import { localizeSkillDescription, localizeSkillName } from '../i18n/content';

@@ -1,6 +1,6 @@
 import type { Express } from 'express';
 import fs from 'node:fs';
-import { SIDECAR_ENV } from '@open-design/sidecar-proto';
+import { SIDECAR_ENV } from '@capydesign/sidecar-proto';
 import { buildMcpInstallPayload, type McpInstallPayload } from './mcp-install-info.js';
 import { installCodexMcp, probeCodexInstall, uninstallCodexMcp } from './codex-cli.js';
 import { MCP_TEMPLATES, buildAcpMcpServers, buildClaudeMcpJson, isManagedProjectCwd, readMcpConfig, writeMcpConfig } from './mcp-config.js';
@@ -18,7 +18,7 @@ export function registerMcpRoutes(app: Express, ctx: RegisterMcpRoutesDeps) {
   const getDaemonUrl = () => daemonUrlRef.current;
   // Surfaces the absolute paths to the daemon's Node-compatible runtime and
   // CLI entry so the Settings → MCP server panel can render snippets that work
-  // even when `od` isn't on the user's PATH (the common case for source clones
+  // even when `capt` isn't on the user's PATH (the common case for source clones
   // - and macOS/Linux ship a /usr/bin/od octal-dump tool that shadows ours
   // anyway). Cached for 5s because the panel pings on every open. The
   // executable paths remain stable for the daemon lifetime, while the
@@ -42,7 +42,7 @@ export function registerMcpRoutes(app: Express, ctx: RegisterMcpRoutesDeps) {
   function computeInstallPayload(): McpInstallPayload {
     const cliPath = OD_BIN;
     // Forward only the opaque inherited client capability. IPC endpoint
-    // naming and transport stay private to @open-design/sidecar.
+    // naming and transport stay private to @capydesign/sidecar.
     const sidecarEnv = inheritedEnvironment();
     const isSidecarMode = Object.keys(sidecarEnv).length > 0;
     const mcpBootstrapCommand = process.env.OD_MCP_BOOTSTRAP_COMMAND;

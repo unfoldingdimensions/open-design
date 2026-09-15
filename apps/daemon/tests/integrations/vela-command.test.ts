@@ -14,8 +14,8 @@ const {
 }));
 
 vi.mock('node:child_process', () => ({ execFile: execFileMock }));
-vi.mock('@open-design/platform', async (importOriginal) => ({
-  ...await importOriginal<typeof import('@open-design/platform')>(),
+vi.mock('@capydesign/platform', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@capydesign/platform')>(),
   listProcessSnapshots: listProcessSnapshotsMock,
   stopProcesses: stopProcessesMock,
 }));

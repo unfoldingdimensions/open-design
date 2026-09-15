@@ -11,8 +11,8 @@ import {
   SidecarFactory,
   type SidecarClient,
   type SidecarStamp,
-} from '@open-design/sidecar';
-import { APP_KEYS, SIDECAR_MESSAGES } from '@open-design/sidecar-proto';
+} from '@capydesign/sidecar';
+import { APP_KEYS, SIDECAR_MESSAGES } from '@capydesign/sidecar-proto';
 
 import { createAgentRuntimeEnv, startServer } from '../src/server.js';
 import { resetDesktopAuthForTests, setDesktopAuthSecret } from '../src/desktop-auth.js';
@@ -83,7 +83,7 @@ describe('Phase 2C CLI wrappers', () => {
       let stderr = '';
       const timeout = setTimeout(() => {
         child.kill('SIGTERM');
-        reject(new Error(`CLI timed out: od ${args.join(' ')}`));
+        reject(new Error(`CLI timed out: capt ${args.join(' ')}`));
       }, options.timeout ?? 20_000);
 
       child.stdout.setEncoding('utf8');
@@ -104,7 +104,7 @@ describe('Phase 2C CLI wrappers', () => {
           resolve({ stdout, stderr });
           return;
         }
-        reject(new Error(`od ${args.join(' ')} exited ${code}\nstdout:\n${stdout}\nstderr:\n${stderr}`));
+        reject(new Error(`capt ${args.join(' ')} exited ${code}\nstdout:\n${stdout}\nstderr:\n${stderr}`));
       });
       child.stdin.end(options.input ?? '');
     });
@@ -131,7 +131,7 @@ describe('Phase 2C CLI wrappers', () => {
       let stderr = '';
       const timeout = setTimeout(() => {
         child.kill('SIGTERM');
-        reject(new Error(`CLI timed out: od ${args.join(' ')}`));
+        reject(new Error(`CLI timed out: capt ${args.join(' ')}`));
       }, options.timeout ?? 20_000);
 
       child.stdout.setEncoding('utf8');
@@ -149,7 +149,7 @@ describe('Phase 2C CLI wrappers', () => {
       child.on('close', (code) => {
         clearTimeout(timeout);
         if (code === 0) {
-          reject(new Error(`od ${args.join(' ')} unexpectedly exited 0\nstdout:\n${stdout}\nstderr:\n${stderr}`));
+          reject(new Error(`capt ${args.join(' ')} unexpectedly exited 0\nstdout:\n${stdout}\nstderr:\n${stderr}`));
           return;
         }
         resolve({ code, stdout, stderr });

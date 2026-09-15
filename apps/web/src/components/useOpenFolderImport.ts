@@ -3,7 +3,7 @@ import {
   isCapyDesignHostAvailable,
   pickAndImportHostProject,
   type CapyDesignHostProjectImportSuccess,
-} from '@open-design/host';
+} from '@capydesign/host';
 import { pickLocalFolderPath } from '../state/projects';
 import { resolvedWorkspaceContextForWrite } from '../state/projects';
 import { useWorkspaceContext } from '../collab/useWorkspaceContext';

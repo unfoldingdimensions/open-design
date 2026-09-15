@@ -5,7 +5,7 @@ import {
   createApiErrorResponse,
   TeamResourceCopyForbiddenError,
   type TeamResourceState,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   TeamResourceKind,
   TeamResourceKey,

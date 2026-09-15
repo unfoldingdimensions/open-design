@@ -8,7 +8,7 @@
  * 架构视角:`specs/current/chat-panel-dev-design.md`
  * 参考实现:`docs/design/chat-sim/sim.js`(评审载体,15 个场景在跑)
  */
-import type { MediaFailureNextStep, MediaSurface, PersistedAgentEvent, ProjectMediaTask } from '@open-design/contracts';
+import type { MediaFailureNextStep, MediaSurface, PersistedAgentEvent, ProjectMediaTask } from '@capydesign/contracts';
 
 export type { ToolKind } from './tool-kind';
 export type { ArtifactKind, DiffStat } from './format';
@@ -118,7 +118,7 @@ export interface ImageRow {
   /**
    * 这一批生成的到底是**哪一类**媒体(OPEND-2625)。
    *
-   * 名字仍叫 `ImageRow` 是历史,行本身早就不只装图片了:同一条 `od media generate`
+   * 名字仍叫 `ImageRow` 是历史,行本身早就不只装图片了:同一条 `capt media generate`
    * 出音频、出视频、出图,走的是同一条落行路径。缺了这一格,渲染层只剩「图片」
    * 一种可讲 —— 真机上一次 `--surface audio` 被写成
    * `Generating illustrations · 1 images`,那一格还摆了个 `<img src=….mp3>`

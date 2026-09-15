@@ -11,12 +11,12 @@ import type {
   OdNextRuntimeCapabilitySnapshotV1,
   CapyDesignPlanContractV2,
   ProjectScenarioTaskProfile,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   normalizeAgentObservationV1,
   OD_NEXT_PROMPT_STAGE_CONTRACT_V2,
   parseOdNextPromptBundleV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 const uuidControl = vi.hoisted(() => ({ forced: [] as string[] }));
 let pendingAutomaticFixtureIdentity: {
@@ -1166,8 +1166,8 @@ describe('OD Next automatic production through the real server', () => {
     // and 0.21.1, so an operator who scripted it gets told what happened and
     // what replaced it — and gets a non-zero exit, because the recovery it
     // asked for neither happened nor can.
-    expect(resetCli.stderr).toContain('od strategy rollout reset was removed');
-    expect(resetCli.stderr).toContain('od config set odNextStrategyMode off');
+    expect(resetCli.stderr).toContain('capt strategy rollout reset was removed');
+    expect(resetCli.stderr).toContain('capt config set odNextStrategyMode off');
   });
 
   it('keeps active retry/task recipe-only while rollback lazily resolves the ordinary default', async () => {

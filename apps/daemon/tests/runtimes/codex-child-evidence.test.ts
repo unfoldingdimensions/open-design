@@ -10,7 +10,7 @@ import {
   evaluateRuntimeFixtureCaseV1,
   normalizeAgentObservationV1,
   type NormalizedAgentObservationV1,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { collectCodexChildEvidence } from '../../src/runtimes/codex-child-evidence.js';

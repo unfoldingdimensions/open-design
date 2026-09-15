@@ -28,7 +28,7 @@ import {
   type VerifyWorkspaceRequestAuthority,
   type WorkspaceResourceAccessInput,
 } from '../collab/workspace-resource-mutation.js';
-import type { Project, ProjectFile } from '@open-design/contracts';
+import type { Project, ProjectFile } from '@capydesign/contracts';
 
 type DbHandle = ReturnType<typeof openDatabase>;
 
@@ -854,7 +854,7 @@ export function registerDesignSystemRoutes(
   });
 
   // Streams a .zip of the whole user design system directory plus a generated
-  // SKILLS.md usage guide, so the "Download brand" action (and `od
+  // SKILLS.md usage guide, so the "Download brand" action (and `capt
   // design-systems download`) hand the recipient a self-contained, shareable
   // brand package. Only user systems have an editable dir; presets resolve to
   // null and surface as 404.

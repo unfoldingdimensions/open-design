@@ -16,7 +16,7 @@ const repoRoot = fileURLToPath(new URL('../../..', import.meta.url));
 const cliEntry = fileURLToPath(new URL('../src/cli.ts', import.meta.url));
 const tsxCli = path.join(repoRoot, 'node_modules/tsx/dist/cli.mjs');
 
-describe('od export --format html', () => {
+describe('capt export --format html', () => {
   let server: http.Server;
   let daemonUrl: string;
   let outputDir: string;

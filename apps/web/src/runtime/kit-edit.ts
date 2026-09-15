@@ -1,4 +1,4 @@
-import type { Brand, BrandColorRole, WorkspaceCollabContext } from '@open-design/contracts';
+import type { Brand, BrandColorRole, WorkspaceCollabContext } from '@capydesign/contracts';
 import {
   deleteProjectFile,
   fetchProjectFileText,

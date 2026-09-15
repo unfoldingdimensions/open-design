@@ -8,7 +8,7 @@ import type {
   DesktopRenderFramesResult,
   DesktopRenderSlidesInput,
   DesktopRenderSlidesResult,
-} from '@open-design/sidecar-proto';
+} from '@capydesign/sidecar-proto';
 import express from 'express';
 import multer from 'multer';
 import JSZip from 'jszip';
@@ -30,29 +30,29 @@ import {
   PLUGIN_SHARE_ACTION_PLUGIN_IDS,
   renderChatTurnHostProtocolInstructions,
   resolveOdNextDeckFrameworkMode,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   advanceAuthenticatedDoneCapture,
   isTodoWriteToolName,
   stopReasonIsTruncation,
   todoItemsFromTodoWriteInput,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   renderUnfinishedTodoRecall,
   recalledTodosFromTodoWriteInput,
   type RecalledTodo,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   CollabCloudMemberDirectoryEntry,
   TeamProject,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   detectOdNextDevicePlatformFromText,
   resolveOdNextDevicePlatform,
   selectOdNextDeviceFrameContextV2,
   selectOdNextLayoutPrimitivesCss,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   loadOdNextTaskResourcesForSnapshot,
   materializeOdNextDeviceFrames,
@@ -242,8 +242,8 @@ export {
 } from './runtimes/run-lifecycle-analytics.js';
 
 export { resolveProjectRoot };
-import { createCommandInvocation } from '@open-design/platform';
-import { SIDECAR_ENV } from '@open-design/sidecar-proto';
+import { createCommandInvocation } from '@capydesign/platform';
+import { SIDECAR_ENV } from '@capydesign/sidecar-proto';
 import {
   buildLiveArtifactsMcpServersForAgent,
   checkPromptArgvBudget,
@@ -635,7 +635,7 @@ import { newInsertId, readAnalyticsContext, type AnalyticsContext, type Analytic
 import {
   agentIdToTracking,
   modelIdForTracking,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import {
   mergeNoProxyWithLoopbackDefaults,
   redactSecrets,
@@ -726,7 +726,7 @@ import {
   chatScrollForensicsBodyParser,
   chatScrollForensicsHandler,
 } from './diagnostics-client-evidence.js';
-import { DIAGNOSTICS_EXPORT_PATH } from '@open-design/diagnostics';
+import { DIAGNOSTICS_EXPORT_PATH } from '@capydesign/diagnostics';
 import {
   createProjectArchiveStream,
   createBatchArchiveStream,
@@ -1216,14 +1216,14 @@ import {
 import { renderOAuthResultPage } from './http/oauth-result-page.js';
 import { bearerTokenFromRequest, createToolRequestAuth } from './http/tool-request-auth.js';
 
-/** @typedef {import('@open-design/contracts').ApiErrorCode} ApiErrorCode */
-/** @typedef {import('@open-design/contracts').ApiError} ApiError */
-/** @typedef {import('@open-design/contracts').ApiErrorResponse} ApiErrorResponse */
-/** @typedef {import('@open-design/contracts').ChatRequest} ChatRequest */
-/** @typedef {import('@open-design/contracts').ChatSseEvent} ChatSseEvent */
-/** @typedef {import('@open-design/contracts').ProxyStreamRequest} ProxyStreamRequest */
-/** @typedef {import('@open-design/contracts').ProxySseEvent} ProxySseEvent */
-/** @typedef {import('@open-design/contracts').ProjectConversationCreatedSsePayload} ProjectConversationCreatedSsePayload */
+/** @typedef {import('@capydesign/contracts').ApiErrorCode} ApiErrorCode */
+/** @typedef {import('@capydesign/contracts').ApiError} ApiError */
+/** @typedef {import('@capydesign/contracts').ApiErrorResponse} ApiErrorResponse */
+/** @typedef {import('@capydesign/contracts').ChatRequest} ChatRequest */
+/** @typedef {import('@capydesign/contracts').ChatSseEvent} ChatSseEvent */
+/** @typedef {import('@capydesign/contracts').ProxyStreamRequest} ProxyStreamRequest */
+/** @typedef {import('@capydesign/contracts').ProxySseEvent} ProxySseEvent */
+/** @typedef {import('@capydesign/contracts').ProjectConversationCreatedSsePayload} ProjectConversationCreatedSsePayload */
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1416,7 +1416,7 @@ const ALL_SKILL_LIKE_ROOTS = [
   DESIGN_TEMPLATES_DIR,
 ];
 // Global OD Library data root — owned, content-addressed assets captured by
-// the clipper / `od library import`. Derived from RUNTIME_DATA_DIR per the
+// the clipper / `capt library import`. Derived from RUNTIME_DATA_DIR per the
 // daemon data directory contract.
 const LIBRARY_DIR = path.join(RUNTIME_DATA_DIR, 'library');
 fs.mkdirSync(PROJECTS_DIR, { recursive: true });
@@ -1867,7 +1867,7 @@ export function createAgentRuntimeToolPrompt(
     `- Daemon URL: \`${daemonUrl}\` (also available as \`OD_DAEMON_URL\`).`,
     '- `OD_NODE_BIN` is the absolute path to the Node-compatible runtime that started the daemon; packaged desktop installs provide this even when the user has no system `node` on PATH.',
     '- `OD_HYPERFRAMES_BIN` is the absolute path to CapyDesign\'s pinned HyperFrames CLI. Run lightweight commands through `OD_NODE_BIN`; use `"$OD_NODE_BIN" "$OD_BIN" media scaffold` for composition setup and never use a user-level `npx` cache.',
-    '- `OD_BIN` is the absolute path to the CapyDesign CLI script. On POSIX shells run wrappers with `"$OD_NODE_BIN" "$OD_BIN" tools ...`; do not call bare `od`, which may resolve to the system octal-dump command on Unix-like systems.',
+    '- `OD_BIN` is the absolute path to the CapyDesign CLI script. On POSIX shells run wrappers with `"$OD_NODE_BIN" "$OD_BIN" tools ...`; do not call bare `capt`, which may resolve to the system octal-dump command on Unix-like systems.',
     '- On PowerShell use `& $env:OD_NODE_BIN $env:OD_BIN tools ...`; on cmd.exe use `"%OD_NODE_BIN%" "%OD_BIN%" tools ...`.',
     tokenLine,
     '- Prefer project wrapper commands through `OD_NODE_BIN` + `OD_BIN` over raw HTTP. The wrappers read these environment values automatically.',
@@ -2051,7 +2051,7 @@ export function telemetryPromptFromRunRequest(message, currentPrompt) {
   return typeof currentPrompt === 'string' ? currentPrompt : message;
 }
 
-// Keep this header grammar aligned with parseFormAnswers in @open-design/contracts.
+// Keep this header grammar aligned with parseFormAnswers in @capydesign/contracts.
 const FORM_ANSWERS_HEADER_RE =
   /^\s*\[form answers(?:\s*[\u2014\-:]\s*([^\]\r\n]+))?\]\s*(?:\r?\n|$)/i;
 
@@ -2206,7 +2206,7 @@ export function composeChatUserRequestForAgent(
   // native session memory provides the rest.
   const skip = options.skipTranscript === true;
   // Native-session clients normally provide `currentPrompt`, but headless
-  // callers such as `od run start --message` only populate `message`. On a
+  // callers such as `capt run start --message` only populate `message`. On a
   // resumed session that value is the latest turn, not a rendered transcript,
   // so dropping it would send the misleading empty-turn placeholder instead.
   const bodySource = skip
@@ -8081,7 +8081,7 @@ export async function startServer({
     const reportHost = reportHostForPoweredPreview();
     const baseOrigin = resolvedPort ? `http://${reportHost}:${resolvedPort}` : null;
     res.setHeader('Cache-Control', 'no-store');
-    /** @type {import('@open-design/contracts').ProjectPreviewIsolationResponse} */
+    /** @type {import('@capydesign/contracts').ProjectPreviewIsolationResponse} */
     const body = {
       supported: Boolean(baseOrigin),
       baseOrigin,
@@ -8149,7 +8149,7 @@ export async function startServer({
   // Renderer-side chat-scroll evidence, pushed just before an export is
   // requested. Same guard and same threat tier as the export itself: the body
   // carries the chat log's DOM. Not a user-facing capability — it is the
-  // renderer half of `od diagnostics export`, which already exists on both
+  // renderer half of `capt diagnostics export`, which already exists on both
   // surfaces — so it gets no CLI subcommand of its own.
   //
   // The 24mb body parser is NOT in this chain: a route-level parser cannot
@@ -9161,7 +9161,7 @@ export async function startServer({
           marketplaceResolution = resolvePluginInMarketplaces(db, plugin.sourceMarketplaceEntryName);
           if (marketplaceResolution) source = marketplaceResolution.source;
         }
-        if (!source) return res.status(409).json({ error: { code: 'missing-source', message: `Plugin "${id}" has no recorded install source — cannot upgrade. Reinstall via 'od plugin install --source <...>' to set one.`, data: { id } } });
+        if (!source) return res.status(409).json({ error: { code: 'missing-source', message: `Plugin "${id}" has no recorded install source — cannot upgrade. Reinstall via 'capt plugin install --source <...>' to set one.`, data: { id } } });
       } else {
         source = typeof body.source === 'string' ? body.source : '';
         if (!source) return res.status(400).json({ error: 'source is required' });
@@ -9175,7 +9175,7 @@ export async function startServer({
           const locked = lockfile.plugins[source];
           if (locked?.version && !source.includes('@')) lookupName = `${source}@${locked.version}`;
           const resolved = resolvePluginInMarketplaces(db, lookupName);
-          if (!resolved) return res.status(404).json({ error: { code: 'plugin-not-found', message: `No marketplace plugin named "${source}". Add a marketplace via 'od marketplace add <url>' or pass a github: / https:// / local source.`, data: { name: source } } });
+          if (!resolved) return res.status(404).json({ error: { code: 'plugin-not-found', message: `No marketplace plugin named "${source}". Add a marketplace via 'capt marketplace add <url>' or pass a github: / https:// / local source.`, data: { name: source } } });
           marketplaceResolution = resolved;
           source = resolved.source;
         }
@@ -9363,7 +9363,7 @@ export async function startServer({
     type ScenarioEntry = {
       id: string;
       taskKind: 'new-generation' | 'figma-migration' | 'code-migration' | 'tune-collab';
-      pipeline: NonNullable<NonNullable<import('@open-design/contracts').PluginManifest['od']>['pipeline']>;
+      pipeline: NonNullable<NonNullable<import('@capydesign/contracts').PluginManifest['od']>['pipeline']>;
     };
     const byTaskKind = new Map<ScenarioEntry['taskKind'], ScenarioEntry>();
     try {
@@ -10268,7 +10268,7 @@ export async function startServer({
         // legacy warn/fallback path only for ordinary snapshots.
         if (!snap?.strategy && stages.length > 0) {
           const { loadAtomBodies } = await import('./plugins/atom-bodies.js');
-          const { renderActiveStageBlocks } = await import('@open-design/contracts');
+          const { renderActiveStageBlocks } = await import('@capydesign/contracts');
           const { atomsForPrompt } = await import('./plugins/critique-prompt-gate.js');
           const stageViews = [];
           for (const stage of stages) {

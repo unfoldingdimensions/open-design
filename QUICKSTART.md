@@ -200,8 +200,8 @@ pnpm tools-dev status          # inspect managed runtimes
 pnpm tools-dev logs            # show daemon/web/desktop logs
 pnpm tools-dev check           # status + recent logs + common diagnostics
 pnpm tools-dev stop            # stop managed runtimes
-pnpm --filter @open-design/daemon build  # build apps/daemon/dist/cli.js for `od`
-pnpm --filter @open-design/web build     # build the web package when needed
+pnpm --filter @capydesign/daemon build  # build apps/daemon/dist/cli.js for `capt`
+pnpm --filter @capydesign/web build     # build the web package when needed
 pnpm typecheck                 # workspace typecheck
 ```
 
@@ -213,7 +213,7 @@ During local development, `tools-dev` starts the daemon first, passes its port i
 
 ## Media generation / agent dispatcher checks
 
-Image, video, audio, and HyperFrames skills call the local `od` CLI through environment variables injected by the daemon when it spawns an agent:
+Image, video, audio, and HyperFrames skills call the local `capt` CLI through environment variables injected by the daemon when it spawns an agent:
 
 - `OD_BIN` — absolute path to `apps/daemon/dist/cli.js`.
 - `OD_DAEMON_URL` — the running daemon URL.
@@ -223,7 +223,7 @@ Image, video, audio, and HyperFrames skills call the local `od` CLI through envi
 If media generation fails with `OD_BIN: parameter not set`, `apps/daemon/dist/cli.js` missing, or `failed to reach daemon at http://127.0.0.1:0`, rebuild the daemon CLI and restart the managed runtime:
 
 ```bash
-pnpm --filter @open-design/daemon build
+pnpm --filter @capydesign/daemon build
 pnpm tools-dev restart --daemon-port 7457 --web-port 5175
 ls -la apps/daemon/dist/cli.js
 curl -s http://127.0.0.1:7457/api/health
@@ -292,7 +292,7 @@ open-design/
 ├── apps/
 │   ├── daemon/                # Node/Express — spawns local agents + serves APIs
 │   │   └── src/
-│   │       ├── cli.ts             # `od` bin entry
+│   │       ├── cli.ts             # `capt` bin entry
 │   │       ├── server.ts          # /api/* + static serving
 │   │       ├── agents.ts          # compatibility exports for the runtime modules
 │   │       ├── runtimes/
@@ -327,12 +327,12 @@ open-design/
 ├── scripts/sync-design-systems.ts    # re-import from upstream getdesign tarball
 ├── docs/                      # product vision + spec
 ├── pnpm-workspace.yaml        # apps/* + packages/* + tools/* + e2e
-└── package.json               # root quality scripts + `od` bin
+└── package.json               # root quality scripts + `capt` bin
 ```
 
 ## Troubleshooting
 
-- **`better-sqlite3` fails to load / ABI mismatch after a Node.js version change** — `pnpm install` re-runs `postinstall` automatically and rebuilds the native addon for the current Node.js. To rebuild manually or verify the fix: `pnpm --filter @open-design/daemon rebuild better-sqlite3` then `pnpm --filter @open-design/daemon exec node -e "require('better-sqlite3')"`. Requires build tools: `python3`, `make`, `g++` (or `clang++`). If you use `ignore-scripts=true` in your `.npmrc` (common for AUR packages), run `pnpm bootstrap` after `pnpm install`.
+- **`better-sqlite3` fails to load / ABI mismatch after a Node.js version change** — `pnpm install` re-runs `postinstall` automatically and rebuilds the native addon for the current Node.js. To rebuild manually or verify the fix: `pnpm --filter @capydesign/daemon rebuild better-sqlite3` then `pnpm --filter @capydesign/daemon exec node -e "require('better-sqlite3')"`. Requires build tools: `python3`, `make`, `g++` (or `clang++`). If you use `ignore-scripts=true` in your `.npmrc` (common for AUR packages), run `pnpm bootstrap` after `pnpm install`.
 - **"no agents found on PATH"** — install one of the local runtimes registered in [`apps/daemon/src/runtimes/registry.ts`](apps/daemon/src/runtimes/registry.ts), make sure its executable is visible to the daemon, then use **Rescan** in **Models & providers → Local CLI**. Or configure a BYOK runtime in Settings.
 - **Claude Code exits with code 1** — OpenDesign was able to start `claude`, but the spawned non-interactive run failed before producing a response. From the same shell or app environment that starts OpenDesign, check:
   ```bash

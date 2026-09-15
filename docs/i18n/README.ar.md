@@ -110,29 +110,29 @@
 
 ## توافق المنصات
 
-> يُشحَن OpenDesign على هيئة **مهارات وواجهة CLI وخادم MCP** تستهلكها وكلاء البرمجة السائدة بشكل أصلي. بمجرد تثبيت OD، يربط أمر واحد `od mcp install <agent>` خادم MCP في إعدادات ذلك الوكيل، فتستدعي الأدوات نفسها من داخل أي وكيل.
+> يُشحَن OpenDesign على هيئة **مهارات وواجهة CLI وخادم MCP** تستهلكها وكلاء البرمجة السائدة بشكل أصلي. بمجرد تثبيت OD، يربط أمر واحد `capt mcp install <agent>` خادم MCP في إعدادات ذلك الوكيل، فتستدعي الأدوات نفسها من داخل أي وكيل.
 
 | وكيل البرمجة / المنصة &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | الحالة &nbsp;&nbsp; | تثبيت خادم MCP بأمر واحد &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ مدعوم | `od mcp install claude` |
-| [Codex CLI](https://github.com/openai/codex) | ✅ مدعوم | `od mcp install codex` |
-| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ مدعوم | `od mcp install reasonix` |
-| [Raven](https://github.com/EverMind-AI/Raven) | ✅ مدعوم | `od mcp install raven` |
-| [Cursor](https://www.cursor.com/cli) | ✅ مدعوم | `od mcp install cursor` |
-| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ مدعوم | `od mcp install copilot` |
-| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ مدعوم | `od mcp install copilot` |
-| [OpenCode](https://opencode.ai/) | ✅ مدعوم | `od mcp install opencode` |
-| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ مدعوم | `od mcp install openclaw` |
-| [Antigravity](https://antigravity.google) | ✅ مدعوم | `od mcp install antigravity` |
-| [Cline](https://github.com/cline/cline) | ✅ مدعوم | `od mcp install cline` |
-| [Trae](https://www.trae.ai/) | ✅ مدعوم | `od mcp install trae` |
-| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ مدعوم | `od mcp install kimi` |
-| [Kiro](https://kiro.dev) | ✅ مدعوم | `od mcp install kiro` |
-| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ مدعوم | `od mcp install pi` |
-| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ مدعوم | `od mcp install vibe` |
-| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ مدعوم | `od mcp install hermes` |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ مدعوم | `capt mcp install claude` |
+| [Codex CLI](https://github.com/openai/codex) | ✅ مدعوم | `capt mcp install codex` |
+| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ مدعوم | `capt mcp install reasonix` |
+| [Raven](https://github.com/EverMind-AI/Raven) | ✅ مدعوم | `capt mcp install raven` |
+| [Cursor](https://www.cursor.com/cli) | ✅ مدعوم | `capt mcp install cursor` |
+| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ مدعوم | `capt mcp install copilot` |
+| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ مدعوم | `capt mcp install copilot` |
+| [OpenCode](https://opencode.ai/) | ✅ مدعوم | `capt mcp install opencode` |
+| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ مدعوم | `capt mcp install openclaw` |
+| [Antigravity](https://antigravity.google) | ✅ مدعوم | `capt mcp install antigravity` |
+| [Cline](https://github.com/cline/cline) | ✅ مدعوم | `capt mcp install cline` |
+| [Trae](https://www.trae.ai/) | ✅ مدعوم | `capt mcp install trae` |
+| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ مدعوم | `capt mcp install kimi` |
+| [Kiro](https://kiro.dev) | ✅ مدعوم | `capt mcp install kiro` |
+| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ مدعوم | `capt mcp install pi` |
+| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ مدعوم | `capt mcp install vibe` |
+| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ مدعوم | `capt mcp install hermes` |
 
-`od mcp install <agent> --print` لمعاينة تجريبية دون تنفيذ · `--uninstall` للإزالة · القائمة الكاملة عبر `od mcp install --help`.
+`capt mcp install <agent> --print` لمعاينة تجريبية دون تنفيذ · `--uninstall` للإزالة · القائمة الكاملة عبر `capt mcp install --help`.
 
 <p align="center">
   <img src="https://repo-assets.open-design.ai/resources/images/coding-agents.png" alt="The 25 coding-agent CLIs OpenDesign supports — Claude Code · Codex · OpenCode · Hermes · Antigravity · Vela · Grok Build · Kimi · Cursor Agent · Qwen · Qoder · GitHub Copilot · Pi · Kiro · Kilo · Mistral Vibe · DeepSeek · Reasonix · Aider · Amp · CodeBuddy · Mimo · AtomCode · Devin · Trae" width="100%" />
@@ -294,7 +294,7 @@
 
 ```bash
 # One-line install into the agent you're using:
-od mcp install <agent>
+capt mcp install <agent>
 # <agent> = claude | codex | reasonix | raven | cursor | copilot | openclaw | antigravity
 #         | pi | vibe | hermes | cline | kimi | kiro | trae | opencode
 ```
@@ -355,14 +355,14 @@ pnpm tools-dev run web
 
 ```bash
 # One-line install (16+ CLIs supported):
-od mcp install <agent>
+capt mcp install <agent>
 
 # Then the agent can:
-od project list --json
-od files list <project-id> --json
-od files read <project-id> <relative-path>
-od plugin list --json
-od skills list --json
+capt project list --json
+capt files list <project-id> --json
+capt files read <project-id> <relative-path>
+capt plugin list --json
+capt skills list --json
 ```
 
 **لماذا MCP؟** تصدير ملف مضغوط وإعادة إرفاقه في كل دورة يكسر الانسياب. يكشف MCP مصدر التصميم مباشرة — فيرى الوكيل دائمًا الملف الحي.
@@ -463,20 +463,20 @@ od skills list --json
 
 ### استخدام الإضافات
 
-الإضافات على تكافؤ تام عبر **واجهة الويب** وواجهة **`od` CLI** — نقاط نهاية `/api/plugins` نفسها، اختر ما يناسبك.
+الإضافات على تكافؤ تام عبر **واجهة الويب** وواجهة **`capt` CLI** — نقاط نهاية `/api/plugins` نفسها، اختر ما يناسبك.
 
 **في تطبيق سطح المكتب / الويب:** افتح صفحة **الإضافة** لتصفّح السوق وانقر **تثبيت**؛ وداخل استوديو المشروع، تظهر الإضافات كأشرطة في أداة الإنشاء تنقر عليها لتطبيقها (مع المدخلات التي تصرّح بها).
 
 **على سطر الأوامر** (يعمل دون واجهة مستخدم — هذا هو المسار الذي تستخدمه الوكلاء الخارجية):
 
 ```bash
-od plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
-od plugin search "landing page"      # search by keyword
-od plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
-od plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
-od plugin apply od-default --input brief="a one-page pitch for our seed round"
-od plugin upgrade od-default         # upgrade
-od plugin uninstall od-default       # uninstall
+capt plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
+capt plugin search "landing page"      # search by keyword
+capt plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
+capt plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
+capt plugin apply od-default --input brief="a one-page pitch for our seed round"
+capt plugin upgrade od-default         # upgrade
+capt plugin uninstall od-default       # uninstall
 ```
 
 يدعم كل أمر `--json`، فتستطيع تمريره عبر `jq` / `xargs` إلى الأتمتة.
@@ -499,8 +499,8 @@ my-plugin/
 التهيئة والتحقق محليًا:
 
 ```bash
-od plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
-od plugin validate ./my-plugin                          # check manifest / file layout
+capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
+capt plugin validate ./my-plugin                          # check manifest / file layout
 pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 ```
 
@@ -509,7 +509,7 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 ### المساهمة بإضافة
 
 1. أسقِط مجلد الإضافة في [`plugins/community/`](../../plugins/community/) (الإضافات الخارجية)، أو — لشحنها مجمَّعة مع OpenDesign — في المستوى المطابق ضمن [`plugins/_official/`](../../plugins/_official/).
-2. اجتز التحقق: `od plugin validate` و`pnpm guard` و`pnpm --filter @open-design/plugin-runtime typecheck`.
+2. اجتز التحقق: `capt plugin validate` و`pnpm guard` و`pnpm --filter @open-design/plugin-runtime typecheck`.
 3. املأ الـ PR باستخدام القالب في [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) (المعرّف، الإصدار، المسار، الوضع، القدرات، أمثلة التشغيل؛ أرفِق لقطة شاشة / معاينة للإضافات البصرية).
 4. للنشر على سجل خارجي (skills.sh / ClawHub / GitHub مستقل) ← [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -575,8 +575,8 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 - [x] إصدارات Electron مجمَّعة — macOS (Apple Silicon + Intel) + Windows (x64) + Linux AppImage (مسار اختياري)
 - [ ] تعديلات جراحية في وضع التعليق — مشحونة جزئيًا؛ الترقيع المستهدف الموثوق قيد التنفيذ
 - [ ] تجربة استخدام لوحة تعديلات يصدرها الذكاء الاصطناعي — لم تُنفَّذ بعد
-- [ ] `npx od init` لتهيئة مشروع بملف `DESIGN.md`
-- [ ] SDK للإضافات + واجهة `od plugin {add,list,remove,test,publish}` CLI
+- [ ] `npx capt init` لتهيئة مشروع بملف `DESIGN.md`
+- [ ] SDK للإضافات + واجهة `capt plugin {add,list,remove,test,publish}` CLI
 - [ ] إضافات نقل Figma / Pencil ← React / Next / Vue (ألفا)
 - [ ] إضافة تحديث قاعدة شفرة موجودة (وجّهها نحو مستودع git + ملف `DESIGN.md`)
 

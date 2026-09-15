@@ -16,7 +16,7 @@ import type { ReactElement } from 'react';
 import { I18nProvider } from '../../../src/i18n';
 import { ImageRow } from '../../../src/components/chat/primitives/ImageRow';
 import type { ImageRow as ImageRowData } from '../../../src/runtime/chat/contract';
-import type { MediaFailureNextStep } from '@open-design/contracts';
+import type { MediaFailureNextStep } from '@capydesign/contracts';
 
 afterEach(cleanup);
 const render = (ui: ReactElement) => rtlRender(<I18nProvider initial="zh-CN">{ui}</I18nProvider>);

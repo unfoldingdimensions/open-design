@@ -1,4 +1,4 @@
-import type { ByokChatProviderConfig } from '@open-design/contracts';
+import type { ByokChatProviderConfig } from '@capydesign/contracts';
 
 export const BYOK_OPENCODE_AGENT_ID = 'byok-opencode';
 export const BYOK_OPENCODE_PROVIDER_ID = 'open-design-byok';

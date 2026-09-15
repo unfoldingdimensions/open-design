@@ -5,7 +5,7 @@ import type {
   DesktopStatusSnapshot,
   DesktopUpdateResult,
   WebStatusSnapshot,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 import type { ToolPackLauncherRuntimeSnapshot } from "../launcher/runtime-snapshot.js";
 import type { ToolPackUpdateCacheLifecycleSnapshot } from "../updates/cache-lifecycle-snapshot.js";
 import type { CacheReport } from "../cache/index.js";

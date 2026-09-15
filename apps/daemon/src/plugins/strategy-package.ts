@@ -16,11 +16,11 @@ import {
   type AppliedStrategyBindingV2,
   type InstalledPluginRecord,
   type StrategyTaskTypeV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   buildStrategyPackageIdentity,
   normalizeStrategyAssetPath,
-} from '@open-design/plugin-runtime';
+} from '@capydesign/plugin-runtime';
 import { inspectBundledStrategyProvenanceV2 } from './strategy-provenance.js';
 
 export type SelectableStrategyTaskTypeV2 = Exclude<StrategyTaskTypeV2, 'generic'>;

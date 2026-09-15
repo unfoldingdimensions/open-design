@@ -3,7 +3,7 @@ import fs, { mkdtempSync, rmSync, writeFileSync, mkdirSync, readFileSync, exists
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { Brand } from '@open-design/contracts';
+import type { Brand } from '@capydesign/contracts';
 
 import {
   closeDatabase,
@@ -439,7 +439,7 @@ describe('agent-driven brand extraction engine', () => {
     expect(project).toBeTruthy();
     expect(project?.metadata?.kind).toBe('brand');
     expect(project?.pendingPrompt ?? '').toContain('DESIGN SYSTEM ENRICHMENT');
-    expect(project?.pendingPrompt ?? '').toContain(`od brand preview ${result.id}`);
+    expect(project?.pendingPrompt ?? '').toContain(`capt brand preview ${result.id}`);
 
     // brand.html is seeded as the active tab; the site stays as a secondary
     // browser tab the user can use to clear an anti-bot wall by hand.
@@ -1504,7 +1504,7 @@ describe('agent-driven brand extraction engine', () => {
         imageryFallback: NO_IMAGERY_FALLBACK,
       });
 
-    // The live extraction agent may re-run `od brand finalize` (e.g. after
+    // The live extraction agent may re-run `capt brand finalize` (e.g. after
     // fixing a validation error or enriching the kit). A second finalize must
     // reuse the brand's existing design system, not register a duplicate.
     const first = await finalizeOnce();

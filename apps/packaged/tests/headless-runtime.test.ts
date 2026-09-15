@@ -6,7 +6,7 @@ import {
   resolvePackagedMcpBootstrapLaunch,
   runPackagedMcpActionAgainstExistingDaemon,
 } from "../src/headless-runtime.js";
-import { APP_KEYS, SIDECAR_SOURCES } from "@open-design/sidecar-proto";
+import { APP_KEYS, SIDECAR_SOURCES } from "@capydesign/sidecar-proto";
 
 describe("parsePackagedHeadlessRequest", () => {
   it("accepts a headless Codex MCP install request", () => {

@@ -15,7 +15,7 @@
  * 一批一个必须也画对 —— 下面有专门的反向对照。
  */
 import { describe, expect, it } from 'vitest';
-import type { PersistedAgentEvent, ProjectMediaTask } from '@open-design/contracts';
+import type { PersistedAgentEvent, ProjectMediaTask } from '@capydesign/contracts';
 import { buildTurnBlocks } from '../../../src/runtime/chat/build-turn-blocks';
 import type { ExecutionShell, ImageRow, ShellItem } from '../../../src/runtime/chat/contract';
 
@@ -132,7 +132,7 @@ describe('轮询先到时:同一批合成一行', () => {
 describe('tool_use 到达后:M 认 batchSize,不认命令行里数出来的次数', () => {
   it('一条命令只写了一次 generate,批里有三张,就画三格', () => {
     const blocks = buildTurnBlocks({
-      events: [bash('g1', 'od media generate --count 3')],
+      events: [bash('g1', 'capt media generate --count 3')],
       mediaTasks: [
         task({ taskId: 'm1', batchId: 'b1', batchIndex: 1, batchSize: 3, status: 'done', endedAt: 400, file: { name: 'a.png' } }),
         task({ taskId: 'm2', batchId: 'b1', batchIndex: 2, batchSize: 3 }),
@@ -158,8 +158,8 @@ describe('tool_use 到达后:M 认 batchSize,不认命令行里数出来的次�
      */
     const blocks = buildTurnBlocks({
       events: [
-        bash('h1', 'od media generate --help'),
-        bash('g1', 'od media generate a'),
+        bash('h1', 'capt media generate --help'),
+        bash('g1', 'capt media generate a'),
       ],
       mediaTasks: [task({ taskId: 'm1', batchId: 'b1', batchIndex: 1, batchSize: 1 })],
       runStatus: 'running',

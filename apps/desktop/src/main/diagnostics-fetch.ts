@@ -1,4 +1,4 @@
-import { DIAGNOSTICS_EXPORT_PATH } from "@open-design/diagnostics";
+import { DIAGNOSTICS_EXPORT_PATH } from "@capydesign/diagnostics";
 
 export interface FetchDiagnosticsBundleDeps {
   /** Injectable fetch for tests; defaults to the global `fetch`. */

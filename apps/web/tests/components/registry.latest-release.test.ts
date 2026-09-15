@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { CapyDesignGithubLatestReleaseResponse } from '@open-design/contracts';
+import type { CapyDesignGithubLatestReleaseResponse } from '@capydesign/contracts';
 
 import { fetchLatestGithubReleaseInfo } from '../../src/providers/registry';
 

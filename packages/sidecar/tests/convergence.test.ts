@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { captureProcessSnapshot, collectProcessTreePids, isProcessAlive, waitForProcessExit } from "@open-design/platform";
+import { captureProcessSnapshot, collectProcessTreePids, isProcessAlive, waitForProcessExit } from "@capydesign/platform";
 import {
   normalizeSidecarStamp,
   allocatePort,

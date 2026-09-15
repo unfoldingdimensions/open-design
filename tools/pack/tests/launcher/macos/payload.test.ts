@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 
-import { LAUNCHER_SCHEMA_VERSION } from "@open-design/launcher-proto";
+import { LAUNCHER_SCHEMA_VERSION } from "@capydesign/launcher-proto";
 import { describe, expect, it } from "vitest";
 
 import type { ToolPackConfig } from "@/config/index.js";

@@ -12,7 +12,7 @@ import {
   type OdNextLayoutPrimitivesPresenceV1,
   type AppliedPluginSnapshot,
   type OdNextDevicePlatformResolutionV1,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { resolvePluginFolder } from '../../plugins/registry.js';
 import { loadBundledStrategyPromptAssetsV2 } from '../../plugins/strategy-package.js';

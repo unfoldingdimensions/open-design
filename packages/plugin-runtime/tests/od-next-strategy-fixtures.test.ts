@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import type { PluginManifest } from '@open-design/contracts';
+import type { PluginManifest } from '@capydesign/contracts';
 import {
   parseManifest,
   resolveAppliedPipeline,

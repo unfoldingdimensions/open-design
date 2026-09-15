@@ -9,13 +9,13 @@ import {
   type DesktopArtifactCaptureMode,
   type DesktopExportArtifactInput,
   type DesktopExportArtifactResult,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 
 import { DECK_PAGE_SIZE, DECK_PRINT_CSS, inferPageSize, waitForPrintableContent } from "./pdf-export.js";
 import { bgraBitmapHasPaint, freezePageForStaticCapture, type StaticCaptureFreeze } from "./static-capture.js";
-import { findRealElementRange, findRealTagEnd, findRealTagOffset, HTML_TAG_PATTERNS } from '@open-design/contracts/runtime/html-injection-points';
+import { findRealElementRange, findRealTagEnd, findRealTagOffset, HTML_TAG_PATTERNS } from '@capydesign/contracts/runtime/html-injection-points';
 
-// Headless programmatic exporter for the `od export` CLI (PDF / image).
+// Headless programmatic exporter for the `capt export` CLI (PDF / image).
 // The on-screen web Download menu rasterizes client-side; this is the daemon →
 // Electron path so the CLI gets the desktop's bundled Chromium for pixel-perfect
 // output without a print dialog. Renders into an off-screen BrowserWindow, writes

@@ -6,13 +6,13 @@ import { describe, test } from 'vitest';
 import { identityFrame, modelsFrame, parseHostCommand } from '../src/protocol.js';
 import { internals } from '../src/index.js';
 
-describe('@open-design/dsh-runtime protocol', () => {
+describe('@capydesign/dsh-runtime protocol', () => {
   test('declares a dsh profile bundle patch', () => {
     const manifest = JSON.parse(readFileSync(resolve('package.json'), 'utf8')) as {
       dsh?: { bundle?: { patch?: string } };
     };
     assert.equal(manifest.dsh?.bundle?.patch, './cordis.patch.yml');
-    assert.match(readFileSync(resolve('cordis.patch.yml'), 'utf8'), /@open-design\/dsh-runtime/);
+    assert.match(readFileSync(resolve('cordis.patch.yml'), 'utf8'), /@capydesign\/dsh-runtime/);
   });
 
   test('emits the strict probe identity', () => {

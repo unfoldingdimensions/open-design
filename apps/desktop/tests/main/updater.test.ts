@@ -13,13 +13,13 @@ import {
   LAUNCHER_AFTER_QUIT_TIMEOUT_MS_ARG,
   LAUNCHER_SCHEMA_VERSION,
   resolveLauncherPaths,
-} from "@open-design/launcher-proto";
+} from "@capydesign/launcher-proto";
 import {
   DESKTOP_UPDATE_CHANNELS,
   DESKTOP_UPDATE_STATES,
   SIDECAR_SOURCES,
-} from "@open-design/sidecar-proto";
-import type { ReleaseChannel } from "@open-design/release";
+} from "@capydesign/sidecar-proto";
+import type { ReleaseChannel } from "@capydesign/release";
 
 import {
   compareVersions,
@@ -2498,7 +2498,7 @@ describe("desktop updater", () => {
       expect(checked.state).toBe(DESKTOP_UPDATE_STATES.DOWNLOADED);
       expect(checked.error).toBeUndefined();
       expect(fixture.artifactRequests()).toBe(2);
-      // Byte-range resumption is covered by @open-design/download. At this
+      // Byte-range resumption is covered by @capydesign/download. At this
       // integration boundary, a full retry is also valid when the interrupted
       // response did not persist any partial bytes before the stream failed.
       expect(logger.warn).not.toHaveBeenCalled();

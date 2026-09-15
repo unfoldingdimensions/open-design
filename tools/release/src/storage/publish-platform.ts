@@ -14,7 +14,7 @@ import {
 } from "./common.ts";
 import { assertCurrentVersionReservation, versionLockObjectKey } from "./beta-version-reservation.ts";
 import { putStorageObject } from "./s3-upload.ts";
-import { releaseChannelDescriptor } from "@open-design/release";
+import { releaseChannelDescriptor } from "@capydesign/release";
 
 type AssetEntry = {
   contentType: string;

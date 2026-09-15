@@ -64,7 +64,7 @@ async function runScaffoldCli(env: NodeJS.ProcessEnv) {
   });
 }
 
-describe('od media scaffold', () => {
+describe('capt media scaffold', () => {
   it('asks the daemon to create a project-scoped HyperFrames composition', async () => {
     const result = await runScaffoldCli({
       ...process.env,

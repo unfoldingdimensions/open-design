@@ -7,9 +7,9 @@ import path from "node:path";
 import {
   OPEN_DESIGN_SIDECAR_CONTRACT,
   SIDECAR_DEFAULTS,
-} from "@open-design/sidecar-proto";
-import { resolveNamespace } from "@open-design/sidecar";
-import { releaseChannelFromVersion, releaseNamespace } from "@open-design/release";
+} from "@capydesign/sidecar-proto";
+import { resolveNamespace } from "@capydesign/sidecar";
+import { releaseChannelFromVersion, releaseNamespace } from "@capydesign/release";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,12 +20,12 @@ function resolveToolPackRoot(startDir: string): string {
     if (existsSync(packageJsonPath)) {
       const require = createRequire(packageJsonPath);
       const packageJson = require(packageJsonPath) as { name?: string };
-      if (packageJson.name === "@open-design/tools-pack") return candidate;
+      if (packageJson.name === "@capydesign/tools-pack") return candidate;
     }
 
     const parent = path.dirname(candidate);
     if (parent === candidate) {
-      throw new Error(`could not locate @open-design/tools-pack package from ${startDir}`);
+      throw new Error(`could not locate @capydesign/tools-pack package from ${startDir}`);
     }
     candidate = parent;
   }

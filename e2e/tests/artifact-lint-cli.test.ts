@@ -9,10 +9,10 @@ import { describe, expect, test } from 'vitest';
 
 import { createSmokeSuite } from '@/vitest/suite';
 
-const odBin = fileURLToPath(new URL('../../apps/daemon/bin/od.mjs', import.meta.url));
+const odBin = fileURLToPath(new URL('../../apps/daemon/bin/capt.mjs', import.meta.url));
 
 describe('artifact lint CLI end-to-end', () => {
-  test('[P1] real od lint uses the running daemon for files, stdin, JSON, and exit thresholds', async () => {
+  test('[P1] real capt lint uses the running daemon for files, stdin, JSON, and exit thresholds', async () => {
     const suite = await createSmokeSuite('artifact-lint-cli');
 
     await suite.with.toolsDev(async ({ runtime }) => {
