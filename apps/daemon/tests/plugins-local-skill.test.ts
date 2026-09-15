@@ -20,7 +20,7 @@ import {
 } from '../src/plugins/apply.js';
 import { skillCwdAliasSegment } from '../src/cwd-aliases.js';
 import { loadPluginLocalSkill } from '../src/plugins/local-skill.js';
-import type { InstalledPluginRecord, PluginManifest } from '@open-design/contracts';
+import type { InstalledPluginRecord, PluginManifest } from '@capydesign/contracts';
 
 function manifestWithSkills(skills: Array<{ ref?: string; path?: string }>): PluginManifest {
   return {

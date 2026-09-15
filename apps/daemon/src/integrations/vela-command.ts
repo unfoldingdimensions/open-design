@@ -7,7 +7,7 @@ import {
   createCommandInvocation,
   listProcessSnapshots,
   stopProcesses,
-} from '@open-design/platform';
+} from '@capydesign/platform';
 
 import {
   agentCliEnvForAgent,

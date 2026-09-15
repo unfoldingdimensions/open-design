@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type {
   WorkspaceCollabContext,
   WorkspaceInviteAcceptResponse,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   clearPendingInviteContinuation,
   deriveWorkspaceActivation,

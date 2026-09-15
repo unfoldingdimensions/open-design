@@ -11,7 +11,7 @@ import {
   type ProjectConversationCreatedSsePayload,
   type ProjectContentTransferStateSsePayload,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   workspaceIdentityCacheKey,
   workspaceResourceUrl,

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import type { Project } from '../types';
 import { useI18n } from '../i18n';
 import { getProjectDetail, listProjects } from '../state/projects';
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import { dirExists } from '../providers/registry';
 import { workspaceIdentityCacheKey } from '../collab/workspace-identity';
 import { Icon } from './Icon';

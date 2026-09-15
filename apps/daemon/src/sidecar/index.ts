@@ -1,5 +1,5 @@
-import { APP_KEYS, SIDECAR_MESSAGES, isSidecarSource } from "@open-design/sidecar-proto";
-import { SidecarFactory, type SidecarClient } from "@open-design/sidecar";
+import { APP_KEYS, SIDECAR_MESSAGES, isSidecarSource } from "@capydesign/sidecar-proto";
+import { SidecarFactory, type SidecarClient } from "@capydesign/sidecar";
 
 import { startDaemonSidecar, type DaemonSidecarHandle } from "./server.js";
 import {

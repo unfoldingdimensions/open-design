@@ -127,7 +127,7 @@ The `<namespace>` suffix is unconditional so multiple developer namespaces can c
 
 Headless mode targets environments without a display (WSL2, headless servers, CI) where Electron can't run. If you have a desktop, use the AppImage; if you're SSH'd into a machine or in WSL, use headless.
 
-`--headless` makes `install`, `start`, `stop`, `uninstall`, and `cleanup` operate on the headless entry (`@open-design/packaged/dist/headless.mjs`) instead of the AppImage. Headless mode runs daemon + web without Electron.
+`--headless` makes `install`, `start`, `stop`, `uninstall`, and `cleanup` operate on the headless entry (`@capydesign/packaged/dist/headless.mjs`) instead of the AppImage. Headless mode runs daemon + web without Electron.
 
 - `install --headless` writes a shell launcher at `~/.local/bin/open-design-headless-<namespace>` that bakes in the namespace and resource paths. The launcher is self-contained, but the assembled app directory at those paths must remain in place — don't move it after install.
 - `start --headless` launches through the sidecar atomic and waits up to 95s for private status readiness.

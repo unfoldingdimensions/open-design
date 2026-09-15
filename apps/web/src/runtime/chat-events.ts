@@ -3,7 +3,7 @@ import type {
   RunFailureAction,
   RunFailureCategory,
   RunFailureDetail,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 export interface RunFailureClassificationFields {
   failureCategory?: RunFailureCategory | null;

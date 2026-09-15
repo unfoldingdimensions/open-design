@@ -10,11 +10,11 @@ import type {
   WorkspaceDirectoryItem,
   WorkspaceDirectoryResponse,
   WorkspaceInvalidationSsePayload,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   buildWorkspacePermissions,
   buildWorkspaceSeatSummary,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { coalescedGet, forceCoalescedGet } from '../lib/coalesced-get';
 import { BackoffController, type BackoffOptions } from '../lib/backoff';
 import {

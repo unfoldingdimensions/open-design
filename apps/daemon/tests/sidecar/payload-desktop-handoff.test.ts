@@ -6,8 +6,8 @@ import {
   LAUNCHER_SCHEMA_VERSION,
   resolveLauncherPaths,
   resolveLauncherVersionPaths,
-} from "@open-design/launcher-proto";
-import { SIDECAR_SOURCES } from "@open-design/sidecar-proto";
+} from "@capydesign/launcher-proto";
+import { SIDECAR_SOURCES } from "@capydesign/sidecar-proto";
 import { describe, expect, it, vi } from "vitest";
 
 import {

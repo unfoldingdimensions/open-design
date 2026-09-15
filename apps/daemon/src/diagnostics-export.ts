@@ -12,18 +12,18 @@ import {
   DIAGNOSTICS_FILENAME_PREFIX,
   diagnosticsFileName,
   type LogSource,
-} from '@open-design/diagnostics';
+} from '@capydesign/diagnostics';
 import {
   APP_KEYS,
   OPEN_DESIGN_SIDECAR_CONTRACT,
   SIDECAR_MODES,
   type LegacySidecarRuntimeLayout,
-} from '@open-design/sidecar-proto';
+} from '@capydesign/sidecar-proto';
 import {
   resolveLogFilePath,
   resolveRuntimeNamespaceRoot,
   type SidecarRuntimeContext,
-} from '@open-design/sidecar';
+} from '@capydesign/sidecar';
 
 import { readCurrentAppVersionInfo } from './app-version.js';
 import {

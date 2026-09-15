@@ -4,7 +4,7 @@ import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import path from 'node:path';
 
-import { createCommandInvocation } from '@open-design/platform';
+import { createCommandInvocation } from '@capydesign/platform';
 import type {
   AmrAuthErrorKind,
   AmrAuthNetworkPath,
@@ -15,8 +15,8 @@ import type {
   TrackingCampaignConversionSource,
   TrackingCampaignId,
   TrackingPageName,
-} from '@open-design/contracts/analytics';
-import type { AmrSessionState } from '@open-design/contracts';
+} from '@capydesign/contracts/analytics';
+import type { AmrSessionState } from '@capydesign/contracts';
 
 import { resolveAgentLaunch } from '../runtimes/launch.js';
 import { spawnEnvForAgent } from '../runtimes/env.js';

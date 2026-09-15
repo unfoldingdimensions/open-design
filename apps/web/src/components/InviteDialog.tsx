@@ -16,8 +16,8 @@ import {
   normalizeWorkspaceInviteCreateErrorCode,
   type WorkspaceCollabContext,
   type WorkspaceInviteRole,
-} from '@open-design/contracts';
-import { Button } from '@open-design/components';
+} from '@capydesign/contracts';
+import { Button } from '@capydesign/components';
 import { Icon } from './Icon';
 import { useI18n } from '../i18n';
 import { workspaceInviteErrorMessageKey } from '../collab/invite-error-copy';

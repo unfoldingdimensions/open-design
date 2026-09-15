@@ -12,7 +12,7 @@ import {
   type McpServerConfig,
   type SkillSummary,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 const workspaceA: WorkspaceCollabContext = {
   workspaceId: 'workspace-a',

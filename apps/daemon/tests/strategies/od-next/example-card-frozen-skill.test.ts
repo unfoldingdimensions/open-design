@@ -10,7 +10,7 @@ import {
   type OdNextPromptBundleV2,
   type ProjectMetadata,
   serializeOdNextPromptBundleV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import {
   InvalidFrozenSkillPackageError,

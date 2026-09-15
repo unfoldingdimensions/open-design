@@ -13,8 +13,8 @@ import {
   SIDECAR_MODES,
   SIDECAR_SOURCES,
   type LegacySidecarRuntimeLayout,
-} from '@open-design/sidecar-proto';
-import type { SidecarRuntimeContext } from '@open-design/sidecar';
+} from '@capydesign/sidecar-proto';
+import type { SidecarRuntimeContext } from '@capydesign/sidecar';
 
 import {
   STANDALONE_LAUNCH_WARNING,

@@ -40,7 +40,7 @@ import { existsSync } from "node:fs";
 import { readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 
-import { createPackageManagerInvocation } from "@open-design/platform";
+import { createPackageManagerInvocation } from "@capydesign/platform";
 
 import type { ToolPackConfig } from "./config/index.js";
 import { execFileAsync } from "./mac/commands.js";

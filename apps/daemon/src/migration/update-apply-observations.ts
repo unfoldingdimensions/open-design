@@ -6,12 +6,12 @@ import type {
   TrackingUpdateApplyReason,
   TrackingUpdateApplyResult,
   UpdateApplyObservedProps,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import {
   isReleaseChannel,
   releaseChannelFromVersion,
   type ReleaseChannel,
-} from '@open-design/release';
+} from '@capydesign/release';
 
 import type { AnalyticsContext, AnalyticsService } from '../analytics.js';
 import { readPosthogConfig } from '../analytics.js';

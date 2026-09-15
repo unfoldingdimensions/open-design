@@ -8,11 +8,11 @@ vi.mock('../../src/components/home-hero/PlaceholderCarousel', () => ({
 }));
 
 import { HomeView } from '../../src/components/HomeView';
-import { isCapyDesignHostAvailable, pickHostWorkingDir } from '@open-design/host';
+import { isCapyDesignHostAvailable, pickHostWorkingDir } from '@capydesign/host';
 import { openFolderDialog } from '../../src/providers/registry';
 
-vi.mock('@open-design/host', async () => {
-  const actual = await vi.importActual<typeof import('@open-design/host')>('@open-design/host');
+vi.mock('@capydesign/host', async () => {
+  const actual = await vi.importActual<typeof import('@capydesign/host')>('@capydesign/host');
   return {
     ...actual,
     isCapyDesignHostAvailable: vi.fn(),

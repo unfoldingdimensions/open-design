@@ -714,7 +714,7 @@ export const zhTW: Dict = {
   "settings.mcpBuildDaemon": "請先建置守護行程。",
   "settings.mcpNodeMissing": "缺少 Node 執行檔。",
   "settings.mcpBuildHint":
-    "缺少 apps/daemon/dist/cli.js。請執行 `pnpm --filter @open-design/daemon build` 後重新整理。",
+    "缺少 apps/daemon/dist/cli.js。請執行 `pnpm --filter @capydesign/daemon build` 後重新整理。",
   "settings.mcpMethodCli": "設定指令",
   "settings.mcpInstructionCli": "在終端機中執行以下指令：",
   "settings.mcpMethodToml": "TOML 設定檔",
@@ -1498,7 +1498,7 @@ export const zhTW: Dict = {
   "useEverywhere.section.http.tab": "HTTP API",
   "useEverywhere.section.http.heading": "與 web UI 所用相同的 REST + SSE 介面",
   "useEverywhere.section.http.intro":
-    "本機 daemon 會在 `http://127.0.0.1:7456` 提供 HTTP API（連接埠可設定）。web UI 呼叫的每個端點，你的指令稿同樣可以使用。串流端點（聊天回合、專案執行）會發出 Server-Sent Events，其合約型別定義於 `@open-design/contracts`。",
+    "本機 daemon 會在 `http://127.0.0.1:7456` 提供 HTTP API（連接埠可設定）。web UI 呼叫的每個端點，你的指令稿同樣可以使用。串流端點（聊天回合、專案執行）會發出 Server-Sent Events，其合約型別定義於 `@capydesign/contracts`。",
   "useEverywhere.section.http.bullet1": "`GET /api/health` — daemon 存活狀態。",
   "useEverywhere.section.http.bullet2":
     "`GET /api/skills` 與 `GET /api/design-systems` — 可用的登錄。",
@@ -1517,7 +1517,7 @@ export const zhTW: Dict = {
   "useEverywhere.section.http.snippet3":
     "串流一次聊天回合（SSE — 每一行都相容於 JSON-Lines）",
   "useEverywhere.section.http.footer":
-    "每個請求／回應的純 TypeScript 型別都位於 `@open-design/contracts` 中 — 在您的指令碼中匯入它們，即可享有完整的自動完成，而無需接上產生器。",
+    "每個請求／回應的純 TypeScript 型別都位於 `@capydesign/contracts` 中 — 在您的指令碼中匯入它們，即可享有完整的自動完成，而無需接上產生器。",
   "useEverywhere.section.skills.tab": "技能與無頭模式",
   "useEverywhere.section.skills.heading":
     "適用於任何 Agent 的隨插即用 Skills — 即使 CapyDesign 未在執行也行",

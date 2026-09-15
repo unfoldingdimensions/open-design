@@ -4,11 +4,11 @@ import {
   type AppliedStrategyBindingV2,
   type BundledStrategyDeclarationV2,
   type InstalledPluginRecord,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   normalizeStrategyAssetPath,
   strategyPackageHashFromDigests,
-} from '@open-design/plugin-runtime';
+} from '@capydesign/plugin-runtime';
 
 type StrategyProvenanceInput = Pick<InstalledPluginRecord, 'sourceKind' | 'manifest'>;
 

@@ -49,7 +49,7 @@ import type {
   ChatOpenKind,
   ChatSampleReason,
   ChatStreamHealthProps,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 
 import { reportSafetyEvent } from '../analytics/error-tracking';
 import {

@@ -14769,13 +14769,13 @@
       "rawInput": {
        "filePath": "/Users/elian/Documents/od-wt-chat-panel/apps/web/src/runtime/chat/tool-kind.ts"
       },
-      "rawOutput": "<path>/Users/elian/Documents/od-wt-chat-panel/apps/web/src/runtime/chat/tool-kind.ts</path>\n<type>file</type>\n<content>\n1: import { isTodoWriteToolName } from '@open-design/contrac…[trimmed 10969 chars]",
+      "rawOutput": "<path>/Users/elian/Documents/od-wt-chat-panel/apps/web/src/runtime/chat/tool-kind.ts</path>\n<type>file</type>\n<content>\n1: import { isTodoWriteToolName } from '@capydesign/contrac…[trimmed 10969 chars]",
       "content": [
        {
         "type": "content",
         "content": {
          "type": "text",
-         "text": "<path>/Users/elian/Documents/od-wt-chat-panel/apps/web/src/runtime/chat/tool-kind.ts</path>\n<type>file</type>\n<content>\n1: import { isTodoWriteToolName } from '@open-design/contrac…[trimmed 10969 chars]"
+         "text": "<path>/Users/elian/Documents/od-wt-chat-panel/apps/web/src/runtime/chat/tool-kind.ts</path>\n<type>file</type>\n<content>\n1: import { isTodoWriteToolName } from '@capydesign/contrac…[trimmed 10969 chars]"
         }
        }
       ]

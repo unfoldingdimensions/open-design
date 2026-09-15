@@ -35,7 +35,7 @@ describe('hyperframes-html media renderer preflight', () => {
   beforeEach(async () => {
     root = await mkdtemp(path.join(tmpdir(), 'od-hyperframes-media-'));
     projectRoot = path.join(root, 'project-root');
-    projectsRoot = path.join(projectRoot, '.od', 'projects');
+    projectsRoot = path.join(projectRoot, '.capydesign', 'projects');
     await mkdir(path.join(projectsRoot, 'project-1'), { recursive: true });
     process.env.OD_MEDIA_ALLOW_STUBS = '1';
     delete process.env.HYPERFRAMES_BROWSER_PATH;

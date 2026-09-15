@@ -1,13 +1,13 @@
 import type {
   CapyDesignPlanContractV2,
   StrategyRuntimeStateV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   AppliedStrategyBindingV2Schema,
   OD_NEXT_AGENT_DECLARED_BLOCK_REASON,
   OD_NEXT_RUNTIME_STATE_SCHEMA,
   composeOdNextStrategyContinuationV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type Database from 'better-sqlite3';
 
 import { getSnapshot } from '../../plugins/snapshots.js';

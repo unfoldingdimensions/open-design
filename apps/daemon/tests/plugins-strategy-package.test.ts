@@ -3,7 +3,7 @@ import { chmod, cp, mkdtemp, readFile, rm, symlink, unlink, writeFile } from 'no
 import os from 'node:os';
 import path from 'node:path';
 import Database from 'better-sqlite3';
-import type { InstalledPluginRecord } from '@open-design/contracts';
+import type { InstalledPluginRecord } from '@capydesign/contracts';
 import { migratePlugins } from '../src/plugins/persistence.js';
 import { resolvePluginFolder } from '../src/plugins/registry.js';
 import {

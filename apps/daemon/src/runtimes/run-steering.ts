@@ -39,7 +39,7 @@
  * re-deriving the rule.
  */
 
-import { agentSupportsMidTurnSteering } from '@open-design/contracts';
+import { agentSupportsMidTurnSteering } from '@capydesign/contracts';
 
 export type RunSteeringRefusal =
   | 'runtime_unsupported'

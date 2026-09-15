@@ -50,7 +50,7 @@ describe('Vela media provider', () => {
     runVelaCommandMock.mockReset();
     root = await mkdtemp(path.join(os.tmpdir(), 'od-vela-media-test-'));
     projectRoot = path.join(root, 'repo');
-    projectsRoot = path.join(projectRoot, '.od', 'projects');
+    projectsRoot = path.join(projectRoot, '.capydesign', 'projects');
     projectDir = path.join(projectsRoot, 'project-1');
     await mkdir(projectDir, { recursive: true });
     refs = [];

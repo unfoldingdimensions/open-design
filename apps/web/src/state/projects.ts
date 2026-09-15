@@ -14,7 +14,7 @@ import {
   API_ERROR_CODES,
   isSameWorkspacePrincipal,
   type ApiErrorCode,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   AppliedPluginSnapshot,
   ApplyResult,
@@ -41,7 +41,7 @@ import type {
   WorkspaceCollabContext,
   WorkspaceProjectSummary,
   WorkspaceProjectsResponse,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { randomUUID } from '../utils/uuid';
 import { markProjectDisplaySnapshotsDirty } from './project-display-cache';
 import {
@@ -65,8 +65,8 @@ import type {
 import { removeDesignBrowserProjectCache } from '../components/design-browser-storage';
 import { boundedRequestErrorCode } from '../analytics/workspace';
 
-export type { PluginInstallOutcome } from '@open-design/contracts';
-export type { PluginShareAction } from '@open-design/contracts';
+export type { PluginInstallOutcome } from '@capydesign/contracts';
+export type { PluginShareAction } from '@capydesign/contracts';
 export { workspaceProjectHeaders } from '../collab/workspace-identity';
 
 export type WorkspaceProjectListView = 'all' | 'recent' | 'drafts' | 'team';

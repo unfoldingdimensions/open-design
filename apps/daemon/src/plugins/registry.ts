@@ -16,6 +16,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { promises as fsp } from 'node:fs';
+import { resolveDefaultDataDir } from '../daemon-paths.js';
 import {
   adaptAgentSkill,
   adaptClaudePlugin,
@@ -23,14 +24,14 @@ import {
   parseManifest,
   validateSafe,
   type ManifestParseResult,
-} from '@open-design/plugin-runtime';
+} from '@capydesign/plugin-runtime';
 import type {
   InstalledPluginRecord,
   MarketplaceTrust,
   PluginManifest,
   PluginSourceKind,
   TrustTier,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { defaultTrustForRecord, resolveCapabilitiesGranted } from './trust.js';
 import { isInternalBundledStrategyV2 } from './strategy-provenance.js';
 import { getWorkspaceResourceByResourceId } from '../db.js';
@@ -52,7 +53,7 @@ export function registryRootsForDataDir(dataDir: string): RegistryRoots {
 }
 
 export function defaultRegistryRoots(): RegistryRoots {
-  return registryRootsForDataDir(path.resolve(process.env.OD_DATA_DIR ?? path.join(process.cwd(), '.od')));
+  return registryRootsForDataDir(path.resolve(process.env.OD_DATA_DIR ?? resolveDefaultDataDir(process.cwd())));
 }
 
 export interface ScannedPlugin {

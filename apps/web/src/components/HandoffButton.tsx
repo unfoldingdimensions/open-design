@@ -8,12 +8,12 @@ import type {
   HostEditor,
   HostEditorId,
   HostEditorsResponse,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   handoffTargetIdToTracking,
   type TrackingArtifactKind,
   type TrackingProjectKind,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import { fetchHostEditors, openProjectInEditor } from '../providers/registry';
 import { useAnalytics } from '../analytics/provider';
 import { trackHandoffClick } from '../analytics/events';

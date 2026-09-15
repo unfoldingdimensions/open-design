@@ -1,6 +1,6 @@
 import type { Express } from 'express';
 import fs from 'node:fs';
-import { SIDECAR_ENV } from '@open-design/sidecar-proto';
+import { SIDECAR_ENV } from '@capydesign/sidecar-proto';
 import { buildMcpInstallPayload, type McpInstallPayload } from './mcp-install-info.js';
 import { installCodexMcp, probeCodexInstall, uninstallCodexMcp } from './codex-cli.js';
 import { MCP_TEMPLATES, buildAcpMcpServers, buildClaudeMcpJson, isManagedProjectCwd, readMcpConfig, writeMcpConfig } from './mcp-config.js';
@@ -42,7 +42,7 @@ export function registerMcpRoutes(app: Express, ctx: RegisterMcpRoutesDeps) {
   function computeInstallPayload(): McpInstallPayload {
     const cliPath = OD_BIN;
     // Forward only the opaque inherited client capability. IPC endpoint
-    // naming and transport stay private to @open-design/sidecar.
+    // naming and transport stay private to @capydesign/sidecar.
     const sidecarEnv = inheritedEnvironment();
     const isSidecarMode = Object.keys(sidecarEnv).length > 0;
     const mcpBootstrapCommand = process.env.OD_MCP_BOOTSTRAP_COMMAND;

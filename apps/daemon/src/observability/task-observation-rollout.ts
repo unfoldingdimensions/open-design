@@ -5,7 +5,7 @@ import {
   NormalizedAgentObservationV1Schema,
   type ChildEvidenceCoverageV1,
   type OdNextRolloutDecision,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type Database from 'better-sqlite3';
 
 import type { TelemetryPrefs } from '../app-config.js';

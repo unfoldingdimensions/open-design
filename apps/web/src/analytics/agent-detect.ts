@@ -1,5 +1,5 @@
-import { agentIdToTracking } from '@open-design/contracts/analytics';
-import type { AgentInfo } from '@open-design/contracts';
+import { agentIdToTracking } from '@capydesign/contracts/analytics';
+import type { AgentInfo } from '@capydesign/contracts';
 import { trackAgentDetectDiagnostic, type Track } from './events';
 
 /**

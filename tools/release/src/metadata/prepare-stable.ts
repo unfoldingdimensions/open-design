@@ -14,7 +14,7 @@ import {
   releaseNamespace,
   type ReleaseBaseVersionTuple,
   type ReleaseChannel,
-} from "@open-design/release";
+} from "@capydesign/release";
 
 const execFile = promisify(execFileCallback);
 

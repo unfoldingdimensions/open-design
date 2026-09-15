@@ -6,12 +6,12 @@ import {
   strategyTaskProvesDelivery,
   todoSnapshotHasUnfinishedWork,
   turnEndedByAskingUser,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   collectProcessTreePids,
   listProcessSnapshots,
   stopProcesses,
-} from '@open-design/platform';
+} from '@capydesign/platform';
 import { normalizeMediaExecutionPolicyForRun } from '../media/policy.js';
 import {
   normalizeRunToolBundleForRun,

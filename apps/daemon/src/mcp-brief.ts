@@ -4,7 +4,7 @@ import {
   type CapyDesignBriefAnswers,
   type CapyDesignBriefArtifactType,
   type CapyDesignBriefQuestion,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { randomBytes, randomUUID } from 'node:crypto';
 import {
   type ExternalPluginContext,

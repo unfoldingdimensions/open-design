@@ -7,8 +7,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
   CapyDesignHostUpdaterOpenDialogListener,
   CapyDesignHostUpdaterStatusSnapshot,
-} from '@open-design/host';
-import { installMockCapyDesignHost } from '@open-design/host/testing';
+} from '@capydesign/host';
+import { installMockCapyDesignHost } from '@capydesign/host/testing';
 
 import { App } from '../../src/App';
 import { fetchAmrModels, fetchVelaLoginStatus } from '../../src/providers/daemon';

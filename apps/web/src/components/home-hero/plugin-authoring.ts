@@ -1,4 +1,4 @@
-import type { ProjectKind, SkillSummary } from '@open-design/contracts';
+import type { ProjectKind, SkillSummary } from '@capydesign/contracts';
 import type { PluginUseAction } from '../plugins-home/useActions';
 
 export type HomePromptHandoff =

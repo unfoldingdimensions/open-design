@@ -1,11 +1,11 @@
 import { spawn } from "node:child_process";
 import { isAbsolute } from "node:path";
 
-import { SidecarFactory } from "@open-design/sidecar";
+import { SidecarFactory } from "@capydesign/sidecar";
 import {
   APP_KEYS,
   type DaemonStatusSnapshot,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 
 import { resolveDaemonUrl as resolveDaemonUrlDefault } from "./daemon-url.js";
 

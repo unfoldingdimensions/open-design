@@ -17,11 +17,11 @@
 // `/api/memory/events`.
 
 import { randomUUID } from 'node:crypto';
-import { splitOnOdCards } from '@open-design/contracts';
+import { splitOnOdCards } from '@capydesign/contracts';
 import type {
   MemoryVerifyResult,
   MemoryVerifyRecord,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { memoryEvents } from './memory.js';
 
 export interface ActiveRuleForVerify {

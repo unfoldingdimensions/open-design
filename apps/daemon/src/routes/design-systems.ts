@@ -28,7 +28,7 @@ import {
   type VerifyWorkspaceRequestAuthority,
   type WorkspaceResourceAccessInput,
 } from '../collab/workspace-resource-mutation.js';
-import type { Project, ProjectFile } from '@open-design/contracts';
+import type { Project, ProjectFile } from '@capydesign/contracts';
 
 type DbHandle = ReturnType<typeof openDatabase>;
 

@@ -1,4 +1,4 @@
-import { RELEASE_CHANNELS, type ReleaseChannel } from "@open-design/release";
+import { RELEASE_CHANNELS, type ReleaseChannel } from "@capydesign/release";
 
 export const APP_KEYS = Object.freeze({
   DAEMON: "daemon",
@@ -691,7 +691,7 @@ export type ShutdownResult = {
 
 /**
  * Legacy runtime-layout descriptor retained for the generic path/bootstrap
- * contract. This is not sidecar process identity: `@open-design/sidecar` owns
+ * contract. This is not sidecar process identity: `@capydesign/sidecar` owns
  * the authoritative five-field argv stamp, and IPC is private transport state.
  */
 export type LegacySidecarRuntimeLayout = {

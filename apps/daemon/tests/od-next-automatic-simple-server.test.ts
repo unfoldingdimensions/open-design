@@ -11,12 +11,12 @@ import type {
   OdNextRuntimeCapabilitySnapshotV1,
   CapyDesignPlanContractV2,
   ProjectScenarioTaskProfile,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   normalizeAgentObservationV1,
   OD_NEXT_PROMPT_STAGE_CONTRACT_V2,
   parseOdNextPromptBundleV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 const uuidControl = vi.hoisted(() => ({ forced: [] as string[] }));
 let pendingAutomaticFixtureIdentity: {

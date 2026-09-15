@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, Dispatch, SetStateAction } from 'react';
-import { Button, VisuallyHidden } from '@open-design/components';
+import { Button, VisuallyHidden } from '@capydesign/components';
 import type {
   AmrWalletSnapshot,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
-import { validateBaseUrl } from '@open-design/contracts/api/connectionTest';
+} from '@capydesign/contracts';
+import { validateBaseUrl } from '@capydesign/contracts/api/connectionTest';
 import {
   agentIdToTracking,
   byokProtocolToTracking,
   executionModeToTracking,
   settingsSectionToTracking,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import { useAnalytics } from '../analytics/provider';
 import { byokErrorCode } from '../analytics/byok-error-code';
 import {

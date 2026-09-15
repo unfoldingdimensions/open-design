@@ -7,7 +7,7 @@ import {
   buildWorkspaceSeatSummary,
   type CollabCloudComment,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   closeDatabase,
   deleteConversationAndRepairTeamCommentAnchor,

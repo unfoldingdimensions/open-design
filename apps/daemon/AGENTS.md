@@ -125,9 +125,9 @@ When adding a user-facing capability, close the loop in one change: contract typ
 Common daemon checks:
 
 ```bash
-pnpm --filter @open-design/daemon typecheck
-pnpm --filter @open-design/daemon test
-pnpm --filter @open-design/daemon build
+pnpm --filter @capydesign/daemon typecheck
+pnpm --filter @capydesign/daemon test
+pnpm --filter @capydesign/daemon build
 ```
 
 Focused tests from `apps/daemon`:

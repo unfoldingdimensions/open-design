@@ -41,7 +41,7 @@ describe('memory extraction media-provider fallback', () => {
       originalEnv.set(key, process.env[key]);
       delete process.env[key];
     }
-    process.env.OD_MEDIA_CONFIG_DIR = path.join(projectRoot, '.od');
+    process.env.OD_MEDIA_CONFIG_DIR = path.join(projectRoot, '.capydesign');
   });
 
   afterEach(async () => {
@@ -57,7 +57,7 @@ describe('memory extraction media-provider fallback', () => {
   });
 
   async function writeMediaConfig(config: unknown) {
-    const file = path.join(projectRoot, '.od', 'media-config.json');
+    const file = path.join(projectRoot, '.capydesign', 'media-config.json');
     await mkdir(path.dirname(file), { recursive: true });
     await writeFile(file, JSON.stringify(config), 'utf8');
   }

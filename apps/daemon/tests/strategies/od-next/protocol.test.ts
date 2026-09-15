@@ -1,4 +1,4 @@
-import type { CapyDesignPlanContractV2 } from '@open-design/contracts';
+import type { CapyDesignPlanContractV2 } from '@capydesign/contracts';
 import { describe, expect, it } from 'vitest';
 
 import {

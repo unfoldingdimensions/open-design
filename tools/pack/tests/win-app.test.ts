@@ -154,7 +154,7 @@ describe("createWorkspaceTarballsCacheKey", () => {
 
 describe("createWinPackagedAppCacheKey", () => {
   const packedTarballs = [
-    { fileName: "contracts.tgz", packageName: "@open-design/contracts" },
+    { fileName: "contracts.tgz", packageName: "@capydesign/contracts" },
   ] satisfies PackedTarballInfo[];
 
   it("covers every mutable packaged-app input", async () => {
@@ -172,7 +172,7 @@ describe("createWinPackagedAppCacheKey", () => {
       await expect(createWinPackagedAppCacheKey(config, "tarballs-b", packedTarballs)).resolves.not.toBe(baseline);
       await expect(createWinPackagedAppCacheKey(config, "tarballs-a", [
         ...packedTarballs,
-        { fileName: "platform.tgz", packageName: "@open-design/platform" },
+        { fileName: "platform.tgz", packageName: "@capydesign/platform" },
       ])).resolves.not.toBe(baseline);
       await expect(createWinPackagedAppCacheKey(config, "tarballs-a", packedTarballs, {
         "hyperframes": "0.8.1",

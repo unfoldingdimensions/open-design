@@ -23,7 +23,7 @@ import {
   createCommandInvocation,
   listProcessSnapshots,
   stopProcesses,
-} from '@open-design/platform';
+} from '@capydesign/platform';
 
 const require = createRequire(import.meta.url);
 
@@ -70,7 +70,7 @@ describe('DeepSeek Harness Windows carrier', () => {
       expect(detected.available).toBe(true);
       expect(detected.version).toBe('0.1.0-rc.6');
       expect(getDetectedRuntimeVersions('deepseek-harness')).toMatchObject({
-        runtimeCompanionName: '@open-design/dsh-runtime',
+        runtimeCompanionName: '@capydesign/dsh-runtime',
         runtimeCompanionVersion: 'fixture-1',
       });
     } finally {

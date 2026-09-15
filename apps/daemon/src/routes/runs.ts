@@ -17,7 +17,7 @@ import {
   type StrategyTaskProjectionV2,
   type ProjectMetadata as ContractProjectMetadata,
   type RunResultPackageResponse,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   buildRunCreatedV4Aliases,
   buildRunFinishedV4Aliases,
@@ -30,8 +30,8 @@ import {
   type TrackingDesignSystemEditSurface,
   type RunTaskLineageProps,
   type TrackingRunRecoveryActionType,
-} from '@open-design/contracts/analytics';
-import type { OdNativeEvent } from '@open-design/agui-adapter';
+} from '@capydesign/contracts/analytics';
+import type { OdNativeEvent } from '@capydesign/agui-adapter';
 import { newInsertId, readAnalyticsContext } from '../analytics.js';
 import type { AnalyticsContext } from '../analytics.js';
 import { spawnEnvForAgent } from '../agents.js';
@@ -3527,7 +3527,7 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
       run,
       { mode: 'read', allowNavigationQuery: true },
     )) return;
-    const { encodeOdEventForAgui } = await import('@open-design/agui-adapter');
+    const { encodeOdEventForAgui } = await import('@capydesign/agui-adapter');
     const sse = createSseResponse(res);
     const lastEventId = Number(req.get('Last-Event-ID') || req.query.after || 0);
     const emitMapped = (record: RunEventRecord) => {

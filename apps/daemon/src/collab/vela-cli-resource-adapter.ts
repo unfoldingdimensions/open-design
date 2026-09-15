@@ -1,7 +1,7 @@
 import {
   workspaceContextHasTeamIdentity,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   runVelaCommand,
   velaWorkspaceCommandOptions,

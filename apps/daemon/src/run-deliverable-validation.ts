@@ -1,13 +1,13 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { HYPERFRAMES_VIDEO_MODEL } from '@open-design/contracts';
+import { HYPERFRAMES_VIDEO_MODEL } from '@capydesign/contracts';
 import type {
   ChatRunStatus,
   ProjectFile,
   ProjectFileKind,
   ProjectMetadata,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { listFiles, resolveProjectDir } from './projects.js';
 

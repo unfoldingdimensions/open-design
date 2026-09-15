@@ -15,7 +15,7 @@ import {
   type DesktopUpdateAction,
   type DesktopUpdateResult,
   type WebStatusSnapshot,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 import {
   convergeSidecarLaunch,
   findSidecarProcesses,
@@ -24,8 +24,8 @@ import {
   stopSidecars,
   withSidecarLifecycleLock,
   type SidecarStamp,
-} from "@open-design/sidecar";
-import { readLogTail } from "@open-design/platform";
+} from "@capydesign/sidecar";
+import { readLogTail } from "@capydesign/platform";
 
 import type { ToolPackConfig } from "../config/index.js";
 import { allPackagedSidecarStopRequests, toolPackSidecarStamp } from "../config/sidecar-stamps.js";

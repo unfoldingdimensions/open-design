@@ -1,5 +1,5 @@
-import type { ArtifactOrigin, ProjectFileVersion } from '@open-design/contracts';
-import type { ArtifactExportResultProps } from '@open-design/contracts/analytics';
+import type { ArtifactOrigin, ProjectFileVersion } from '@capydesign/contracts';
+import type { ArtifactExportResultProps } from '@capydesign/contracts/analytics';
 
 const CONTENT_DIGEST_RE = /^[a-f0-9]{64}$/u;
 const ORIGIN_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;

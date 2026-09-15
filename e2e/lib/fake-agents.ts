@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
-import { DECK_SKELETON_HTML } from '@open-design/contracts';
+import { DECK_SKELETON_HTML } from '@capydesign/contracts';
 
 const PROTOCOL_DECK_CANARY_HTML = DECK_SKELETON_HTML
   .replace('<!-- SLOT: deck title -->', 'Deck protocol matrix canary')

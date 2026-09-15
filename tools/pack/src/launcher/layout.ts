@@ -8,9 +8,9 @@ import {
   type LauncherPaths,
   type LauncherRuntimeDescriptor,
   type LauncherVersionPaths,
-} from "@open-design/launcher-proto";
-import { SIDECAR_DEFAULTS } from "@open-design/sidecar-proto";
-import { releaseChannelFromNamespace, releaseChannelFromVersion } from "@open-design/release";
+} from "@capydesign/launcher-proto";
+import { SIDECAR_DEFAULTS } from "@capydesign/sidecar-proto";
+import { releaseChannelFromNamespace, releaseChannelFromVersion } from "@capydesign/release";
 
 import type { ToolPackConfig, ToolPackPlatform } from "../config/index.js";
 

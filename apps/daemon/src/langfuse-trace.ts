@@ -28,7 +28,7 @@ import {
   type SafeDeliverableSyntaxTelemetryV1,
   type SafeRunProcessOutcomeV1,
   type SafeRunQualityV1,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import type { TelemetryPrefs } from './app-config.js';
 import { normalizeCapyDesignTelemetryRelayUrl } from './integrations/telemetry-relay.js';

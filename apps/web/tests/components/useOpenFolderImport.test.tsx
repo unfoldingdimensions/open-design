@@ -3,7 +3,7 @@
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@open-design/host', () => ({
+vi.mock('@capydesign/host', () => ({
   isCapyDesignHostAvailable: () => true,
   pickAndImportHostProject: vi.fn(),
 }));
@@ -16,7 +16,7 @@ vi.mock('../../src/collab/useWorkspaceContext', () => ({
   }),
 }));
 
-import { pickAndImportHostProject } from '@open-design/host';
+import { pickAndImportHostProject } from '@capydesign/host';
 import { useOpenFolderImport } from '../../src/components/useOpenFolderImport';
 
 afterEach(() => {

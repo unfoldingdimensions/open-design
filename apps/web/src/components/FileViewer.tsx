@@ -2,12 +2,12 @@ import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, 
 import type { ArtifactExportFormat } from '../runtime/chat/artifact-export';
 import { AnchoredMenuShell } from './chat/AnchoredMenuShell';
 import { createPortal, flushSync } from 'react-dom';
-import { Button, Input, Select } from '@open-design/components';
+import { Button, Input, Select } from '@capydesign/components';
 import {
   getLatestHostPreviewNavigationFailure,
   subscribeHostPreviewNavigationFailure,
   type CapyDesignHostPreviewNavigationFailure,
-} from '@open-design/host';
+} from '@capydesign/host';
 import { CenteredLoader } from './Loading';
 import { APP_CHROME_FILE_ACTIONS_ID, APP_CHROME_FILE_ACTIONS_SELECTOR } from './AppChromeHeader';
 import {
@@ -26,13 +26,13 @@ import {
   type SocialShareRequest,
   type SocialShareResponse,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
-import { PREVIEW_OBSERVABILITY_HOST_STATE_MESSAGE_TYPE } from '@open-design/contracts/runtime/preview-observability';
-import { PREVIEW_URL_GUARD_MAX_HTML_BYTES } from '@open-design/contracts/runtime/preview-guards';
+} from '@capydesign/contracts';
+import { PREVIEW_OBSERVABILITY_HOST_STATE_MESSAGE_TYPE } from '@capydesign/contracts/runtime/preview-observability';
+import { PREVIEW_URL_GUARD_MAX_HTML_BYTES } from '@capydesign/contracts/runtime/preview-guards';
 import {
   isPreviewRuntimeState,
   type PreviewRuntimeState,
-} from '@open-design/contracts/runtime/preview-runtime-state';
+} from '@capydesign/contracts/runtime/preview-runtime-state';
 import {
   appendResourceQuery,
   workspaceIdentityCacheKey,
@@ -48,7 +48,7 @@ import {
   type TrackingArtifactKind,
   type TrackingProjectKind,
   type TrackingDeployProvider,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import { useAnalytics } from '../analytics/provider';
 import { exportErrorCode } from '../analytics/export-error-code';
 import { deployErrorCode } from '../analytics/deploy-error-code';

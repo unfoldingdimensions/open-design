@@ -7,7 +7,7 @@ import {
   buildWorkspaceSeatSummary,
   type ConnectorDetail,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import {
   buildDesignSystemPackageAuditRepairPrompt,

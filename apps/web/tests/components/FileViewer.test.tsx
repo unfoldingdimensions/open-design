@@ -5,11 +5,11 @@ import { join } from 'node:path';
 import { useLayoutEffect, useRef, useState, type ReactElement } from 'react';
 import { act, cleanup, createEvent, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { installMockCapyDesignHost } from '@open-design/host/testing';
+import { installMockCapyDesignHost } from '@capydesign/host/testing';
 import type {
   CapyDesignHostPreviewNavigationFailure,
   CapyDesignHostPreviewNavigationFailureListener,
-} from '@open-design/host';
+} from '@capydesign/host';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ANNOTATION_EVENT } from '../../src/components/PreviewDrawOverlay';
 
@@ -108,7 +108,7 @@ import {
   buildWorkspacePermissions,
   buildWorkspaceSeatSummary,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 /** A team workspace context — the only state that can address the resource hub,
  *  and therefore the only one where the public "Publish file" entry is offered. */

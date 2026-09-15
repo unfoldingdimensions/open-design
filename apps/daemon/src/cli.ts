@@ -16,10 +16,10 @@ import { runLiveArtifactsToolCli } from './tools-live-artifacts-cli.js';
 import { runDeliverableSyntaxToolCli } from './tools-deliverable-syntax-cli.js';
 import { splitResearchSubcommand } from './research/cli-args.js';
 import { resolveDaemonUrl } from './daemon-url.js';
-import { SidecarFactory } from '@open-design/sidecar';
-import { APP_KEYS, SIDECAR_MESSAGES } from '@open-design/sidecar-proto';
-import { EXPORT_FORMATS, EXPORT_IMAGE_FORMATS, mediaFailureNextStep } from '@open-design/contracts';
-import type { ArtifactLintFinding, LintArtifactCliResultEnvelope, LintArtifactResponse, LintFailOn } from '@open-design/contracts';
+import { SidecarFactory } from '@capydesign/sidecar';
+import { APP_KEYS, SIDECAR_MESSAGES } from '@capydesign/sidecar-proto';
+import { EXPORT_FORMATS, EXPORT_IMAGE_FORMATS, mediaFailureNextStep } from '@capydesign/contracts';
+import type { ArtifactLintFinding, LintArtifactCliResultEnvelope, LintArtifactResponse, LintFailOn } from '@capydesign/contracts';
 import { buildExportCliRequestBody, buildExportCliResultEnvelope, resolveExportCliDeckMode } from './export-cli-request.js';
 import { exportRoutePath } from './export-cli-routing.js';
 import {
@@ -9185,7 +9185,7 @@ async function runDaemonDb(rest, flags) {
 
 status:
   Prints a structured inventory of the daemon's SQLite backend:
-    - file path (under .od/ by default; OD_DATA_DIR overrides)
+    - file path (under .capydesign/ by default; OD_DATA_DIR overrides)
     - size on disk (primary + WAL + SHM)
     - schema version (user_version PRAGMA)
     - per-table row counts (system tables excluded)
@@ -10169,7 +10169,7 @@ diagnostics produces.
   const base = (await libraryDaemonUrl(flags)).replace(/\/$/, '');
 
   const { DIAGNOSTICS_EXPORT_PATH, DIAGNOSTICS_FILENAME_PREFIX, diagnosticsFileName } =
-    await import('@open-design/diagnostics');
+    await import('@capydesign/diagnostics');
   const fs = await import('node:fs/promises');
   const path = await import('node:path');
 

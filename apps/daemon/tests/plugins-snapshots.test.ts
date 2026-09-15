@@ -23,7 +23,7 @@ import {
   restoreProjectSnapshotLink,
   rowToSnapshot,
 } from '../src/plugins/snapshots.js';
-import { strategyPackageHashFromDigests } from '@open-design/plugin-runtime';
+import { strategyPackageHashFromDigests } from '@capydesign/plugin-runtime';
 
 let db: Database.Database;
 let tmpDir: string;

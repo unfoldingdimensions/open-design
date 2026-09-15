@@ -6,14 +6,14 @@ import { dirname, join, resolve } from "node:path";
 import { posix } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { findSidecarProcesses, getSidecarStatus, invokeSidecar, stopSidecar } from "@open-design/sidecar";
+import { findSidecarProcesses, getSidecarStatus, invokeSidecar, stopSidecar } from "@capydesign/sidecar";
 import {
   APP_KEYS,
   OPEN_DESIGN_SIDECAR_CONTRACT,
   SIDECAR_MESSAGES,
   SIDECAR_MODES,
   SIDECAR_SOURCES,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 import { describe, expect, it, vi } from "vitest";
 
 const stopSidecarMock = vi.hoisted(() => vi.fn(async (_stamp?: unknown, _options?: unknown) => ({
@@ -41,8 +41,8 @@ const stopSidecarsMock = vi.hoisted(() => vi.fn(async (requests: Array<{ options
   };
 }));
 
-vi.mock("@open-design/sidecar", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@open-design/sidecar")>();
+vi.mock("@capydesign/sidecar", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@capydesign/sidecar")>();
   return {
     ...actual,
     findSidecarProcesses: vi.fn(async () => []),
@@ -649,8 +649,8 @@ describe("renderLinuxPackagedMainEntry", () => {
   it("loads the ESM packaged entry without require or temporary keepalive handles", () => {
     const out = renderLinuxPackagedMainEntry();
 
-    expect(out).toContain('import("@open-design/packaged")');
-    expect(out).not.toContain('require("@open-design/packaged")');
+    expect(out).toContain('import("@capydesign/packaged")');
+    expect(out).not.toContain('require("@capydesign/packaged")');
     expect(out).not.toContain("setTimeout");
   });
 });

@@ -3,7 +3,7 @@ import fs, { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { WorkspaceDirectoryItem } from '@open-design/contracts';
+import type { WorkspaceDirectoryItem } from '@capydesign/contracts';
 import {
   createCachedWorkspaceDirectoryFetcher,
   createFreshWorkspaceDirectoryFetcher,

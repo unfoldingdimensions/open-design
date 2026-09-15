@@ -13,8 +13,8 @@ import { createPortal, flushSync } from 'react-dom';
 import {
   clearHostBrowserData,
   isCapyDesignHostAvailable,
-} from '@open-design/host';
-import type { TrackingReferenceBoardCategory } from '@open-design/contracts/analytics';
+} from '@capydesign/host';
+import type { TrackingReferenceBoardCategory } from '@capydesign/contracts/analytics';
 import { useAnalytics } from '../analytics/provider';
 import {
   trackReferenceBoardClick,

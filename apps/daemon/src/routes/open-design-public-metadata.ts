@@ -3,7 +3,7 @@ import type {
   CapyDesignDiscordPresenceResponse,
   CapyDesignGithubLatestReleaseResponse,
   CapyDesignGithubRepoResponse,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type { RouteDeps } from '../server-context.js';
 import {
   OPEN_DESIGN_DISCORD_INVITE_URL,

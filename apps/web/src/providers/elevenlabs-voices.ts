@@ -1,4 +1,4 @@
-import type { AudioVoiceOption } from '@open-design/contracts';
+import type { AudioVoiceOption } from '@capydesign/contracts';
 
 type JsonRecord = Record<string, unknown>;
 

@@ -7,7 +7,7 @@ import {
   compareLauncherVersions,
   validateLauncherRuntimeDescriptor,
   type LauncherRuntimeDescriptor,
-} from "@open-design/launcher-proto";
+} from "@capydesign/launcher-proto";
 import {
   DESKTOP_UPDATE_CHANNELS,
   DESKTOP_UPDATE_MODES,
@@ -18,7 +18,7 @@ import {
   type DesktopUpdateErrorSnapshot,
   type DesktopUpdateReinstallSnapshot,
   type DesktopUpdateState,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 
 import { isDesktopUpdateChannel, type DesktopUpdaterConfig } from "./config.js";
 import type { ResolvedChecksumSnapshot, UpdateReleaseRef } from "./store.js";

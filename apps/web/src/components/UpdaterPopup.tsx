@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import type { CapyDesignHostUpdaterStatusSnapshot } from '@open-design/host';
+import type { CapyDesignHostUpdaterStatusSnapshot } from '@capydesign/host';
 
 import { Icon } from './Icon';
 import { popoverIn } from '../motion';

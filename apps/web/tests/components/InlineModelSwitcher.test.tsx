@@ -2,7 +2,7 @@
 
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import { InlineModelSwitcher } from '../../src/components/InlineModelSwitcher';
 import {
   AMR_LOGIN_POLL_INTERVAL_MS,

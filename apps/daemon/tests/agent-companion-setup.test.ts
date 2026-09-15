@@ -46,7 +46,7 @@ async function fixture(options: { existingProfile?: boolean; validHash?: boolean
   const sha256 = createHash('sha256').update(await readFile(tarball)).digest('hex');
   await writeFile(path.join(bundleRoot, 'manifest.json'), `${JSON.stringify({
     file: path.basename(tarball),
-    packageName: '@open-design/dsh-runtime',
+    packageName: '@capydesign/dsh-runtime',
     schemaVersion: 1,
     sha256: options.validHash === false ? '0'.repeat(64) : sha256,
     version: '0.1.0',

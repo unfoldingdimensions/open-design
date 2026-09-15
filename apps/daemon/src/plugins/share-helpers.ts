@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import type Database from 'better-sqlite3';
-import { PLUGIN_SHARE_ACTION_PLUGIN_IDS } from '@open-design/contracts';
+import { PLUGIN_SHARE_ACTION_PLUGIN_IDS } from '@capydesign/contracts';
 import { upsertMessage } from '../db.js';
 import { emittedRenderableQuestionForm } from '../question-form-detect.js';
 import { execGhBuffered } from '../services/login-shell.js';
@@ -129,6 +129,7 @@ const PLUGIN_CONTEXT_SKIP_DIRS = new Set([
   '.next',
   '.nuxt',
   '.od',
+  '.capydesign',
   '.output',
   '.tmp',
   '.turbo',

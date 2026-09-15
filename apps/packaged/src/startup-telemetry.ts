@@ -55,7 +55,7 @@ export const STARTUP_FAILURE_EVENT = "packaged_runtime_failed";
 //
 // EVENT_SCHEMA_VERSION must stay in lockstep with
 // packages/contracts/src/analytics/public-params.ts. It is replicated (not
-// imported) because apps/packaged does not depend on @open-design/contracts and
+// imported) because apps/packaged does not depend on @capydesign/contracts and
 // a single integer isn't worth a new cross-package dependency that also
 // complicates the daemon-chunk externalization.
 const EVENT_SCHEMA_VERSION = 2;

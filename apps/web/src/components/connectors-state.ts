@@ -1,4 +1,4 @@
-import type { ConnectorDetail, ConnectorStatusResponse } from '@open-design/contracts';
+import type { ConnectorDetail, ConnectorStatusResponse } from '@capydesign/contracts';
 import {
   fetchConnectorDiscovery,
   fetchConnectors,

@@ -3,7 +3,7 @@ import fs, { mkdtempSync, rmSync, writeFileSync, mkdirSync, readFileSync, exists
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { Brand } from '@open-design/contracts';
+import type { Brand } from '@capydesign/contracts';
 
 import {
   closeDatabase,

@@ -331,13 +331,13 @@ describe("release workflows", () => {
     expect(macWorkspace).toContain("await ensureWorkspaceBuildArtifacts(");
     expect(linuxPack).toContain("await runWorkspaceBuild(");
     for (const buildSource of [winApp, macWorkspace, linuxPack]) {
-      expect(buildSource).not.toContain('["--filter", "@open-design/platform", "build"]');
-      expect(buildSource).not.toContain('["--filter", "@open-design/sidecar", "build"]');
+      expect(buildSource).not.toContain('["--filter", "@capydesign/platform", "build"]');
+      expect(buildSource).not.toContain('["--filter", "@capydesign/sidecar", "build"]');
     }
-    const dependencyClosureBuild = '"--filter", "@open-design/packaged^..."';
-    const webSidecarBuild = '"--filter", "@open-design/web", "run", "build:sidecar"';
-    const packagedBuild = '"--filter", "@open-design/packaged", "run", "build"';
-    expect(workspaceBuild).toContain('"--filter", "@open-design/dsh-runtime..."');
+    const dependencyClosureBuild = '"--filter", "@capydesign/packaged^..."';
+    const webSidecarBuild = '"--filter", "@capydesign/web", "run", "build:sidecar"';
+    const packagedBuild = '"--filter", "@capydesign/packaged", "run", "build"';
+    expect(workspaceBuild).toContain('"--filter", "@capydesign/dsh-runtime..."');
     expect(workspaceBuild.indexOf(dependencyClosureBuild)).toBeLessThan(workspaceBuild.indexOf(webSidecarBuild));
     expect(workspaceBuild.indexOf(webSidecarBuild)).toBeLessThan(workspaceBuild.indexOf(packagedBuild));
     expect(prerelease).toContain("name: release-prerelease");
@@ -679,8 +679,8 @@ describe("release workflows", () => {
 
     // The suites moved verbatim and still run against the resolved build commit.
     for (const suite of [
-      "pnpm --filter @open-design/e2e test",
-      "pnpm --filter @open-design/daemon test --shard=${{ matrix.shard }}/4",
+      "pnpm --filter @capydesign/e2e test",
+      "pnpm --filter @capydesign/daemon test --shard=${{ matrix.shard }}/4",
       "pnpm -r --workspace-concurrency=4 --if-present run typecheck",
       "run: pnpm guard",
       "uses: ./.github/workflows/ui-extended-main.yml",

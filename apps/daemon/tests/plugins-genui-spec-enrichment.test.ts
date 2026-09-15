@@ -12,7 +12,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import Database from 'better-sqlite3';
 import express from 'express';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -32,7 +32,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(here, '../../..');
 const serverRuntimeDataRoot = process.env.OD_DATA_DIR
   ? path.resolve(projectRoot, process.env.OD_DATA_DIR)
-  : path.join(projectRoot, '.od');
+  : path.join(projectRoot, '.capydesign');
 
 let server: http.Server | undefined;
 let baseUrl: string;

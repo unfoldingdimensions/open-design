@@ -3,7 +3,7 @@ import type {
   WorkspaceBillingRuntimeState,
   WorkspaceBillingSnapshot,
   WorkspaceWalletBalance,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type { VelaWorkspaceBillingProjection } from '../integrations/vela-billing.js';
 
 const DEFAULT_POLL_INTERVAL_MS = 30_000;

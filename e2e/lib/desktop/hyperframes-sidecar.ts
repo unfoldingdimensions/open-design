@@ -6,11 +6,11 @@ import {
   isCurrentSidecarLauncher,
   readCurrentSidecarStamp,
   SidecarFactory,
-} from '@open-design/sidecar';
+} from '@capydesign/sidecar';
 import {
   SIDECAR_MESSAGES,
   type DesktopRenderFramesInput,
-} from '@open-design/sidecar-proto';
+} from '@capydesign/sidecar-proto';
 import { PNG } from 'pngjs';
 
 const capturePath = process.env.OD_TEST_CAPTURED_FRAME_DOCUMENT;

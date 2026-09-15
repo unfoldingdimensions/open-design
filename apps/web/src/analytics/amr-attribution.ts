@@ -4,7 +4,7 @@ import type {
   TrackingCampaignConversionSource,
   TrackingCampaignId,
   TrackingPageName,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import {
   readOnboardingProfile,
   type OnboardingProfile,

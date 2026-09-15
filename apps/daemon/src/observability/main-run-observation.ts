@@ -5,7 +5,7 @@ import {
   type NormalizedUsageEvidenceV1,
   type SafeRunQualityV1,
   type StrategyInputStageV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import {
   structuredPromptStackInput,

@@ -54,7 +54,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build tools-release
-        run: pnpm --filter @open-design/tools-release build
+        run: pnpm --filter @capydesign/tools-release build
 
       - name: Verify publisher checkout is current main
         run: |

@@ -1,4 +1,4 @@
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import {
   fetchProjectFilePreview,
   fetchProjectFileText,

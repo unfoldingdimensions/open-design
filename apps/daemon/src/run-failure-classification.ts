@@ -12,11 +12,11 @@ import type {
   TrackingRunPolicyReason,
   TrackingRunRepairOwner,
   TrackingRunTerminalTrigger,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import {
   isMembershipConcurrencyLimitFailure,
   isModelWindowLimitFailure,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import {
   classifyAmrAccountFailure,

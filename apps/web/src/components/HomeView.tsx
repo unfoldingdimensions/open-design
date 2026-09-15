@@ -8,7 +8,7 @@
 // textarea can live centered in the hero.
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Dialog, DialogFooter, DialogTitle } from '@open-design/components';
+import { Dialog, DialogFooter, DialogTitle } from '@capydesign/components';
 import type {
   ApplyResult,
   ChatSessionMode,
@@ -23,12 +23,12 @@ import type {
   WorkspaceProjectSummary,
   AudioVoiceOption,
   WorkspaceContextItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   automaticStrategyTaskProfileForRouteId,
   DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID,
-} from '@open-design/contracts';
-import { projectKindFromMetadataToTracking } from '@open-design/contracts/analytics';
+} from '@capydesign/contracts';
+import { projectKindFromMetadataToTracking } from '@capydesign/contracts/analytics';
 import { useAnalytics } from '../analytics/provider';
 import {
   trackCommunityGalleryClick,
@@ -81,7 +81,7 @@ import {
   openFolderDialog,
   pushRecentLinkedDir,
 } from '../providers/registry';
-import { isCapyDesignHostAvailable, pickHostWorkingDir } from '@open-design/host';
+import { isCapyDesignHostAvailable, pickHostWorkingDir } from '@capydesign/host';
 import type {
   DesignSystemSummary,
   Project,

@@ -5,7 +5,7 @@ import { join } from "node:path";
 import {
   LAUNCHER_SCHEMA_VERSION,
   resolveLauncherPaths,
-} from "@open-design/launcher-proto";
+} from "@capydesign/launcher-proto";
 import { describe, expect, it } from "vitest";
 
 import type { ToolPackConfig } from "@/config/index.js";

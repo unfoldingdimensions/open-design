@@ -46,7 +46,7 @@ function makeConfig(root: string, namespace: string): ToolPackConfig {
 describe("resolveMacInstallIdentity", () => {
   it("keeps stable builds on the canonical mac identity", () => {
     expect(resolveMacInstallIdentity(makeConfig("/work", "release-stable"))).toMatchObject({
-      appId: "io.open-design.desktop",
+      appId: "io.capydesign.desktop",
       installerTitle: "CapyDesign",
       productName: "CapyDesign",
       publicAppBundleName: "CapyDesign.app",
@@ -58,7 +58,7 @@ describe("resolveMacInstallIdentity", () => {
     const config = makeConfig("/work", "release-beta");
 
     expect(resolveMacInstallIdentity(config)).toEqual({
-      appId: "io.open-design.desktop.beta",
+      appId: "io.capydesign.desktop.beta",
       executableName: "CapyDesign Beta",
       installerTitle: "CapyDesign Beta",
       productName: "CapyDesign Beta",
@@ -72,7 +72,7 @@ describe("resolveMacInstallIdentity", () => {
     const config = makeConfig("/work", "release-preview");
 
     expect(resolveMacInstallIdentity(config)).toEqual({
-      appId: "io.open-design.desktop.preview",
+      appId: "io.capydesign.desktop.preview",
       executableName: "CapyDesign Preview",
       installerTitle: "CapyDesign Preview",
       productName: "CapyDesign Preview",
@@ -90,7 +90,7 @@ describe("resolveMacInstallIdentity", () => {
     const prereleaseNamespaceConfig = makeConfig("/work", "release-prerelease");
 
     expect(resolveMacInstallIdentity(prereleaseVersionConfig)).toEqual({
-      appId: "io.open-design.desktop.prerelease",
+      appId: "io.capydesign.desktop.prerelease",
       executableName: "CapyDesign Prerelease",
       installerTitle: "CapyDesign Prerelease",
       productName: "CapyDesign Prerelease",

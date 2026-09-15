@@ -19,7 +19,7 @@ import {
   type CapyDesignHostUpdaterResult,
   type CapyDesignHostUpdaterStatusListener,
   type CapyDesignHostUpdaterStatusSnapshot,
-} from '@open-design/host';
+} from '@capydesign/host';
 
 export type UpdaterEnvironment = 'desktop' | 'web';
 

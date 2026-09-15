@@ -1,7 +1,7 @@
 import type { Context } from '@deepseek-ai/cordis';
 import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants';
 
-const PACKAGE_NAME = '@open-design/dsh-runtime';
+const PACKAGE_NAME = '@capydesign/dsh-runtime';
 export const name = 'open-design-runtime-invariant';
 export const inject = ['invariants'];
 const install: InvariantInstaller = () => {};

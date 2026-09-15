@@ -52,7 +52,7 @@ import {
   DESKTOP_ARTIFACT_CAPTURE_MODES,
   type DesktopExportArtifactInput,
   type DesktopExportArtifactResult,
-} from '@open-design/sidecar-proto';
+} from '@capydesign/sidecar-proto';
 
 import {
   bundleStandaloneHtml,

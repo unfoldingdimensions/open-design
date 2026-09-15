@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
-import { INTEGRATIONS_MCP_PATH } from '@open-design/contracts';
+import { INTEGRATIONS_MCP_PATH } from '@capydesign/contracts';
 
 import {
   composeSystemPrompt,

@@ -19,7 +19,7 @@ import {
   type ComponentsManifest,
   extractComponentsManifest,
   summarizeComponentsManifestForPrompt,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { parseFrontmatter } from './frontmatter.js';
 import type { FrontmatterObject, FrontmatterValue } from './frontmatter.js';

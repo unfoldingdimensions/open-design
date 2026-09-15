@@ -73,7 +73,7 @@ async function createDshRuntimeFixture(workspaceRoot: string): Promise<void> {
   await writeFile(
     join(packageRoot, "package.json"),
     `${JSON.stringify({
-      name: "@open-design/dsh-runtime",
+      name: "@capydesign/dsh-runtime",
       version: "0.1.0",
       files: ["dist"],
     }, null, 2)}\n`,
@@ -122,7 +122,7 @@ describe("prepareResourceTree", () => {
 
       expect(manifest).toMatchObject({
         file: tarballs[0],
-        packageName: "@open-design/dsh-runtime",
+        packageName: "@capydesign/dsh-runtime",
         schemaVersion: 1,
         version: "0.1.0",
       });

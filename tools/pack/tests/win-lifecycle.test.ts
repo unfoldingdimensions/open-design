@@ -2,7 +2,7 @@ import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promise
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 
-import { SIDECAR_MESSAGES } from "@open-design/sidecar-proto";
+import { SIDECAR_MESSAGES } from "@capydesign/sidecar-proto";
 import { describe, expect, it, vi } from "vitest";
 
 import type { ToolPackConfig } from "@/config/index.js";
@@ -12,10 +12,10 @@ const findSidecarProcesses = vi.hoisted(() => vi.fn(async (stamp: { source: stri
   stamp.source === "tools-pack" ? [{ pid: 1234 }] : [],
 ));
 const listProcessSnapshots = vi.hoisted(() =>
-  vi.fn<typeof import("@open-design/platform").listProcessSnapshots>(async () => []),
+  vi.fn<typeof import("@capydesign/platform").listProcessSnapshots>(async () => []),
 );
 const matchesStampedProcess = vi.hoisted(() =>
-  vi.fn<typeof import("@open-design/platform").matchesStampedProcess>(() => false),
+  vi.fn<typeof import("@capydesign/platform").matchesStampedProcess>(() => false),
 );
 const spawnBackgroundProcess = vi.hoisted(() => vi.fn(async () => ({ pid: 12345 })));
 const convergeSidecarLaunch = vi.hoisted(() => vi.fn(async (
@@ -59,8 +59,8 @@ const resolveWinRegisteredPaths = vi.hoisted(() =>
   vi.fn<typeof import("@/win/registry.js").resolveWinRegisteredPaths>(async (_config, paths) => paths),
 );
 
-vi.mock("@open-design/sidecar", async () => {
-  const actual = await vi.importActual<typeof import("@open-design/sidecar")>("@open-design/sidecar");
+vi.mock("@capydesign/sidecar", async () => {
+  const actual = await vi.importActual<typeof import("@capydesign/sidecar")>("@capydesign/sidecar");
   return {
     ...actual,
     convergeSidecarLaunch,
@@ -73,8 +73,8 @@ vi.mock("@open-design/sidecar", async () => {
   };
 });
 
-vi.mock("@open-design/platform", async () => {
-  const actual = await vi.importActual<typeof import("@open-design/platform")>("@open-design/platform");
+vi.mock("@capydesign/platform", async () => {
+  const actual = await vi.importActual<typeof import("@capydesign/platform")>("@capydesign/platform");
   return {
     ...actual,
     listProcessSnapshots,

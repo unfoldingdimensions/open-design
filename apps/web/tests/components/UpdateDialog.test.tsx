@@ -7,8 +7,8 @@ import type {
   CapyDesignHostUpdaterOpenDialogListener,
   CapyDesignHostUpdaterStatusListener,
   CapyDesignHostUpdaterStatusSnapshot,
-} from '@open-design/host';
-import { installMockCapyDesignHost } from '@open-design/host/testing';
+} from '@capydesign/host';
+import { installMockCapyDesignHost } from '@capydesign/host/testing';
 
 import { UpdateDialog } from '../../src/components/UpdateDialog';
 import { I18nProvider } from '../../src/i18n';

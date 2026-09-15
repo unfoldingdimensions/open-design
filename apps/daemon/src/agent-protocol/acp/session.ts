@@ -7,7 +7,7 @@
  * connectionTest.ts and server.ts (via the acp/ barrel).
  */
 import path from 'node:path';
-import type { ExecutionProfile } from '@open-design/contracts';
+import type { ExecutionProfile } from '@capydesign/contracts';
 import {
   createDsmlArtifactTextSuppressor,
   createToolCallTextSuppressor,

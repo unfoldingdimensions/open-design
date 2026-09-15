@@ -7,8 +7,8 @@ import {
   type DesktopUpdateChannel,
   type DesktopUpdateMode,
   type SidecarSource,
-} from "@open-design/sidecar-proto";
-import { isReleaseChannel, releaseChannelFromVersion } from "@open-design/release";
+} from "@capydesign/sidecar-proto";
+import { isReleaseChannel, releaseChannelFromVersion } from "@capydesign/release";
 
 /**
  * @module updater-config

@@ -271,17 +271,17 @@ jobs:
       #   - `apps/daemon/dist/*.d.ts` for packaged/runtime consumers of the daemon
       #     package export
       #   - `apps/desktop/dist/main/index.d.ts` for `apps/packaged` imports of
-      #     `@open-design/desktop/main`
+      #     `@capydesign/desktop/main`
       #   - `apps/web/dist/sidecar/index.d.ts` for `apps/packaged` imports of
-      #     `@open-design/web/sidecar`
+      #     `@capydesign/web/sidecar`
       # If postinstall grows a targeted app type-generation phase covering these
       # three exports without broad app builds, this CI prebuild can be removed.
       - name: Prebuild workspace type declarations
         if: ${{ fromJSON(needs.plan.outputs.scopes).run_preflight_typecheck }}
         run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/desktop build
-          pnpm --filter @open-design/web build:sidecar
+          pnpm --filter @capydesign/daemon build
+          pnpm --filter @capydesign/desktop build
+          pnpm --filter @capydesign/web build:sidecar
 
       - name: Typecheck workspaces
         if: ${{ fromJSON(needs.plan.outputs.scopes).run_preflight_typecheck }}
@@ -316,21 +316,21 @@ jobs:
 
       - name: Workspace unit tests
         run: |
-          pnpm --filter @open-design/contracts test
-          pnpm --filter @open-design/host test
-          pnpm --filter @open-design/platform test
-          pnpm --filter @open-design/sidecar test
-          pnpm --filter @open-design/sidecar-proto test
+          pnpm --filter @capydesign/contracts test
+          pnpm --filter @capydesign/host test
+          pnpm --filter @capydesign/platform test
+          pnpm --filter @capydesign/sidecar test
+          pnpm --filter @capydesign/sidecar-proto test
           if [ "${{ fromJSON(needs.plan.outputs.scopes).tools_dev_tests_required }}" = "true" ]; then
-            pnpm --filter @open-design/tools-dev test
+            pnpm --filter @capydesign/tools-dev test
           fi
           if [ "${{ fromJSON(needs.plan.outputs.scopes).tools_pack_tests_required }}" = "true" ]; then
-            pnpm --filter @open-design/desktop build
-            pnpm --filter @open-design/desktop test
-            pnpm --filter @open-design/packaged test
-            pnpm --filter @open-design/tools-pack test
+            pnpm --filter @capydesign/desktop build
+            pnpm --filter @capydesign/desktop test
+            pnpm --filter @capydesign/packaged test
+            pnpm --filter @capydesign/tools-pack test
             if [ "${{ fromJSON(needs.plan.outputs.run).e2e_vitest }}" != "true" ]; then
-              pnpm --filter @open-design/e2e test tests/packaged-launcher-update-loop.test.ts
+              pnpm --filter @capydesign/e2e test tests/packaged-launcher-update-loop.test.ts
             fi
           fi
 
@@ -361,7 +361,7 @@ jobs:
       - name: Run daemon test shard
         env:
           OD_WATCHER_TEST_DEBUG: "1"
-        run: pnpm --filter @open-design/daemon test --shard=${{ matrix.shard }}/4
+        run: pnpm --filter @capydesign/daemon test --shard=${{ matrix.shard }}/4
 
   windows_tools_pack_payload_tests:
     name: Windows tools-pack payload tests
@@ -380,7 +380,7 @@ jobs:
           runner-labels: ${{ toJSON(fromJSON(needs.runners.outputs.runs_on).windows_tools) }}
 
       - name: Windows launcher payload archive tests
-        run: pnpm --filter @open-design/tools-pack exec vitest run tests/launcher/windows/payload.test.ts
+        run: pnpm --filter @capydesign/tools-pack exec vitest run tests/launcher/windows/payload.test.ts
 
   web_workspace_tests:
     name: Web workspace tests (${{ matrix.shard }}/2)
@@ -406,10 +406,10 @@ jobs:
           runner-labels: ${{ toJSON(fromJSON(needs.runners.outputs.runs_on).js_hot) }}
 
       - name: Prebuild web sidecar declarations
-        run: pnpm --filter @open-design/web build:sidecar
+        run: pnpm --filter @capydesign/web build:sidecar
 
       - name: Web workspace tests
-        run: pnpm --filter @open-design/web exec vitest run -c vitest.config.ts --maxWorkers=2 --shard=${{ matrix.shard }}/2
+        run: pnpm --filter @capydesign/web exec vitest run -c vitest.config.ts --maxWorkers=2 --shard=${{ matrix.shard }}/2
 
   e2e_vitest:
     name: E2E Vitest
@@ -439,12 +439,12 @@ jobs:
 
       - name: Prebuild workspace type declarations
         run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/desktop build
-          pnpm --filter @open-design/web build:sidecar
+          pnpm --filter @capydesign/daemon build
+          pnpm --filter @capydesign/desktop build
+          pnpm --filter @capydesign/web build:sidecar
 
       - name: E2E Vitest
-        run: pnpm --filter @open-design/e2e test
+        run: pnpm --filter @capydesign/e2e test
 
   playwright_critical:
     name: Playwright critical (${{ matrix.group }})
@@ -482,9 +482,9 @@ jobs:
 
       - name: Prebuild workspace type declarations
         run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/desktop build
-          pnpm --filter @open-design/web build:sidecar
+          pnpm --filter @capydesign/daemon build
+          pnpm --filter @capydesign/desktop build
+          pnpm --filter @capydesign/web build:sidecar
 
       - name: Clean Playwright state
         run: pnpm -C e2e exec tsx scripts/playwright.ts clean
@@ -526,9 +526,9 @@ jobs:
 
       - name: Prebuild workspace type declarations
         run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/desktop build
-          pnpm --filter @open-design/web build:sidecar
+          pnpm --filter @capydesign/daemon build
+          pnpm --filter @capydesign/desktop build
+          pnpm --filter @capydesign/web build:sidecar
 
       - name: Clean Playwright state
         run: pnpm -C e2e exec tsx scripts/playwright.ts clean
@@ -598,9 +598,9 @@ jobs:
 
       - name: Prebuild workspace type declarations
         run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/desktop build
-          pnpm --filter @open-design/web build:sidecar
+          pnpm --filter @capydesign/daemon build
+          pnpm --filter @capydesign/desktop build
+          pnpm --filter @capydesign/web build:sidecar
 
       - name: Run strict visual Playwright suite
         id: visual

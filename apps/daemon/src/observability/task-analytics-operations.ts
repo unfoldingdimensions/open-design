@@ -6,7 +6,7 @@ import type {
   StrategyInputStageV2,
   StrategyRouteV2,
   StrategyTaskTypeV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import type {
   ObservationAvailabilityCountsV1,

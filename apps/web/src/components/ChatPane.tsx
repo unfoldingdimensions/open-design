@@ -49,7 +49,7 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { hasOdCard, OD_NEXT_STRATEGY_ID, type ProjectMediaTask } from '@open-design/contracts';
+import { hasOdCard, OD_NEXT_STRATEGY_ID, type ProjectMediaTask } from '@capydesign/contracts';
 import { useAnalytics } from '../analytics/provider';
 import { getResolvedDeviceId } from '../analytics/client';
 import {
@@ -106,11 +106,11 @@ import type {
   ChatSessionMode,
   RunContextSelection,
   WorkspaceContextItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   TrackingProjectKind,
   TrackingRunRecoveryActionType,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import { isDesignSystemWorkspacePrompt } from '../design-system-auto-prompt';
 import {
   isTodoWriteToolName,

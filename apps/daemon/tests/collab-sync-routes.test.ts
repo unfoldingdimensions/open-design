@@ -16,7 +16,7 @@ import {
   buildWorkspacePermissions,
   buildWorkspaceSeatSummary,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { runVelaResourceCommand } from '../src/collab/vela-cli-resource-adapter.js';
 import {
   createCollabRuntime,

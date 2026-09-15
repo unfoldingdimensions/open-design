@@ -1,12 +1,12 @@
 import type Database from 'better-sqlite3';
-import type { MarketplaceManifest, MarketplacePluginEntry } from '@open-design/contracts';
+import type { MarketplaceManifest, MarketplacePluginEntry } from '@capydesign/contracts';
 import type {
   RegistryEntry,
   RegistryPublishOutcome,
   RegistryPublishRequest,
   RegistryTrust,
   RegistryYankOutcome,
-} from '@open-design/registry-protocol';
+} from '@capydesign/registry-protocol';
 import { StaticRegistryBackend, toRegistryEntry } from './static-backend.js';
 
 type SqliteDb = Database.Database;

@@ -3,14 +3,14 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { BrandSummary } from '@open-design/contracts';
-import { isCapyDesignHostAvailable, pickHostWorkingDir } from '@open-design/host';
+import type { BrandSummary } from '@capydesign/contracts';
+import { isCapyDesignHostAvailable, pickHostWorkingDir } from '@capydesign/host';
 import { NewProjectPanel } from '../../src/components/NewProjectPanel';
 import { openFolderDialog } from '../../src/providers/registry';
 import type { DesignSystemSummary, SkillSummary } from '../../src/types';
 
-vi.mock('@open-design/host', async () => {
-  const actual = await vi.importActual<typeof import('@open-design/host')>('@open-design/host');
+vi.mock('@capydesign/host', async () => {
+  const actual = await vi.importActual<typeof import('@capydesign/host')>('@capydesign/host');
   return {
     ...actual,
     isCapyDesignHostAvailable: vi.fn(),

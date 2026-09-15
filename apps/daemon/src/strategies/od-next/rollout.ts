@@ -5,14 +5,14 @@ import type {
   OdNextRolloutMode,
   OdNextRolloutModeSource,
   OdNextRolloutTaskType,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 export type {
   OdNextRolloutDecision,
   OdNextRolloutMode,
   OdNextRolloutModeSource,
   OdNextRolloutTaskType,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 /**
  * The single app-config field this policy consults. Structural on purpose: the

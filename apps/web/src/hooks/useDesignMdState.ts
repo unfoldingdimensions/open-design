@@ -11,7 +11,7 @@ import type {
   Conversation,
   ProjectFile,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { parseProvenance } from '../lib/parse-provenance';
 import { fetchProjectFiles } from '../providers/registry';
 import { listConversations } from '../state/projects';

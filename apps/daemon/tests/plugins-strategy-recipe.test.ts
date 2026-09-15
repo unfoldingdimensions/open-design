@@ -9,7 +9,7 @@ import {
   type InstalledPluginRecord,
   type OdNextStrategyRequestRecipeV2,
   type PluginPipeline,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { applyPlugin, InternalBundledStrategyApplyError } from '../src/plugins/apply.js';
 import { loadBundledAtomBodiesStrict } from '../src/plugins/atom-bodies.js';
 import { registerBundledPlugins } from '../src/plugins/bundled.js';

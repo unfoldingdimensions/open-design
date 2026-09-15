@@ -7,7 +7,7 @@ import {
   OPEN_DESIGN_SIDECAR_CONTRACT,
   SIDECAR_ENV,
   SIDECAR_SOURCES,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 import {
   resolveAppRuntimePath,
   resolveLogFilePath,
@@ -15,7 +15,7 @@ import {
   resolveNamespaceRoot,
   resolveSidecarBase,
   resolveSourceRuntimeRoot,
-} from "@open-design/sidecar";
+} from "@capydesign/sidecar";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

@@ -423,7 +423,7 @@ describe("packaged smoke workflow", () => {
     expect(job).toContain("fromJSON(needs.runners.outputs.runs_on).windows_tools");
     expect(job).toContain("toJSON(fromJSON(needs.runners.outputs.runs_on).windows_tools)");
     expect(job).toContain("fromJSON(needs.plan.outputs.run).windows_tools_pack_payload_tests");
-    expect(job).toContain("pnpm --filter @open-design/tools-pack exec vitest run tests/launcher/windows/payload.test.ts");
+    expect(job).toContain("pnpm --filter @capydesign/tools-pack exec vitest run tests/launcher/windows/payload.test.ts");
     expect(validate).toContain("windows_tools_pack_payload_tests");
   });
 
@@ -1133,11 +1133,11 @@ process.stdin.on("end", () => {
       ]);
       await Promise.all([
         writeJson("package.json", { name: "root", version: "0.12.0", dependencies: { untouched: "0.12.0" } }),
-        writeJson("apps/web/package.json", { name: "@open-design/web", version: "0.12.0" }),
-        writeJson("packages/platform/package.json", { name: "@open-design/platform", version: "0.12.0" }),
-        writeJson("packages/components/package.json", { name: "@open-design/components", version: "0.5.0" }),
-        writeJson("tools/dev/package.json", { name: "@open-design/dev", version: "0.12.0" }),
-        writeJson("e2e/package.json", { name: "@open-design/e2e", version: "0.12.0" }),
+        writeJson("apps/web/package.json", { name: "@capydesign/web", version: "0.12.0" }),
+        writeJson("packages/platform/package.json", { name: "@capydesign/platform", version: "0.12.0" }),
+        writeJson("packages/components/package.json", { name: "@capydesign/components", version: "0.5.0" }),
+        writeJson("tools/dev/package.json", { name: "@capydesign/dev", version: "0.12.0" }),
+        writeJson("e2e/package.json", { name: "@capydesign/e2e", version: "0.12.0" }),
       ]);
 
       await execFileAsync("bash", ["-c", script], {
@@ -1417,7 +1417,7 @@ process.stdin.on("end", () => {
 
   it("[P1] builds tools-release before the standalone DSH publisher invokes its bin", async () => {
     const workflow = await readFile(dshBootstrapPublishWorkflowPath, "utf8");
-    const buildIndex = workflow.indexOf("pnpm --filter @open-design/tools-release build");
+    const buildIndex = workflow.indexOf("pnpm --filter @capydesign/tools-release build");
     const publishIndex = workflow.indexOf("pnpm exec tools-release publish-dsh-bootstrap");
 
     expect(buildIndex).toBeGreaterThanOrEqual(0);
@@ -1537,12 +1537,12 @@ process.stdin.on("end", () => {
     const workspaceUnit = sectionBetween(workflow, "  workspace_unit_tests:", "  daemon_unit_tests:");
 
     expect(workspaceUnit).toContain(`if [ "\${{ fromJSON(needs.plan.outputs.scopes).tools_pack_tests_required }}" = "true" ]; then
-            pnpm --filter @open-design/desktop build
-            pnpm --filter @open-design/desktop test
-            pnpm --filter @open-design/packaged test
-            pnpm --filter @open-design/tools-pack test
+            pnpm --filter @capydesign/desktop build
+            pnpm --filter @capydesign/desktop test
+            pnpm --filter @capydesign/packaged test
+            pnpm --filter @capydesign/tools-pack test
             if [ "\${{ fromJSON(needs.plan.outputs.run).e2e_vitest }}" != "true" ]; then
-              pnpm --filter @open-design/e2e test tests/packaged-launcher-update-loop.test.ts
+              pnpm --filter @capydesign/e2e test tests/packaged-launcher-update-loop.test.ts
             fi
           fi`);
   });
@@ -1555,7 +1555,7 @@ process.stdin.on("end", () => {
     expect(daemonTests).toContain("if: ${{ fromJSON(needs.plan.outputs.run).daemon_unit_tests }}");
     expect(daemonTests).toContain("fail-fast: false");
     expect(daemonTests).toContain("shard: [1, 2, 3, 4]");
-    expect(daemonTests).toContain("pnpm --filter @open-design/daemon test --shard=${{ matrix.shard }}/4");
+    expect(daemonTests).toContain("pnpm --filter @capydesign/daemon test --shard=${{ matrix.shard }}/4");
     expect(validate).toContain("- daemon_unit_tests");
     expect(validate).toContain("[$run | to_entries[] | select(.value) | .key]");
   });
@@ -1795,11 +1795,11 @@ process.stdin.on("end", () => {
     expect(webWorkspaceTests).toContain("toJSON(fromJSON(needs.runners.outputs.runs_on).js_hot)");
     expect(webWorkspaceTests).not.toContain('"od-persistent-ci"');
     // Pin two-way vitest sharding so a later YAML edit cannot collapse the split or restore the
-    // monolithic `pnpm --filter @open-design/web test` command while this suite still passes.
+    // monolithic `pnpm --filter @capydesign/web test` command while this suite still passes.
     expect(webWorkspaceTests).toContain("fail-fast: false");
     expect(webWorkspaceTests).toContain("shard: [1, 2]");
     expect(webWorkspaceTests).toContain(
-      "pnpm --filter @open-design/web exec vitest run -c vitest.config.ts --maxWorkers=2 --shard=${{ matrix.shard }}/2",
+      "pnpm --filter @capydesign/web exec vitest run -c vitest.config.ts --maxWorkers=2 --shard=${{ matrix.shard }}/2",
     );
     expect(e2eVitest).toContain("fromJSON(needs.runners.outputs.runs_on).js_hot");
     expect(e2eVitest).toContain("toJSON(fromJSON(needs.runners.outputs.runs_on).js_hot)");
@@ -2057,13 +2057,13 @@ process.stdin.on("end", () => {
     expect(e2eVitestGate).toContain("kernel.apparmor_restrict_unprivileged_userns=0");
     expect(e2eVitestGate).not.toContain("--no-sandbox");
     expect(e2eVitestGate.indexOf("kernel.apparmor_restrict_unprivileged_userns=0"))
-      .toBeLessThan(e2eVitestGate.indexOf("pnpm --filter @open-design/e2e test"));
-    expect(e2eVitestGate).toContain("pnpm --filter @open-design/e2e test");
+      .toBeLessThan(e2eVitestGate.indexOf("pnpm --filter @capydesign/e2e test"));
+    expect(e2eVitestGate).toContain("pnpm --filter @capydesign/e2e test");
 
     const daemonGate = sectionBetween(tests, "  daemon_unit_tests:", "  verify:");
     expect(daemonGate).toContain("shard: [1, 2, 3, 4]");
     expect(daemonGate).toContain("ref: ${{ inputs.commit }}");
-    expect(daemonGate).toContain("pnpm --filter @open-design/daemon test --shard=${{ matrix.shard }}/4");
+    expect(daemonGate).toContain("pnpm --filter @capydesign/daemon test --shard=${{ matrix.shard }}/4");
 
     const verifyGate = tests.slice(tests.indexOf("  verify:"));
     expect(verifyGate).toContain("ref: ${{ inputs.commit }}");

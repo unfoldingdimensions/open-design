@@ -10,7 +10,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type {
   ApplyResult,
   InstalledPluginRecord,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   applyPlugin,
   listPlugins,

@@ -35,7 +35,7 @@ import {
   buildProjectRawFileUrl,
   type McpAnalyticsContextResponse,
   type WorkspaceProjectsResponse,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { randomUUID } from 'node:crypto';
 
 import { postCreateArtifactRequest } from './artifacts/create.js';

@@ -29,7 +29,7 @@ import { join } from 'node:path';
 
 import { describe, expect, test } from 'vitest';
 
-import type { AgentsResponse } from '@open-design/contracts';
+import type { AgentsResponse } from '@capydesign/contracts';
 
 import { AMR_TEST_WORKSPACE_HEADERS } from '@/vitest/amr';
 import { requestJson } from '@/vitest/http';

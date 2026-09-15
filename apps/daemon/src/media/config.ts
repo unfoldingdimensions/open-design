@@ -1,7 +1,7 @@
 // Per-provider credentials for the media dispatcher.
 //
 // The frontend Settings dialog pushes API keys here via PUT
-// /api/media/config; the daemon persists them to .od/media-config.json
+// /api/media/config; the daemon persists them to .capydesign/media-config.json
 // and reads them at generation time. Environment variables override the
 // stored values so power users can keep keys out of the workspace
 // folder altogether (`OD_OPENAI_API_KEY=… node daemon/cli.js`).
@@ -38,6 +38,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { resolveDefaultDataDir } from '../daemon-paths.js';
 import { MEDIA_PROVIDERS } from './models.js';
 import { expandHomePrefix } from '../home-expansion.js';
 import { resolveXAIBearer } from '../integrations/xai-credentials.js';
@@ -147,7 +148,7 @@ export function mediaConfigDir(projectRoot: string): string {
   return (
     envOverrideDir('OD_MEDIA_CONFIG_DIR', projectRoot)
     ?? envOverrideDir('OD_DATA_DIR', projectRoot)
-    ?? path.join(projectRoot, '.od')
+    ?? resolveDefaultDataDir(projectRoot)
   );
 }
 

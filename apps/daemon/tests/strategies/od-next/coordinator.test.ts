@@ -2,9 +2,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import { strategyPackageHashFromDigests } from '@open-design/plugin-runtime';
-import { StrategyTaskProjectionV2Schema } from '@open-design/contracts';
-import type { AppliedPluginSnapshot, CapyDesignPlanContractV2 } from '@open-design/contracts';
+import { strategyPackageHashFromDigests } from '@capydesign/plugin-runtime';
+import { StrategyTaskProjectionV2Schema } from '@capydesign/contracts';
+import type { AppliedPluginSnapshot, CapyDesignPlanContractV2 } from '@capydesign/contracts';
 import type Database from 'better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 

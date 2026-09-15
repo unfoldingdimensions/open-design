@@ -16,7 +16,7 @@ import type {
   OnboardingCompletedProps,
   TrackingOnboardingFirstLoopStep,
   TrackingOnboardingProductType,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import type { OnboardingEntry } from './onboarding-entry';
 
 type Track = (event: string, properties: Record<string, unknown>) => void;

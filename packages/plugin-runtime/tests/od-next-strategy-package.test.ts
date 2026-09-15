@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { BundledStrategyDeclarationV2Schema } from '@open-design/contracts';
+import { BundledStrategyDeclarationV2Schema } from '@capydesign/contracts';
 import { parseManifest } from '../src/index.js';
 
 const pluginRoot = fileURLToPath(

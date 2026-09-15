@@ -44,7 +44,7 @@ import {
 } from '../runtime/chat/reconnect-state';
 import { forkBoundaryMessageIndex } from '../runtime/chat/fork-boundary';
 import { resolveRecoveryActionBlockReason } from '../runtime/chat/recovery-gating';
-import { normalizeCustomReason } from '@open-design/contracts/analytics';
+import { normalizeCustomReason } from '@capydesign/contracts/analytics';
 import {
   deletePreviewComment,
   fetchConnectorStatuses,
@@ -85,7 +85,7 @@ import {
   type ChatTaskExecutionAnalytics,
   type ProjectWorkspaceScope,
   type ResearchOptions,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   anonymizeArtifactId,
   artifactKindToTracking,
@@ -95,7 +95,7 @@ import {
   projectKindFromMetadataToTrackingOrLegacyDefault,
   projectKindToTracking,
   sessionModeToTracking,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import type {
   TrackingArtifactKind,
   TrackingConversationForkErrorCode,
@@ -104,7 +104,7 @@ import type {
   TrackingDesignSystemOrigin,
   TrackingDesignSystemStatusValue,
   TrackingRunRecoveryActionType,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import { useAnalytics } from '../analytics/provider';
 import {
   trackByokPreflightBlocked,
@@ -193,7 +193,7 @@ import {
   extractBrandFromHtml,
   finalizeBrandProject,
 } from '../runtime/brands';
-import { isCapyDesignHostAvailable } from '@open-design/host';
+import { isCapyDesignHostAvailable } from '@capydesign/host';
 import {
   getBrandBrowser,
   BRAND_BROWSER_TAB_ID,
@@ -254,7 +254,7 @@ import type {
   RunContextSelection,
   WorkspaceCollabContext,
   WorkspaceContextItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   AgentEvent,
   AgentInfo,

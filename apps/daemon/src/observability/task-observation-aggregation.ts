@@ -13,7 +13,7 @@ import {
   type PromptBoundaryEvidenceV1,
   type SafeDeliverableSyntaxTelemetryV1,
   type StrategyInputStageV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type Database from 'better-sqlite3';
 
 import type { TelemetryPrefs } from '../app-config.js';

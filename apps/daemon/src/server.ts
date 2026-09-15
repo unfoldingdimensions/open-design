@@ -8,7 +8,7 @@ import type {
   DesktopRenderFramesResult,
   DesktopRenderSlidesInput,
   DesktopRenderSlidesResult,
-} from '@open-design/sidecar-proto';
+} from '@capydesign/sidecar-proto';
 import express from 'express';
 import multer from 'multer';
 import JSZip from 'jszip';
@@ -30,29 +30,29 @@ import {
   PLUGIN_SHARE_ACTION_PLUGIN_IDS,
   renderChatTurnHostProtocolInstructions,
   resolveOdNextDeckFrameworkMode,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   advanceAuthenticatedDoneCapture,
   isTodoWriteToolName,
   stopReasonIsTruncation,
   todoItemsFromTodoWriteInput,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   renderUnfinishedTodoRecall,
   recalledTodosFromTodoWriteInput,
   type RecalledTodo,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type {
   CollabCloudMemberDirectoryEntry,
   TeamProject,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   detectOdNextDevicePlatformFromText,
   resolveOdNextDevicePlatform,
   selectOdNextDeviceFrameContextV2,
   selectOdNextLayoutPrimitivesCss,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   loadOdNextTaskResourcesForSnapshot,
   materializeOdNextDeviceFrames,
@@ -242,8 +242,8 @@ export {
 } from './runtimes/run-lifecycle-analytics.js';
 
 export { resolveProjectRoot };
-import { createCommandInvocation } from '@open-design/platform';
-import { SIDECAR_ENV } from '@open-design/sidecar-proto';
+import { createCommandInvocation } from '@capydesign/platform';
+import { SIDECAR_ENV } from '@capydesign/sidecar-proto';
 import {
   buildLiveArtifactsMcpServersForAgent,
   checkPromptArgvBudget,
@@ -635,7 +635,7 @@ import { newInsertId, readAnalyticsContext, type AnalyticsContext, type Analytic
 import {
   agentIdToTracking,
   modelIdForTracking,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import {
   mergeNoProxyWithLoopbackDefaults,
   redactSecrets,
@@ -726,7 +726,7 @@ import {
   chatScrollForensicsBodyParser,
   chatScrollForensicsHandler,
 } from './diagnostics-client-evidence.js';
-import { DIAGNOSTICS_EXPORT_PATH } from '@open-design/diagnostics';
+import { DIAGNOSTICS_EXPORT_PATH } from '@capydesign/diagnostics';
 import {
   createProjectArchiveStream,
   createBatchArchiveStream,
@@ -1216,14 +1216,14 @@ import {
 import { renderOAuthResultPage } from './http/oauth-result-page.js';
 import { bearerTokenFromRequest, createToolRequestAuth } from './http/tool-request-auth.js';
 
-/** @typedef {import('@open-design/contracts').ApiErrorCode} ApiErrorCode */
-/** @typedef {import('@open-design/contracts').ApiError} ApiError */
-/** @typedef {import('@open-design/contracts').ApiErrorResponse} ApiErrorResponse */
-/** @typedef {import('@open-design/contracts').ChatRequest} ChatRequest */
-/** @typedef {import('@open-design/contracts').ChatSseEvent} ChatSseEvent */
-/** @typedef {import('@open-design/contracts').ProxyStreamRequest} ProxyStreamRequest */
-/** @typedef {import('@open-design/contracts').ProxySseEvent} ProxySseEvent */
-/** @typedef {import('@open-design/contracts').ProjectConversationCreatedSsePayload} ProjectConversationCreatedSsePayload */
+/** @typedef {import('@capydesign/contracts').ApiErrorCode} ApiErrorCode */
+/** @typedef {import('@capydesign/contracts').ApiError} ApiError */
+/** @typedef {import('@capydesign/contracts').ApiErrorResponse} ApiErrorResponse */
+/** @typedef {import('@capydesign/contracts').ChatRequest} ChatRequest */
+/** @typedef {import('@capydesign/contracts').ChatSseEvent} ChatSseEvent */
+/** @typedef {import('@capydesign/contracts').ProxyStreamRequest} ProxyStreamRequest */
+/** @typedef {import('@capydesign/contracts').ProxySseEvent} ProxySseEvent */
+/** @typedef {import('@capydesign/contracts').ProjectConversationCreatedSsePayload} ProjectConversationCreatedSsePayload */
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -2051,7 +2051,7 @@ export function telemetryPromptFromRunRequest(message, currentPrompt) {
   return typeof currentPrompt === 'string' ? currentPrompt : message;
 }
 
-// Keep this header grammar aligned with parseFormAnswers in @open-design/contracts.
+// Keep this header grammar aligned with parseFormAnswers in @capydesign/contracts.
 const FORM_ANSWERS_HEADER_RE =
   /^\s*\[form answers(?:\s*[\u2014\-:]\s*([^\]\r\n]+))?\]\s*(?:\r?\n|$)/i;
 
@@ -8081,7 +8081,7 @@ export async function startServer({
     const reportHost = reportHostForPoweredPreview();
     const baseOrigin = resolvedPort ? `http://${reportHost}:${resolvedPort}` : null;
     res.setHeader('Cache-Control', 'no-store');
-    /** @type {import('@open-design/contracts').ProjectPreviewIsolationResponse} */
+    /** @type {import('@capydesign/contracts').ProjectPreviewIsolationResponse} */
     const body = {
       supported: Boolean(baseOrigin),
       baseOrigin,
@@ -9363,7 +9363,7 @@ export async function startServer({
     type ScenarioEntry = {
       id: string;
       taskKind: 'new-generation' | 'figma-migration' | 'code-migration' | 'tune-collab';
-      pipeline: NonNullable<NonNullable<import('@open-design/contracts').PluginManifest['od']>['pipeline']>;
+      pipeline: NonNullable<NonNullable<import('@capydesign/contracts').PluginManifest['od']>['pipeline']>;
     };
     const byTaskKind = new Map<ScenarioEntry['taskKind'], ScenarioEntry>();
     try {
@@ -10268,7 +10268,7 @@ export async function startServer({
         // legacy warn/fallback path only for ordinary snapshots.
         if (!snap?.strategy && stages.length > 0) {
           const { loadAtomBodies } = await import('./plugins/atom-bodies.js');
-          const { renderActiveStageBlocks } = await import('@open-design/contracts');
+          const { renderActiveStageBlocks } = await import('@capydesign/contracts');
           const { atomsForPrompt } = await import('./plugins/critique-prompt-gate.js');
           const stageViews = [];
           for (const stage of stages) {

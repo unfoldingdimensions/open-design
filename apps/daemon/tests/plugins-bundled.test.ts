@@ -12,7 +12,7 @@ import {
   resolvePluginFolder,
   upsertInstalledPlugin,
 } from '../src/plugins/registry.js';
-import type { InstalledPluginRecord } from '@open-design/contracts';
+import type { InstalledPluginRecord } from '@capydesign/contracts';
 import { registerBundledPlugins } from '../src/plugins/bundled.js';
 import {
   applyPlugin,

@@ -51,13 +51,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Typecheck tools-release
-        run: pnpm --filter @open-design/tools-release typecheck
+        run: pnpm --filter @capydesign/tools-release typecheck
 
       - name: Test tools-release
-        run: pnpm --filter @open-design/tools-release test
+        run: pnpm --filter @capydesign/tools-release test
 
       - name: Build tools-release
-        run: pnpm --filter @open-design/tools-release build
+        run: pnpm --filter @capydesign/tools-release build
 
       - name: Export + validate fixture path (smoke)
         env:

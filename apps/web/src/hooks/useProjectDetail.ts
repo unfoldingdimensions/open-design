@@ -10,7 +10,7 @@ import type {
   Project,
   ProjectDetailResponse,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 export interface ProjectDetailState {
   project: Project | null;

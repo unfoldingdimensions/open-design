@@ -1,9 +1,9 @@
-import { isTodoWriteToolName } from '@open-design/contracts';
+import { isTodoWriteToolName } from '@capydesign/contracts';
 import {
   eventsEndedByAskingUser,
   todoStatusIsUnfinished,
   turnEndedByAskingUser,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type { AgentEvent } from '../types';
 
 export type TodoStatus = 'pending' | 'in_progress' | 'completed' | 'stopped';

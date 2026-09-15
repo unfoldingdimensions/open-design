@@ -94,7 +94,7 @@ async function writeWorkspace(root: string): Promise<void> {
 
 function buildRunner(build: () => Promise<void>): WorkspaceBuildRunner {
   return async (args) => {
-    if (args[0] === "--filter" && args[1] === "@open-design/packaged") await build();
+    if (args[0] === "--filter" && args[1] === "@capydesign/packaged") await build();
   };
 }
 
@@ -405,7 +405,7 @@ describe("runWorkspaceBuild", () => {
       }
     }
     const closure = new Set<string>();
-    const pending = ["@open-design/packaged"];
+    const pending = ["@capydesign/packaged"];
     while (pending.length > 0) {
       const name = pending.pop()!;
       if (closure.has(name)) continue;
@@ -414,7 +414,7 @@ describe("runWorkspaceBuild", () => {
         if (packages.has(dependency)) pending.push(dependency);
       }
     }
-    closure.add("@open-design/dsh-runtime");
+    closure.add("@capydesign/dsh-runtime");
 
     expect(WORKSPACE_BUILD_PACKAGES.map(({ name }) => name).sort()).toEqual([...closure].sort());
   });

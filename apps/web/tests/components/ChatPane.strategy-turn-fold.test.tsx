@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ChatMessage, ProjectFile } from '@open-design/contracts';
+import type { ChatMessage, ProjectFile } from '@capydesign/contracts';
 
 import { foldStrategyTaskTurns } from '../../src/components/ChatPane';
 

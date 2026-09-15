@@ -14,7 +14,7 @@ Read `tools/pack/CACHE.md` before changing any build-cache node key, adding a ca
 - Linux AppImage build/install/start/stop/logs/uninstall/cleanup smoke commands.
 - Linux headless (no-Electron) install/start/stop via `--headless` flag on `install`, `start`, and `stop`.
 - Linux containerized builds via `electronuserland/builder` Docker image for distro-agnostic glibc compat.
-- Consuming sidecar/process/path primitives from `@open-design/sidecar-proto`, `@open-design/sidecar`, and `@open-design/platform`.
+- Consuming sidecar/process/path primitives from `@capydesign/sidecar-proto`, `@capydesign/sidecar`, and `@capydesign/platform`.
 
 ## Does not own
 
@@ -27,7 +27,7 @@ Read `tools/pack/CACHE.md` before changing any build-cache node key, adding a ca
 
 - Keep cross-platform source responsibilities in named directories such as `cache/`, `config/`, `launcher/`, `resources/`, `updates/`, and `versioning/`; keep platform-owned behavior below `mac/` or `win/`. Mirror those responsibilities in `tests/` when a test set has the same ownership. A new root-level `src/*.ts` file is intentionally treated as unclassified by CI and pays the conservative Windows payload fallback until it is placed in an owned source unit.
 - Tests import source modules through the test-only `@/*` alias. Tests that intentionally inspect source text use the same alias with Vitest's `?raw` suffix; do not reintroduce directory-depth-dependent `../src/` imports or file URLs.
-- Do not hand-build stamp argv, IPC paths, or process matching; use `@open-design/sidecar` launch/discovery/invoke/stop atomics.
+- Do not hand-build stamp argv, IPC paths, or process matching; use `@capydesign/sidecar` launch/discovery/invoke/stop atomics.
 - Do not use port numbers in data/log/runtime/cache path decisions. Namespace decides paths; ports are only transient transports.
 - Public release artifacts must use channel-specific app identity: stable uses `Open Design`, beta uses `Open Design Beta`, prerelease uses `Open Design Prerelease`, and preview uses `Open Design Preview`. Local tools-pack installs may still use namespace-scoped install paths only as a developer multi-instance validation convention.
 - Do not let namespace-named `.app` installs change data/log/runtime/cache path conventions.
@@ -170,14 +170,14 @@ pnpm tools-pack win cleanup --dir C:\odtp-beta-release-fixed --namespace release
 `docs/testing/updater-lifecycle.md` is the full lifecycle-to-test coverage map (including deliberate manual-only nodes); consult it to find the owning tests for the node you touched, then run the narrow tests plus the repo checks:
 
 ```bash
-pnpm --filter @open-design/desktop test -- tests/main/updater.test.ts tests/main/updater-host-boundary.test.ts tests/main/preload-host-boundary.test.ts
-pnpm --filter @open-design/web test -- tests/components/UpdaterPopup.test.tsx tests/lib/updater.test.ts
-pnpm --filter @open-design/tools-serve test
-pnpm --filter @open-design/tools-pack test -- tests/win-identity.test.ts tests/win-app.test.ts tests/win-builder.test.ts
-pnpm --filter @open-design/desktop typecheck
-pnpm --filter @open-design/web typecheck
-pnpm --filter @open-design/tools-pack typecheck
-pnpm --filter @open-design/tools-serve typecheck
+pnpm --filter @capydesign/desktop test -- tests/main/updater.test.ts tests/main/updater-host-boundary.test.ts tests/main/preload-host-boundary.test.ts
+pnpm --filter @capydesign/web test -- tests/components/UpdaterPopup.test.tsx tests/lib/updater.test.ts
+pnpm --filter @capydesign/tools-serve test
+pnpm --filter @capydesign/tools-pack test -- tests/win-identity.test.ts tests/win-app.test.ts tests/win-builder.test.ts
+pnpm --filter @capydesign/desktop typecheck
+pnpm --filter @capydesign/web typecheck
+pnpm --filter @capydesign/tools-pack typecheck
+pnpm --filter @capydesign/tools-serve typecheck
 git diff --check
 pnpm guard
 pnpm typecheck

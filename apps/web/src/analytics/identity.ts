@@ -2,10 +2,10 @@
 // so it stays SSR-safe: every entry point guards window/localStorage access
 // and falls back to a deterministic-enough fake id under jsdom and Next.js
 // pre-render. The daemon mirrors these values via the x-od-analytics-*
-// headers (see @open-design/contracts/analytics).
+// headers (see @capydesign/contracts/analytics).
 
-import type { AnalyticsClientType } from '@open-design/contracts/analytics';
-import { detectCapyDesignHostClientType } from '@open-design/host';
+import type { AnalyticsClientType } from '@capydesign/contracts/analytics';
+import { detectCapyDesignHostClientType } from '@capydesign/host';
 
 const ANONYMOUS_ID_KEY = 'open-design:analytics.anonymous_id';
 const SESSION_ID_KEY = 'open-design:analytics.session_id';

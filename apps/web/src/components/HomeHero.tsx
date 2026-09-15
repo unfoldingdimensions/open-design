@@ -18,7 +18,7 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { VisuallyHidden } from '@open-design/components';
+import { VisuallyHidden } from '@capydesign/components';
 import type {
   CSSProperties,
   DragEvent as ReactDragEvent,
@@ -34,7 +34,7 @@ import type {
   McpServerConfig,
   WorkspaceCollabContext,
   WorkspaceContextItem,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { DesignSystemPicker } from './DesignSystemPicker';
 import type { SkillSummary } from '../types';
 import { Icon, type IconName } from './Icon';
@@ -99,7 +99,7 @@ import { TypePillRow } from './home-hero/TypePillRow';
 import { LibraryPicker } from './LibraryPicker';
 import { assetTitle } from './LibraryAssetMeta';
 import { libraryAssetRawUrl } from '../providers/registry';
-import type { LibraryAsset } from '@open-design/contracts';
+import type { LibraryAsset } from '@capydesign/contracts';
 import { WorkingDirPicker } from './WorkingDirPicker';
 import {
   ProjectReferenceModal,

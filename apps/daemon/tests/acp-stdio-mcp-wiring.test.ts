@@ -142,7 +142,7 @@ describe('ACP stdio MCP servers are withheld from runtimes that reject them', ()
     projectsToClean.push(id);
     const projectsBase = process.env.OD_DATA_DIR
       ? join(process.env.OD_DATA_DIR, 'projects')
-      : join(process.cwd(), '.od', 'projects');
+      : join(process.cwd(), '.capydesign', 'projects');
     return { id, dir: join(projectsBase, id) };
   }
 

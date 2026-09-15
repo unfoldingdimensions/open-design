@@ -3,7 +3,7 @@ import {
   ATTRIBUTION_CLAIM_PATH,
   type AttributionClaimResponse,
   type AttributionClaimSource,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import type { AnalyticsService } from '../analytics.js';
 import type { AppConfigPrefs } from '../app-config.js';
 import {

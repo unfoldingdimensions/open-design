@@ -13,7 +13,7 @@ import { useMemo } from 'react';
 import {
   isCapyDesignHostAvailable,
   openHostProjectPath,
-} from '@open-design/host';
+} from '@capydesign/host';
 
 export interface TerminalLaunchResult {
   kind: 'host' | 'web-fallback';

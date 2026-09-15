@@ -32,9 +32,9 @@ describe('resolveDataDir', () => {
     await rm(projectRoot, { recursive: true, force: true });
   });
 
-  it('returns <projectRoot>/.od when OD_DATA_DIR is unset', () => {
-    expect(resolveDataDir(undefined, projectRoot)).toBe(path.join(projectRoot, '.od'));
-    expect(resolveDataDir('', projectRoot)).toBe(path.join(projectRoot, '.od'));
+  it('returns <projectRoot>/.capydesign when OD_DATA_DIR is unset', () => {
+    expect(resolveDataDir(undefined, projectRoot)).toBe(path.join(projectRoot, '.capydesign'));
+    expect(resolveDataDir('', projectRoot)).toBe(path.join(projectRoot, '.capydesign'));
   });
 
   it('requires an explicit OD_DATA_DIR when sandbox mode requires one', () => {

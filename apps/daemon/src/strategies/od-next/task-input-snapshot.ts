@@ -10,7 +10,7 @@ import {
   type OdNextProductionTaskTypeV1,
   type OdNextRequestInputFactsV1,
   type OdNextTaskConfigurationV1,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { spawnSync } from 'node:child_process';
 import { createHash, randomBytes } from 'node:crypto';
 import fs from 'node:fs';

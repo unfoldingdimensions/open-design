@@ -16,7 +16,7 @@ import {
   modelIdForTracking,
   type TrackingRunCancelOrigin,
   type TrackingRunTerminalTrigger,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import {
   DELIVERABLE_SYNTAX_FINALIZATION_REASONS,
   DELIVERABLE_SYNTAX_SAFE_FIX_REFUSALS,
@@ -27,7 +27,7 @@ import {
   type DeliverableSyntaxValidationEvidence,
   type OdNextRolloutDecision,
   type SafeRunQualityV1,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { agentCliEnvForAgent, readAppConfig, type TelemetryPrefs } from './app-config.js';
 import type { AppVersionInfo } from './app-version.js';

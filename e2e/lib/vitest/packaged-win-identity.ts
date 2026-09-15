@@ -2,7 +2,7 @@ import {
   releaseChannelFromNamespace,
   releaseChannelFromVersion,
   releaseInstallIdentity,
-} from "@open-design/release";
+} from "@capydesign/release";
 
 export { releaseAppVersionArgs } from "./packaged-release-version.js";
 

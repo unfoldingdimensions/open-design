@@ -13,7 +13,7 @@
 // canSendTo) that only make sense for a project; this module owns the part
 // that generalizes cleanly: reading the caller's workspace identity off
 // headers, and deciding whether a caller may mutate a bound resource row.
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import type { Response } from 'express';
 
 export type WorkspaceResourceContext = {

@@ -17,7 +17,7 @@ import {
   buildWorkspaceSeatSummary,
   type ProjectWorkspaceScope,
   type WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { runWorkspaceIdentity } from '../src/collab/useProjectWorkspaceScope';
 

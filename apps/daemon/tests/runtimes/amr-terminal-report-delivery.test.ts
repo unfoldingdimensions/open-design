@@ -42,7 +42,7 @@ describe('AMR terminal report delivery', () => {
   it('upgrades the #7392 row and claims it once with a stable timestamp', () => {
     const now = 1_800_000_000_000;
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'od-amr-terminal-delivery-'));
-    const dataDir = path.join(tempDir, '.od');
+    const dataDir = path.join(tempDir, '.capydesign');
     fs.mkdirSync(dataDir, { recursive: true });
     const legacy = new Database(path.join(dataDir, 'app.sqlite'));
     legacy.exec(`

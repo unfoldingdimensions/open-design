@@ -102,10 +102,10 @@ describe("resolveSeededAppConfigPaths", () => {
     expect(macBuilderSource).toContain('schemes: ["opendesign"]');
   });
 
-  it("uses workspace .od by default", () => {
+  it("uses workspace .capydesign by default", () => {
     const config = makeConfig("/work");
     expect(resolveSeededAppConfigPaths(config)).toEqual({
-      sourcePath: join("/work", ".od", "app-config.json"),
+      sourcePath: join("/work", ".capydesign", "app-config.json"),
       targetPath: join("/work", ".tmp", "tools-pack", "runtime", "mac", "namespaces", "local-test", "data", "app-config.json"),
     });
   });
@@ -120,10 +120,10 @@ describe("resolveSeededAppConfigPaths", () => {
   });
 
   it("resolves relative OD_DATA_DIR against the workspace root", () => {
-    process.env.OD_DATA_DIR = "e2e/ui/.od-data";
+    process.env.OD_DATA_DIR = "e2e/ui/.capydesign-data";
     const config = makeConfig("/work");
     expect(resolveSeededAppConfigPaths(config)).toEqual({
-      sourcePath: resolve("/work", "e2e", "ui", ".od-data", "app-config.json"),
+      sourcePath: resolve("/work", "e2e", "ui", ".capydesign-data", "app-config.json"),
       targetPath: join("/work", ".tmp", "tools-pack", "runtime", "mac", "namespaces", "local-test", "data", "app-config.json"),
     });
   });
@@ -207,7 +207,7 @@ describe("copyResourceTree", () => {
       await writeFile(
         join(dshRuntimeRoot, "package.json"),
         `${JSON.stringify({
-          name: "@open-design/dsh-runtime",
+          name: "@capydesign/dsh-runtime",
           version: "0.1.0",
           files: ["dist"],
         }, null, 2)}\n`,
@@ -221,7 +221,7 @@ describe("copyResourceTree", () => {
       expect(await pathExists(join(paths.resourceRoot, "bin", "node"))).toBe(false);
       const dshRuntimeResourceRoot = join(paths.resourceRoot, "agent-runtimes", "deepseek-harness");
       await expect(readFile(join(dshRuntimeResourceRoot, "manifest.json"), "utf8")).resolves.toContain(
-        '"packageName": "@open-design/dsh-runtime"',
+        '"packageName": "@capydesign/dsh-runtime"',
       );
       expect((await readdir(dshRuntimeResourceRoot)).filter((entry) => entry.endsWith(".tgz"))).toHaveLength(1);
     } finally {

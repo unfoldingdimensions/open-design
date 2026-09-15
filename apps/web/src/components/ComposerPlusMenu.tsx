@@ -14,7 +14,7 @@ import type {
   McpServerConfig,
   SkillSummary,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { useI18n, useT } from '../i18n';
 import { LIBRARY_UI_VISIBLE } from '../features/libraryUi';
 import { ComposerPluginPreview } from './ComposerPluginPreview';

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import { AnimatePresence, motion, MotionConfig } from 'motion/react';
-import { Button } from '@open-design/components';
+import { Button } from '@capydesign/components';
 import { reportAgentDetectDiagnostics } from './analytics/agent-detect';
 import { useAnalytics } from './analytics/provider';
 import {
@@ -22,7 +22,7 @@ import {
   deriveConfigureGlobals,
   projectKindFromMetadataToTracking,
   fidelityToTracking,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import type {
   AmrModelsResponse,
   ChatSessionMode,
@@ -35,8 +35,8 @@ import type {
   ProjectWorkspaceScope,
   ProjectScenarioTaskProfile,
   WorkspaceProjectSummary,
-} from '@open-design/contracts';
-import { DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID } from '@open-design/contracts';
+} from '@capydesign/contracts';
+import { DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID } from '@capydesign/contracts';
 import { EntryView } from './components/EntryView';
 import type { ProjectTitleHint } from './components/EntryShell';
 import type { IntegrationTab } from './components/IntegrationsView';
@@ -235,7 +235,7 @@ import {
   removeProjectFromDisplaySnapshots,
   writeProjectDisplaySnapshot,
 } from './state/project-display-cache';
-import { getCapyDesignHost, type CapyDesignHostProjectImportSuccess } from '@open-design/host';
+import { getCapyDesignHost, type CapyDesignHostProjectImportSuccess } from '@capydesign/host';
 import { useI18n } from './i18n';
 import { liveArtifactTabId } from './types';
 import type {

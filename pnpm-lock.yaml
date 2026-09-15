@@ -23,22 +23,22 @@ importers:
 
   .:
     devDependencies:
-      '@open-design/components':
+      '@capydesign/components':
         specifier: workspace:*
         version: link:packages/components
-      '@open-design/daemon':
+      '@capydesign/daemon':
         specifier: workspace:*
         version: link:apps/daemon
-      '@open-design/tools-dev':
+      '@capydesign/tools-dev':
         specifier: workspace:*
         version: link:tools/dev
-      '@open-design/tools-pack':
+      '@capydesign/tools-pack':
         specifier: workspace:*
         version: link:tools/pack
-      '@open-design/tools-release':
+      '@capydesign/tools-release':
         specifier: workspace:*
         version: link:tools/release
-      '@open-design/tools-serve':
+      '@capydesign/tools-serve':
         specifier: workspace:*
         version: link:tools/serve
       '@types/node':
@@ -56,7 +56,7 @@ importers:
 
   apps/closure:
     dependencies:
-      '@open-design/standalone':
+      '@capydesign/standalone':
         specifier: workspace:*
         version: link:../../packages/standalone
     devDependencies:
@@ -81,42 +81,42 @@ importers:
       '@babel/parser':
         specifier: 7.29.3
         version: 7.29.3
+      '@capydesign/agui-adapter':
+        specifier: workspace:*
+        version: link:../../packages/agui-adapter
+      '@capydesign/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@capydesign/diagnostics':
+        specifier: workspace:*
+        version: link:../../packages/diagnostics
+      '@capydesign/launcher-proto':
+        specifier: workspace:*
+        version: link:../../packages/launcher-proto
+      '@capydesign/platform':
+        specifier: workspace:*
+        version: link:../../packages/platform
+      '@capydesign/plugin-runtime':
+        specifier: workspace:*
+        version: link:../../packages/plugin-runtime
+      '@capydesign/registry-protocol':
+        specifier: workspace:*
+        version: link:../../packages/registry-protocol
+      '@capydesign/release':
+        specifier: workspace:*
+        version: link:../../packages/release
+      '@capydesign/sidecar':
+        specifier: workspace:*
+        version: link:../../packages/sidecar
+      '@capydesign/sidecar-proto':
+        specifier: workspace:*
+        version: link:../../packages/sidecar-proto
       '@ffmpeg-installer/ffmpeg':
         specifier: 1.1.0
         version: 1.1.0
       '@modelcontextprotocol/sdk':
         specifier: 1.29.0
         version: 1.29.0(zod@4.4.2)
-      '@open-design/agui-adapter':
-        specifier: workspace:*
-        version: link:../../packages/agui-adapter
-      '@open-design/contracts':
-        specifier: workspace:*
-        version: link:../../packages/contracts
-      '@open-design/diagnostics':
-        specifier: workspace:*
-        version: link:../../packages/diagnostics
-      '@open-design/launcher-proto':
-        specifier: workspace:*
-        version: link:../../packages/launcher-proto
-      '@open-design/platform':
-        specifier: workspace:*
-        version: link:../../packages/platform
-      '@open-design/plugin-runtime':
-        specifier: workspace:*
-        version: link:../../packages/plugin-runtime
-      '@open-design/registry-protocol':
-        specifier: workspace:*
-        version: link:../../packages/registry-protocol
-      '@open-design/release':
-        specifier: workspace:*
-        version: link:../../packages/release
-      '@open-design/sidecar':
-        specifier: workspace:*
-        version: link:../../packages/sidecar
-      '@open-design/sidecar-proto':
-        specifier: workspace:*
-        version: link:../../packages/sidecar-proto
       '@opentelemetry/api':
         specifier: 1.9.1
         version: 1.9.1
@@ -202,31 +202,31 @@ importers:
 
   apps/desktop:
     dependencies:
-      '@open-design/contracts':
+      '@capydesign/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
-      '@open-design/diagnostics':
+      '@capydesign/diagnostics':
         specifier: workspace:*
         version: link:../../packages/diagnostics
-      '@open-design/download':
+      '@capydesign/download':
         specifier: workspace:*
         version: link:../../packages/download
-      '@open-design/host':
+      '@capydesign/host':
         specifier: workspace:*
         version: link:../../packages/host
-      '@open-design/launcher-proto':
+      '@capydesign/launcher-proto':
         specifier: workspace:*
         version: link:../../packages/launcher-proto
-      '@open-design/platform':
+      '@capydesign/platform':
         specifier: workspace:*
         version: link:../../packages/platform
-      '@open-design/release':
+      '@capydesign/release':
         specifier: workspace:*
         version: link:../../packages/release
-      '@open-design/sidecar':
+      '@capydesign/sidecar':
         specifier: workspace:*
         version: link:../../packages/sidecar
-      '@open-design/sidecar-proto':
+      '@capydesign/sidecar-proto':
         specifier: workspace:*
         version: link:../../packages/sidecar-proto
     devDependencies:
@@ -245,31 +245,31 @@ importers:
 
   apps/packaged:
     dependencies:
-      '@open-design/contracts':
+      '@capydesign/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
-      '@open-design/daemon':
+      '@capydesign/daemon':
         specifier: workspace:*
         version: link:../daemon
-      '@open-design/desktop':
+      '@capydesign/desktop':
         specifier: workspace:*
         version: link:../desktop
-      '@open-design/launcher-proto':
+      '@capydesign/launcher-proto':
         specifier: workspace:*
         version: link:../../packages/launcher-proto
-      '@open-design/platform':
+      '@capydesign/platform':
         specifier: workspace:*
         version: link:../../packages/platform
-      '@open-design/release':
+      '@capydesign/release':
         specifier: workspace:*
         version: link:../../packages/release
-      '@open-design/sidecar':
+      '@capydesign/sidecar':
         specifier: workspace:*
         version: link:../../packages/sidecar
-      '@open-design/sidecar-proto':
+      '@capydesign/sidecar-proto':
         specifier: workspace:*
         version: link:../../packages/sidecar-proto
-      '@open-design/web':
+      '@capydesign/web':
         specifier: workspace:*
         version: link:../web
     devDependencies:
@@ -294,6 +294,24 @@ importers:
       '@anthropic-ai/sdk':
         specifier: 0.32.1
         version: 0.32.1
+      '@capydesign/components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      '@capydesign/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@capydesign/host':
+        specifier: workspace:*
+        version: link:../../packages/host
+      '@capydesign/platform':
+        specifier: workspace:*
+        version: link:../../packages/platform
+      '@capydesign/sidecar':
+        specifier: workspace:*
+        version: link:../../packages/sidecar
+      '@capydesign/sidecar-proto':
+        specifier: workspace:*
+        version: link:../../packages/sidecar-proto
       '@excalidraw/excalidraw':
         specifier: 0.18.1
         version: 0.18.1(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -306,24 +324,6 @@ importers:
       '@lexical/utils':
         specifier: 0.36.2
         version: 0.36.2
-      '@open-design/components':
-        specifier: workspace:*
-        version: link:../../packages/components
-      '@open-design/contracts':
-        specifier: workspace:*
-        version: link:../../packages/contracts
-      '@open-design/host':
-        specifier: workspace:*
-        version: link:../../packages/host
-      '@open-design/platform':
-        specifier: workspace:*
-        version: link:../../packages/platform
-      '@open-design/sidecar':
-        specifier: workspace:*
-        version: link:../../packages/sidecar
-      '@open-design/sidecar-proto':
-        specifier: workspace:*
-        version: link:../../packages/sidecar-proto
       '@xterm/addon-fit':
         specifier: 0.10.0
         version: 0.10.0(@xterm/xterm@5.5.0)
@@ -421,24 +421,24 @@ importers:
       '@aws-sdk/client-s3':
         specifier: 3.1050.0
         version: 3.1050.0
+      '@capydesign/contracts':
+        specifier: workspace:*
+        version: link:../packages/contracts
+      '@capydesign/release':
+        specifier: workspace:*
+        version: link:../packages/release
+      '@capydesign/sidecar':
+        specifier: workspace:*
+        version: link:../packages/sidecar
+      '@capydesign/sidecar-proto':
+        specifier: workspace:*
+        version: link:../packages/sidecar-proto
       '@ffmpeg-installer/ffmpeg':
         specifier: 1.1.0
         version: 1.1.0
       '@ffprobe-installer/ffprobe':
         specifier: 2.1.2
         version: 2.1.2
-      '@open-design/contracts':
-        specifier: workspace:*
-        version: link:../packages/contracts
-      '@open-design/release':
-        specifier: workspace:*
-        version: link:../packages/release
-      '@open-design/sidecar':
-        specifier: workspace:*
-        version: link:../packages/sidecar
-      '@open-design/sidecar-proto':
-        specifier: workspace:*
-        version: link:../packages/sidecar-proto
       '@playwright/test':
         specifier: 1.60.0
         version: 1.60.0
@@ -466,7 +466,7 @@ importers:
 
   packages/agui-adapter:
     dependencies:
-      '@open-design/contracts':
+      '@capydesign/contracts':
         specifier: workspace:*
         version: link:../contracts
     devDependencies:
@@ -515,7 +515,7 @@ importers:
 
   packages/contracts:
     dependencies:
-      '@open-design/release':
+      '@capydesign/release':
         specifier: workspace:*
         version: link:../release
       zod:
@@ -553,7 +553,7 @@ importers:
 
   packages/download:
     dependencies:
-      '@open-design/platform':
+      '@capydesign/platform':
         specifier: workspace:*
         version: link:../platform
     devDependencies:
@@ -618,7 +618,7 @@ importers:
 
   packages/host:
     dependencies:
-      '@open-design/release':
+      '@capydesign/release':
         specifier: workspace:*
         version: link:../release
     devDependencies:
@@ -637,10 +637,10 @@ importers:
 
   packages/launcher-proto:
     dependencies:
-      '@open-design/release':
+      '@capydesign/release':
         specifier: workspace:*
         version: link:../release
-      '@open-design/sidecar-proto':
+      '@capydesign/sidecar-proto':
         specifier: workspace:*
         version: link:../sidecar-proto
     devDependencies:
@@ -693,7 +693,7 @@ importers:
 
   packages/plugin-runtime:
     dependencies:
-      '@open-design/contracts':
+      '@capydesign/contracts':
         specifier: workspace:*
         version: link:../contracts
       zod:
@@ -749,7 +749,7 @@ importers:
 
   packages/sidecar:
     dependencies:
-      '@open-design/platform':
+      '@capydesign/platform':
         specifier: workspace:*
         version: link:../platform
     devDependencies:
@@ -768,7 +768,7 @@ importers:
 
   packages/sidecar-proto:
     dependencies:
-      '@open-design/release':
+      '@capydesign/release':
         specifier: workspace:*
         version: link:../release
     devDependencies:
@@ -787,7 +787,7 @@ importers:
 
   packages/standalone:
     dependencies:
-      '@open-design/download':
+      '@capydesign/download':
         specifier: workspace:*
         version: link:../download
       jszip:
@@ -812,13 +812,13 @@ importers:
 
   shells/terminal:
     devDependencies:
-      '@open-design/platform':
+      '@capydesign/platform':
         specifier: workspace:*
         version: link:../../packages/platform
-      '@open-design/sidecar':
+      '@capydesign/sidecar':
         specifier: workspace:*
         version: link:../../packages/sidecar
-      '@open-design/standalone':
+      '@capydesign/standalone':
         specifier: workspace:*
         version: link:../../packages/standalone
       '@types/node':
@@ -833,13 +833,13 @@ importers:
 
   tools/dev:
     dependencies:
-      '@open-design/platform':
+      '@capydesign/platform':
         specifier: workspace:*
         version: link:../../packages/platform
-      '@open-design/sidecar':
+      '@capydesign/sidecar':
         specifier: workspace:*
         version: link:../../packages/sidecar
-      '@open-design/sidecar-proto':
+      '@capydesign/sidecar-proto':
         specifier: workspace:*
         version: link:../../packages/sidecar-proto
       cac:
@@ -861,27 +861,27 @@ importers:
 
   tools/pack:
     dependencies:
+      '@capydesign/launcher-proto':
+        specifier: workspace:*
+        version: link:../../packages/launcher-proto
+      '@capydesign/platform':
+        specifier: workspace:*
+        version: link:../../packages/platform
+      '@capydesign/release':
+        specifier: workspace:*
+        version: link:../../packages/release
+      '@capydesign/sidecar':
+        specifier: workspace:*
+        version: link:../../packages/sidecar
+      '@capydesign/sidecar-proto':
+        specifier: workspace:*
+        version: link:../../packages/sidecar-proto
       '@electron/notarize':
         specifier: 3.1.1
         version: 3.1.1
       '@electron/rebuild':
         specifier: 4.0.4
         version: 4.0.4
-      '@open-design/launcher-proto':
-        specifier: workspace:*
-        version: link:../../packages/launcher-proto
-      '@open-design/platform':
-        specifier: workspace:*
-        version: link:../../packages/platform
-      '@open-design/release':
-        specifier: workspace:*
-        version: link:../../packages/release
-      '@open-design/sidecar':
-        specifier: workspace:*
-        version: link:../../packages/sidecar
-      '@open-design/sidecar-proto':
-        specifier: workspace:*
-        version: link:../../packages/sidecar-proto
       cac:
         specifier: 6.7.14
         version: 6.7.14
@@ -914,10 +914,10 @@ importers:
 
   tools/release:
     dependencies:
-      '@open-design/launcher-proto':
+      '@capydesign/launcher-proto':
         specifier: workspace:*
         version: link:../../packages/launcher-proto
-      '@open-design/release':
+      '@capydesign/release':
         specifier: workspace:*
         version: link:../../packages/release
       cac:
@@ -952,7 +952,7 @@ importers:
 
   tools/serve:
     dependencies:
-      '@open-design/release':
+      '@capydesign/release':
         specifier: workspace:*
         version: link:../../packages/release
       cac:
@@ -3551,6 +3551,7 @@ packages:
   '@xmldom/xmldom@0.9.10':
     resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
     engines: {node: '>=14.6'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@xterm/addon-fit@0.10.0':
     resolution: {integrity: sha512-UFYkDm4HUahf2lnEyHvio51TNGiLK66mqP2JoATy7hRZeXaGMRDr00JiSF7m63vR5WKATF605yEggJKsw0JpMQ==}

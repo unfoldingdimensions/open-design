@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 import {
   APP_KEYS,
   type DaemonStatusSnapshot,
-} from "@open-design/sidecar-proto";
-import { SidecarFactory } from "@open-design/sidecar";
+} from "@capydesign/sidecar-proto";
+import { SidecarFactory } from "@capydesign/sidecar";
 
 export const DEFAULT_DAEMON_URL = "http://127.0.0.1:7456";
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");

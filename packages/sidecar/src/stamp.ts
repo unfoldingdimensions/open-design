@@ -2,8 +2,8 @@ import { createHash } from "node:crypto";
 import { tmpdir, userInfo } from "node:os";
 import { join } from "node:path";
 
-import type { ProcessStampContract } from "@open-design/platform";
-import { readProcessStamp } from "@open-design/platform";
+import type { ProcessStampContract } from "@capydesign/platform";
+import { readProcessStamp } from "@capydesign/platform";
 
 export const SIDECAR_STAMP_FIELDS = ["channel", "namespace", "source", "mode", "app"] as const;
 

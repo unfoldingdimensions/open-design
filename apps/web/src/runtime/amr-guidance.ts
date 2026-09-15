@@ -7,8 +7,8 @@ import {
   isModelWindowLimitFailure,
   readMembershipConcurrencyResetAt,
   readModelWindowResetAt,
-} from '@open-design/contracts';
-import type { RunFailureAction } from '@open-design/contracts';
+} from '@capydesign/contracts';
+import type { RunFailureAction } from '@capydesign/contracts';
 import { byokApiKeyIsEditableInSettings } from '../utils/byokProvider';
 
 // AMR model-gateway console (account, balance, top-up, plans).

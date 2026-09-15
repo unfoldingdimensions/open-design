@@ -17,7 +17,7 @@ import type {
   AmrAuthStage,
   AmrAuthStageResult,
   AmrAuthStageSource,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 import type {
   ApiErrorResponse,
   ChatAnalyticsHints,
@@ -40,8 +40,8 @@ import type {
   SseErrorPayload,
   StrategyTaskProjectionV2,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
-import { OD_NEXT_AGENT_DECLARED_BLOCK_REASON } from '@open-design/contracts';
+} from '@capydesign/contracts';
+import { OD_NEXT_AGENT_DECLARED_BLOCK_REASON } from '@capydesign/contracts';
 import type { StreamHandlers } from './anthropic';
 
 /**
@@ -1332,7 +1332,7 @@ export interface VelaLiveAccount {
 
 export interface VelaLoginStatus {
   loggedIn: boolean;
-  sessionState?: import('@open-design/contracts').AmrSessionState;
+  sessionState?: import('@capydesign/contracts').AmrSessionState;
   credentialRevision?: string;
   loginInFlight?: boolean;
   profile: string;

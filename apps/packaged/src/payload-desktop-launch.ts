@@ -1,7 +1,7 @@
 import { dirname } from "node:path";
 
-import { buildLauncherAfterQuitArgs, buildLauncherDelegatedArgs } from "@open-design/launcher-proto";
-import { handoffCurrentSidecarGeneration } from "@open-design/sidecar";
+import { buildLauncherAfterQuitArgs, buildLauncherDelegatedArgs } from "@capydesign/launcher-proto";
+import { handoffCurrentSidecarGeneration } from "@capydesign/sidecar";
 
 import {
   armPackagedLauncherRuntimeAttempt,

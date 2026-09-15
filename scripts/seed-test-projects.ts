@@ -10,7 +10,7 @@
 //   pnpm seed:test-projects --decks 2 --webs 2 # cap counts
 //   pnpm seed:test-projects --daemon http://127.0.0.1:17456
 //   pnpm seed:test-projects --namespace work-a     # discover tools-dev namespace
-//   pnpm seed:test-projects --offline          # ingest into ./.od before boot
+//   pnpm seed:test-projects --offline          # ingest into ./.capydesign before boot
 //   pnpm seed:test-projects --clear            # remove previously seeded projects
 //
 // The daemon URL is resolved in this order: --daemon flag > $OD_DAEMON_URL >
@@ -28,6 +28,7 @@
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 import os from 'node:os';
+import { existsSync } from 'node:fs';
 import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -590,9 +591,19 @@ function expandHomePrefix(raw: string): string {
 }
 
 function resolveDataDir(raw: string | null): string {
-  const value = raw ?? process.env.OD_DATA_DIR ?? path.join(REPO_ROOT, '.od');
+  const value = raw ?? process.env.OD_DATA_DIR ?? defaultDataDir();
   const expanded = expandHomePrefix(value);
   return path.isAbsolute(expanded) ? expanded : path.resolve(REPO_ROOT, expanded);
+}
+
+// Prefer the rebranded `.capydesign`, fall back to an existing legacy `.od`,
+// else default to `.capydesign` (mirrors apps/daemon resolveDefaultDataDir).
+function defaultDataDir(): string {
+  const preferred = path.join(REPO_ROOT, '.capydesign');
+  if (existsSync(preferred)) return preferred;
+  const legacy = path.join(REPO_ROOT, '.od');
+  if (existsSync(legacy)) return legacy;
+  return preferred;
 }
 
 function assertOfflineDataDirIsExplicit(args: Args): void {

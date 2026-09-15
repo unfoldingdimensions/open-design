@@ -9,7 +9,7 @@
 
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { installMockCapyDesignHost } from '@open-design/host/testing';
+import { installMockCapyDesignHost } from '@capydesign/host/testing';
 
 import { DesignBrowserPanel } from '../../src/components/DesignBrowserPanel';
 import { FileViewer } from '../../src/components/FileViewer';

@@ -120,9 +120,9 @@ jobs:
 
       - name: Prebuild workspace type declarations
         run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/desktop build
-          pnpm --filter @open-design/web build:sidecar
+          pnpm --filter @capydesign/daemon build
+          pnpm --filter @capydesign/desktop build
+          pnpm --filter @capydesign/web build:sidecar
 
       - name: Clean Playwright state
         run: pnpm -C e2e exec tsx scripts/playwright.ts clean
@@ -194,9 +194,9 @@ jobs:
 
       - name: Prebuild workspace type declarations
         run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/desktop build
-          pnpm --filter @open-design/web build:sidecar
+          pnpm --filter @capydesign/daemon build
+          pnpm --filter @capydesign/desktop build
+          pnpm --filter @capydesign/web build:sidecar
 
       - name: Clean Playwright state
         run: pnpm -C e2e exec tsx scripts/playwright.ts clean
@@ -251,9 +251,9 @@ jobs:
 
       - name: Prebuild workspace type declarations
         run: |
-          pnpm --filter @open-design/daemon build
-          pnpm --filter @open-design/desktop build
-          pnpm --filter @open-design/web build:sidecar
+          pnpm --filter @capydesign/daemon build
+          pnpm --filter @capydesign/desktop build
+          pnpm --filter @capydesign/web build:sidecar
 
       - name: Clean Playwright state
         run: pnpm -C e2e exec tsx scripts/playwright.ts clean

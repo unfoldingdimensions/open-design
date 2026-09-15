@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import type {
   NormalizedAgentObservationStatusV1,
   NormalizedAgentObservationV1,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import type { TelemetryPrefs } from '../app-config.js';
 import {

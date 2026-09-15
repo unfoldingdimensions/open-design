@@ -14,7 +14,7 @@ import {
   findRealTagEnd,
   findRealTagOffset,
   HTML_TAG_PATTERNS,
-} from '@open-design/contracts/runtime/html-injection-points';
+} from '@capydesign/contracts/runtime/html-injection-points';
 
 import { buildSrcdoc, type SrcdocOptions } from './srcdoc';
 import { buildReactComponentSrcdoc } from './react-component';
@@ -25,8 +25,8 @@ import {
   captureHostPage,
   isCapyDesignHostAvailable,
   printHostPdf,
-} from '@open-design/host';
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+} from '@capydesign/host';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import {
   workspaceProjectHeaders,
   workspaceResourceUrl,
@@ -35,7 +35,7 @@ import { sourceHasLegacyDeckScreenSlides } from './deck-slide-structure';
 
 // Re-exported so app components can gate desktop-only export paths without
 // importing the host package directly.
-export { isCapyDesignHostAvailable } from '@open-design/host';
+export { isCapyDesignHostAvailable } from '@capydesign/host';
 
 const DESIGN_HANDOFF_FILENAME = 'DESIGN-HANDOFF.md';
 const DESIGN_MANIFEST_FILENAME = 'DESIGN-MANIFEST.json';

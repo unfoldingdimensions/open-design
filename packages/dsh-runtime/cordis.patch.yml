@@ -13,8 +13,8 @@
 
 - insert:
     - id: open-design-startup
-      name: '@open-design/dsh-runtime/startup'
+      name: '@capydesign/dsh-runtime/startup'
 
     - id: open-design-runtime
-      name: '@open-design/dsh-runtime'
+      name: '@capydesign/dsh-runtime'
       inject: [openDesignStartup]

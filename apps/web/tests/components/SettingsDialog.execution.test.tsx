@@ -2,9 +2,9 @@
 
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { CapyDesignHostUpdaterStatusSnapshot } from '@open-design/host';
-import { installMockCapyDesignHost } from '@open-design/host/testing';
-import type { WorkspaceCollabContext } from '@open-design/contracts';
+import type { CapyDesignHostUpdaterStatusSnapshot } from '@capydesign/host';
+import { installMockCapyDesignHost } from '@capydesign/host/testing';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import { en } from '../../src/i18n/locales/en';
 
 function optionNames(container: HTMLElement): string[] {
@@ -4812,7 +4812,7 @@ describe('SettingsDialog MCP server interactions', () => {
   const installInfo = {
     command: '/Applications/CapyDesign.app/Contents/Resources/open-design/bin/node',
     args: [
-      '/Applications/CapyDesign.app/Contents/Resources/app/node_modules/@open-design/daemon/dist/cli.js',
+      '/Applications/CapyDesign.app/Contents/Resources/app/node_modules/@capydesign/daemon/dist/cli.js',
       'mcp',
       '--daemon-url',
       'http://127.0.0.1:51706',

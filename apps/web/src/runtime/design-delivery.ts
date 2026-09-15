@@ -1,4 +1,4 @@
-import type { ChatSessionMode } from '@open-design/contracts';
+import type { ChatSessionMode } from '@capydesign/contracts';
 import {
   containsQuestionFormAsk,
   containsUnrenderableQuestionForm,

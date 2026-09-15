@@ -1,4 +1,4 @@
-import { parseOdNextPromptBundleV2 } from '@open-design/contracts';
+import { parseOdNextPromptBundleV2 } from '@capydesign/contracts';
 
 export const OD_NEXT_EXACT_INPUT_MAP_VERSION =
   'open-design.od-next-exact-input-map/v2' as const;

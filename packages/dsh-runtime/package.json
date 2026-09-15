@@ -1,5 +1,5 @@
 {
-  "name": "@open-design/dsh-runtime",
+  "name": "@capydesign/dsh-runtime",
   "version": "0.1.0",
   "description": "DeepSeek Harness profile runtime for OpenDesign",
   "license": "Apache-2.0",

@@ -24,6 +24,7 @@
 
 import path from 'node:path';
 
+import { resolveDefaultDataDir } from '../../daemon-paths.js';
 import { runAdapterConformance } from '../conformance.js';
 import { appendConformanceDay } from '../conformance-history.js';
 import type { ConformanceDay } from '../ratchet.js';
@@ -41,14 +42,15 @@ const ADAPTERS: readonly PrereleaseAdapter[] = [
 ];
 
 /**
- * Anchor the run at the project's `.od/` data dir by default; the
+ * Anchor the run at the project's `.capydesign/` data dir by default (falling
+ * back to a legacy `.od/` when that exists); the
  * Playwright and other supervised runtimes that already set
  * `OD_DATA_DIR` keep their isolation here too.
  */
 function resolveDataDir(): string {
   const override = process.env.OD_DATA_DIR;
   if (override && override.length > 0) return path.resolve(override);
-  return path.resolve(process.cwd(), '.od');
+  return resolveDefaultDataDir(process.cwd());
 }
 
 function isoDay(d: Date): string {

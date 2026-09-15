@@ -1,8 +1,8 @@
 import { appendFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
-import { stopProcesses, waitForProcessExit, type StopProcessesResult } from "@open-design/platform";
-import { compareLauncherVersions, type LauncherAfterQuitRequest } from "@open-design/launcher-proto";
+import { stopProcesses, waitForProcessExit, type StopProcessesResult } from "@capydesign/platform";
+import { compareLauncherVersions, type LauncherAfterQuitRequest } from "@capydesign/launcher-proto";
 import {
   APP_KEYS,
   SIDECAR_MESSAGES,
@@ -10,13 +10,13 @@ import {
   SIDECAR_SOURCES,
   type AppKey,
   type DesktopStatusSnapshot,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 import {
   getSidecarStatus,
   invokeSidecar,
   stopSidecar,
   type SidecarStamp,
-} from "@open-design/sidecar";
+} from "@capydesign/sidecar";
 
 import type { PackagedNamespacePaths } from "./paths.js";
 

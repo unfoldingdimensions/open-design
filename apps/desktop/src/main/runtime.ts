@@ -21,7 +21,7 @@ import {
   type DesktopRenderSlidesInput,
   type DesktopRenderSlidesResult,
   type DesktopUpdateStatusSnapshot,
-} from "@open-design/sidecar-proto";
+} from "@capydesign/sidecar-proto";
 import type {
   CapyDesignHostActionResult,
   CapyDesignHostCaptureResult,
@@ -30,7 +30,7 @@ import type {
   CapyDesignHostUpdaterActionOptions,
   CapyDesignHostUpdaterMenuLabels,
   CapyDesignHostUpdaterOpenDialogRequest,
-} from "@open-design/host";
+} from "@capydesign/host";
 
 import { renderDeckSlides } from "./deck-capture.js";
 import { renderDeterministicFrames } from "./frame-capture.js";

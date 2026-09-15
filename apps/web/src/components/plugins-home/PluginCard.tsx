@@ -13,11 +13,11 @@
 // needs to commit.
 
 import { useMemo, useRef, useState } from 'react';
-import { VisuallyHidden } from '@open-design/components';
+import { VisuallyHidden } from '@capydesign/components';
 import type {
   InstalledPluginRecord,
   WorkspaceCollabContext,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { useI18n } from '../../i18n';
 import { useDeckPreviewScale } from '../../lib/use-deck-preview-scale';
 import type { PluginShareAction } from '../../state/projects';

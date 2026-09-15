@@ -6,7 +6,7 @@ import type {
   AnalyticsEntrySurface,
   AnalyticsHostProduct,
   AnalyticsPublisherClass,
-} from '@open-design/contracts/analytics';
+} from '@capydesign/contracts/analytics';
 
 export const OPEN_DESIGN_PLUGIN_ID = 'open-design';
 export const PLUGIN_TELEMETRY_SCHEMA_VERSION = 3;

@@ -5,7 +5,7 @@ import type {
   ArtifactOrigin,
   ProjectFileVersion,
   ProjectFileVersionPromptSource,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 import { ensureCurrentProjectFileVersion } from './project-file-versions.js';
 import { OPEN_DESIGN_PLUGIN_ID } from './mcp-observability.js';

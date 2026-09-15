@@ -713,7 +713,7 @@ export const zhCN: Dict = {
   "settings.mcpBuildDaemon": "请先构建守护进程。",
   "settings.mcpNodeMissing": "Node 二进制文件缺失。",
   "settings.mcpBuildHint":
-    "apps/daemon/dist/cli.js 缺失。请运行 `pnpm --filter @open-design/daemon build` 并刷新。",
+    "apps/daemon/dist/cli.js 缺失。请运行 `pnpm --filter @capydesign/daemon build` 并刷新。",
   "settings.mcpMethodCli": "设置命令",
   "settings.mcpInstructionCli": "在终端中运行以下命令：",
   "settings.mcpMethodToml": "TOML 配置",
@@ -1496,7 +1496,7 @@ export const zhCN: Dict = {
   "useEverywhere.section.http.tab": "HTTP API",
   "useEverywhere.section.http.heading": "与 Web UI 相同的 REST + SSE 接口",
   "useEverywhere.section.http.intro":
-    "本地 daemon 在 `http://127.0.0.1:7456` 提供 HTTP API（端口可配置）。Web UI 调用的每个端点也都可以供你的脚本使用。流式端点（聊天回合、项目运行）会发出 Server-Sent Events，事件类型定义在 `@open-design/contracts` 中。",
+    "本地 daemon 在 `http://127.0.0.1:7456` 提供 HTTP API（端口可配置）。Web UI 调用的每个端点也都可以供你的脚本使用。流式端点（聊天回合、项目运行）会发出 Server-Sent Events，事件类型定义在 `@capydesign/contracts` 中。",
   "useEverywhere.section.http.bullet1": "`GET /api/health` — daemon 存活检查。",
   "useEverywhere.section.http.bullet2":
     "`GET /api/skills` 和 `GET /api/design-systems` — 可用 registry。",
@@ -1514,7 +1514,7 @@ export const zhCN: Dict = {
   "useEverywhere.section.http.snippet3":
     "流式读取聊天回合（SSE，每行兼容 JSON Lines）",
   "useEverywhere.section.http.footer":
-    "每个请求 / 响应的纯 TypeScript 类型都在 `@open-design/contracts` 中；脚本中导入即可获得完整自动补全，无需接入生成器。",
+    "每个请求 / 响应的纯 TypeScript 类型都在 `@capydesign/contracts` 中；脚本中导入即可获得完整自动补全，无需接入生成器。",
   "useEverywhere.section.skills.tab": "Skills 和无头模式",
   "useEverywhere.section.skills.heading":
     "任意智能体可直接使用的 Skills，即使 CapyDesign 未运行",

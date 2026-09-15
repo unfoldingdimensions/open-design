@@ -18,7 +18,7 @@
  * op7418/guizang-ppt-skill (pre-flight asset reads, P0 self-check,
  * theme-rhythm rules).
  */
-import type { ExecutionProfile } from '@open-design/contracts';
+import type { ExecutionProfile } from '@capydesign/contracts';
 
 const HANDOFF_INVARIANT_PLACEHOLDER = '%%OPEN_DESIGN_HANDOFF_INVARIANT%%';
 

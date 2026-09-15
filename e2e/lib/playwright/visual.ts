@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import type { Locator, Page, Route } from '@playwright/test';
-import type { Project } from '@open-design/contracts';
+import type { Project } from '@capydesign/contracts';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fulfillAgentsRoute } from './mock-factory.js';

@@ -27,8 +27,8 @@ import {
   type PluginConnectorRef,
   type PluginPipeline,
   type ResolvedContext,
-} from '@open-design/contracts';
-import { strategyPackageHashFromDigests } from '@open-design/plugin-runtime';
+} from '@capydesign/contracts';
+import { strategyPackageHashFromDigests } from '@capydesign/plugin-runtime';
 
 type SqliteDb = Database.Database;
 type DbRow = Record<string, unknown>;

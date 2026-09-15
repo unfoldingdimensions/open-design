@@ -19,7 +19,7 @@ import {
   isPathLikeChatHref,
   resolveChatFileLink,
 } from "../runtime/in-project-link";
-import { Button } from "@open-design/components";
+import { Button } from "@capydesign/components";
 import { navigate } from "../router";
 import { deleteProjectFile, projectFileUrl, uploadProjectFiles } from "../providers/registry";
 import { useProjectCollabContext } from "../collab/collab-context";
@@ -45,8 +45,8 @@ import {
   type TrackingFeedbackReasonCode,
   type TrackingFeedbackRatingWithNone,
   type TrackingProjectKind,
-} from "@open-design/contracts/analytics";
-import { questionsFormTrackingId } from "@open-design/contracts/analytics";
+} from "@capydesign/contracts/analytics";
+import { questionsFormTrackingId } from "@capydesign/contracts/analytics";
 import {
   hasUnterminatedQuestionForm,
   splitOnQuestionForms,
@@ -70,7 +70,7 @@ import {
   type OdCardBrandBrowserAssist,
   type RunContextSelection,
   type WorkspaceContextItem,
-} from "@open-design/contracts";
+} from "@capydesign/contracts";
 import { OdCardView, type BrandBrowserAssistConfirm } from "./OdCard";
 import {
   AnsweredValue,
@@ -118,7 +118,7 @@ import type {
   ProjectMetadata,
   SkillSummary,
 } from "../types";
-import type { ProjectMediaTask } from '@open-design/contracts';
+import type { ProjectMediaTask } from '@capydesign/contracts';
 
 type TranslateFn = (
   key: keyof Dict,
@@ -3685,7 +3685,7 @@ function ProseBlock({
      *
      * 位置都在最前面:后面 `stripArtifact` 之类都按标记找边界,先把不是标记的
      * 噪音清掉,它们的扫描才不会被岔开。
-     * 语法出处在 `@open-design/contracts`,两边共用一份,不会分叉。
+     * 语法出处在 `@capydesign/contracts`,两边共用一份,不会分叉。
      */
     const withoutMarkers = stripArtifactFocusMarkers(
       stripCritiqueGrammar(stripInternalControlMarkers(text, { streaming })),

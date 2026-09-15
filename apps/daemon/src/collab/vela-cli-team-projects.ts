@@ -1,4 +1,4 @@
-import type { ProjectMetadata, TeamProject } from '@open-design/contracts';
+import type { ProjectMetadata, TeamProject } from '@capydesign/contracts';
 import type {
   UpsertVelaTeamProjectInput,
   VelaTeamProjectCatalogClient,

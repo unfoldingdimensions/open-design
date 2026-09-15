@@ -11,8 +11,8 @@ import {
   SidecarFactory,
   type SidecarClient,
   type SidecarStamp,
-} from '@open-design/sidecar';
-import { APP_KEYS, SIDECAR_MESSAGES } from '@open-design/sidecar-proto';
+} from '@capydesign/sidecar';
+import { APP_KEYS, SIDECAR_MESSAGES } from '@capydesign/sidecar-proto';
 
 import { createAgentRuntimeEnv, startServer } from '../src/server.js';
 import { resetDesktopAuthForTests, setDesktopAuthSecret } from '../src/desktop-auth.js';

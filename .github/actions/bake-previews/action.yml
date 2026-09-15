@@ -59,8 +59,8 @@ runs:
       shell: bash
       run: |
         pnpm --filter "./packages/**" build
-        pnpm --filter @open-design/daemon build
-        pnpm --filter @open-design/tools-dev build
+        pnpm --filter @capydesign/daemon build
+        pnpm --filter @capydesign/tools-dev build
 
     - name: Start daemon
       shell: bash

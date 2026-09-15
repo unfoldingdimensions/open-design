@@ -59,15 +59,15 @@ import { promisify } from 'node:util';
 import { Agent as UndiciAgent } from 'undici';
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 import { load as loadHtml } from 'cheerio';
-import { SETTINGS_MEDIA_PROVIDERS_PATH } from '@open-design/contracts';
+import { SETTINGS_MEDIA_PROVIDERS_PATH } from '@capydesign/contracts';
 import {
   findRealTagOffset,
   HTML_TAG_PATTERNS,
-} from '@open-design/contracts/runtime/html-injection-points';
+} from '@capydesign/contracts/runtime/html-injection-points';
 import type {
   DesktopRenderFramesInput,
   DesktopRenderFramesResult,
-} from '@open-design/sidecar-proto';
+} from '@capydesign/sidecar-proto';
 import {
   AUDIO_DURATIONS_SEC,
   type AudioKind,

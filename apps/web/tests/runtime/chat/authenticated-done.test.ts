@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   eventsHaveAuthenticatedDoneConclusion,
   type PersistedAgentEvent,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 
 const KEY = 'a7f3c91ed2b40561';
 

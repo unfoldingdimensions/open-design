@@ -8,7 +8,7 @@
  * 架构视角:`specs/current/chat-panel-dev-design.md`
  * 参考实现:`docs/design/chat-sim/sim.js`(评审载体,15 个场景在跑)
  */
-import type { MediaFailureNextStep, MediaSurface, PersistedAgentEvent, ProjectMediaTask } from '@open-design/contracts';
+import type { MediaFailureNextStep, MediaSurface, PersistedAgentEvent, ProjectMediaTask } from '@capydesign/contracts';
 
 export type { ToolKind } from './tool-kind';
 export type { ArtifactKind, DiffStat } from './format';

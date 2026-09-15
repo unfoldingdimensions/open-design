@@ -3,7 +3,7 @@ import type {
   CollabCloudMemberDirectoryEntry,
   CollabMemberRole,
   CollabPresenceMember,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import {
   runVelaCommand,
   velaWorkspaceCommandOptions,

@@ -1,7 +1,7 @@
 import type { ExecFileOptions } from 'node:child_process';
-import type { AgentDiagnostic, ModelMetadata } from '@open-design/contracts';
+import type { AgentDiagnostic, ModelMetadata } from '@capydesign/contracts';
 
-export type { AgentDiagnostic } from '@open-design/contracts';
+export type { AgentDiagnostic } from '@capydesign/contracts';
 
 export type RuntimeEnv = NodeJS.ProcessEnv | Record<string, string>;
 

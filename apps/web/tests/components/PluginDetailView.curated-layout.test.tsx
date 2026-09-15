@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { InstalledPluginRecordSchema } from '@open-design/contracts';
+import { InstalledPluginRecordSchema } from '@capydesign/contracts';
 
 import { PluginDetailView } from '../../src/components/PluginDetailView';
 import { I18nProvider } from '../../src/i18n';

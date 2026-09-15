@@ -2,7 +2,7 @@ import {
   normalizeAgentObservationV1,
   type StrategyInputStageV2,
   type StrategyTaskTypeV2,
-} from '@open-design/contracts';
+} from '@capydesign/contracts';
 import { describe, expect, it } from 'vitest';
 
 import {

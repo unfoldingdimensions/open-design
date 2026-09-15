@@ -3,7 +3,7 @@ import { spawn } from "node:child_process";
 import {
   captureProcessSnapshot,
   stopProcesses,
-} from "@open-design/platform";
+} from "@capydesign/platform";
 
 import {
   readSidecarLaunchResources,

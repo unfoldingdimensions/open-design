@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 
-import { parseLauncherAfterQuitArgs, parseLauncherDelegatedArgs } from "@open-design/launcher-proto";
+import { parseLauncherAfterQuitArgs, parseLauncherDelegatedArgs } from "@capydesign/launcher-proto";
 import { describe, expect, it, vi } from "vitest";
 
 import type { PackagedLauncherRuntime } from "../src/launcher-runtime.js";
