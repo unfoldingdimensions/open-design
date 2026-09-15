@@ -1416,7 +1416,7 @@ const ALL_SKILL_LIKE_ROOTS = [
   DESIGN_TEMPLATES_DIR,
 ];
 // Global OD Library data root — owned, content-addressed assets captured by
-// the clipper / `od library import`. Derived from RUNTIME_DATA_DIR per the
+// the clipper / `capt library import`. Derived from RUNTIME_DATA_DIR per the
 // daemon data directory contract.
 const LIBRARY_DIR = path.join(RUNTIME_DATA_DIR, 'library');
 fs.mkdirSync(PROJECTS_DIR, { recursive: true });
@@ -1867,7 +1867,7 @@ export function createAgentRuntimeToolPrompt(
     `- Daemon URL: \`${daemonUrl}\` (also available as \`OD_DAEMON_URL\`).`,
     '- `OD_NODE_BIN` is the absolute path to the Node-compatible runtime that started the daemon; packaged desktop installs provide this even when the user has no system `node` on PATH.',
     '- `OD_HYPERFRAMES_BIN` is the absolute path to CapyDesign\'s pinned HyperFrames CLI. Run lightweight commands through `OD_NODE_BIN`; use `"$OD_NODE_BIN" "$OD_BIN" media scaffold` for composition setup and never use a user-level `npx` cache.',
-    '- `OD_BIN` is the absolute path to the CapyDesign CLI script. On POSIX shells run wrappers with `"$OD_NODE_BIN" "$OD_BIN" tools ...`; do not call bare `od`, which may resolve to the system octal-dump command on Unix-like systems.',
+    '- `OD_BIN` is the absolute path to the CapyDesign CLI script. On POSIX shells run wrappers with `"$OD_NODE_BIN" "$OD_BIN" tools ...`; do not call bare `capt`, which may resolve to the system octal-dump command on Unix-like systems.',
     '- On PowerShell use `& $env:OD_NODE_BIN $env:OD_BIN tools ...`; on cmd.exe use `"%OD_NODE_BIN%" "%OD_BIN%" tools ...`.',
     tokenLine,
     '- Prefer project wrapper commands through `OD_NODE_BIN` + `OD_BIN` over raw HTTP. The wrappers read these environment values automatically.',
@@ -2206,7 +2206,7 @@ export function composeChatUserRequestForAgent(
   // native session memory provides the rest.
   const skip = options.skipTranscript === true;
   // Native-session clients normally provide `currentPrompt`, but headless
-  // callers such as `od run start --message` only populate `message`. On a
+  // callers such as `capt run start --message` only populate `message`. On a
   // resumed session that value is the latest turn, not a rendered transcript,
   // so dropping it would send the misleading empty-turn placeholder instead.
   const bodySource = skip
@@ -8149,7 +8149,7 @@ export async function startServer({
   // Renderer-side chat-scroll evidence, pushed just before an export is
   // requested. Same guard and same threat tier as the export itself: the body
   // carries the chat log's DOM. Not a user-facing capability — it is the
-  // renderer half of `od diagnostics export`, which already exists on both
+  // renderer half of `capt diagnostics export`, which already exists on both
   // surfaces — so it gets no CLI subcommand of its own.
   //
   // The 24mb body parser is NOT in this chain: a route-level parser cannot
@@ -9161,7 +9161,7 @@ export async function startServer({
           marketplaceResolution = resolvePluginInMarketplaces(db, plugin.sourceMarketplaceEntryName);
           if (marketplaceResolution) source = marketplaceResolution.source;
         }
-        if (!source) return res.status(409).json({ error: { code: 'missing-source', message: `Plugin "${id}" has no recorded install source — cannot upgrade. Reinstall via 'od plugin install --source <...>' to set one.`, data: { id } } });
+        if (!source) return res.status(409).json({ error: { code: 'missing-source', message: `Plugin "${id}" has no recorded install source — cannot upgrade. Reinstall via 'capt plugin install --source <...>' to set one.`, data: { id } } });
       } else {
         source = typeof body.source === 'string' ? body.source : '';
         if (!source) return res.status(400).json({ error: 'source is required' });
@@ -9175,7 +9175,7 @@ export async function startServer({
           const locked = lockfile.plugins[source];
           if (locked?.version && !source.includes('@')) lookupName = `${source}@${locked.version}`;
           const resolved = resolvePluginInMarketplaces(db, lookupName);
-          if (!resolved) return res.status(404).json({ error: { code: 'plugin-not-found', message: `No marketplace plugin named "${source}". Add a marketplace via 'od marketplace add <url>' or pass a github: / https:// / local source.`, data: { name: source } } });
+          if (!resolved) return res.status(404).json({ error: { code: 'plugin-not-found', message: `No marketplace plugin named "${source}". Add a marketplace via 'capt marketplace add <url>' or pass a github: / https:// / local source.`, data: { name: source } } });
           marketplaceResolution = resolved;
           source = resolved.source;
         }

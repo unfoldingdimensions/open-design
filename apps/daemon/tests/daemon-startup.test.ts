@@ -48,7 +48,7 @@ describe('daemon startup CLI parsing', () => {
     expect(parseDaemonCliStartupArgs(['browser', 'snapshot', '--url', 'https://example.test/'], {})).toEqual({
       ok: false,
       kind: 'error',
-      message: 'unknown command: od browser',
+      message: 'unknown command: capt browser',
     });
   });
 

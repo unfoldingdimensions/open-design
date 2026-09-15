@@ -20,7 +20,7 @@ dsh --profile open-design --probe
 dsh --profile open-design --models
 ```
 
-The daemon and `od agent setup deepseek-harness --json` use the same setup
+The daemon and `capt agent setup deepseek-harness --json` use the same setup
 endpoint as the UI. Setup is always explicit on the first incompatible
 selection; cancelling does not select the agent or mutate the Harness profile.
 

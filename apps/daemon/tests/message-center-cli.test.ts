@@ -98,7 +98,7 @@ async function runCli(args: string[]): Promise<{ stdout: string; stderr: string;
   }
 }
 
-describe('od message-center CLI', () => {
+describe('capt message-center CLI', () => {
   let stub: StubServer;
 
   beforeAll(async () => {
@@ -114,10 +114,10 @@ describe('od message-center CLI', () => {
     stub.setResponder(() => ({ status: 200, body: { ok: true } }));
   });
 
-  it('prints usage on `od message-center help` and exits 0', async () => {
+  it('prints usage on `capt message-center help` and exits 0', async () => {
     const result = await runCli(['message-center', 'help']);
     expect(result.code).toBe(0);
-    expect(result.stdout).toMatch(/od message-center/);
+    expect(result.stdout).toMatch(/capt message-center/);
     expect(result.stdout).toMatch(/read-all/);
     expect(stub.requests).toHaveLength(0);
   });
@@ -243,6 +243,6 @@ describe('od message-center CLI', () => {
     const result = await runCli(['message-center', 'read', '--daemon-url', stub.baseUrl]);
     expect(result.code).toBe(2);
     expect(stub.requests).toHaveLength(0);
-    expect(result.stderr).toMatch(/Usage: od message-center read/);
+    expect(result.stderr).toMatch(/Usage: capt message-center read/);
   });
 });

@@ -108,29 +108,29 @@ Im Studio eines Projekts bleiben Unterhaltung, generierte Dateien und Live-Vorsc
 
 ## Plattform-Kompatibilität
 
-> OpenDesign wird als **Skills, ein CLI und ein MCP-Server** ausgeliefert, die gängige Coding-Agents nativ konsumieren. Sobald OD installiert ist, verdrahtet ein einziges `od mcp install <agent>` den MCP-Server in die Konfiguration dieses Agents, und du rufst dieselben Tools aus jedem Agent heraus auf.
+> OpenDesign wird als **Skills, ein CLI und ein MCP-Server** ausgeliefert, die gängige Coding-Agents nativ konsumieren. Sobald OD installiert ist, verdrahtet ein einziges `capt mcp install <agent>` den MCP-Server in die Konfiguration dieses Agents, und du rufst dieselben Tools aus jedem Agent heraus auf.
 
 | Coding-Agent / Plattform &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Status &nbsp;&nbsp; | Einzeiler zur MCP-Server-Installation &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Unterstützt | `od mcp install claude` |
-| [Codex CLI](https://github.com/openai/codex) | ✅ Unterstützt | `od mcp install codex` |
-| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Unterstützt | `od mcp install reasonix` |
-| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Unterstützt | `od mcp install raven` |
-| [Cursor](https://www.cursor.com/cli) | ✅ Unterstützt | `od mcp install cursor` |
-| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Unterstützt | `od mcp install copilot` |
-| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Unterstützt | `od mcp install copilot` |
-| [OpenCode](https://opencode.ai/) | ✅ Unterstützt | `od mcp install opencode` |
-| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Unterstützt | `od mcp install openclaw` |
-| [Antigravity](https://antigravity.google) | ✅ Unterstützt | `od mcp install antigravity` |
-| [Cline](https://github.com/cline/cline) | ✅ Unterstützt | `od mcp install cline` |
-| [Trae](https://www.trae.ai/) | ✅ Unterstützt | `od mcp install trae` |
-| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Unterstützt | `od mcp install kimi` |
-| [Kiro](https://kiro.dev) | ✅ Unterstützt | `od mcp install kiro` |
-| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Unterstützt | `od mcp install pi` |
-| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Unterstützt | `od mcp install vibe` |
-| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Unterstützt | `od mcp install hermes` |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ Unterstützt | `capt mcp install claude` |
+| [Codex CLI](https://github.com/openai/codex) | ✅ Unterstützt | `capt mcp install codex` |
+| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ Unterstützt | `capt mcp install reasonix` |
+| [Raven](https://github.com/EverMind-AI/Raven) | ✅ Unterstützt | `capt mcp install raven` |
+| [Cursor](https://www.cursor.com/cli) | ✅ Unterstützt | `capt mcp install cursor` |
+| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ Unterstützt | `capt mcp install copilot` |
+| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ Unterstützt | `capt mcp install copilot` |
+| [OpenCode](https://opencode.ai/) | ✅ Unterstützt | `capt mcp install opencode` |
+| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ Unterstützt | `capt mcp install openclaw` |
+| [Antigravity](https://antigravity.google) | ✅ Unterstützt | `capt mcp install antigravity` |
+| [Cline](https://github.com/cline/cline) | ✅ Unterstützt | `capt mcp install cline` |
+| [Trae](https://www.trae.ai/) | ✅ Unterstützt | `capt mcp install trae` |
+| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ Unterstützt | `capt mcp install kimi` |
+| [Kiro](https://kiro.dev) | ✅ Unterstützt | `capt mcp install kiro` |
+| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ Unterstützt | `capt mcp install pi` |
+| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Unterstützt | `capt mcp install vibe` |
+| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Unterstützt | `capt mcp install hermes` |
 
-`od mcp install <agent> --print` für eine Trockenlauf-Vorschau · `--uninstall` zum Entfernen · vollständige Liste mit `od mcp install --help`.
+`capt mcp install <agent> --print` für eine Trockenlauf-Vorschau · `--uninstall` zum Entfernen · vollständige Liste mit `capt mcp install --help`.
 
 <p align="center">
   <img src="https://repo-assets.open-design.ai/resources/images/coding-agents.png" alt="The 25 coding-agent CLIs OpenDesign supports — Claude Code · Codex · OpenCode · Hermes · Antigravity · Vela · Grok Build · Kimi · Cursor Agent · Qwen · Qoder · GitHub Copilot · Pi · Kiro · Kilo · Mistral Vibe · DeepSeek · Reasonix · Aider · Amp · CodeBuddy · Mimo · AtomCode · Devin · Trae" width="100%" />
@@ -292,7 +292,7 @@ Du kannst OpenDesign nutzen, ohne jemals die GUI zu öffnen — rufe es als Skil
 
 ```bash
 # One-line install into the agent you're using:
-od mcp install <agent>
+capt mcp install <agent>
 # <agent> = claude | codex | reasonix | raven | cursor | copilot | openclaw | antigravity
 #         | pi | vibe | hermes | cline | kimi | kiro | trae | opencode
 ```
@@ -353,14 +353,14 @@ OpenDesign liefert einen **stdio-MCP-Server** und **Installationsskripte pro Age
 
 ```bash
 # One-line install (16+ CLIs supported):
-od mcp install <agent>
+capt mcp install <agent>
 
 # Then the agent can:
-od project list --json
-od files list <project-id> --json
-od files read <project-id> <relative-path>
-od plugin list --json
-od skills list --json
+capt project list --json
+capt files list <project-id> --json
+capt files read <project-id> <relative-path>
+capt plugin list --json
+capt skills list --json
 ```
 
 **Warum MCP?** Bei jeder Iteration ein ZIP zu exportieren und neu anzuhängen, bricht den Flow. MCP legt die Designquelle direkt offen — der Agent sieht immer die Live-Datei.
@@ -461,20 +461,20 @@ Außerdem [`plugins/community/`](../../plugins/community/) für Community-Plugin
 
 ### Plugins verwenden
 
-Plugins sind im **Web-UI** und im **`od`-CLI** voll gleichwertig — dieselben `/api/plugins`-Endpunkte, wähle, was passt.
+Plugins sind im **Web-UI** und im **`capt`-CLI** voll gleichwertig — dieselben `/api/plugins`-Endpunkte, wähle, was passt.
 
 **In der Desktop- / Web-App:** öffne die **Plugin**-Seite, um den Marktplatz zu durchsuchen, und klicke auf **Install**; im Studio eines Projekts erscheinen Plugins als Composer-Chips, die du zum Anwenden klickst (mit den von ihnen deklarierten Eingaben).
 
 **Auf der Kommandozeile** (läuft ohne UI — dies ist der Weg, den externe Agents nutzen):
 
 ```bash
-od plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
-od plugin search "landing page"      # search by keyword
-od plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
-od plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
-od plugin apply od-default --input brief="a one-page pitch for our seed round"
-od plugin upgrade od-default         # upgrade
-od plugin uninstall od-default       # uninstall
+capt plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
+capt plugin search "landing page"      # search by keyword
+capt plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
+capt plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
+capt plugin apply od-default --input brief="a one-page pitch for our seed round"
+capt plugin upgrade od-default         # upgrade
+capt plugin uninstall od-default       # uninstall
 ```
 
 Jeder Befehl unterstützt `--json`, sodass du ihn über `jq` / `xargs` in Automatisierungen leiten kannst.
@@ -497,8 +497,8 @@ Zentrale `open-design.json`-Felder sind `specVersion`, `name`, `version`, das op
 Lokal scaffolden + validieren:
 
 ```bash
-od plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
-od plugin validate ./my-plugin                          # check manifest / file layout
+capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
+capt plugin validate ./my-plugin                          # check manifest / file layout
 pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 ```
 
@@ -507,7 +507,7 @@ Vollständiger Feldsatz und Laufzeitvertrag → [`plugins/spec/SPEC.md`](../../p
 ### Ein Plugin beitragen
 
 1. Lege den Plugin-Ordner in [`plugins/community/`](../../plugins/community/) (Drittanbieter-Plugins) ab, oder — um es gebündelt mit OpenDesign auszuliefern — in die passende Stufe von [`plugins/_official/`](../../plugins/_official/).
-2. Bestehe die Validierung: `od plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
+2. Bestehe die Validierung: `capt plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
 3. Fülle den PR mithilfe der Vorlage in [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) (ID, Version, Spur, Modus, Capabilities, Trigger-Beispiele; füge für visuelle Plugins einen Screenshot / eine Vorschau bei).
 4. Um in einer externen Registry zu veröffentlichen (skills.sh / ClawHub / eigenständiges GitHub) → [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -574,8 +574,8 @@ Vollständige Architektur → [`docs/architecture.md`](../../docs/architecture.m
 - [x] Gepackte Electron-Builds — macOS (Apple Silicon + Intel) + Windows (x64) + Linux-AppImage (optionale Spur)
 - [ ] Kommentar-Modus für chirurgische Bearbeitungen — teilweise ausgeliefert; zuverlässiges gezieltes Patchen in Arbeit
 - [ ] KI-ausgegebenes Tweaks-Panel-UX — noch nicht implementiert
-- [ ] `npx od init` zum Scaffolden eines Projekts mit `DESIGN.md`
-- [ ] Plugin-SDK + `od plugin {add,list,remove,test,publish}`-CLI
+- [ ] `npx capt init` zum Scaffolden eines Projekts mit `DESIGN.md`
+- [ ] Plugin-SDK + `capt plugin {add,list,remove,test,publish}`-CLI
 - [ ] Figma- / Pencil- → React- / Next- / Vue-Migrations-Plugins (Alpha)
 - [ ] Plugin zum Auffrischen einer bestehenden Codebasis (auf ein git-Repo + `DESIGN.md` gerichtet)
 

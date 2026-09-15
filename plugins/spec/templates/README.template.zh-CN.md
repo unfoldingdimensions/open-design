@@ -13,9 +13,9 @@
 ## 试用
 
 ```bash
-od plugin validate .
-od plugin install .
-od plugin apply plugin-id --input artifact=prototype --input audience=founders --input topic=onboarding
+capt plugin validate .
+capt plugin install .
+capt plugin apply plugin-id --input artifact=prototype --input audience=founders --input topic=onboarding
 ```
 
 ## 文件

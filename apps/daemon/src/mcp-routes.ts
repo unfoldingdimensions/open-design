@@ -18,7 +18,7 @@ export function registerMcpRoutes(app: Express, ctx: RegisterMcpRoutesDeps) {
   const getDaemonUrl = () => daemonUrlRef.current;
   // Surfaces the absolute paths to the daemon's Node-compatible runtime and
   // CLI entry so the Settings → MCP server panel can render snippets that work
-  // even when `od` isn't on the user's PATH (the common case for source clones
+  // even when `capt` isn't on the user's PATH (the common case for source clones
   // - and macOS/Linux ship a /usr/bin/od octal-dump tool that shadows ours
   // anyway). Cached for 5s because the panel pings on every open. The
   // executable paths remain stable for the daemon lifetime, while the

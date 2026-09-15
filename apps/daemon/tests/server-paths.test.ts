@@ -34,7 +34,7 @@ describe('resolveProjectRoot', () => {
 });
 
 describe('resolveDaemonCliPath', () => {
-  it('resolves the od CLI from the daemon package root', () => {
+  it('resolves the capt CLI from the daemon package root', () => {
     const packageRoot = path.resolve(import.meta.dirname, '..');
 
     expect(resolveDaemonCliPath()).toBe(path.join(packageRoot, 'dist', 'cli.js'));

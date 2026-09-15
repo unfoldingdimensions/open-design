@@ -40,7 +40,7 @@ const legacyBaseHref = 'https://external.invalid/legacy/';
 const rendererStylesheetPath = 'styles/export.css';
 const rendererImagePath = 'assets/hero.png';
 
-describe('od export run-scoped project authority', () => {
+describe('capt export run-scoped project authority', () => {
   let authorityServer: http.Server;
   let daemonShutdown: () => Promise<void> | void;
   let daemonUrl = '';

@@ -1853,7 +1853,7 @@ export function registerRunRoutes(app: Express, ctx: RegisterRunRoutesDeps) {
         || (projectHasExplicitPin && !projectPinIsAutomaticDefault)
       );
       // A named Skill is deliberately absent here. Naming one — the composer's
-      // @-mention, `od run --skill`, a Skill persisted on the project — refines
+      // @-mention, `capt run --skill`, a Skill persisted on the project — refines
       // the task; it does not claim the route away from a task type OD Next
       // already owns. An admitted strategy carries the Skill in
       // `session_skills/user_selected_skills` (see

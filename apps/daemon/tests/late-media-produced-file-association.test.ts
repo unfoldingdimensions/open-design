@@ -13,7 +13,7 @@
  *
  * 这条测试把顺序本身钉死,而不是相信推理:
  *   1. 一轮真的 run,agent 只做一件事 —— 用 run 自己的 `OD_TOOL_TOKEN` 打
- *      `POST /api/tools/media/generate`,拿到 202 就退出(真实里就是 `od media
+ *      `POST /api/tools/media/generate`,拿到 202 就退出(真实里就是 `capt media
  *      generate` 25s 轮询预算耗尽后的那条 "still running" 交接)。
  *   2. 等 `runStatus` 变成 terminal,**当场断言文件还没落盘** —— 这一步是事实
  *      本身,不是断言风格问题:它证明这一轮的 diff 里不可能有这个文件。
@@ -217,7 +217,7 @@ describe('a media file that lands after the run terminal still reaches its messa
     }).conversations[0]?.id;
     expect(conversationId).toBeTruthy();
 
-    // The agent does exactly what `od media generate` does when its polling
+    // The agent does exactly what `capt media generate` does when its polling
     // budget runs out: dispatch, take the 202, hand off, exit. It writes
     // nothing itself, so this run's own diff is empty.
     const script = `
@@ -295,7 +295,7 @@ describe('a media file that lands after the run terminal still reaches its messa
     };
   }
 
-  /** Drive the task to completion through the same endpoint `od media wait` uses. */
+  /** Drive the task to completion through the same endpoint `capt media wait` uses. */
   async function waitForMediaTask(taskId: string): Promise<string> {
     let status = '';
     for (let attempt = 0; attempt < 30 && status !== 'done' && status !== 'failed'; attempt += 1) {
@@ -429,7 +429,7 @@ describe('a media file that lands after the run terminal still reaches its messa
     }).conversations[0]?.id;
     expect(conversationId).toBeTruthy();
 
-    // Dispatch, wait for the task the way `od media wait` does, THEN write a
+    // Dispatch, wait for the task the way `capt media wait` does, THEN write a
     // file of its own — so this turn's diff genuinely holds both.
     const script = `
 const fs = require('node:fs');

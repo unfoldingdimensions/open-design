@@ -284,14 +284,14 @@ The split keeps DESIGN.md authors free of universal-craft duplication and keeps 
 ## 6. Skill inspection and distribution
 
 ```sh
-od skills list
+capt skills list
 # → id and display label for entries returned by /api/skills
 
-od skills show <id>
+capt skills show <id>
 # → the daemon's JSON representation of one skill
 
-od skill install github:owner/repo
-od skill install https://example.com/my-skill.tar.gz
+capt skill install github:owner/repo
+capt skill install https://example.com/my-skill.tar.gz
 # → installs one public skill bundle through POST /api/skills/install
 ```
 
@@ -300,7 +300,7 @@ Remote skill import accepts the same source grammar as Plugin URL import:
 top-level `SKILL.md`. Downloads are size-capped and reject private-network
 targets, path traversal, symbolic/hard links, malformed manifests, and
 duplicate skill ids. An intentional replacement is explicit: uninstall the
-existing user skill first, then install the new bundle. `od skills` remains the
+existing user skill first, then install the new bundle. `capt skills` remains the
 compatibility alias for list/show/install/uninstall. Repository-owned
 functional skills and rendering templates still live under `skills/` and
 `design-templates/` respectively. Do not document a concrete daemon-managed
@@ -371,7 +371,7 @@ od:
 
 ## 9. Testing skills
 
-There is no `od skills test` command and no runtime contract for a
+There is no `capt skills test` command and no runtime contract for a
 `tests/basic.prompt` tree. Repository-owned entries are checked by the root
 guard, localized-content coverage, registry tests, and any focused tests for
 their assets or prompt behavior. Run at least `pnpm guard` and

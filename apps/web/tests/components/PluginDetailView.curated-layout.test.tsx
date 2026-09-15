@@ -190,7 +190,7 @@ describe('PluginDetailView curated installed-extension layout', () => {
     const advanced = screen.getByTestId('plugin-meta-advanced');
     expect(advanced).not.toHaveAttribute('open');
     expect(within(advanced).getByText('MIT')).toBeTruthy();
-    expect(within(advanced).getByText('od plugin install open-design/research-suite')).toBeTruthy();
+    expect(within(advanced).getByText('capt plugin install open-design/research-suite')).toBeTruthy();
 
     expect(screen.getByTestId('plugin-detail-preview-iframe').getAttribute('src'))
       .toBe('/api/plugins/research-suite/preview');

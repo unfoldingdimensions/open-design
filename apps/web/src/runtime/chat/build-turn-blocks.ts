@@ -1059,7 +1059,7 @@ export function buildTurnBlocks(input: BuildTurnInput): TurnBlock[] {
     const command = isCommandTool(event.name) ? commandOf(event.input) : '';
     /*
      * **判据必须和 `readImageCall` 是同一条**。这里原来只数 `media generate` 出现几次,
-     * `od media generate --help` 也算一次,于是游标往前推了一格;而 `readImageCall`
+     * `capt media generate --help` 也算一次,于是游标往前推了一格;而 `readImageCall`
      * 又把 `--help` 拒掉 —— 那一格任务被静默吃掉,真正那次调用拿到空 slice,
      * 组件 12 整行画不出来。查用法不是生图,不许动游标。
      */
@@ -1761,7 +1761,7 @@ function isMediaGenerateCommand(command: string): boolean {
  *    这是唯一权威 —— 它说的是这次生成**实际**打给了哪条渲染路。
  * 2. 命令行上的 `--surface`:任务还没轮询到时的第二证人。这个 flag 是
  *    **必填**的(`cli.ts:1838-1840` 拒收缺失或非法值),所以一次真正的
- *    `od media generate` 一定带着它。
+ *    `capt media generate` 一定带着它。
  *
  * 两个都没有才落到 `'image'`。这不是猜:走到这里意味着命令既是
  * `media generate` 又没有 `--surface`,而那样的命令 CLI 根本不会执行 ——
@@ -1902,7 +1902,7 @@ function mediaBatchStartedAt(tasks: ProjectMediaTask[]): number | null {
 /**
  * 认出一次生图调用,并把结果读成「出了几张 / 砸了几张 / 图在哪」。
  *
- * `od media generate` 的输出是**每行一个 JSON**(失败行里还嵌着 error 对象),
+ * `capt media generate` 的输出是**每行一个 JSON**(失败行里还嵌着 error 对象),
  * 所以逐行 parse,parse 不动的行退回正则抠 `status`。
  * 一条状态都读不出来时分两种:命令本身报错 → 整组算失败;否则说明这压根不是一次
  * 真正的生图(比如在查参数),回落成普通命令行,别硬画成图。

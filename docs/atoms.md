@@ -3,8 +3,8 @@
 > The atomic capabilities OpenDesign exposes to plugins.
 > Spec: [`docs/plugins-spec.md`](plugins-spec.md) §10.
 > Source of truth: [`apps/daemon/src/plugins/atoms.ts`](../apps/daemon/src/plugins/atoms.ts).
-> Live discovery: `GET /api/atoms`, `od atoms list --json`, and
-> `od atoms info <id>` for the bundled `SKILL.md` body.
+> Live discovery: `GET /api/atoms`, `capt atoms list --json`, and
+> `capt atoms info <id>` for the bundled `SKILL.md` body.
 
 A **plugin** assembles atoms into ordered stages (`od.pipeline.stages[].atoms[]`).
 The OpenDesign daemon is responsible for resolving each atom into a system-prompt
@@ -80,7 +80,7 @@ The current `until` vocabulary is:
 - `tests.passing` — emitted by the build-test flow for the test gate.
 
 The evaluator is deliberately closed and is not arbitrary JavaScript. Unknown
-signals fail parsing and `od plugin doctor` reports them.
+signals fail parsing and `capt plugin doctor` reports them.
 
 ## Adding a new atom
 
@@ -93,5 +93,5 @@ signals fail parsing and `od plugin doctor` reports them.
 4. The atom is now reachable via:
    - `od.pipeline.stages[*].atoms[]` references in any plugin,
    - `GET /api/atoms` discovery,
-   - `od atoms list/show/info`,
-   - `od plugin doctor` validation.
+   - `capt atoms list/show/info`,
+   - `capt plugin doctor` validation.

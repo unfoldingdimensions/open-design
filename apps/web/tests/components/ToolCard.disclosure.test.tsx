@@ -65,7 +65,7 @@ describe('ToolCard secondary result disclosures', () => {
     expect(screen.getByText('Done')).toBeTruthy();
   });
 
-  it('shows model, aspect, and output while an od media generation command is running', () => {
+  it('shows model, aspect, and output while an capt media generation command is running', () => {
     const { container } = render(
       <I18nProvider initial="en">
         <ToolCard

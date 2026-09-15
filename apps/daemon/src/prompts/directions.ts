@@ -197,7 +197,7 @@ export const DESIGN_DIRECTIONS: DesignDirection[] = [
  * 只搜得到定义),设计风格选择题从提示词整题下线之后更不会有。留着不删是因为
  * 产品明说「后续可能要找回」,而它是那条路上现成的一块。
  *
- * ⚠️ 同文件里**读答案**那一半(`od tools directions` / `catalogue identity` 那段)
+ * ⚠️ 同文件里**读答案**那一半(`capt tools directions` / `catalogue identity` 那段)
  * **是活的,别一起清掉**:旧表单交上来的 `value` / `foundation` / `guidance`
  * 仍要读得懂。撤的是**发问**,不是**读答案**。
  *
@@ -292,7 +292,7 @@ export function renderDirectionSpecBlock(): string {
   const lines: string[] = [
     '## Direction library — infer and bind by default',
     '',
-    'Each direction below carries a CSS-ready palette (OKLch values) and font stacks. Infer the best match from the brief and known context, then bind it without asking. If the user explicitly requested direction comparison and selected one in a Host-owned direction form, its answer carries a stable Host `value`, a `foundation` id from this library, and visual `guidance`. Bind the named foundation from this library, then apply the guidance as the selected refinement; the Host value is catalogue identity and must not be passed to `od tools directions`. Replace the seed template\'s `:root` block with the chosen foundation\'s palette and font stacks **verbatim** — do not improvise. Posture cues describe how that direction *behaves* (border weight, radius, accent budget); honour them in the layout choices.',
+    'Each direction below carries a CSS-ready palette (OKLch values) and font stacks. Infer the best match from the brief and known context, then bind it without asking. If the user explicitly requested direction comparison and selected one in a Host-owned direction form, its answer carries a stable Host `value`, a `foundation` id from this library, and visual `guidance`. Bind the named foundation from this library, then apply the guidance as the selected refinement; the Host value is catalogue identity and must not be passed to `capt tools directions`. Replace the seed template\'s `:root` block with the chosen foundation\'s palette and font stacks **verbatim** — do not improvise. Posture cues describe how that direction *behaves* (border weight, radius, accent budget); honour them in the layout choices.',
     '',
   ];
   for (const d of DESIGN_DIRECTIONS) {
@@ -321,7 +321,7 @@ export function renderDirectionIndexBlock(): string {
   return lines.join('\n');
 }
 
-/** Resolve an inferred or user-selected direction; used by `od tools directions`. */
+/** Resolve an inferred or user-selected direction; used by `capt tools directions`. */
 export function formatDirectionSpecText(idOrLabel: string): string | null {
   const needle = idOrLabel.trim().toLowerCase();
   if (!needle) return null;

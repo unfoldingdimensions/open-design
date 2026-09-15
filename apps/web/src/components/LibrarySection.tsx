@@ -1321,7 +1321,7 @@ export function LibrarySection({ active, onOpenProject }: Props) {
           <p>{t('library.emptyTitle')}</p>
           <p className={styles.emptyHint}>
             {t('library.emptyHintBefore')}{' '}
-            <code>od library import &lt;file&gt;</code>
+            <code>capt library import &lt;file&gt;</code>
             {t('library.emptyHintAfter')}
           </p>
         </div>

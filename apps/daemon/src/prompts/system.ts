@@ -449,7 +449,7 @@ This project was created through the daemon API with \`skipDiscoveryBrief: true\
 // already holds in .od/media-config.json.
 // Kept deliberately compact: this hint ships on EVERY non-media project
 // (the vast majority never generate media), so the worked generate→wait
-// bash recipe lives in `od media help` (printMediaHelp in cli.ts) and the
+// bash recipe lives in `capt media help` (printMediaHelp in cli.ts) and the
 // CLI's own stderr handoff guidance instead of the prompt. The hint only
 // needs to (1) route the agent to the dispatcher instead of provider APIs,
 // (2) state the handoff/exit-code semantics, and (3) pin the behavioral
@@ -1147,7 +1147,7 @@ export function composeSystemPrompt({
     // fingerprint stays cacheable).
     if (!activeDesignSystemBody) {
       // Slim carries only the id+label index and the agent pulls the chosen
-      // direction's full spec via `od tools directions --id <id>` — but ONLY
+      // direction's full spec via `capt tools directions --id <id>` — but ONLY
       // on filesystem runs. text_artifact runs (BYOK/plain adapters) have no
       // tools to dereference the index, so they keep the full inline library
       // like classic; anything less tells them to bind palettes they cannot
@@ -1435,7 +1435,7 @@ export function composeSystemPrompt({
     if (runtimeDefaultsHint) parts.push(runtimeDefaultsHint);
   } else if (mediaHintSignal ?? true) {
     // Non-media projects (prototype, deck, etc.): inject a lightweight hint
-    // so the agent uses `od media generate` if the user asks for an image/video
+    // so the agent uses `capt media generate` if the user asks for an image/video
     // mid-session, rather than hunting for provider API keys in the environment.
     // Gated on the media-intent signal: most conversations never mention
     // media, and the transcript-scanned signal flips the hint on for the

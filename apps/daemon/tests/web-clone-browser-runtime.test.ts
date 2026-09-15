@@ -48,7 +48,7 @@ afterEach(() => {
   }
 });
 
-// Website Clone is a primary generation path from both the web UI and `od` CLI.
+// Website Clone is a primary generation path from both the web UI and `capt` CLI.
 // Agent subprocesses run inside a sandbox that may not be allowed to spawn Chrome,
 // so these tests pin the self-contained adapter and the daemon-owned browser broker.
 // A regression here previously made a normal clone spend minutes installing

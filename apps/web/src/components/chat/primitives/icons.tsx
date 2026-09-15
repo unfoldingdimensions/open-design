@@ -177,7 +177,7 @@ export const ImageIcon = (): ReactElement => (
 /**
  * 生成 —— 音频(OPEND-2625)。
  *
- * 和 `ImageIcon` 是并列的一枚,不是它的变体:同一条 `od media generate` 出音频、
+ * 和 `ImageIcon` 是并列的一枚,不是它的变体:同一条 `capt media generate` 出音频、
  * 出视频、出图,行首那一格必须能一眼分出是哪一类。原来只有 `ImageIcon` 一枚,
  * 一次 `--surface audio` 于是顶着图片图标出现在记录里。
  *

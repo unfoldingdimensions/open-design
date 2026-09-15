@@ -370,7 +370,7 @@ export type DesktopExportArtifactImageFormat = "png" | "jpeg";
 /**
  * What the caller wants out of the renderer — stated, not inferred.
  *
- * `full_page_export` is the historical `od export` product: measure the
+ * `full_page_export` is the historical `capt export` product: measure the
  * document, grow the surface to its full scroll height, and hand back one tall
  * image (or a paginated PDF). Its cost scales with page length, by design.
  *
@@ -409,7 +409,7 @@ export type DesktopArtifactCaptureErrorCode =
 
 // Generic programmatic export (PDF / image). The desktop renderer writes
 // the result to a temporary file and returns its path; the daemon streams those
-// bytes to the HTTP caller (the `od export` CLI), then removes the temp file.
+// bytes to the HTTP caller (the `capt export` CLI), then removes the temp file.
 export type DesktopExportArtifactInput = {
   baseHref?: string;
   /**

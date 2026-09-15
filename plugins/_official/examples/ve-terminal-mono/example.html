@@ -656,7 +656,7 @@
     <div class="reveal">
       <p class="slide__subtitle" style="margin-bottom:clamp(16px,2vh,32px);">AI Literacy &middot; CLI Curriculum &middot; For Engineering Teams</p>
     </div>
-    <h1 class="slide__display reveal">Teach the <code style="font-family:inherit;">od</code> Workflow</h1>
+    <h1 class="slide__display reveal">Teach the <code style="font-family:inherit;">capt</code> Workflow</h1>
     <div class="reveal">
       <p class="slide__subtitle" style="margin-top:clamp(16px,2vh,32px);">OpenDesign from the command line &mdash; scripted, composable, agent-ready</p>
     </div>
@@ -712,9 +712,9 @@
         <p class="slide__label reveal">Pilot &mdash; Week 1&ndash;6</p>
         <h2 class="slide__heading reveal" style="font-size:clamp(20px,3vw,32px);">Any Engineer, One Command</h2>
         <ul class="slide__bullets" style="margin-top:16px;">
-          <li class="reveal">14 engineers ran <code>od project create</code> in week one, zero onboarding tickets</li>
+          <li class="reveal">14 engineers ran <code>capt project create</code> in week one, zero onboarding tickets</li>
           <li class="reveal">Design specs live as git-diffable files, reviewed in normal PRs</li>
-          <li class="reveal"><code>od plugin apply</code> scripts a full page from a design system in under 90s</li>
+          <li class="reveal"><code>capt plugin apply</code> scripts a full page from a design system in under 90s</li>
           <li class="reveal">Full shell history doubles as the change-audit trail</li>
         </ul>
       </div>
@@ -736,38 +736,38 @@
     <div class="pipeline-wrap reveal">
       <div class="pipeline-row">
         <div class="pipe-node">
-          <div class="pipe-node__name">od init</div>
+          <div class="pipe-node__name">capt init</div>
           <div class="pipe-node__meta">new project</div>
         </div>
         <div class="pipe-link"><div class="pipe-link__line"></div></div>
         <div class="pipe-node">
-          <div class="pipe-node__name">od design</div>
+          <div class="pipe-node__name">capt design</div>
           <div class="pipe-node__meta">import system</div>
         </div>
         <div class="pipe-link"><div class="pipe-link__line"><span class="pipe-link__label">design system</span></div></div>
         <div class="pipe-node pipe-node--accent">
-          <div class="pipe-node__name">od agent</div>
+          <div class="pipe-node__name">capt agent</div>
           <div class="pipe-node__meta">run task</div>
         </div>
         <div class="pipe-link"><div class="pipe-link__line"><span class="pipe-link__label">sandbox</span></div></div>
         <div class="pipe-node">
-          <div class="pipe-node__name">od export</div>
+          <div class="pipe-node__name">capt export</div>
           <div class="pipe-node__meta">ship files</div>
         </div>
       </div>
       <div class="pipeline-row">
         <div class="pipe-node">
-          <div class="pipe-node__name">od plugin</div>
+          <div class="pipe-node__name">capt plugin</div>
           <div class="pipe-node__meta">apply template</div>
         </div>
         <div class="pipe-link pipe-link--dashed"><div class="pipe-link__line"><span class="pipe-link__label">or preview</span></div></div>
         <div class="pipe-node">
-          <div class="pipe-node__name">od preview</div>
+          <div class="pipe-node__name">capt preview</div>
           <div class="pipe-node__meta">html &rarr; live</div>
         </div>
         <div class="pipe-link"><div class="pipe-link__line"></div></div>
         <div class="pipe-node pipe-node--accent">
-          <div class="pipe-node__name">od skill</div>
+          <div class="pipe-node__name">capt skill</div>
           <div class="pipe-node__meta">learns style</div>
         </div>
         <div class="pipe-link"><div class="pipe-link__line"></div></div>
@@ -836,13 +836,13 @@
     <div class="slide__code-block reveal" style="margin-top:clamp(12px,2vh,24px);">
       <span class="slide__code-filename">od-101.md</span>
       <pre><code><span class="hl">[week 1]</span>
-init     = <span class="hl">"od project create &lt;name&gt;"</span>     <span class="cm"># first command every hire runs</span>
-import   = <span class="hl">"od design import &lt;repo&gt;"</span>
+init     = <span class="hl">"capt project create &lt;name&gt;"</span>     <span class="cm"># first command every hire runs</span>
+import   = <span class="hl">"capt design import &lt;repo&gt;"</span>
 <span class="hl">[week 2]</span>
-run      = <span class="hl">"od agent run --prompt-file brief.md"</span> <span class="cm"># --json pipes into CI</span>
-apply    = <span class="hl">"od plugin apply &lt;template&gt;"</span>
+run      = <span class="hl">"capt agent run --prompt-file brief.md"</span> <span class="cm"># --json pipes into CI</span>
+apply    = <span class="hl">"capt plugin apply &lt;template&gt;"</span>
 <span class="hl">[week 3]</span>
-ship     = <span class="hl">"od file export --to ./dist"</span>       <span class="cm"># git-diffable, PR-ready</span></code></pre>
+ship     = <span class="hl">"capt file export --to ./dist"</span>       <span class="cm"># git-diffable, PR-ready</span></code></pre>
     </div>
   </section>
 
@@ -850,7 +850,7 @@ ship     = <span class="hl">"od file export --to ./dist"</span>       <span clas
   <section class="slide slide--quote">
     <div class="slide__quote-mark reveal">&gt;</div>
     <blockquote class="reveal">
-      The moment <code style="font-family:inherit;">od agent run --json</code> piped cleanly into our CI, design stopped being the one GUI-shaped exception in an otherwise scripted stack.
+      The moment <code style="font-family:inherit;">capt agent run --json</code> piped cleanly into our CI, design stopped being the one GUI-shaped exception in an otherwise scripted stack.
     </blockquote>
     <cite class="reveal">&mdash; Staff engineer, pilot cohort</cite>
   </section>
@@ -863,7 +863,7 @@ ship     = <span class="hl">"od file export --to ./dist"</span>       <span clas
     </svg>
     <p class="slide__label reveal">Rollout &middot; Weeks 7&ndash;12</p>
     <h2 class="slide__display reveal">Ship the curriculum,<br><em>not just the tool.</em></h2>
-    <p class="slide__subtitle reveal" style="margin-top:clamp(16px,2vh,32px);">Week 7: guild office hours &mdash; Week 9: <code style="font-family:inherit;">od</code> added to onboarding checklist &mdash; Week 12: org-wide, CLI-first</p>
+    <p class="slide__subtitle reveal" style="margin-top:clamp(16px,2vh,32px);">Week 7: guild office hours &mdash; Week 9: <code style="font-family:inherit;">capt</code> added to onboarding checklist &mdash; Week 12: org-wide, CLI-first</p>
   </section>
 
 </div><!-- /deck -->

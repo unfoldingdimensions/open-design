@@ -175,7 +175,7 @@ const fail = () => JSON.stringify({ status: 'failed', error: { code: 'provider_m
 
 function shellFor(runStatus: NonNullable<Parameters<typeof buildTurnBlocks>[0]['runStatus']>): ShellData {
   const events: PersistedAgentEvent[] = [
-    { kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'od media generate a && od media generate b' }, startedAt: 0 },
+    { kind: 'tool_use', id: 'g1', name: 'Bash', input: { command: 'capt media generate a && capt media generate b' }, startedAt: 0 },
     { kind: 'tool_result', toolUseId: 'g1', content: [gen('a.png'), fail()].join('\n'), isError: false, completedAt: 1200 },
   ];
   const shell = buildTurnBlocks({ events, runStatus }).find((b): b is ShellData => b.kind === 'shell');

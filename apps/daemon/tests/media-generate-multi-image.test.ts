@@ -72,7 +72,7 @@ async function runCli(images: string[]): Promise<{ code: number; stderr: string 
   });
 }
 
-describe('od media generate repeated --image', () => {
+describe('capt media generate repeated --image', () => {
   it('posts all five images and preserves the legacy primary image field', async () => {
     const images = ['one.png', 'two.png', 'three.png', 'four.png', 'five.png'];
     const result = await runCli(images);

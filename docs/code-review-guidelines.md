@@ -238,7 +238,7 @@ page templates, and image/video/audio templates.
 - `open-design.json` conforms to `docs/schemas/open-design.plugin.v1.json` and references only supported atoms, design systems, craft docs, assets, scripts, MCP servers, or connectors.
 - Plugin content stays portable and does not import app-private source.
 - Contribution-facing spec documentation updates its matching `*.zh-CN.md` mirror.
-- Validation follows `plugins/AGENTS.md`, including plugin-runtime typechecking and `od plugin validate` when the built CLI is available.
+- Validation follows `plugins/AGENTS.md`, including plugin-runtime typechecking and `capt plugin validate` when the built CLI is available.
 
 **Block when:**
 

@@ -480,7 +480,7 @@ export function capabilitiesRequiredError(args: {
   missing: string[];
 }): ResolveSnapshotError {
   const remediation = [
-    `od plugin trust ${args.pluginId} --capabilities ${args.missing.join(',')}`,
+    `capt plugin trust ${args.pluginId} --capabilities ${args.missing.join(',')}`,
     `or pass --grant-caps ${args.missing.join(',')} to the apply / run command`,
   ];
   return {

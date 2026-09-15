@@ -164,7 +164,7 @@ export function registerStaticResourceRoutes(app: Express, ctx: RegisterStaticRe
   };
   // Stamp a freshly imported/installed skill with the caller's workspace, the
   // same moment plugin install does (`installOrUpgradePlugin` in server.ts).
-  // A caller with no workspace headers (`od skill import`, a not-logged-in
+  // A caller with no workspace headers (`capt skill import`, a not-logged-in
   // web session) leaves the skill unbound — visible everywhere, same as
   // every skill imported before this shipped ("no retroactive tagging").
   const bindImportedSkillToWorkspace = (

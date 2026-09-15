@@ -19,7 +19,7 @@ interface CapturedRequest {
   headers: http.IncomingHttpHeaders;
 }
 
-describe('od skill CLI', () => {
+describe('capt skill CLI', () => {
   const requests: CapturedRequest[] = [];
   const completeSkill = {
     id: 'complete-skill',

@@ -28,7 +28,7 @@ function rowOf(mediaTasks: ProjectMediaTask[]): ImageRow {
         kind: 'tool_use',
         id: 'g1',
         name: 'Bash',
-        input: { command: 'od media generate a && od media generate b' },
+        input: { command: 'capt media generate a && capt media generate b' },
         startedAt: 0,
       } as PersistedAgentEvent,
     ],

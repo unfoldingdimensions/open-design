@@ -263,7 +263,7 @@ L5 环境/外围  离线、代理、企业网、磁盘、更新器、打包壳�
 |---|---|---|---|---|---|---|---|---|---|---|
 | R-090 | 打包壳启动失败家族(原生模块缺失、SQLite 坏 / 锁、数据目录不可写、磁盘满、冷启动超时、Node 版本) | 安装损坏、两实例、慢盘、杀毒 | 只有遥测 `packaged_runtime_failed`;弹框仅路径非法 | 应用消失 | P 每天 100–190 台(mac better-sqlite3 358 台、win sidecar 超时 958 台) | 覆盖不到 | 弹(启动失败页:原因 + 导出日志 + 重装) | F8 / F10 | 需用户 | E-002~011/031 |
 | R-091 | 更新器失败(元数据拉不到、下载中断、校验失败、壳子 / payload 错配、地板拒绝) | 离线、镜像、旧壳 | `metadata-unreachable` / `download-failed` / `checksum-*` / `outer-below-min` | 「Couldn't check for updates」/「Update failed」/ reinstallReady | F-I 14 | 覆盖不到 | 弹(已有)+ 区分离线 | F8 | 一步 | E-020/035~037 |
-| R-092 | Windows 特有:缺 node.exe、无 od CLI、坏 PATHEXT、DPAPI 超时、EPIPE 弹窗、Defender 拖慢 | Windows 包 | 多数无告警;DPAPI 曾让 run 静默走 Cloud 计费 | 各种 | issue #6065/#7148/#6285/#6964 | 覆盖不到 | 拦(打包产物校验门)+ 弹 | F8 | 需用户 | E-022~027 |
+| R-092 | Windows 特有:缺 node.exe、无 capt CLI、坏 PATHEXT、DPAPI 超时、EPIPE 弹窗、Defender 拖慢 | Windows 包 | 多数无告警;DPAPI 曾让 run 静默走 Cloud 计费 | 各种 | issue #6065/#7148/#6285/#6964 | 覆盖不到 | 拦(打包产物校验门)+ 弹 | F8 | 需用户 | E-022~027 |
 | R-093 | macOS 27 系统策略拒绝 / 安装路径含符号链接 / 单实例闸门误杀 | 特定环境 | 零日志 / 拒绝 symlink / 强杀重启 | 无窗口;「launcher payload」报错;被重启 | issue #6663 | 覆盖不到 | 文档 + 弹 | F8 | 需用户 | E-012/028/029 |
 | R-094 | Renderer 崩溃循环 / GPU | 驱动、缓存 | 熔断 5 次/60s → 静态恢复屏 | 「It will try to recover on its own」 | P 去重后每版几十到几百台 | 覆盖不到 | 弹(已有) | F8 | 自动 | E-030、P §7b |
 | R-095 | od:// 连接池卡死 / 字体 tofu / 高 CPU(大目录 walk) | 频繁切页、长流、16 万条目导入 | 已修无回归监测;font-recovery 只覆盖两族;无自监测 | 越来越慢到全白;方块图标;卡顿 | issue #7195/#6655 | 覆盖不到 | 静(自愈)+ 行 | F8 | 自动 | E-017/018/032 |

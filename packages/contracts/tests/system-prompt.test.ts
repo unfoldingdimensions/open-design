@@ -98,7 +98,7 @@ describe('DISCOVERY_AND_PHILOSOPHY (contracts copy) — prompt routing parity', 
    * T69(2026-09-07):设计风格选择题从提示词整题下线,产品逐字「**不问了**」。
    * 原用例守的是「API/BYOK 这条路也要教 host 目录契约」,现在守它不再教。
    *
-   * ⚠️ **答案解读那一半故意留着**(`od tools directions` 那条):缓存的旧提示词、
+   * ⚠️ **答案解读那一半故意留着**(`capt tools directions` 那条):缓存的旧提示词、
    * 旧客户端、模型记住的旧格式都还可能把一份 Host 目录答案交上来,那时 agent
    * 必须仍然知道 `value` / `foundation` / `guidance` 怎么用 —— 这和渲染器继续
    * 认得 `direction-cards` 是同一件事的两面(见 e2e `DORMANT_TYPES`)。
@@ -109,7 +109,7 @@ describe('DISCOVERY_AND_PHILOSOPHY (contracts copy) — prompt routing parity', 
     expect(prompt).not.toContain('direction-cards');
     expect(prompt).not.toContain("host-owned visual-style catalog");
     expect(prompt).toContain(
-      'the Host value is catalogue identity and must not be passed to `od tools directions`',
+      'the Host value is catalogue identity and must not be passed to `capt tools directions`',
     );
     expect(prompt).not.toContain('draft 3–5 distinct directions');
   });

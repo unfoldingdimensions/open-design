@@ -2,7 +2,7 @@
 //
 //   skills + metadata + system-prompt
 //        ↓ (the code agent decides what to make)
-//   `od media generate --surface … --model … --output … --prompt …`
+//   `capt media generate --surface … --model … --output … --prompt …`
 //        ↓ (this module routes to a provider)
 //   bytes written to <projectsRoot>/<projectId>/<output>
 //        ↓

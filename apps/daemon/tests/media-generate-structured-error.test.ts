@@ -86,7 +86,7 @@ async function runCli(options: { delayStderrReadMs?: number } = {}): Promise<{
   });
 }
 
-describe("od media generate structured daemon failures", () => {
+describe("capt media generate structured daemon failures", () => {
   it("preserves the safe daemon error envelope without leaking diagnostics", async () => {
     const result = await runCli();
 

@@ -428,7 +428,7 @@ async function renderOneCover(
     }
   } finally {
     // The renderer's temp file is the daemon's to clean up — the same contract
-    // the `od export` route follows.
+    // the `capt export` route follows.
     await fs.promises.rm(result.path, { force: true }).catch(() => {});
   }
 }

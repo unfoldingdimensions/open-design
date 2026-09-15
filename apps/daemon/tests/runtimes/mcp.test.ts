@@ -13,7 +13,7 @@ test('live artifact MCP discovery is limited to mature ACP agents', () => {
     const s = server[0];
     if (!s) throw new Error('unreachable: server length verified as 1 above');
     assert.equal(s.name, 'open-design-live-artifacts');
-    assert.equal(s.command, 'od');
+    assert.equal(s.command, 'capt');
     assert.deepEqual(s.args, ['mcp', 'live-artifacts']);
     const envIsMap =
       typeof s.env === 'object' && s.env !== null && !Array.isArray(s.env);
@@ -38,7 +38,7 @@ test('Kimi retains ACP live-artifacts and external MCP wiring', () => {
   assert.deepEqual(buildLiveArtifactsMcpServersForAgent(kimi), [
     {
       name: 'open-design-live-artifacts',
-      command: 'od',
+      command: 'capt',
       args: ['mcp', 'live-artifacts'],
       env: [{ name: 'ELECTRON_RUN_AS_NODE', value: '1' }],
     },

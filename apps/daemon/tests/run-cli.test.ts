@@ -187,7 +187,7 @@ async function runCli(args: string[]): Promise<{ stdout: string; stderr: string;
   }
 }
 
-describe('od run CLI', () => {
+describe('capt run CLI', () => {
   it('keeps one --skill backward compatible and sends multiple ids canonically', async () => {
     stub = await startRunStubServer(true);
     const single = await runCli([

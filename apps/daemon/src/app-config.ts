@@ -49,7 +49,7 @@ export interface PluginEnvKnobs {
   // its run/conversation/project is terminal. Default unset -> unlimited.
   snapshotRetentionDays: number | null;
   // GC worker tick interval. Phase 5 reads this; Phase 1 just exposes the
-  // knob through `od config get` so operators can plan ahead.
+  // knob through `capt config get` so operators can plan ahead.
   snapshotGcIntervalMs: number;
 }
 
@@ -920,7 +920,7 @@ export class InvalidAppConfigValueError extends Error {
  * setting falling back to its default. `odNextStrategyMode` is not a
  * preference — it decides whether OD Next runs at all, and its default is
  * `active`, so dropping it is not a neutral outcome. It revokes an opt-out,
- * which means `od config set odNextStrategyMode of` would put the installation
+ * which means `capt config set odNextStrategyMode of` would put the installation
  * back on OD Next while printing success, and the person who typed it would go
  * on believing they had opted out.
  *

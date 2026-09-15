@@ -16,7 +16,7 @@ interface ParsedOptions {
 }
 
 const DELIVERABLE_SYNTAX_USAGE = `Usage:
-  od tools deliverable-syntax check [--json]
+  capt tools deliverable-syntax check [--json]
 
 Environment:
   OD_NODE_BIN     Node-compatible runtime for agent wrapper invocations

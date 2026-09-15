@@ -66,7 +66,7 @@ storage, MCP injection, and automatic background maintenance deferred.
 - install the hash-verified embedded tarball through the user's `dsh` only
   after confirmation;
 - rescan, select, and connection-test on success;
-- expose the same operation as `od agent setup deepseek-harness --json`;
+- expose the same operation as `capt agent setup deepseek-harness --json`;
 - do not reinstall or prompt when the compatible profile already exists.
 
 ### Models and reasoning
@@ -160,7 +160,7 @@ These are deferred without changing the chosen architecture.
 | session model | one compatible Harness session per OD conversation |
 | completion | exactly one matching terminal `result` |
 | resume failure | fail; never silently create |
-| profile setup | explicit selection dialog or `od agent setup` |
+| profile setup | explicit selection dialog or `capt agent setup` |
 | bundle delivery | pinned tarball embedded in OD; official `dsh` stays external |
 | credential source | preconfigured Harness or inherited environment |
 | MCP | not forwarded in phase one |
@@ -321,7 +321,7 @@ The agent picker and Settings both place an installed-but-unconfigured DSH in
 the ordinary **Your CLIs** group. Clicking it opens the same confirmation
 dialog; Settings' **Test** remains a pure connection test. The setup operation
 has a shared contract DTO and daemon endpoint, a Web surface, and the explicit
-`od agent setup deepseek-harness --json` CLI peer.
+`capt agent setup deepseek-harness --json` CLI peer.
 
 The existing normal chat/run APIs expose DeepSeek Harness by runtime id like
 other coding agents. Future credential management must likewise land as one

@@ -108,29 +108,29 @@ OpenDesign 是這樣誕生的：當 Anthropic 隨 Claude Design 推出的那套 
 
 ## 平台相容性
 
-> OpenDesign 以 **skills、CLI 與 MCP server** 的形式發行，主流編碼 agent 都能原生使用。安裝 OD 後，只要一句 `od mcp install <agent>` 就能把 MCP server 接進該 agent 的設定，你便能在任何 agent 內呼叫同一組工具。
+> OpenDesign 以 **skills、CLI 與 MCP server** 的形式發行，主流編碼 agent 都能原生使用。安裝 OD 後，只要一句 `capt mcp install <agent>` 就能把 MCP server 接進該 agent 的設定，你便能在任何 agent 內呼叫同一組工具。
 
 | 編碼 agent／平台 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 狀態 &nbsp;&nbsp; | 一行指令安裝 MCP server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ 已支援 | `od mcp install claude` |
-| [Codex CLI](https://github.com/openai/codex) | ✅ 已支援 | `od mcp install codex` |
-| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ 已支援 | `od mcp install reasonix` |
-| [Raven](https://github.com/EverMind-AI/Raven) | ✅ 已支援 | `od mcp install raven` |
-| [Cursor](https://www.cursor.com/cli) | ✅ 已支援 | `od mcp install cursor` |
-| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ 已支援 | `od mcp install copilot` |
-| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ 已支援 | `od mcp install copilot` |
-| [OpenCode](https://opencode.ai/) | ✅ 已支援 | `od mcp install opencode` |
-| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ 已支援 | `od mcp install openclaw` |
-| [Antigravity](https://antigravity.google) | ✅ 已支援 | `od mcp install antigravity` |
-| [Cline](https://github.com/cline/cline) | ✅ 已支援 | `od mcp install cline` |
-| [Trae](https://www.trae.ai/) | ✅ 已支援 | `od mcp install trae` |
-| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ 已支援 | `od mcp install kimi` |
-| [Kiro](https://kiro.dev) | ✅ 已支援 | `od mcp install kiro` |
-| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ 已支援 | `od mcp install pi` |
-| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ 已支援 | `od mcp install vibe` |
-| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ 已支援 | `od mcp install hermes` |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | ✅ 已支援 | `capt mcp install claude` |
+| [Codex CLI](https://github.com/openai/codex) | ✅ 已支援 | `capt mcp install codex` |
+| [DeepSeek Reasonix](https://github.com/esengine/DeepSeek-Reasonix) | ✅ 已支援 | `capt mcp install reasonix` |
+| [Raven](https://github.com/EverMind-AI/Raven) | ✅ 已支援 | `capt mcp install raven` |
+| [Cursor](https://www.cursor.com/cli) | ✅ 已支援 | `capt mcp install cursor` |
+| [VS Code + GitHub Copilot](https://github.com/features/copilot) | ✅ 已支援 | `capt mcp install copilot` |
+| [GitHub Copilot CLI](https://github.com/features/copilot/cli) | ✅ 已支援 | `capt mcp install copilot` |
+| [OpenCode](https://opencode.ai/) | ✅ 已支援 | `capt mcp install opencode` |
+| [OpenClaw](https://github.com/openclaw/openclaw) | ✅ 已支援 | `capt mcp install openclaw` |
+| [Antigravity](https://antigravity.google) | ✅ 已支援 | `capt mcp install antigravity` |
+| [Cline](https://github.com/cline/cline) | ✅ 已支援 | `capt mcp install cline` |
+| [Trae](https://www.trae.ai/) | ✅ 已支援 | `capt mcp install trae` |
+| [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) | ✅ 已支援 | `capt mcp install kimi` |
+| [Kiro](https://kiro.dev) | ✅ 已支援 | `capt mcp install kiro` |
+| [Pi Agent](https://github.com/badlogic/pi-mono) | ✅ 已支援 | `capt mcp install pi` |
+| [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ 已支援 | `capt mcp install vibe` |
+| [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ 已支援 | `capt mcp install hermes` |
 
-`od mcp install <agent> --print` 可預覽 dry-run · `--uninstall` 可移除 · 完整清單請執行 `od mcp install --help`。
+`capt mcp install <agent> --print` 可預覽 dry-run · `--uninstall` 可移除 · 完整清單請執行 `capt mcp install --help`。
 
 <p align="center">
   <img src="https://repo-assets.open-design.ai/resources/images/coding-agents.png" alt="The 25 coding-agent CLIs OpenDesign supports — Claude Code · Codex · OpenCode · Hermes · Antigravity · Vela · Grok Build · Kimi · Cursor Agent · Qwen · Qoder · GitHub Copilot · Pi · Kiro · Kilo · Mistral Vibe · DeepSeek · Reasonix · Aider · Amp · CodeBuddy · Mimo · AtomCode · Devin · Trae" width="100%" />
@@ -292,7 +292,7 @@ OpenDesign（OD）就是那個開源的替代方案。同樣的迴圈、同樣�
 
 ```bash
 # One-line install into the agent you're using:
-od mcp install <agent>
+capt mcp install <agent>
 # <agent> = claude | codex | reasonix | raven | cursor | copilot | openclaw | antigravity
 #         | pi | vibe | hermes | cline | kimi | kiro | trae | opencode
 
@@ -300,11 +300,11 @@ od mcp install <agent>
 curl -fsSL https://open-design.ai/install.sh | sh -s <agent>
 ```
 
-`install.sh` 是包在 `od mcp install` 外的輕量 shell wrapper；它的用途是讓 hosted URL 回傳 shell 指令、而非 landing page 的 HTML fallback，並在你的 shell 解析到非 OpenDesign 的 `od` 執行檔時快速失敗。
+`install.sh` 是包在 `capt mcp install` 外的輕量 shell wrapper；它的用途是讓 hosted URL 回傳 shell 指令、而非 landing page 的 HTML fallback，並在你的 shell 解析到非 OpenDesign 的 `capt` 執行檔時快速失敗。
 
 > **WSL2 使用者：** 若你的編碼 agent CLI 跑在 WSL2 內，請先依照
 > [`WSL2 設定指南`](../../docs/wsl-setup.md) 操作。Linux 的 `/usr/bin/od` 可能會
-> 遮蔽 OpenDesign 的 `od` 指令。
+> 遮蔽 OpenDesign 的 `capt` 指令。
 
 接著，在 agent 內：
 
@@ -364,14 +364,14 @@ OpenDesign 隨附一個 **stdio MCP server** 與各 agent 專屬的 **安裝腳�
 
 ```bash
 # One-line install (16+ CLIs supported):
-od mcp install <agent>
+capt mcp install <agent>
 
 # Then the agent can:
-od project list --json
-od files list <project-id> --json
-od files read <project-id> <relative-path>
-od plugin list --json
-od skills list --json
+capt project list --json
+capt files list <project-id> --json
+capt files read <project-id> <relative-path>
+capt plugin list --json
+capt skills list --json
 ```
 
 **為什麼用 MCP？** 每次迭代都匯出再重新附上一個 zip 會打斷心流。MCP 直接揭露設計來源——agent 看到的永遠是即時檔案。
@@ -472,20 +472,20 @@ od skills list --json
 
 ### 使用外掛
 
-外掛在 **web UI** 與 **`od` CLI** 之間完全對等——使用同一組 `/api/plugins` 端點，挑哪個合適就用哪個。
+外掛在 **web UI** 與 **`capt` CLI** 之間完全對等——使用同一組 `/api/plugins` 端點，挑哪個合適就用哪個。
 
 **在桌面／網頁應用程式中：** 打開 **外掛** 頁面瀏覽市集並點擊 **安裝**；在專案的 Studio 中，外掛會以撰寫框 chip 的形式出現，點擊即可套用（連同它們宣告的輸入）。
 
 **在命令列上**（不需 UI 即可執行——這正是外部 agent 採用的路徑）：
 
 ```bash
-od plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
-od plugin search "landing page"      # search by keyword
-od plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
-od plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
-od plugin apply od-default --input brief="a one-page pitch for our seed round"
-od plugin upgrade od-default         # upgrade
-od plugin uninstall od-default       # uninstall
+capt plugin list                       # list installed plugins (--task-kind / --mode / --tag filters)
+capt plugin search "landing page"      # search by keyword
+capt plugin info od-default            # inspect a plugin's metadata, inputs, capabilities
+capt plugin install od-figma-migration # install from a registry; also accepts ./local-folder or an https://… link
+capt plugin apply od-default --input brief="a one-page pitch for our seed round"
+capt plugin upgrade od-default         # upgrade
+capt plugin uninstall od-default       # uninstall
 ```
 
 每個指令都支援 `--json`，因此你可以把它透過 `jq` / `xargs` 接進自動化流程。
@@ -508,8 +508,8 @@ my-plugin/
 在本地搭建骨架並驗證：
 
 ```bash
-od plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
-od plugin validate ./my-plugin                          # check manifest / file layout
+capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
+capt plugin validate ./my-plugin                          # check manifest / file layout
 pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 ```
 
@@ -518,7 +518,7 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 ### 貢獻一個外掛
 
 1. 把外掛資料夾放進 [`plugins/community/`](../../plugins/community/)（第三方外掛），或——若要讓它隨 OpenDesign 一同附帶——放進 [`plugins/_official/`](../../plugins/_official/) 中對應的層級。
-2. 通過驗證：`od plugin validate`、`pnpm guard`、`pnpm --filter @open-design/plugin-runtime typecheck`。
+2. 通過驗證：`capt plugin validate`、`pnpm guard`、`pnpm --filter @open-design/plugin-runtime typecheck`。
 3. 使用 [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) 中的範本填寫 PR（ID、版本、通道、mode、能力、觸發範例；視覺型外掛請附上截圖／預覽）。
 4. 若要發布到外部 registry（skills.sh / ClawHub / 獨立 GitHub）→ [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md)。
 
@@ -585,8 +585,8 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 - [x] 打包的 Electron 建置——macOS（Apple Silicon + Intel）+ Windows（x64）+ Linux AppImage（選用通道）
 - [ ] 註解模式的精準編輯——部分完成；可靠的定點修補開發中
 - [ ] AI 發出的 tweaks 面板 UX——尚未實作
-- [ ] `npx od init` 以 `DESIGN.md` 搭建專案骨架
-- [ ] Plugin SDK + `od plugin {add,list,remove,test,publish}` CLI
+- [ ] `npx capt init` 以 `DESIGN.md` 搭建專案骨架
+- [ ] Plugin SDK + `capt plugin {add,list,remove,test,publish}` CLI
 - [ ] Figma / Pencil → React / Next / Vue 遷移外掛（alpha）
 - [ ] 翻新既有程式碼庫的外掛（指向一個 git 儲存庫 + `DESIGN.md`）
 

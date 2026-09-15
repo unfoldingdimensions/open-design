@@ -216,7 +216,7 @@ pnpm tools-dev status          # inspect managed runtimes
 pnpm tools-dev logs            # show daemon/web/desktop logs
 pnpm tools-dev check           # status + recent logs + common diagnostics
 pnpm tools-dev stop            # stop managed runtimes
-pnpm --filter @open-design/daemon build  # build apps/daemon/dist/cli.js for `od`
+pnpm --filter @open-design/daemon build  # build apps/daemon/dist/cli.js for `capt`
 pnpm --filter @open-design/web build     # build the web package when needed
 pnpm typecheck                 # workspace typecheck
 ```
@@ -227,7 +227,7 @@ pnpm typecheck                 # workspace typecheck
 
 ## Media generation / agent dispatcher checks
 
-Skills สำหรับ image, video, audio และ HyperFrames เรียก local `od` CLI ผ่าน environment variables ที่ daemon inject เมื่อ spawn agent:
+Skills สำหรับ image, video, audio และ HyperFrames เรียก local `capt` CLI ผ่าน environment variables ที่ daemon inject เมื่อ spawn agent:
 
 - `OD_BIN` — absolute path ไปยัง `apps/daemon/dist/cli.js`.
 - `OD_DAEMON_URL` — URL ของ daemon ที่กำลังรัน.
@@ -306,7 +306,7 @@ open-design/
 ├── apps/
 │   ├── daemon/                # Node/Express — spawns local agents + serves APIs
 │   │   └── src/
-│   │       ├── cli.ts             # `od` bin entry
+│   │       ├── cli.ts             # `capt` bin entry
 │   │       ├── server.ts          # /api/* + static serving
 │   │       ├── agents.ts          # compatibility exports for the runtime modules
 │   │       ├── runtimes/
@@ -341,7 +341,7 @@ open-design/
 ├── scripts/sync-design-systems.ts    # re-import from upstream getdesign tarball
 ├── docs/                      # product vision + spec
 ├── pnpm-workspace.yaml        # apps/* + packages/* + tools/* + e2e
-└── package.json               # root quality scripts + `od` bin
+└── package.json               # root quality scripts + `capt` bin
 ```
 
 ## Troubleshooting

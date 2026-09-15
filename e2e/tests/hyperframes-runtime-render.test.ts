@@ -20,11 +20,11 @@ import { describe, expect, test } from 'vitest';
 
 import { createSmokeSuite } from '@/vitest/suite';
 
-const odBin = fileURLToPath(new URL('../../apps/daemon/bin/od.mjs', import.meta.url));
+const odBin = fileURLToPath(new URL('../../apps/daemon/bin/capt.mjs', import.meta.url));
 const desktopFixture = fileURLToPath(new URL('../lib/desktop/hyperframes-sidecar.ts', import.meta.url));
 
 describe('HyperFrames bundled runtime end-to-end', () => {
-  test('[P0] real od media generate renders MP4 through the daemon-owned HyperFrames runtime', async () => {
+  test('[P0] real capt media generate renders MP4 through the daemon-owned HyperFrames runtime', async () => {
     const suite = await createSmokeSuite('hyperframes-runtime-render');
     const desktopStamp = {
       app: APP_KEYS.DESKTOP,

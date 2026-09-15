@@ -33,7 +33,7 @@ function partiallyGeneratedShell(): ShellData {
       kind: 'tool_use',
       id: 'g1',
       name: 'Bash',
-      input: { command: 'od media generate a && od media generate b && od media generate c && od media generate d' },
+      input: { command: 'capt media generate a && capt media generate b && capt media generate c && capt media generate d' },
       startedAt: 0,
     },
     { kind: 'tool_result', toolUseId: 'g1', content: [gen('a.png'), failed()].join('\n'), isError: false },

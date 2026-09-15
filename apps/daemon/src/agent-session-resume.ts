@@ -265,7 +265,7 @@ export function resolveAgentResumeContext(
  * "Continue the run" sends a directive, not a request: *continue where you left
  * off; otherwise complete the original request*. That sentence is only
  * answerable inside the session that heard the original request. Two surfaces
- * offer it — the chat error card and `od run continue` — and neither can tell
+ * offer it — the chat error card and `capt run continue` — and neither can tell
  * whether the session will actually be continued: they see `resumable` (and, in
  * the UI, agent identity), while `evaluateResumeInvalidation` above ALSO
  * compares the stored model, cwd and cursor. Changing the model in Settings

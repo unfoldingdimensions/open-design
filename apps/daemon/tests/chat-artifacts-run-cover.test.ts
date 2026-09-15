@@ -325,7 +325,7 @@ describe('run terminal HTML cover wiring', () => {
     expect(htmlRef?.snapshotUrl).toBeUndefined();
 
     // And the renderer was asked for a viewport cover, not the 20,000px long
-    // image `od export` produces.
+    // image `capt export` produces.
     expect(exporterCalls).toHaveLength(1);
     expect(exporterCalls[0]?.captureMode).toBe('first_viewport_thumbnail');
     expect(exporterCalls[0]?.format).toBe('image');

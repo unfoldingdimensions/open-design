@@ -4112,7 +4112,7 @@ function buildAvailableInstallCommand(
   version: string,
 ): string {
   const suffix = version && version !== 'latest' ? `@${version}` : '';
-  return `od plugin install ${entry.name}${suffix}`;
+  return `capt plugin install ${entry.name}${suffix}`;
 }
 
 function buildAvailablePluginProvenance({

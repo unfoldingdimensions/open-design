@@ -641,7 +641,7 @@ export type BoundWorkspaceResourceMutationGate = (
  * DIVERGES from `enforceWorkspaceResourceMutation`: that gate 401s a headerless
  * caller on a bound resource, because a mutation must prove membership. Here
  * the same absence must NOT suppress the bootstrap, or every legacy client,
- * `od` CLI invocation, and signed-out read would silently lose version history
+ * `capt` CLI invocation, and signed-out read would silently lose version history
  * for no security gain — the suppressed write is local-only either way
  * (`.file-versions` never publishes). Only an authenticated "this member
  * cannot write here" suppresses it.
@@ -907,14 +907,14 @@ export async function enforceVerifiedWorkspaceResourceRead(
  * local daemon's own signed-in user, and is judged as that identity. Being
  * unable to name a workspace is not the same as having no standing in one.
  *
- * Headerless is the `od` CLI's normal shape, not an anomaly: nothing in
- * `apps/daemon/src/cli.ts` attaches `x-od-workspace-*` outside `od workspace …`,
+ * Headerless is the `capt` CLI's normal shape, not an anomaly: nothing in
+ * `apps/daemon/src/cli.ts` attaches `x-od-workspace-*` outside `capt workspace …`,
  * and `AGENTS.md` makes the CLI the embeddability contract that external agents
  * drive CapyDesign through. This branch used to answer 401 for ANY bound
  * resource, which was survivable only while headerless creates left projects
  * unbound. Once every created project got a workspace home (#6201), the two
  * rules combined into a project its own creator could not touch:
- * `od project create` then `od project duplicate` -> 401.
+ * `capt project create` then `capt project duplicate` -> 401.
  *
  * Resolving to the daemon's ambient identity — rather than to the request's
  * claim, of which there is none — is the same fallback the create path already

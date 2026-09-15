@@ -26,7 +26,7 @@ credentials, no wrangler, no per-person bottleneck. The content is **not**
 carried in release `metadata.json`, and there is no per-release publish
 tooling: one file, edited when the copy should change.
 
-- The daemon proxies it at `GET /api/whats-new` (also `od whats-new [--json]`),
+- The daemon proxies it at `GET /api/whats-new` (also `capt whats-new [--json]`),
   so the web UI and CLI read the exact same payload.
 - The card is a **release feature**: the daemon only fetches the document on
   real release channels (`beta`, `prerelease`, `preview`, `stable`). Development

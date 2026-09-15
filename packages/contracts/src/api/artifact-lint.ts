@@ -4,7 +4,7 @@
 // findings inline from POST /api/artifacts/save) since the linter landed,
 // but the shape only ever existed as a private type in
 // apps/daemon/src/lint-artifact.ts. This file makes it a shared DTO so the
-// CLI (`od lint`) and web surfaces parse one contract instead of
+// CLI (`capt lint`) and web surfaces parse one contract instead of
 // re-declaring the daemon's internals.
 
 export type ArtifactLintSeverity = 'P0' | 'P1' | 'P2';
@@ -33,7 +33,7 @@ export interface LintArtifactResponse {
   agentMessage: string;
 }
 
-/** Severity threshold for `od lint`'s exit code. `none` never fails. */
+/** Severity threshold for `capt lint`'s exit code. `none` never fails. */
 export type LintFailOn = 'p0' | 'p1' | 'p2' | 'none';
 
 export interface LintArtifactCliCounts {
@@ -42,7 +42,7 @@ export interface LintArtifactCliCounts {
   p2: number;
 }
 
-/** Machine envelope printed by `od lint --json`. */
+/** Machine envelope printed by `capt lint --json`. */
 export interface LintArtifactCliResultEnvelope {
   ok: boolean;
   file: string;

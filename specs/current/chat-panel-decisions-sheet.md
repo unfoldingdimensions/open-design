@@ -435,7 +435,7 @@ QA 报的是两件(Beta 0.21.1-beta.7,会话 `7f04b326`):**① 提交后同时�
 
 ⚠️ **往 `DORMANT_TYPES` 里加名字 = 宣布又一个能力对模型不可见,必须有产品裁决**,不是「这条路写漏了」的消音器。已实测:把 `direction-cards` 加回任何一条路的类型清单,parity **当场红**。
 
-**撤的是「发问」,不是「读答案」**:`prompts/directions.ts` 里解读旧表单答案那半边(`value` / `foundation` / `guidance`、`od tools directions`)**故意留着**,和渲染器继续认这个类型是同一件事的两面。
+**撤的是「发问」,不是「读答案」**:`prompts/directions.ts` 里解读旧表单答案那半边(`value` / `foundation` / `guidance`、`capt tools directions`)**故意留着**,和渲染器继续认这个类型是同一件事的两面。
 
 ### 顺带修掉的一条死路(本来就在,不是这次改出来的)
 

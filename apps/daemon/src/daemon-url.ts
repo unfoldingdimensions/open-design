@@ -21,12 +21,12 @@ export interface ResolveDaemonUrlOptions {
 }
 
 /**
- * Resolve the daemon HTTP base URL for `od` client commands.
+ * Resolve the daemon HTTP base URL for `capt` client commands.
  *
  * Spawn order: explicit `--daemon-url` flag, `OD_DAEMON_URL` env, then
  * inherited sidecar client status, then the default
  * `tools-dev status --json` runtime. Falls back to the legacy default
- * for direct `od` launches that do not run as a sidecar.
+ * for direct `capt` launches that do not run as a sidecar.
  */
 export async function resolveDaemonUrl(
   options: ResolveDaemonUrlOptions = {},

@@ -587,7 +587,7 @@ describe('slim core — direction library becomes a pull layer', () => {
     expect(classic).toContain('## Direction library — infer and bind by default');
     expect(classic).toContain('Infer the best match from the brief and known context');
     expect(classic).toContain('If the user explicitly requested direction comparison');
-    expect(classic).toContain('the Host value is catalogue identity and must not be passed to `od tools directions`');
+    expect(classic).toContain('the Host value is catalogue identity and must not be passed to `capt tools directions`');
     expect(classic).toContain('**Palette (drop into `:root`):**');
     expect(classic).not.toContain('## Direction library — index');
     // An active design system suppresses both variants.
@@ -627,7 +627,7 @@ describe('slim core — regression-audit fixes vs classic', () => {
       executionProfile: 'text_artifact',
       promptCoreVariant: 'slim',
     });
-    // No tools on this profile: an index telling the model to run the `od`
+    // No tools on this profile: an index telling the model to run the `capt`
     // CLI is a promise it cannot keep. Classic inlined the palettes; slim
     // must too on this profile.
     expect(out).toContain('## Direction library — infer and bind by default');

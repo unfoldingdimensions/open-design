@@ -9,7 +9,7 @@
 // spec 04 §10 addendum: `workspaceId` OMITTED (the argument not passed at
 // all) and `workspaceId: null` (passed explicitly, e.g. by `GET /api/plugins`
 // when the request carries no `x-od-workspace-id` header) are DIFFERENT
-// signals. Omitted means an internal caller (`od plugin list`, inventory
+// signals. Omitted means an internal caller (`capt plugin list`, inventory
 // stats, the bundled-scenario scan) never asked to be scoped — stays
 // unfiltered. Explicit `null` means an HTTP caller DID ask to be scoped but
 // has no identity to offer, and must now see only UNBOUND plugins, not

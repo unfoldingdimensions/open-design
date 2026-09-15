@@ -36,7 +36,7 @@ export interface OdNextRolloutDecision {
  * Read-only, and deliberately without a way to change it from here. This status
  * used to carry a stop latch: an automatic, daemon-wide disable that outranked
  * the saved mode, survived restart, and could only be lifted by an operator
- * running `od strategy rollout reset`. It is gone. Nothing turns OD Next off
+ * running `capt strategy rollout reset`. It is gone. Nothing turns OD Next off
  * for an installation except that installation asking for it, so `effectiveMode`
  * is now derived entirely from `requestedMode` and the content/behavior flags —
  * there is no state behind this endpoint for a caller to reconcile against.

@@ -49,7 +49,7 @@ type ReconResult = {
 };
 
 const execFileAsync = promisify(execFile);
-const odBin = fileURLToPath(new URL('../../../apps/daemon/bin/od.mjs', import.meta.url));
+const odBin = fileURLToPath(new URL('../../../apps/daemon/bin/capt.mjs', import.meta.url));
 
 // This spec deliberately uses a tiny fake executable instead of CI's browser.
 // It exercises the real tools-dev daemon, project authorization, process
@@ -108,7 +108,7 @@ describe('Website Clone main path', () => {
     });
   }, 180_000);
 
-  test('[P0] real od CLI runs the staged recon script through the daemon browser broker', async () => {
+  test('[P0] real capt CLI runs the staged recon script through the daemon browser broker', async () => {
     const suite = await createSmokeSuite('web-clone-real-browser-main');
     const fixture = await startFixtureSite();
     const browserExecutable = await resolveBrowserExecutable();
@@ -128,7 +128,7 @@ describe('Website Clone main path', () => {
           `复刻 ${fixture.url}`,
           '--json',
         ]);
-        expect(created.code, `od project create failed: ${created.stderr}`).toBe(0);
+        expect(created.code, `capt project create failed: ${created.stderr}`).toBe(0);
         const project = JSON.parse(created.stdout) as CreatedProjectResponse;
         expect(project.project.skillId).toBe('web-clone');
         expect(project.conversationId).toEqual(expect.any(String));
@@ -148,12 +148,12 @@ describe('Website Clone main path', () => {
           `Run the Website Clone primary-path smoke. WEB_CLONE_FIXTURE_URL=${fixture.url}`,
           '--json',
         ]);
-        expect(started.code, `od run start failed: ${started.stderr}`).toBe(0);
+        expect(started.code, `capt run start failed: ${started.stderr}`).toBe(0);
         const { runId } = JSON.parse(started.stdout) as RunStartResponse;
         expect(runId).toEqual(expect.any(String));
 
         const watched = await od(daemonUrl, ['run', 'watch', runId], 180_000);
-        expect(watched.code, `od run watch failed: ${watched.stderr || watched.stdout}`).toBe(0);
+        expect(watched.code, `capt run watch failed: ${watched.stderr || watched.stdout}`).toBe(0);
         const watchedEvents = watched.stdout
           .trim()
           .split('\n')

@@ -216,7 +216,7 @@ describe("copyBundledResourceTrees", () => {
       );
       await mkdir(join(workspaceRoot, "skills", "sample"), { recursive: true });
       // Packaged Website Clone runs this staged skill from both the UI and the
-      // bundled `od` CLI. Keep the skill and its zero-dependency CDP runtime in
+      // bundled `capt` CLI. Keep the skill and its zero-dependency CDP runtime in
       // the fixture: losing either file would break a primary product path and
       // tempt the agent to install Playwright into the user's project again.
       await mkdir(dirname(webCloneBrowserRuntimePath), { recursive: true });

@@ -32,7 +32,7 @@ od:
 
 **OpenDesign 环境准备（跑任何 `scripts/` 前先看）**：
 - 本 skill 的脚本会被 stage 到项目内 `.od-skills/<插件目录>/scripts/`（skill 前言里有确切路径）。文中命令写的 `node scripts/xxx.mjs` 按该路径解析，例如 `node .od-skills/<插件目录>/scripts/recon-site.mjs ...`；`RECON/`、`assets/` 等产物仍写到项目根。
-- 脚本内置基于 Chrome DevTools Protocol 的零依赖控制层，直接复用系统已有的 Chrome、Edge 或 Chromium；无需启动 Electron 客户端，也支持纯 `od` CLI。Agent 沙箱内会通过本地 daemon 创建临时 CDP 会话，避免沙箱阻止 Chrome 子进程。**禁止在用户项目里执行 `npm install playwright` 或下载 Chromium。** 若预检报告没有兼容浏览器，直接说明缺少系统浏览器或通过 `OD_BROWSER_EXECUTABLE_PATH` 指定路径，不要改为目测，也不要反复安装依赖。源码开发环境若已经提供 `OD_PLAYWRIGHT_PACKAGE`，脚本仍兼容该运行时，但它不是产品链路的前置条件。
+- 脚本内置基于 Chrome DevTools Protocol 的零依赖控制层，直接复用系统已有的 Chrome、Edge 或 Chromium；无需启动 Electron 客户端，也支持纯 `capt` CLI。Agent 沙箱内会通过本地 daemon 创建临时 CDP 会话，避免沙箱阻止 Chrome 子进程。**禁止在用户项目里执行 `npm install playwright` 或下载 Chromium。** 若预检报告没有兼容浏览器，直接说明缺少系统浏览器或通过 `OD_BROWSER_EXECUTABLE_PATH` 指定路径，不要改为目测，也不要反复安装依赖。源码开发环境若已经提供 `OD_PLAYWRIGHT_PACKAGE`，脚本仍兼容该运行时，但它不是产品链路的前置条件。
 
 ## 头号铁律：真源码至上，绝不信 AI 推测的代码
 

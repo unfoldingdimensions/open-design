@@ -10,7 +10,7 @@ import { upsertSpeakerNotesInHtml } from '../../src/runtime/speaker-notes';
 // Export splices bridges into the artifact's own bytes exactly like the preview
 // transports do, so it carries the same hazard: a prototype that builds an HTML
 // document string writes `</head>` and `</body>` as ordinary content. #7410 was
-// reported against preview only because `od export` skips the daemon's
+// reported against preview only because `capt export` skips the daemon's
 // URL-preview injection — the export path had the same defect all along.
 //
 // Each fixture puts the authored copy of the boundary *before* the document's

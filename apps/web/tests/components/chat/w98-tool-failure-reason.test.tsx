@@ -12,7 +12,7 @@
  *   库 `/Users/elian/.od-chatpanel-preview/app.sqlite`
  *   消息 `27eaad58-120b-48ac-9570-067583367fe2`,agent = `codex`
  *   tool_use `exec-29102c36-…`,`isError: true`,内容是 152 字符的 JSON 错误体。
- * 命令是**复合命令**(`wc -l <文件> && rg -n '…' <文件> && od export …`),
+ * 命令是**复合命令**(`wc -l <文件> && rg -n '…' <文件> && capt export …`),
  * 界面按**第一段**标成「读取 <文件>」,而失败来自**最后一段** ——
  * 标签选择这件事本身也不准,那是另一单(见 PR 说明的「相邻问题」),这里不碰。
  */

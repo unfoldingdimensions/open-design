@@ -25,7 +25,7 @@ AMR（Agentic Model Router）不再作为 OpenDesign 的独立产品，收敛成
 | 余额来源 | 本地 config 无余额；daemon 有 `/api/amr/*` 反代上游 vela API（代理已存在），余额可由此取 | `daemon/src/routes/vela.ts`（`AMR_API_PROXY_PREFIX`） |
 | 登录态消费 | **四处各自 `fetch + useState` 轮询**，无全局 account context（App 顶层持有一份并部分下传） | `App.tsx:585`、`ChatPane.tsx:758`、`InlineModelSwitcher.tsx:160`、`AmrLoginPill.tsx` |
 | 登录流 | vela device-auth（`startVelaLogin` → 轮询 `/status`），有事件总线 | `components/amrLoginPolling.ts`、`providers/daemon.ts` |
-| CLI | vela 登录是纯 UI，**无 `od account` 子命令** | `daemon/src/cli.ts`（`SUBCOMMAND_MAP`） |
+| CLI | vela 登录是纯 UI，**无 `capt account` 子命令** | `daemon/src/cli.ts`（`SUBCOMMAND_MAP`） |
 
 ## 开源 / 商业化分层（open-core）
 
@@ -47,7 +47,7 @@ OpenDesign 本身是开源产品，商业化走 open-core：**账号挂在托管
 - 全局登录态的 single source（收敛现在分散的 4 处）。
 - 常驻用户头像，跨视图（home + project）可见，与运行方式无关。
 - 头像下拉展示：身份、当前套餐、余额，以及登出 / 管理订阅 / 充值入口。
-- UI / CLI 双轨：新增 `od account login | status | logout`。
+- UI / CLI 双轨：新增 `capt account login | status | logout`。
 
 **Non-goals（本期不做）**
 - 不改计费后端、不自建支付（充值/管理仍跳现有外部 console）。
@@ -115,13 +115,13 @@ export interface AccountSummary {
 
 ## CLI 对等（仓库强制 UI/CLI 双轨）
 
-- 新增 `od account login | status | logout`，`--json` 输出，走同一 `/api/account/*` 与 vela 登录端点；与 UI 同 PR 落地（`daemon/src/cli.ts` 的 `SUBCOMMAND_MAP` 注册）。
+- 新增 `capt account login | status | logout`，`--json` 输出，走同一 `/api/account/*` 与 vela 登录端点；与 UI 同 PR 落地（`daemon/src/cli.ts` 的 `SUBCOMMAND_MAP` 注册）。
 
 ## 分阶段实现
 
 - **P1 数据层**：contracts `account.ts` + daemon `/api/account/summary`（含余额打通）+ web `AccountProvider`。
 - **P2 UI**：`AccountAvatar`（登录态展示）+ 全局头部接入 + 未登录登录流。
-- **P3 收敛 + CLI**：把分散的 4 处登录态迁到 context；`od account` 子命令。
+- **P3 收敛 + CLI**：把分散的 4 处登录态迁到 context；`capt account` 子命令。
 - **P4 文案/验证**：i18n（承接 OpenDesign Cloud 命名）+ 截图 + 测试。
 
 ## Open questions（需确认，决定能否落地）
@@ -140,4 +140,4 @@ export interface AccountSummary {
 - e2e（Vitest）在 daemon HTTP 边界打 `/api/account/summary`（含登录/未登录/有余额/无余额分支）。
 - Playwright 看头像的登录态/未登录态、套餐+余额渲染。
 - 两 namespace（main vs 分支）对比；用**真实 vela 账号**经生产 API 验证余额展示（不走测试后门）。
-- CLI：`od account status --json` 与 UI 同源校验。
+- CLI：`capt account status --json` 与 UI 同源校验。

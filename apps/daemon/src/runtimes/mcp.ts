@@ -8,7 +8,7 @@ type McpOptions = {
 
 export function buildLiveArtifactsMcpServersForAgent(
   def: RuntimeAgentDef,
-  { enabled = true, command = 'od', argsPrefix = [] }: McpOptions = {},
+  { enabled = true, command = 'capt', argsPrefix = [] }: McpOptions = {},
 ) {
   if (!enabled || def?.mcpDiscovery !== 'mature-acp') return [];
   const wantsMapEnv = def?.acpMcpEnvFormat === 'map';

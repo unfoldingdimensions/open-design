@@ -3053,7 +3053,7 @@ function injectDeckStageShadowChromeHiding(doc: string): string {
 
 // Screens keydown listeners for keyboard slide navigation by their source
 // text, the same way odMaybeHandlesSlideMessages screens message listeners:
-// od bridges and artifact shortcut helpers register keydown listeners of
+// capt bridges and artifact shortcut helpers register keydown listeners of
 // their own, and counting those would put every deck on the key-probe path.
 // Shared between the head-start registry hook and the deck bridge's own
 // addEventListener patches.
@@ -3102,7 +3102,7 @@ function injectDeckKeydownRegistryHook(doc: string): string {
 }
 
 // Whether the artifact ships its own keyboard slide navigation, judged from
-// the artifact source. Must be evaluated BEFORE any od bridge is injected:
+// the artifact source. Must be evaluated BEFORE any capt bridge is injected:
 // injected bridges (preview focus guard, edit bridge) register keydown
 // listeners of their own, and matching those would put every deck on the
 // key-probe path. Requiring a navigation-key token alongside the keydown

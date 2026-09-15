@@ -304,7 +304,7 @@ export function PluginLoopHome({ onSubmit }: Props) {
         ) : sortedPlugins.length === 0 ? (
           <div className="plugin-loop-home__empty">
             No plugins installed. Install one with{' '}
-            <code>od plugin install &lt;source&gt;</code>.
+            <code>capt plugin install &lt;source&gt;</code>.
           </div>
         ) : (
           sortedPlugins.map((p) => {

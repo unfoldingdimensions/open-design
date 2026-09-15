@@ -90,7 +90,7 @@ async function runCli(args: string[]): Promise<{ stdout: string; stderr: string;
   }
 }
 
-describe('od amr login CLI', () => {
+describe('capt amr login CLI', () => {
   let stub: StubServer;
 
   beforeAll(async () => {
@@ -106,11 +106,11 @@ describe('od amr login CLI', () => {
     stub.setResponder(() => ({ status: 404, body: { error: 'unexpected request' } }));
   });
 
-  it('documents login in `od amr help`', async () => {
+  it('documents login in `capt amr help`', async () => {
     const result = await runCli(['amr', 'help']);
     expect(result.code).toBe(0);
-    expect(result.stdout).toContain('od amr login');
-    expect(result.stdout).toContain('od amr logout');
+    expect(result.stdout).toContain('capt amr login');
+    expect(result.stdout).toContain('capt amr logout');
   });
 
   it('logs out through the daemon and emits machine-readable JSON', async () => {

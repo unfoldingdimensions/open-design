@@ -1,7 +1,7 @@
-// Contract test for `od run steer` — the CLI half of B11 「引导对话」.
+// Contract test for `capt run steer` — the CLI half of B11 「引导对话」.
 //
 // AGENTS.md "Capability exposure": every user-facing capability must be
-// reachable from BOTH the web UI and `od`, and both must drive the same
+// reachable from BOTH the web UI and `capt`, and both must drive the same
 // `/api/*` endpoint. Steering is the queue row's third button in the chat
 // panel; this proves the CLI hits the identical `POST /api/runs/:id/steer`
 // with the same body, supports `--json` for headless agents, and accepts a
@@ -106,7 +106,7 @@ async function runCli(
   }
 }
 
-describe('od run steer CLI', () => {
+describe('capt run steer CLI', () => {
   let stub: StubServer;
   let tmpDir: string;
 
@@ -211,13 +211,13 @@ describe('od run steer CLI', () => {
       '--daemon-url', stub.baseUrl,
     ]);
     expect(result.code).toBe(2);
-    expect(result.stderr).toContain('od run steer <runId>');
+    expect(result.stderr).toContain('capt run steer <runId>');
     expect(stub.requests.some((entry) => entry.url.includes('/steer'))).toBe(false);
   }, 40_000);
 
-  it('advertises itself in `od run` help so the capability is discoverable', async () => {
+  it('advertises itself in `capt run` help so the capability is discoverable', async () => {
     const result = await runCli(['run', '--help']);
-    expect(result.stdout).toContain('od run steer');
+    expect(result.stdout).toContain('capt run steer');
     expect(result.stdout).toContain('--prompt-file');
   }, 40_000);
 });

@@ -558,7 +558,7 @@ function stripHostDetail(value: string): string {
  * path encodes the runtime namespace, so a failed connect arrives as
  * `connect ENOENT /tmp/open-design/ipc/<namespace>/desktop.sock` and a timeout
  * as `IPC request timed out: <same path>`. That string does not stop here:
- * `od export` writes the daemon's `message` verbatim to its stderr, the agent
+ * `capt export` writes the daemon's `message` verbatim to its stderr, the agent
  * reads it, and from there it is one prompt-adherence failure away from the
  * user's reply. Redaction is the defence behind the prompt rule, not a
  * replacement for it.

@@ -194,7 +194,7 @@ desktop  idle(按用户要求不起 Electron)
 
 2. **但 Web 客户端不受影响**。挡住它的是 `server.ts:2109-2118`:Web 每次同时寄 `message`(整份 transcript)和 `currentPrompt`(只有最新一轮),daemon 接上了用后者、没接上用前者,**两条分支都对**。Web 不需要改,改了反而会把原话塞两遍。
 
-3. **真正在漏的是 `od run continue`(CLI)**。它只发 `message = RESUME_CONTINUE_PROMPT`,不带 transcript。红测抓到 stdin 全文 52652 字符里原始请求出现 **0 次**。受影响面是所有拿 `od` 当后端的外部 agent(hermes / openclaw / bot),不是 UI。
+3. **真正在漏的是 `capt run continue`(CLI)**。它只发 `message = RESUME_CONTINUE_PROMPT`,不带 transcript。红测抓到 stdin 全文 52652 字符里原始请求出现 **0 次**。受影响面是所有拿 `capt` 当后端的外部 agent(hermes / openclaw / bot),不是 UI。
 
 ### 新发现:Retry 会往已恢复的 session 里重发原话
 

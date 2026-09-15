@@ -139,7 +139,7 @@ describe('ChatPane media-task polling', () => {
             kind: 'tool_use',
             id: 'media-call',
             name: 'Bash',
-            input: { command: 'od media generate --output generated.png' },
+            input: { command: 'capt media generate --output generated.png' },
           }],
         }]}
         streaming={false}
@@ -234,7 +234,7 @@ describe('ChatPane media-task polling', () => {
       kind: 'tool_use',
       id: 'media-call',
       name: 'Bash',
-      input: { command: 'od media generate --output assets/generated.png' },
+      input: { command: 'capt media generate --output assets/generated.png' },
     } as const;
     const runningTask = {
       taskId: 'media-settling',
@@ -364,7 +364,7 @@ describe('ChatPane media-task polling', () => {
             kind: 'tool_use',
             id: 'media-call',
             name: 'Bash',
-            input: { command: 'od media generate --output generated.png' },
+            input: { command: 'capt media generate --output generated.png' },
           }],
         }]}
         streaming={false}
@@ -417,7 +417,7 @@ describe('ChatPane media-task polling', () => {
             kind: 'tool_use',
             id: 'media-call',
             name: 'Bash',
-            input: { command: 'od media generate --output missing.png' },
+            input: { command: 'capt media generate --output missing.png' },
           }],
         }]}
         streaming={false}

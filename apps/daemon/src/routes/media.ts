@@ -274,7 +274,7 @@ export function registerMediaRoutes(app: Express, ctx: RegisterMediaRoutesDeps) 
       : null;
     if (runContext) return runContext;
 
-    // Standalone `od media generate` requests do not carry browser analytics
+    // Standalone `capt media generate` requests do not carry browser analytics
     // headers or a parent run. Match the updater's daemon-internal identity
     // fallback, but only after explicit metrics consent; capture() re-checks
     // the same consent before sending.
@@ -852,7 +852,7 @@ export function registerMediaRoutes(app: Express, ctx: RegisterMediaRoutesDeps) 
       res.json({ config });
     } catch (err: any) {
       if (err?.code === 'INVALID_APP_CONFIG_VALUE') {
-        // Nested envelope on purpose. `od`'s error reader only finds a code in
+        // Nested envelope on purpose. `capt`'s error reader only finds a code in
         // this shape; from a flat body it falls back to `daemon-not-running`
         // and exits 64, which tells a caller to go start a daemon that just
         // answered. Rejected input should read as a plain failure.

@@ -156,7 +156,7 @@ export async function associateRunProducedFiles(
 // The other half: a file this run produced that did not exist yet when the
 // terminal snapshot was taken. (Plane OPEND-2608, OPEND-2609.)
 //
-// `od media generate` is a 202 dispatch. The CLI polls for a bounded budget and
+// `capt media generate` is a 202 dispatch. The CLI polls for a bounded budget and
 // then hands off ("task N still running"), so a generation that outlives that
 // budget writes its bytes into the project AFTER the turn is already terminal.
 // The floor above cannot see it — the run's own diff was frozen before the file

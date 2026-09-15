@@ -33,7 +33,7 @@ async function runCli(args: string[]): Promise<{ stdout: string; stderr: string;
   }
 }
 
-describe('od mcp install CLI identity probe', () => {
+describe('capt mcp install CLI identity probe', () => {
   it('emits a stable identity token without requiring an agent slug', async () => {
     const result = await runCli(['mcp', 'install', '--open-design-cli-probe']);
 

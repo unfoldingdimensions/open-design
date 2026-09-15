@@ -38,7 +38,7 @@ short inconsistency window while Link has pending usage in Redis.
 - Keep run authorization owned by Link `CreditGuard.Check()`.
 - Make UI copy clear that the displayed value is wallet balance, not a
   real-time available-balance guarantee.
-- Expose the same account snapshot to web and `od` CLI surfaces.
+- Expose the same account snapshot to web and `capt` CLI surfaces.
 
 ## Non-Goals
 
@@ -257,11 +257,11 @@ UI states:
 
 ## CLI Surface
 
-Add or extend an `od` command that exposes the same daemon snapshot, for
+Add or extend an `capt` command that exposes the same daemon snapshot, for
 example:
 
 ```sh
-od amr status --json
+capt amr status --json
 ```
 
 or extend an existing AMR/status command if one already exists during
@@ -365,7 +365,7 @@ into a misleading success signal.
 
 ### Slice 3: CLI
 
-- Add or extend `od` AMR/status command to call the daemon wallet endpoint.
+- Add or extend `capt` AMR/status command to call the daemon wallet endpoint.
 - Support `--json`.
 - Add CLI tests for available, signed-out, and unavailable states.
 

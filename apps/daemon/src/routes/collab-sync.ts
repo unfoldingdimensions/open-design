@@ -571,7 +571,7 @@ function encodePublicFileUrlPath(filePath: string): string {
  * workspace can address (`workspaceContextHasTeamIdentity`). A personal or
  * signed-out session — and a team session whose context read momentarily fails —
  * lands here. Ship a sentence alongside the code so every surface that is not
- * the web UI (the `od` CLI, embedding agents) states the reason instead of
+ * the web UI (the `capt` CLI, embedding agents) states the reason instead of
  * echoing `WORKSPACE_IDENTITY_REQUIRED` at a human. The web UI localizes the
  * code itself; see `publicFilePublishFailureKey` in apps/web.
  */
@@ -1348,7 +1348,7 @@ export function registerCollabSyncRoutes(
               code: PUBLIC_FILE_MANUAL_REVOKE_REQUIRED,
               message:
                 `The public link remains active at ${publication.url}. `
-                + 'Run od project revoke-public-link with this project, file path, and URL.',
+                + 'Run capt project revoke-public-link with this project, file path, and URL.',
               data: {
                 projectId,
                 ...publication,

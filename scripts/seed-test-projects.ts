@@ -16,7 +16,7 @@
 // The daemon URL is resolved in this order: --daemon flag > $OD_DAEMON_URL >
 // http://127.0.0.1:$OD_PORT > whatever `pnpm tools-dev status --json` reports
 // for the daemon app. --namespace is only passed to that tools-dev discovery
-// step; it is not forwarded to the od CLI or stored in daemon data. The
+// step; it is not forwarded to the capt CLI or stored in daemon data. The
 // discovery step is what makes the two-shell flow
 // (`pnpm tools-dev` then `pnpm seed:test-projects`) work without extra flags,
 // because tools-dev defaults to an ephemeral daemon port that isn't exported
@@ -331,7 +331,7 @@ Options:
   --offline          Alias for --mode offline.
   --data-dir <dir>   Offline target data dir (default: \$OD_DATA_DIR or ./.od).
   --namespace <name> Tools-dev namespace for online auto-discovery. This does
-                     not affect od CLI behavior. Offline mode requires
+                     not affect capt CLI behavior. Offline mode requires
                      --data-dir or OD_DATA_DIR when --namespace is set.
   --decks <n>        Number of slide decks to seed (default: ${DECKS.length}, max: ${DECKS.length})
   --webs <n>         Number of web prototypes to seed (default: ${WEBS.length}, max: ${WEBS.length})

@@ -72,7 +72,7 @@ Express daemon ◄────────────────┘
                             └─ structured events, file writes, or text output
 ```
 
-The web UI and the `od` CLI call the same daemon HTTP APIs. The CLI is not a
+The web UI and the `capt` CLI call the same daemon HTTP APIs. The CLI is not a
 second business-logic implementation; it is the machine-readable surface for
 the same capabilities.
 
@@ -176,7 +176,7 @@ signals that must come from the active frame re-check the active window.
 
 ### Filesystem execution profile
 
-1. The web UI or `od` CLI creates/selects a project through `/api/projects`.
+1. The web UI or `capt` CLI creates/selects a project through `/api/projects`.
 2. A chat/run request reaches the daemon over `/api/*`.
 3. The daemon resolves the project, design system, primary skill or design
    template, per-turn skills, runtime definition, and execution metadata.
@@ -275,5 +275,5 @@ Shared DTOs live in `packages/contracts`.
 | User-level validation | `e2e/` |
 
 When a user-facing capability changes, keep its daemon endpoint, shared
-contract, web surface, and `od` CLI surface aligned as required by the root
+contract, web surface, and `capt` CLI surface aligned as required by the root
 `AGENTS.md` dual-track rule.

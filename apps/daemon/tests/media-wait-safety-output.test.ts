@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 // What the agent actually reads.
 //
-// A refusal is only useful to a user if it survives the last hop: `od media
+// A refusal is only useful to a user if it survives the last hop: `capt media
 // wait` is the command the agent runs, and its stdout is the agent's entire
 // view of the outcome. If the verdict is flattened here, no prompt wording and
 // no UI can recover it -- the agent would be choosing its reply from a fact it
@@ -82,7 +82,7 @@ function parseResult(stdout: string): Record<string, any> {
   return JSON.parse(line);
 }
 
-describe('od media wait surfaces a content-safety refusal', () => {
+describe('capt media wait surfaces a content-safety refusal', () => {
 	it.each([
 		['sensitive_words_detected', 'sensitive_words_detected'],
 		['content_policy_violation', 'Content policy rejected the prompt'],

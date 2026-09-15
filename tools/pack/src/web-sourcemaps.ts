@@ -32,7 +32,7 @@
 // Scope
 // -----
 // Only the packaged (mac/win/linux Electron) path is covered here. The OSS
-// `od` CLI distribution path serves `apps/web/out/_next/static/chunks/`
+// `capt` CLI distribution path serves `apps/web/out/_next/static/chunks/`
 // directly and is not currently used by any release artifact; it can be
 // added later if the OSS audience reports symbolication needs.
 

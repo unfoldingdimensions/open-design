@@ -138,7 +138,7 @@ const PLAN: PersistedAgentEvent[] = [
   ...call('w1', 'Write', { file_path: 'settings.html', content: Array.from({ length: 140 }, () => 'x').join('\n') }),
   ...call('b1', 'Bash', { command: 'npm run build', description: '构建产物,看能不能跑通' },
     { content: '✓ built in 8.42s', startedAt: 26_000, completedAt: 34_400 }),
-  ...call('g1', 'Bash', { command: 'od media generate a && od media generate b && od media generate c && od media generate d' },
+  ...call('g1', 'Bash', { command: 'capt media generate a && capt media generate b && capt media generate c && capt media generate d' },
     { content: [JSON.stringify({ status: 'succeeded', path: 'a.png' }), JSON.stringify({ status: 'succeeded', path: 'b.png' })].join('\n'), startedAt: 34_400 }),
 ];
 
@@ -393,9 +393,9 @@ const EXECUTION: Cell[] = [
        * 所以这里维持 in_progress,行首是转着的球;剩下的两条差异记在这一格的 notes 上。
        */
       ...todos('p1', [['按同一套间距做设置页', 'in_progress']]),
-      ...call('g1', 'Bash', { command: 'od media generate a' }, { content: gen('a.png'), startedAt: 0, completedAt: 1200 }),
-      ...call('g2', 'Bash', { command: 'od media generate b' }, { content: gen('b.png'), startedAt: 1200, completedAt: 2400 }),
-      { kind: 'tool_use', id: 'g3', name: 'Bash', input: { command: 'od media generate c && od media generate d' }, startedAt: 2400 },
+      ...call('g1', 'Bash', { command: 'capt media generate a' }, { content: gen('a.png'), startedAt: 0, completedAt: 1200 }),
+      ...call('g2', 'Bash', { command: 'capt media generate b' }, { content: gen('b.png'), startedAt: 1200, completedAt: 2400 }),
+      { kind: 'tool_use', id: 'g3', name: 'Bash', input: { command: 'capt media generate c && capt media generate d' }, startedAt: 2400 },
     ],
     run: 'running',
     notes: [
@@ -410,7 +410,7 @@ const EXECUTION: Cell[] = [
     expand: 'deep',
     events: [
       ...todos('p1', [['按同一套间距做设置页', 'in_progress']]),
-      ...call('g1', 'Bash', { command: 'od media generate a && od media generate b && od media generate c && od media generate d' },
+      ...call('g1', 'Bash', { command: 'capt media generate a && capt media generate b && capt media generate c && capt media generate d' },
         { content: [gen('a.png'), gen('b.png'), gen('c.png'), gen('d.png')].join('\n'), startedAt: 0, completedAt: 2600 }),
       ...CLOSING('p2', '按同一套间距做设置页'),
     ],
@@ -423,7 +423,7 @@ const EXECUTION: Cell[] = [
     expand: 'deep',
     events: [
       ...todos('p1', [['按同一套间距做设置页', 'in_progress']]),
-      ...call('g1', 'Bash', { command: 'od media generate a && od media generate b && od media generate c && od media generate d' },
+      ...call('g1', 'Bash', { command: 'capt media generate a && capt media generate b && capt media generate c && capt media generate d' },
         { content: [gen('a.png'), genFail(), gen('b.png'), gen('c.png')].join('\n'), startedAt: 0, completedAt: 3100 }),
       ...CLOSING('p2', '按同一套间距做设置页'),
     ],
@@ -692,7 +692,7 @@ const prose = (text: string, _streaming = false) => (
 
 /** 产物卡走**真实事件流**:`Write` 事件 → `deriveFileOps` → `FileOpsSummary` 自己判
  *  哪些进卡、哪些留文本行(`artifactCardKind`),不手捏 `ArtifactCardItem`。
- *  生图 / 生视频在产线上是 `od media generate`(Bash),`deriveFileOps` 不认;
+ *  生图 / 生视频在产线上是 `capt media generate`(Bash),`deriveFileOps` 不认;
  *  它们靠 `AssistantMessage` 的 `summaryArtifactOpsForProducedFiles` 合成
  *  `ops: ['write']` 的同一种条目再喂进来,所以这里用 `Write` 是同一条路。 */
 const arts = (paths: string[], opts: { publish?: boolean } = {}) => {
@@ -2146,7 +2146,7 @@ const LIVE: LiveCell[] = [
         [
           doneKey(),
           { kind: 'thinking', text: '交接说明写 md 就行,不用做成页面。' },
-          ...call('p-g0', 'Bash', { command: 'od media generate 商品卡对齐稿' },
+          ...call('p-g0', 'Bash', { command: 'capt media generate 商品卡对齐稿' },
             { content: gen('商品卡对齐稿.png'), startedAt: 0, completedAt: 9_600 }),
           conclusion('三样都产出来了,交接说明里写了两页共用的那套间距。'),
         ],

@@ -16,7 +16,7 @@ const baseInput = {
 
 describe("desktop artifact capture mode", () => {
   it("names the two capture intents explicitly instead of inferring them from `deck`", () => {
-    // The chat card's static cover and the `od export` long-image are two
+    // The chat card's static cover and the `capt export` long-image are two
     // different products of the same renderer. Before this enum the only way
     // to ask for "fixed viewport, do not grow to scrollHeight" was to lie and
     // claim the page was a deck.
