@@ -16,8 +16,8 @@ import { resolveWinInstallIdentity } from "@/win/identity.js";
 const execFileAsync = promisify(execFile);
 
 describe("resolveWinInstallIdentity", () => {
-  it("keeps the default namespace on the canonical Windows display name", () => {
-    expect(resolveWinInstallIdentity({ namespace: "default" })).toMatchObject({
+  it("keeps the product namespace on the canonical Windows display name", () => {
+    expect(resolveWinInstallIdentity({ namespace: "capydesign" })).toMatchObject({
       displayName: "CapyDesign",
       shortcutName: "CapyDesign.lnk",
       uninstallerName: "Uninstall CapyDesign.exe",
