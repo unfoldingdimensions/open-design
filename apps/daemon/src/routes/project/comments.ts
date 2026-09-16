@@ -5,7 +5,7 @@ import type {
 } from '@capydesign/contracts';
 import { projectKindFromMetadataToTrackingOrLegacyDefault } from '@capydesign/contracts/analytics';
 import type { RouteDeps } from '../../server-context.js';
-import type { BoundWorkspaceResourceMutationGate } from '../../collab/workspace-resource-mutation.js';
+import type { BoundWorkspaceResourceMutationGate } from '../../local/workspace-resource-mutation.js';
 import { getProject, isProjectCommentAnchorConversationId } from '../../db.js';
 
 export type ProjectCommentWorkspaceContextResolution =

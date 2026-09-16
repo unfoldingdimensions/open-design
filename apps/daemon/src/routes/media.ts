@@ -8,7 +8,7 @@ import type {
   ProjectFile,
   ProjectMediaTaskFile,
 } from '@capydesign/contracts';
-import type { AnalyticsContext } from '../analytics.js';
+import type { AnalyticsContext } from '../local/telemetry-sink.js';
 import { defaultMediaExecutionPolicy, mediaPolicyDenial } from '../media/policy.js';
 import { formatMediaTaskDiagnostic, retryDiagnosticFor } from '../media/diagnostics.js';
 import { findMediaModel } from '../media/models.js';
@@ -17,7 +17,7 @@ import type { RouteDeps } from '../server-context.js';
 import type {
   AuthorizeProjectRequest,
   AuthorizeProjectToolRequest,
-} from '../collab/project-request-authority.js';
+} from '../local/project-request-authority.js';
 import { proxyDispatcherRequestInit } from '../connectionTest.js';
 import {
   aihubmixCatalogUrl,
@@ -38,7 +38,7 @@ import { associateLateRunProducedFile } from '../runtimes/run-produced-files.js'
 import { scaffoldHyperFramesComposition } from '../media/hyperframes-scaffold.js';
 import { assignMediaTaskBatches } from '../media/task-batches.js';
 import { mediaTaskErrorFromFailure } from '../media/task-error.js';
-import { normalizePersistedAutomationWorkspaceScope } from '../automations/workspace-scope.js';
+import { normalizePersistedAutomationWorkspaceScope } from '../local/automation-workspace-scope.js';
 
 const LONG_MEDIA_PROXY_TIMEOUT_MS = 10 * 60 * 1000;
 const MEDIA_FILE_MTIME_TOLERANCE_MS = 1;

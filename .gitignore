@@ -107,3 +107,10 @@ __pycache__/
 
 # CaptDesign rebrand baseline scratch (WS0) — local measurement output, never commit.
 .captdesign-rebrand/
+
+# OpenClaw agent workspace/scratch (must stay git-ignored so pnpm guard does not
+# scan it — same reason as .slim/worktrees/ above).
+.openclaw/
+
+# Local packaged-benchmark harness (vendored app install; not repo content).
+odtp-bench/

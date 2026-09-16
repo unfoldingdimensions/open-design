@@ -5,7 +5,7 @@ import type Database from 'better-sqlite3';
 import {
   readTeamResourceMaterialization,
   teamResourceWorkspaceRoot,
-} from '../collab/team-resource-materialization.js';
+} from '../local/team-resource-materialization.js';
 import {
   getWorkspaceProjectByProjectId,
   getWorkspaceResourceByResourceId,
@@ -289,6 +289,7 @@ export function createDesignSystemServerServices({
           }
           if (
             marker?.kind !== 'skill'
+            || !marker.resourceId
             || !workspaceTeamSkillBindingAllowsRead(db, workspaceId, marker.resourceId)
           ) return;
           markerByDirectory.set(path.join(workspaceRoot, entry.name), marker.resourceId);

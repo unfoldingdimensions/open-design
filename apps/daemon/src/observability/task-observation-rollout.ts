@@ -9,7 +9,7 @@ import {
 import type Database from 'better-sqlite3';
 
 import type { TelemetryPrefs } from '../app-config.js';
-import { buildSafeRunQualityProjectionFromDaemon } from '../langfuse-bridge.js';
+import { buildSafeRunQualityProjectionFromDaemon } from '../local/telemetry-sink.js';
 import { readTelemetryEnvironment } from '../telemetry-environment.js';
 import {
   HARD_BATCH_MAX_BYTES,
@@ -17,10 +17,10 @@ import {
   postLegacyTelemetryBatch,
   readTelemetrySinkConfig,
   readTaskTelemetrySinkConfig,
-  type LangfuseDeliveryState,
+  type TelemetryDeliveryState,
   type RunTelemetrySinkConfig,
   type TelemetrySinkConfig,
-} from '../langfuse-trace.js';
+} from '../local/telemetry-sink.js';
 import {
   scanRunEventsForUsageAnalytics,
   summarizeRunTimingAnalytics,
@@ -824,7 +824,7 @@ export function createTaskObservationRolloutService(
 
   const diagnostic = (): TaskObservationRolloutDiagnostic => {
     const sink = effectiveSink();
-    const directExporter = sink?.kind === 'langfuse'
+    const directExporter = sink?.kind === 'telemetry-endpoint'
       ? readTaskObservationExporterConfig(sink, env)
       : null;
     const taskProtocol = sink === null
@@ -999,8 +999,8 @@ export function createTaskObservationRolloutService(
     sink: RunTelemetrySinkConfig,
     idempotencyKey: string,
     onAttempt: () => void,
-  ): Promise<TaskObservationDeliveryState | LangfuseDeliveryState> => {
-    if (sink.kind === 'langfuse') {
+  ): Promise<TaskObservationDeliveryState | TelemetryDeliveryState> => {
+    if (sink.kind === 'telemetry-endpoint') {
       const direct = readTaskObservationExporterConfig(sink, env);
       if (direct) {
         return exportTaskObservationAggregate(aggregate, {

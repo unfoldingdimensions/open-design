@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as repairDecision from '../../src/artifacts/deliverable-syntax-repair.js';
-import { projectDeliverableSyntaxTelemetry } from '../../src/langfuse-bridge.js';
+import { projectDeliverableSyntaxTelemetry } from '../../src/local/legacy-bridge.js';
 
 import { finalizeSuccessfulRunDeliverable } from '../../src/artifacts/successful-run-deliverable-finalization.js';
 import { deliverableSyntaxFinalizerEnabled } from '../../src/artifacts/successful-run-deliverable-finalization.js';

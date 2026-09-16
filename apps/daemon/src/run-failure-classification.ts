@@ -19,9 +19,9 @@ import {
 } from '@capydesign/contracts';
 
 import {
-  classifyAmrAccountFailure,
+  classifyAccountFailure,
   reportsPlatformProviderCredentialFault,
-} from './integrations/vela-errors.js';
+} from './local/legacy-bridge.js';
 import { runFailureEvidence } from './services/run-failure-evidence.js';
 import { summarizeRunToolProgress } from './run-diagnostics.js';
 import { isAcpHandshakeRpcErrorText } from './runtimes/acp-handshake-id.js';
@@ -995,7 +995,6 @@ function classifyRunFailureBase(
   // signal guard below (a watchdog kill IS a signal, and the reason it was
   // killed outranks the bare signal) and the timeout branch itself.
   const daemonTimeoutVerdict = hasDaemonTimeoutVerdict(events);
-  const amrFailure = classifyAmrAccountFailure(text);
   const byokOpenCodeProviderNotFound = isByokOpenCodeProviderNotFoundText(
     input.agentId,
     text,
@@ -1030,10 +1029,7 @@ function classifyRunFailureBase(
     );
   }
 
-  if (
-    errorCode === 'AMR_INSUFFICIENT_BALANCE' ||
-    amrFailure?.code === 'AMR_INSUFFICIENT_BALANCE'
-  ) {
+  if (errorCode === 'AMR_INSUFFICIENT_BALANCE') {
     return classification(
       'insufficient_balance',
       'amr_insufficient_balance',
@@ -1046,10 +1042,7 @@ function classifyRunFailureBase(
     );
   }
 
-  if (
-    errorCode === 'AMR_TIER_UPGRADE_REQUIRED' ||
-    amrFailure?.code === 'AMR_TIER_UPGRADE_REQUIRED'
-  ) {
+  if (errorCode === 'AMR_TIER_UPGRADE_REQUIRED') {
     return classification(
       'entitlement_required',
       'amr_tier_upgrade_required',
@@ -1065,8 +1058,7 @@ function classifyRunFailureBase(
   if (
     errorCode === 'AMR_AUTH_REQUIRED' ||
     errorCode === 'AGENT_AUTH_REQUIRED' ||
-    errorCode === 'UNAUTHORIZED' ||
-    amrFailure?.code === 'AMR_AUTH_REQUIRED'
+    errorCode === 'UNAUTHORIZED'
   ) {
     return classification(
       'auth',
@@ -1093,16 +1085,6 @@ function classifyRunFailureBase(
   // credentials are the platform's, held in the gateway's configuration, so
   // there is no sign-in for the user to perform and no retry that changes the
   // answer: the run failed because the service is misconfigured.
-  if (reportsPlatformProviderCredentialFault(text)) {
-    return classification(
-      'upstream_unavailable',
-      'upstream_5xx',
-      inferFailureStageFromEvents(events, 'first_token_wait'),
-      false,
-      'none',
-    );
-  }
-
   /*
    * A forced signal is a STRUCTURAL fact — the child did not report it, the OS
    * or an operator ended the process — so no amount of leftover stderr can

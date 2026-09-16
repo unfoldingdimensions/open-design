@@ -14,8 +14,8 @@ import type {
   AuthorizedProjectToolRequest,
   AuthorizeProjectRequest,
   AuthorizeProjectToolRequest,
-} from './collab/project-request-authority.js';
-import { workspaceResourceContextFromRequest } from './collab/workspace-resource-mutation.js';
+} from './local/project-request-authority.js';
+import { workspaceResourceContextFromRequest } from './local/workspace-resource-mutation.js';
 import { PROJECT_EXPORT_TOOL_ENDPOINT } from './tool-tokens.js';
 import {
   InlineAssetsLimitError,
@@ -45,9 +45,9 @@ import {
   authorizeCreatedProjectWorkspace,
   bindCreatedProjectToWorkspace,
   sendCreatedProjectWorkspaceError,
-} from './collab/created-project-workspace.js';
-import type { WorkspaceDirectoryFetchResult } from './collab/vela-workspace-context.js';
-import type { BoundWorkspaceResourceMutationGate } from './collab/workspace-resource-mutation.js';
+} from './local/created-project-workspace.js';
+import type { WorkspaceDirectoryFetchResult } from './local/workspace-directory.js';
+import type { BoundWorkspaceResourceMutationGate } from './local/workspace-resource-mutation.js';
 
 export interface RegisterImportRoutesDeps extends RouteDeps<'db' | 'http' | 'uploads' | 'node' | 'ids' | 'paths' | 'imports' | 'auth' | 'projectStore' | 'conversations' | 'projectFiles' | 'validation'> {
   fetchProjectCreationWorkspaceDirectory?: () => Promise<WorkspaceDirectoryFetchResult>;

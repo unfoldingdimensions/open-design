@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { buildProjectRawFileUrl } from '@capydesign/contracts';
 
 import { handleMcpToolCall, localMcpToolDefinitions } from '../src/mcp.js';
-import { _resetMcpWorkspaceContextCacheForTests } from '../src/mcp-workspace-context.js';
+import { _resetMcpWorkspaceContextCacheForTests } from '../src/local/legacy-bridge.js';
 
 const originalFetch = globalThis.fetch;
 

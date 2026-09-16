@@ -42,11 +42,11 @@ import {
 } from '../src/agents.js';
 import { readAppConfig, writeAppConfig } from '../src/app-config.js';
 import { listProviderModels } from '../src/integrations/provider-models.js';
-import { readVelaCredentialRevision } from '../src/integrations/vela.js';
+import { readSessionCredentialRevision } from '../src/local/legacy-bridge.js';
 import { startServer } from '../src/server.js';
 import { getRememberedLiveModels, rememberLiveModels } from '../src/runtimes/models.js';
-import { amrModelLoadingCache } from '../src/runtimes/amr-model-cache.js';
-import { buildAmrModelCacheKey } from '../src/runtimes/amr-model-probe.js';
+import { modelLoadingCache } from '../src/local/legacy-bridge.js';
+import { buildModelCacheKey } from '../src/local/legacy-bridge.js';
 
 type FetchInput = Parameters<typeof fetch>[0];
 type FetchInit = Parameters<typeof fetch>[1];
@@ -214,7 +214,7 @@ beforeAll(async () => {
 afterEach(() => {
   vi.useRealTimers();
   vi.unstubAllGlobals();
-  amrModelLoadingCache.resetForTests();
+  modelLoadingCache.resetForTests();
 });
 
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
@@ -2680,10 +2680,10 @@ describe('POST /api/test/connection agent mode', () => {
             ),
             launch,
           );
-          const normalProbeCacheKey = buildAmrModelCacheKey({
+          const normalProbeCacheKey = buildModelCacheKey({
             launchPath: launch.launchPath!,
             env,
-            credentialRevision: readVelaCredentialRevision(env),
+            credentialRevision: readSessionCredentialRevision(env),
           });
 
           setCatalog('preset-before-upgrade', 'remote-before-upgrade');
@@ -2699,7 +2699,7 @@ describe('POST /api/test/connection agent mode', () => {
             .toMatchObject({ ok: true, kind: 'success', model: 'remote-before-upgrade' });
 
           setCatalog('preset-after-upgrade', 'remote-after-upgrade');
-          amrModelLoadingCache.invalidate(normalProbeCacheKey);
+          modelLoadingCache.invalidate(normalProbeCacheKey);
 
           expect(await testAgentConnection({ agentId: 'amr', model: 'default' }))
             .toMatchObject({ ok: true, kind: 'success', model: 'preset-after-upgrade' });

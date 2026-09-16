@@ -11,14 +11,12 @@ import type { RegisterLiveArtifactRoutesDeps } from './routes/live-artifact.js';
 import type { RegisterMcpRoutesDeps } from './mcp-routes.js';
 import type { RegisterMediaRoutesDeps } from './routes/media.js';
 import type { RegisterMemoryRoutesDeps } from './routes/memory.js';
-import type { RegisterCapyDesignPublicMetadataRoutesDeps } from './routes/open-design-public-metadata.js';
 import type { RegisterProjectChatArtifactRoutesDeps } from './routes/project/chat-artifacts.js';
 import type { RegisterProjectArtifactRoutesDeps, RegisterProjectFileRoutesDeps, RegisterProjectRoutesDeps, RegisterProjectUploadRoutesDeps } from './routes/project/index.js';
 import type { RegisterRoutineRoutesDeps } from './routes/routine.js';
 import type { RegisterRunRoutesDeps } from './routes/runs.js';
 import type { RegisterSocialShareRoutesDeps } from './routes/social-share.js';
 import type { RegisterStaticResourceRoutesDeps } from './routes/static-resource.js';
-import type { RegisterVelaRoutesDeps } from './routes/vela.js';
 import type { RegisterXaiRoutesDeps } from './routes/xai.js';
 
 type AllRegisteredRouteDeps =
@@ -36,7 +34,6 @@ type AllRegisteredRouteDeps =
   & RegisterMcpRoutesDeps
   & RegisterMediaRoutesDeps
   & RegisterMemoryRoutesDeps
-  & RegisterCapyDesignPublicMetadataRoutesDeps
   & RegisterProjectArtifactRoutesDeps
   & RegisterProjectChatArtifactRoutesDeps
   & RegisterProjectExportRoutesDeps
@@ -47,7 +44,6 @@ type AllRegisteredRouteDeps =
   & RegisterRunRoutesDeps
   & RegisterSocialShareRoutesDeps
   & RegisterStaticResourceRoutesDeps
-  & RegisterVelaRoutesDeps
   & RegisterXaiRoutesDeps;
 
 type Assert<T extends true> = T;

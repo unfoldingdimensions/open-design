@@ -287,28 +287,28 @@ import {
   plainStdoutFromRunEvents,
 } from './runtimes/plain-stream.js';
 import {
-  readVelaLoginStatus,
-  resolveAmrProfile,
-} from './integrations/vela.js';
+  readSessionStatus,
+  readSessionProfileKey,
+} from './local/session-state.js';
 import { isAbortedOperationError } from './integrations/aborted-error.js';
-import { projectResourceIdFor } from './integrations/vela-team-projects.js';
+import { projectResourceIdFor } from './local/legacy-bridge.js';
 import {
   getTeamProjectMaterialization,
   latestTeamProjectMaterializationVersion,
   materializePulledTeamMirror,
   teamProjectMaterializationMatches,
   teamProjectMaterializationSupersedes,
-} from './collab/team-mirror-materializer.js';
-import { recoverAuthorizedTeamProjectPromotions } from './collab/team-mirror-promotion.js';
+} from './local/legacy-bridge.js';
+import { recoverAuthorizedTeamProjectPromotions } from './local/legacy-bridge.js';
 import {
-  amrAccountFailureDetails,
-  classifyAmrAccountFailureSignal,
-} from './integrations/vela-errors.js';
-import { amrModelLoadingCache } from './runtimes/amr-model-cache.js';
+  accountFailureDetails,
+  classifyAccountFailureSignal,
+} from './local/legacy-bridge.js';
+import { modelLoadingCache } from './local/legacy-bridge.js';
 import {
-  fetchVelaPresetModels,
-  fetchVelaRemoteModelsWithRetry,
-} from './runtimes/defs/amr.js';
+  fetchPresetModels,
+  fetchRemoteModelsWithRetry,
+} from './local/legacy-bridge.js';
 import { migrateLegacyDataDirSync } from './migration/index.js';
 import {
   consumedImportNonces,
@@ -416,7 +416,7 @@ import {
   bindCreatedProjectToWorkspace,
   createCreatedProjectWorkspaceResolver,
   sendCreatedProjectWorkspaceError,
-} from './collab/created-project-workspace.js';
+} from './local/created-project-workspace.js';
 import {
   applyDiffReviewDecisionToCwd,
   applyPlugin,
@@ -475,7 +475,7 @@ import { runAutoExtractionCleanup } from './memory-cleanup.js';
 import { attachAcpSession } from './agent-protocol/index.js';
 import { attachPiRpcSession } from './agent-protocol/index.js';
 import { attachDshProfileSession } from './agent-protocol/index.js';
-import { stageAmrImagePaths } from './media/amr-image-staging.js';
+import { stageImagePaths } from './local/legacy-bridge.js';
 import { ingestRoutineConnectorEvolution } from './automation-routine-evolution.js';
 import { createClaudeStreamHandler } from './runtimes/claude-stream.js';
 import { createAgentTitleMarkerStripper } from './title-marker.js';
@@ -533,7 +533,7 @@ import {
   normalizeDeepSeekHarnessFailure,
 } from './runtimes/auth.js';
 import { readOpenCodeServiceFailure } from './runtimes/opencode-log.js';
-import { createAgentStderrVisibilityFilter } from './amr-stderr-filter.js';
+import { createStderrVisibilityFilter } from './local/legacy-bridge.js';
 import { createQoderStreamHandler } from './runtimes/qoder-stream.js';
 import { subscribe as subscribeFileEvents } from './project-watchers.js';
 import { importFigmaFromBytes } from './figma/figma-import.js';
@@ -541,11 +541,11 @@ import { renderDesignSystemPreview } from './design-systems/preview.js';
 import { renderDesignSystemShowcase } from './design-systems/showcase.js';
 import { createChatRunService } from './runtimes/runs.js';
 import {
-  createAmrTerminalReportDeliveryService,
-  createAmrTerminalReportFinalizer,
-  createAmrTerminalReportOutboxStore,
-  type AmrTerminalReportDeliveryService,
-} from './storage/amr-terminal-report-outbox.js';
+  createTerminalReportDeliveryService,
+  createTerminalReportFinalizer,
+  createTerminalReportOutboxStore,
+  type TerminalReportDeliveryService,
+} from './local/legacy-bridge.js';
 import { createInternalRunCreationService } from './services/internal-run-service.js';
 import {
   createRunAnalyticsLifecycle,
@@ -613,11 +613,11 @@ import {
   artifactOriginForRun,
   snapshotAiHtmlVersionsForRun,
 } from './run-html-version-snapshots.js';
-import { reportRunCompletedFromDaemon } from './langfuse-bridge.js';
+import { reportRunCompletedFromDaemon } from './local/telemetry-sink.js';
 import {
   describeRunTelemetrySink,
   readRunTelemetrySinkConfig,
-} from './langfuse-trace.js';
+} from './local/telemetry-sink.js';
 import { reconcileDurableRunTerminals } from './runtimes/run-terminal-reconciliation.js';
 import { createTaskObservationRolloutService } from './observability/task-observation-rollout.js';
 import { strategyTaskRunObservationId } from './observability/task-observation-aggregation.js';
@@ -631,7 +631,7 @@ import {
   bindOdNextExactSendPromptEvidence,
   buildPromptStackTelemetry,
 } from './prompt-telemetry.js';
-import { newInsertId, readAnalyticsContext, type AnalyticsContext, type AnalyticsService } from './analytics.js';
+import { newInsertId, readAnalyticsContext, type AnalyticsContext, type AnalyticsService } from './local/legacy-bridge.js';
 import {
   agentIdToTracking,
   modelIdForTracking,
@@ -879,7 +879,7 @@ import {
 import { registerConnectorRoutes } from './connectors/routes.js';
 import { registerActiveContextRoutes } from './routes/active-context.js';
 import { registerAutomationRoutes } from './routes/automation.js';
-import { registerAttributionRoutes } from './routes/attribution.js';
+import { registerRemovedAttributionRoutes } from './local/legacy-bridge.js';
 import { registerDaemonRoutes } from './routes/daemon.js';
 import { registerGenuiRoutes } from './routes/genui.js';
 import { registerDesignSystemRoutes } from './routes/design-systems.js';
@@ -910,7 +910,7 @@ import { associateRunProducedFiles } from './runtimes/run-produced-files.js';
 import { chatArtifactCaptureResultProps } from './chat-artifacts/telemetry.js';
 import { freezeAndRenderChatArtifactCovers } from './chat-artifacts/cover.js';
 import { setMessageArtifactHtmlVersionIds } from './chat-artifacts/store.js';
-import { registerVelaRoutes } from './routes/vela.js';
+import { registerRemovedIntegrationRoutes } from './local/legacy-bridge.js';
 import { registerFinalizeRoutes, registerImportRoutes, registerProjectExportRoutes } from './import-export-routes.js';
 import { registerHandoffRoutes } from './routes/handoff.js';
 import { EmptyTranscriptError, synthesizeHandoffPrompt } from './design/index.js';
@@ -923,45 +923,46 @@ import { registerBrowserSessionRoutes } from './routes/browser-sessions.js';
 import { createTerminalService } from './terminals.js';
 import { createBrowserSessionService } from './browser-sessions.js';
 import { registerSocialShareRoutes } from './routes/social-share.js';
-import { registerCapyDesignPublicMetadataRoutes } from './routes/open-design-public-metadata.js';
-import { registerWhatsNewRoutes } from './routes/whats-new.js';
+import { registerRemovedMetadataRoutes } from './local/legacy-bridge.js';
+import { registerRemovedFeedRoutes } from './local/legacy-bridge.js';
 import { registerMemoryRoutes } from './routes/memory.js';
 import {
-  createCollabPresenceCloudClient,
-  registerCollabPresenceRoutes,
-} from './routes/collab-presence.js';
+  createCollabPresenceClient,
+  registerRemovedPresenceRoutes,
+} from './local/legacy-bridge.js';
 import {
-  registerCollabSyncRoutes,
+  registerRemovedSyncRoutes,
   type TeamMirrorPullScope,
-} from './routes/collab-sync.js';
+} from './local/legacy-bridge.js';
 import {
   emitWorkspaceEventToAllScopes,
   emitWorkspaceEventToScope,
-  registerCollabContextRoutes,
-} from './routes/collab-context.js';
-import { registerTeamResourceRoutes } from './routes/team-resources.js';
-import { registerTeamResourceShareRoutes } from './routes/team-resource-share.js';
-import { createCollabRuntime } from './collab/runtime.js';
-import { createSqlitePublicFilePublicationStore } from './collab/public-file-publication-store.js';
+  registerRemovedContextRoutes,
+} from './local/legacy-bridge.js';
+import { registerRemovedResourceRoutes } from './local/legacy-bridge.js';
+import { registerRemovedResourceShareRoutes } from './local/legacy-bridge.js';
+import { createLocalCollabRuntime } from './local/legacy-bridge.js';
+import { createSqlitePublicFilePublicationStore } from './local/legacy-bridge.js';
 import {
   createActiveWorkspaceSelectionStore,
-} from './collab/active-workspace-selection.js';
+} from './local/legacy-bridge.js';
 import {
   headerValue,
+  localResourceContext,
   resolveOptionalLocalWorkspaceRequestAuthority,
   workspaceResourceContext,
   workspaceResourceContextFromRequest,
-} from './collab/workspace-resource-mutation.js';
+} from './local/workspace-resource-mutation.js';
 import {
   createAuthorizeProjectRequest,
-} from './collab/project-request-authority.js';
-import { withLastKnownWorkspaceContext } from './collab/workspace-context.js';
+} from './local/project-request-authority.js';
+import { withLastKnownWorkspaceContext } from './local/legacy-bridge.js';
 import {
   createWorkspaceTypeRegistry,
   impossibleTeamShareRows,
   projectCollabScope,
-} from './collab/team-share-scope.js';
-import { resolveWorkspaceScope } from './collab/workspace-scope.js';
+} from './local/team-share-scope.js';
+import { resolveWorkspaceScope } from './local/legacy-bridge.js';
 import {
   AmrWorkspaceScopeRequiredError,
   openDesignAmrTraceEnvForRun,
@@ -971,26 +972,26 @@ import {
 import {
   createWorkspaceDirectoryAuthorityBroker,
   createWorkspaceContextProviderFromEnv,
-  fetchVelaWorkspaceDirectory,
-  resolveVelaWorkspaceHubEventsEndpoint,
-  velaWorkspaceDirectoryIdentity,
+  fetchLocalWorkspaceDirectory,
+  resolveWorkspaceHubEventsEndpoint,
+  workspaceDirectoryIdentity,
   workspaceContextFromDirectoryItem,
-} from './collab/vela-workspace-context.js';
-import { verifyWorkspaceRequestContext } from './collab/request-workspace-context.js';
+} from './local/workspace-directory.js';
+import { verifyWorkspaceRequestContext } from './local/legacy-bridge.js';
 import {
   createWorkspaceBillingRuntimeCoordinator,
   shouldEmitWorkspaceBillingRuntimeNudge,
   WorkspaceBillingAccessRevokedError,
-} from './collab/workspace-billing-runtime.js';
+} from './local/legacy-bridge.js';
 import {
   AUTHORITATIVE_PROJECT_PRESENCE_CAPABILITY,
   startHubEventsSubscriber,
   WORKSPACE_DIRECTORY_EVENTS_CAPABILITY,
-} from './collab/hub-events-subscriber.js';
+} from './local/legacy-bridge.js';
 import {
   createWorkspaceAuthorityHealthCoordinator,
   resolveWorkspaceAuthorityCacheMode,
-} from './collab/workspace-authority-health.js';
+} from './local/workspace-authority-health.js';
 import {
   recordWorkspaceAuthorityDecision,
   recordWorkspaceAuthorityInvalidation,
@@ -1001,65 +1002,65 @@ import {
 import {
   createWorkspaceHubSubscriptionManager,
   type WorkspaceHubSubscriptionManager,
-} from './collab/workspace-hub-subscriptions.js';
+} from './local/legacy-bridge.js';
 import {
   activeTeamWorkspaceIdentity,
   createProactiveContentPull,
   type ProactiveContentPullTarget,
-} from './collab/proactive-content-pull.js';
+} from './local/legacy-bridge.js';
 import {
   backgroundPullMaxEntriesFromEnv,
   backgroundPullMaxCumulativeEntriesFromEnv,
   createBackgroundPullSizeGuard,
-} from './collab/background-pull-size-guard.js';
+} from './local/legacy-bridge.js';
 import {
   inspectAuthorizedTeamProjectPull,
-} from './collab/authorized-team-project-pull.js';
-import { createProjectContentTransferStateStore } from './collab/project-content-transfer-state.js';
+} from './local/legacy-bridge.js';
+import { createProjectContentTransferStateStore } from './local/legacy-bridge.js';
 import {
   emitSharedProjectPullTiming,
   sharedProjectPullProfileEnabled,
-} from './collab/pull-profile.js';
-import { createSyncDigestReader } from './collab/sync-digest.js';
+} from './local/legacy-bridge.js';
+import { createSyncDigestReader } from './local/legacy-bridge.js';
 import {
   createCollabSyncSnapshotStore,
   parseMemberDirectorySnapshot,
   parseTeamProjectSnapshot,
-} from './collab/sync-snapshot-store.js';
-import { createPersistentSyncCache } from './collab/persistent-sync-cache.js';
-import { createSwrCache } from './collab/swr-cache.js';
+} from './local/legacy-bridge.js';
+import { createPersistentSyncCache } from './local/legacy-bridge.js';
+import { createSwrCache } from './local/legacy-bridge.js';
 import {
-  COLLAB_VELA_FANOUT_CONCURRENCY,
+  COLLAB_FANOUT_CONCURRENCY,
   ConcurrencyGate,
-} from './collab/concurrency-gate.js';
+} from './local/legacy-bridge.js';
 import {
   createTeamResourceListCache,
   invalidateTeamResourceListingCaches,
-} from './collab/team-resource-list-cache.js';
-import { createVelaResourcePullBatcher } from './collab/vela-cli-resource-pull-batcher.js';
+} from './local/legacy-bridge.js';
+import { createResourcePullBatcher } from './local/legacy-bridge.js';
 import {
   createRememberedTeamResourceScopes,
   type RememberedTeamResourceScopeLease,
-} from './collab/remembered-team-resource-scopes.js';
-import { readVelaControlApiContext } from './integrations/vela.js';
+} from './local/legacy-bridge.js';
+import { readSessionControlContext } from './local/session-state.js';
 import {
   fetchBillingCheckoutUrl,
-  fetchVelaBillingCatalog,
-  fetchVelaBillingSummary,
-  fetchVelaWorkspaceBillingProjection,
-  isVelaWorkspaceAuthorizationError,
-} from './integrations/vela-billing.js';
-import { createAccountBillingSummaryCache } from './collab/account-billing-summary-cache.js';
-import { createEventRefreshCoordinator } from './collab/event-refresh-coordinator.js';
-import { createWorkspaceExactAuthorityCache } from './collab/workspace-exact-authority-cache.js';
-import { createCollabPublishWatcher } from './collab/collab-publish-watcher.js';
+  fetchBillingCatalog,
+  fetchBillingSummary,
+  fetchWorkspaceBillingProjection,
+  isWorkspaceAuthorizationError,
+} from './local/legacy-bridge.js';
+import { createAccountBillingSummaryCache } from './local/legacy-bridge.js';
+import { createEventRefreshCoordinator } from './local/legacy-bridge.js';
+import { createWorkspaceExactAuthorityCache } from './local/legacy-bridge.js';
+import { createCollabPublishWatcher } from './local/legacy-bridge.js';
 import {
   isUnmaterializedSharedPlaceholder,
   SHARED_PROJECT_PLACEHOLDER_METADATA_KEY,
-} from './collab/shared-project-placeholder.js';
-import { recoverPersistedTeamShareOwnership } from './collab/persisted-team-share.js';
-import { resolveProjectShareDir } from './collab/project-share-dir.js';
-import { createTeamProjectsLister } from './collab/team-projects.js';
+} from './local/legacy-bridge.js';
+import { recoverPersistedTeamShareOwnership } from './local/legacy-bridge.js';
+import { resolveProjectShareDir } from './local/legacy-bridge.js';
+import { createTeamProjectsLister } from './local/legacy-bridge.js';
 import {
   createTeamResourceShareService,
   teamResourceRequestScopeFromContext,
@@ -1069,27 +1070,27 @@ import {
   type TeamResourceShareRecord,
   type TeamResourceSharedReadOptions,
   type TeamResourceShareService,
-} from './collab/team-resource-share.js';
+} from './local/team-resource-share.js';
 import {
   materializeWorkspaceScopedTeamResource,
   readTeamResourceMaterialization,
   teamResourceMaterializationDir,
   teamResourceSourceKey,
   teamResourceWorkspaceRoot,
-} from './collab/team-resource-materialization.js';
-import { createTeamResourceVersionStore } from './collab/team-resource-version-store.js';
+} from './local/team-resource-materialization.js';
+import { createTeamResourceVersionStore } from './local/legacy-bridge.js';
 import {
   contextToResourceHubPrincipal,
   type ResourceHubPrincipal,
-} from './collab/resource-principal.js';
-import { createCollabCloudClientFromEnv } from './integrations/collab-cloud.js';
-import { createCollabCloudService } from './collab/collab-cloud-service.js';
+} from './local/resource-principal.js';
+import { createLocalCollabClientFromEnv } from './local/legacy-bridge.js';
+import { createLocalCollabService } from './local/legacy-bridge.js';
 import {
   commentRelayLocalBindingMatches,
   createCommentRelayOutboxStore,
-} from './collab/comment-relay-outbox.js';
-import { createWorkspaceInvalidationPoller } from './collab/workspace-invalidation-poller.js';
-import { createWorkspaceExactContextCache } from './collab/workspace-exact-context-cache.js';
+} from './local/legacy-bridge.js';
+import { createWorkspaceInvalidationPoller } from './local/legacy-bridge.js';
+import { createWorkspaceExactContextCache } from './local/legacy-bridge.js';
 import {
   handleHubProjectMetadataChanged,
   handleHubTeamProjectsChanged,
@@ -1099,22 +1100,22 @@ import {
   reconcilerRemoteTeamProjects,
   type LocalTeamProjectBinding,
   type WorkspaceProjectsReconcilerDeps,
-} from './collab/workspace-projects-reconciler.js';
+} from './local/legacy-bridge.js';
 import {
   createWorkspaceTeamResourceEventCoordinator,
   reconcileWorkspaceResourcesWithRemote,
   type LocalTeamResourceBinding,
   type MaterializedTeamResourceRef,
   type WorkspaceTeamResourceRefreshReason,
-} from './collab/workspace-resources-reconciler.js';
-import { createVelaCliCollabClientFromEnv } from './collab/vela-cli-collab-client.js';
+} from './local/legacy-bridge.js';
+import { createLocalCollabClientFromEnv } from './local/legacy-bridge.js';
 import {
-  createScopedVelaTeamProjectCatalogClientCache,
-  createVelaCliTeamProjectCatalogClientFromEnv,
-  createVelaCliTeamProjectCatalogFromEnv,
-} from './collab/vela-cli-team-projects.js';
-import { createTeamProjectsChangeEmitter } from './collab/team-projects-change-emitter.js';
-import { registerTelemetryRoutes } from './routes/telemetry.js';
+  createScopedTeamProjectCatalogClientCache,
+  createLocalTeamProjectCatalogClient,
+  createLocalTeamProjectCatalog,
+} from './local/legacy-bridge.js';
+import { createTeamProjectsChangeEmitter } from './local/legacy-bridge.js';
+import { registerTelemetryRoutes } from './local/legacy-bridge.js';
 import {
   assembleExample,
   registerAtomRoutes,
@@ -1126,10 +1127,10 @@ import { registerRoutineRoutes, routineDbRowToContract } from './routes/routine.
 import {
   bindProjectToPersistedAutomationWorkspace,
   normalizePersistedAutomationWorkspaceScope,
-} from './automations/workspace-scope.js';
-import { resolveAmrModelProbe } from './runtimes/amr-model-probe.js';
+} from './local/automation-workspace-scope.js';
+import { resolveModelProbe } from './local/legacy-bridge.js';
 import { createPluginInstallationHelpers, normalizeProjectPluginFolderPath, resolveProjectChildDirectory } from './services/plugin-installation.js';
-import { createPluginShareTaskStore } from './services/plugin-share-tasks.js';
+import { createPluginShareTaskStore } from './local/legacy-bridge.js';
 import { getRouteRegistrationInventory, installRouteRegistrationGuard } from './route-registration-guard.js';
 import { assertServerContextSatisfiesRoutes } from './route-context-contract.js';
 import { configureConnectorCredentialStore, connectorService, FileConnectorCredentialStore } from './connectors/service.js';
@@ -1186,8 +1187,8 @@ import {
   isApiAuthDisabled,
   isApiTokenMiddlewareEnabled,
 } from './api-token-auth.js';
-import { createCapyDesignPublicMetadataService } from './services/open-design-public-metadata.js';
-import { createWhatsNewService } from './services/whats-new.js';
+import { createPublicMetadataService } from './local/legacy-bridge.js';
+import { createWhatsNewFeedService } from './local/legacy-bridge.js';
 import { execCommandViaLoginShell } from './services/login-shell.js';
 import {
   OFFICIAL_MARKETPLACE_ID,
@@ -3078,8 +3079,8 @@ export interface StartServerOptions {
   odNextComplexProductionResolver?: OdNextComplexProductionResolver | null;
 }
 
-export function startAmrTerminalReportDeliveryAfterBind(
-  delivery: Pick<AmrTerminalReportDeliveryService, 'start'>,
+export function startTerminalReportDeliveryAfterBind(
+  delivery: Pick<TerminalReportDeliveryService, 'start'>,
   boundPort: number | null,
 ): boolean {
   if (!Number.isInteger(boundPort) || Number(boundPort) <= 0) return false;
@@ -3429,8 +3430,8 @@ export async function startServer({
     next();
   });
   const db = openDatabase(PROJECT_ROOT, { dataDir: RUNTIME_DATA_DIR });
-  const amrTerminalReportOutbox = createAmrTerminalReportOutboxStore(db);
-  const amrTerminalReportDelivery = createAmrTerminalReportDeliveryService({
+  const amrTerminalReportOutbox = createTerminalReportOutboxStore(db);
+  const amrTerminalReportDelivery = createTerminalReportDeliveryService({
     store: amrTerminalReportOutbox,
     env: { ...process.env, OD_DATA_DIR: RUNTIME_DATA_DIR },
   });
@@ -3736,21 +3737,21 @@ export async function startServer({
   const configuredAmrEnv = () =>
     agentCliEnvForAgent(readAppConfigSync(RUNTIME_DATA_DIR).agentCliEnv, 'amr');
   const workspaceExactAuthorityCache = createWorkspaceExactAuthorityCache({
-    identity: () => velaWorkspaceDirectoryIdentity(
-      readVelaControlApiContext,
+    identity: () => workspaceDirectoryIdentity(
+      readSessionControlContext,
       configuredAmrEnv(),
     ),
   });
   const workspaceDirectoryAuthority = createWorkspaceDirectoryAuthorityBroker({
     fetchDirectory: async () => {
-      const result = await fetchVelaWorkspaceDirectory({
+      const result = await fetchLocalWorkspaceDirectory({
         configuredEnv: configuredAmrEnv(),
       });
       if (result.ok) workspaceTypes.learn(result.items);
       return result;
     },
-    identityKey: () => velaWorkspaceDirectoryIdentity(
-      readVelaControlApiContext,
+    identityKey: () => workspaceDirectoryIdentity(
+      readSessionControlContext,
       configuredAmrEnv(),
     ),
     onDecision: (input) => recordWorkspaceAuthorityDecision({
@@ -3774,90 +3775,29 @@ export async function startServer({
   const fetchFreshBackgroundWorkspaceDirectory =
     workspaceDirectoryAuthority.backgroundFresh;
   let workspaceHubSubscriptions: WorkspaceHubSubscriptionManager | null = null;
-  const verifyExplicitWorkspaceRequestContext = async (input: {
+  // CapyDesign has no workspace identity: there is one implicit local scope and
+  // no sign-in. A headerless request is the normal local case and is
+  // unconditionally in scope. `x-od-workspace-*` headers are still accepted
+  // (and ignored) so external callers that still send them keep working; they
+  // never decide anything.
+  const verifyExplicitWorkspaceRequestContext = async (_input: {
     req: any;
     requireTeam?: boolean;
-  }, options: { fresh?: boolean; backgroundFresh?: boolean } = {}) => {
-    if (process.env.OD_WORKSPACE_CONTEXT_SOURCE?.trim() === 'vela') {
-      let fetchDirectory = fetchFreshMutationWorkspaceDirectory;
-      if (options.fresh === false) {
-        fetchDirectory = fetchWorkspaceDirectory;
-      } else if (options.backgroundFresh) {
-        fetchDirectory = fetchFreshBackgroundWorkspaceDirectory;
-      }
-      return verifyWorkspaceRequestContext({
-        ...input,
-        fetchWorkspaceDirectory: fetchDirectory,
-        configuredEnv: configuredAmrEnv(),
-      });
-    }
-    // Local/dev has no signed membership directory. Its explicit request
-    // headers are the complete, static authority; still never consult the
-    // daemon's mutable active-workspace context.
-    const claimed = workspaceResourceContextFromRequest(input.req);
-    if (claimed === null) {
-      return {
-        ok: false as const,
-        status: 400 as const,
-        code: 'WORKSPACE_CONTEXT_REQUIRED' as const,
-        message: 'an explicit workspace context is required',
-      };
-    }
-    if (claimed === 'missing') {
-      return {
-        ok: false as const,
-        status: 400 as const,
-        code: 'WORKSPACE_CONTEXT_INCOMPLETE' as const,
-        message: 'both workspace and member identity are required',
-      };
-    }
-    if (
-      claimed.memberStatus !== 'active'
-      || claimed.lifecycleState === 'deleted'
-      || (input.requireTeam && claimed.workspaceType !== 'team')
-    ) {
-      return {
-        ok: false as const,
-        status: 403 as const,
-        code: 'WORKSPACE_ACCESS_DENIED' as const,
-        message: 'the requested workspace is not available to this member',
-      };
-    }
+  }, _options: { fresh?: boolean; backgroundFresh?: boolean } = {}) => {
     return {
       ok: true as const,
-      context: workspaceContextFromDirectoryItem({
-        workspaceId: claimed.workspaceId,
-        workspaceName: claimed.workspaceId,
-        workspaceType: claimed.workspaceType,
-        workspaceMemberId: claimed.workspaceMemberId,
-        role: claimed.role,
-        memberStatus: claimed.memberStatus,
-        lifecycleState: claimed.lifecycleState,
-      }, configuredAmrEnv()),
+      context: localResourceContext(),
     };
   };
   const verifyWorkspaceReadAuthority = (req: unknown) =>
     verifyExplicitWorkspaceRequestContext({ req }, { fresh: false });
   const verifyWorkspaceRequestAuthority = (req: unknown) =>
     verifyExplicitWorkspaceRequestContext({ req });
-  const verifyPersonalProjectDeleteLeaseAuthority =
-    process.env.OD_WORKSPACE_CONTEXT_SOURCE?.trim() === 'vela'
-      ? (req: unknown) => verifyWorkspaceRequestContext({
-          req,
-          // A miss is intentionally returned as unavailable. The project gate
-          // then falls through to the existing fresh authority verifier.
-          fetchWorkspaceDirectory: workspaceDirectoryAuthority.cached,
-          configuredEnv: configuredAmrEnv(),
-        })
-      : undefined;
-  // Project-creation writes must be authorized by AMR in production, while
-  // local/dev and explicitly anonymous clients keep their legacy behavior.
-  // Keep this separate from read-side directory fetches so an unconfigured
-  // daemon never turns ordinary local creation into a network-dependent path.
-  const fetchProjectCreationWorkspaceDirectory =
-    process.env.OD_WORKSPACE_CONTEXT_SOURCE?.trim() === 'vela'
-      ? fetchFreshMutationWorkspaceDirectory
-      : undefined;
+  const verifyPersonalProjectDeleteLeaseAuthority = undefined;
+  // Local project creation is never deferred to a remote workspace authority:
+  // an unconfigured local daemon must never turn ordinary creation into a
+  // network-dependent path.
+  const fetchProjectCreationWorkspaceDirectory = undefined;
   const listWorkspaceDirectory = async () => {
     const result = await fetchWorkspaceDirectory();
     return result.items;
@@ -3911,7 +3851,7 @@ export async function startServer({
    */
   async function resolveDesignSystemWorkspaceContext(
     req: any,
-  ): Promise<import('./collab/workspace-resource-mutation.js').WorkspaceResourceContext | null> {
+  ): Promise<import('./local/workspace-resource-mutation.js').WorkspaceResourceContext | null> {
     const claimed = workspaceResourceContextFromRequest(req);
     // A completely headerless local/signed-out request is the explicit legacy
     // lane: built-ins plus unclaimed local resources, and new resources remain
@@ -3965,7 +3905,7 @@ export async function startServer({
   const createWorkspaceOwnedDesignSystemForContext = (
     root: string,
     input: UserDesignSystemInput,
-    context: import('./collab/workspace-resource-mutation.js').WorkspaceResourceContext | null,
+    context: import('./local/workspace-resource-mutation.js').WorkspaceResourceContext | null,
   ) => persistWorkspaceOwnedDesignSystem(root, input, context, {
     listReservedResourceIds: reservedDesignSystemResourceIds,
     ensureWorkspaceResource: (resourceType, workspaceId, resourceId, envelope) => {
@@ -3992,10 +3932,10 @@ export async function startServer({
   // round-trip entirely. Snapshots live in the daemon database, which was
   // opened from the resolved runtime data root. See collab/persistent-sync-cache.ts.
   const collabSyncSnapshots = createCollabSyncSnapshotStore(db);
-  const velaCliCollabClient = createVelaCliCollabClientFromEnv(process.env);
-  const velaCliTeamProjectCatalog = createVelaCliTeamProjectCatalogFromEnv();
+  const velaCliCollabClient = createLocalCollabClientFromEnv(process.env);
+  const velaCliTeamProjectCatalog = createLocalTeamProjectCatalog();
   const velaCliWorkspaceTeamProjectCatalog =
-    createVelaCliTeamProjectCatalogClientFromEnv();
+    createLocalTeamProjectCatalogClient();
   // Generic stale-while-revalidate cache (with an `invalidate()` escape hatch)
   // — see collab/swr-cache.ts.
   // Cache the workspace-scoped team catalog behind /api/workspaces/:id/projects
@@ -4004,7 +3944,7 @@ export async function startServer({
   // navigation stays instant without letting an active-workspace switch retarget
   // an in-flight read.
   const workspaceTeamProjectCatalog = velaCliWorkspaceTeamProjectCatalog
-    ? createScopedVelaTeamProjectCatalogClientCache(
+    ? createScopedTeamProjectCatalogClientCache(
         velaCliWorkspaceTeamProjectCatalog,
       )
     : velaCliWorkspaceTeamProjectCatalog;
@@ -4024,8 +3964,8 @@ export async function startServer({
   );
   const workspaceExactContextCache = createWorkspaceExactContextCache({
     provider: workspaceContext,
-    identity: () => velaWorkspaceDirectoryIdentity(
-      readVelaControlApiContext,
+    identity: () => workspaceDirectoryIdentity(
+      readSessionControlContext,
       configuredAmrEnv(),
     ),
     onDecision: (input) => recordWorkspaceAuthorityDecision({
@@ -4041,8 +3981,8 @@ export async function startServer({
       ...input,
     }),
   });
-  let workspaceHubAccountIdentity = velaWorkspaceDirectoryIdentity(
-    readVelaControlApiContext,
+  let workspaceHubAccountIdentity = workspaceDirectoryIdentity(
+    readSessionControlContext,
     configuredAmrEnv(),
   );
   const resetWorkspaceIdentityCaches = (): void => {
@@ -4051,8 +3991,8 @@ export async function startServer({
     workspaceExactContextCache.resetIdentity();
   };
   const refreshWorkspaceHubAccountIdentity = (): void => {
-    const currentIdentity = velaWorkspaceDirectoryIdentity(
-      readVelaControlApiContext,
+    const currentIdentity = workspaceDirectoryIdentity(
+      readSessionControlContext,
       configuredAmrEnv(),
     );
     if (currentIdentity === workspaceHubAccountIdentity) return;
@@ -4207,7 +4147,7 @@ export async function startServer({
     _projectId: string,
     _workspaceId?: string,
   ): void => {};
-  const collab = createCollabRuntime({
+  const collab = createLocalCollabRuntime({
     workspaceContext: workspaceContextProvider,
     canPublishProjectContent: (projectId) =>
       !projectIsUnmaterializedSharedPlaceholder(projectId),
@@ -4311,7 +4251,7 @@ export async function startServer({
   void backfillDesignSystemWorkspaceResources(db, USER_DESIGN_SYSTEMS_DIR).catch((error) => {
     console.warn('[od] design-system workspace-resource backfill failed:', error);
   });
-  const collabCloudClient = velaCliCollabClient ?? createCollabCloudClientFromEnv();
+  const collabCloudClient = velaCliCollabClient ?? createLocalCollabClientFromEnv();
   const resolveBoundProjectWorkspaceContext = async (
     projectId: string,
     options: { fresh?: boolean } = {},
@@ -4357,7 +4297,7 @@ export async function startServer({
   // pull+merge poller. Kept out of collab/runtime.ts to avoid colliding with the
   // team-project-catalog work also editing that file.
   const collabCloud = collabCloudClient
-    ? createCollabCloudService({
+    ? createLocalCollabService({
         client: collabCloudClient,
         commentOutbox: createCommentRelayOutboxStore(db),
         resolveLocalProjectRelayBinding: (projectId) => {
@@ -4881,12 +4821,12 @@ export async function startServer({
     }
     return verified;
   };
-  const presenceRoutes = registerCollabPresenceRoutes(app, {
+  const presenceRoutes = registerRemovedPresenceRoutes(app, {
     collab,
     // Null when this run has no vela-cli collab transport, which is what keeps
     // the process-local presence fallback reachable. See
-    // `createCollabPresenceCloudClient` for the invariant.
-    cloud: createCollabPresenceCloudClient(velaCliCollabClient, presenceScopeFor),
+    // `createCollabPresenceClient` for the invariant.
+    cloud: createCollabPresenceClient(velaCliCollabClient, presenceScopeFor),
     verifyWorkspaceRequest: (req, projectId) =>
       verifyPresenceWorkspaceRequest(req, projectId, { fresh: false }),
     verifyWorkspaceLeaveRequest: (req, projectId) =>
@@ -5125,7 +5065,7 @@ export async function startServer({
     _scope: TeamMirrorPullScope,
     _version: number,
   ): Promise<void> => {};
-  const collabSyncRoutes = registerCollabSyncRoutes(app, {
+  const collabSyncRoutes = registerRemovedSyncRoutes(app, {
     collab,
     publicFilePublicationStore: createSqlitePublicFilePublicationStore(db),
     verifyWorkspaceRequest: verifiedWorkspaceContextForRequest,
@@ -5624,11 +5564,11 @@ export async function startServer({
     return context ? teamMembersCache(context) : [];
   };
   const accountBillingSummary = createAccountBillingSummaryCache({
-    identity: () => velaWorkspaceDirectoryIdentity(
-      readVelaControlApiContext,
+    identity: () => workspaceDirectoryIdentity(
+      readSessionControlContext,
       configuredAmrEnv(),
     ),
-    fetch: () => fetchVelaBillingSummary({ configuredEnv: configuredAmrEnv() }),
+    fetch: () => fetchBillingSummary({ configuredEnv: configuredAmrEnv() }),
   });
   const workspaceBillingRuntime = createWorkspaceBillingRuntimeCoordinator({
     fetchProjection: async ({ workspaceId }) => {
@@ -5636,11 +5576,11 @@ export async function startServer({
         // The Vela CLI sends only the Bearer credential plus workspace-id
         // candidate. Vela re-derives the member principal server-side, and
         // the runtime validates the returned member id before accepting it.
-        return await fetchVelaWorkspaceBillingProjection(workspaceId, {
+        return await fetchWorkspaceBillingProjection(workspaceId, {
           configuredEnv: configuredAmrEnv(),
         });
       } catch (error) {
-        if (isVelaWorkspaceAuthorizationError(error)) {
+        if (isWorkspaceAuthorizationError(error)) {
           throw new WorkspaceBillingAccessRevokedError();
         }
         throw error;
@@ -5706,7 +5646,7 @@ export async function startServer({
     }).catch(() => undefined);
   };
   let workspaceAnalyticsService: AnalyticsService | null = null;
-  registerCollabContextRoutes(app, {
+  registerRemovedContextRoutes(app, {
     workspaceContext: collab.workspaceContext,
     configuredEnv: configuredAmrEnv,
     verifyWorkspaceReadAuthority: verifyWorkspaceContextReadAuthority,
@@ -5718,7 +5658,7 @@ export async function startServer({
     onWorkspaceSwitched: (workspaceId) => warmWorkspaceDigestFaces(workspaceId),
     fetchBilling: accountBillingSummary.read,
     billingRuntime: workspaceBillingRuntime,
-    fetchBillingCatalog: (workspaceId) => fetchVelaBillingCatalog(workspaceId, {
+    fetchBillingCatalog: (workspaceId) => fetchBillingCatalog(workspaceId, {
       configuredEnv: configuredAmrEnv(),
     }),
     startCheckout: (input) => fetchBillingCheckoutUrl({
@@ -5916,8 +5856,8 @@ export async function startServer({
     identityKey: string,
   ) => `${identityKey}\0${workspaceId}`;
   const currentWorkspaceDirectoryIdentity = () =>
-    velaWorkspaceDirectoryIdentity(
-      readVelaControlApiContext,
+    workspaceDirectoryIdentity(
+      readSessionControlContext,
       configuredAmrEnv(),
     );
   const syncWorkspaceDirectoryRealtimeHealth = (): void => {
@@ -5976,14 +5916,9 @@ export async function startServer({
   const startWorkspaceHubSubscriber = (subscribedWorkspaceId: string) =>
     startHubEventsSubscriber({
     resolveEndpoint: async () => {
-      // Same gating as the workspace-context provider: only the vela source
-      // has a hub to subscribe to (dev daemons must not dial production).
-      if (process.env.OD_WORKSPACE_CONTEXT_SOURCE?.trim() !== 'vela') return null;
-      return resolveVelaWorkspaceHubEventsEndpoint(
-        subscribedWorkspaceId,
-        process.env,
-        configuredAmrEnv(),
-      );
+      // There is no remote hub in a CapyDesign build: a local daemon must
+      // never dial one.
+      return null;
     },
     onStateChange: (state, connection) => {
       if (state === 'disconnected') {
@@ -6559,7 +6494,7 @@ export async function startServer({
     workspaceBillingRuntime.interestedKeys().map((interest) => interest.workspaceId),
   );
 
-  registerTeamResourceRoutes(app, { teamResources: collab.teamResources });
+  registerRemovedResourceRoutes(app, { teamResources: collab.teamResources });
 
   // Team resource sharing is request-scoped. The browser's explicit Workspace
   // headers choose a membership, then the signed-in account's authoritative
@@ -6627,7 +6562,7 @@ export async function startServer({
     scope: TeamResourceRequestScope,
   ): Promise<boolean> => {
     const { runVelaResourceCommand } = await import(
-      './collab/vela-cli-resource-adapter.js'
+      './local/legacy-bridge.js'
     );
     const stdout = await runVelaResourceCommand(
       ['shared', '--json'],
@@ -7075,7 +7010,7 @@ export async function startServer({
   // the browser's 6-connection cap. Materialization still runs, but on the
   // background refresh rather than the hot read.
   //
-  // `invalidate()` is consumed by registerTeamResourceShareRoutes' share/
+  // `invalidate()` is consumed by registerRemovedResourceShareRoutes' share/
   // unshare handlers below (a local mutation this daemon just made). It has to
   // drop TWO layers, not one: this cache's own parsed-and-materialized entry,
   // AND `sharedTeamResourcesCommand` underneath it — `share.sharedResources()`
@@ -7095,7 +7030,7 @@ export async function startServer({
       if (!command) {
         command = createSwrCache(
           async () => {
-            const { runVelaResourceCommand } = await import('./collab/vela-cli-resource-adapter.js');
+            const { runVelaResourceCommand } = await import('./local/legacy-bridge.js');
             return runVelaResourceCommand(['shared', '--json'], key);
           },
           () => key,
@@ -7120,9 +7055,9 @@ export async function startServer({
   // three. The gate lives here, at the composition root, because here is the
   // only place that can see all three.
   const teamResourceMaterializationGate = new ConcurrencyGate(
-    COLLAB_VELA_FANOUT_CONCURRENCY,
+    COLLAB_FANOUT_CONCURRENCY,
   );
-  const teamResourcePullBatcher = createVelaResourcePullBatcher();
+  const teamResourcePullBatcher = createResourcePullBatcher();
   const cachedTeamResourceList = (
     share: TeamResourceShareService,
     sync?: (
@@ -7145,12 +7080,12 @@ export async function startServer({
     if (args.length === 2 && args[0] === 'shared' && args[1] === '--json') {
       if (!workspaceId?.trim()) throw new Error('explicit workspace scope is required');
       if (readOptions?.authoritative) {
-        const { runVelaResourceCommand } = await import('./collab/vela-cli-resource-adapter.js');
+        const { runVelaResourceCommand } = await import('./local/legacy-bridge.js');
         return runVelaResourceCommand(args, workspaceId);
       }
       return sharedTeamResourcesCommand(workspaceId);
     }
-    const { runVelaResourceCommand } = await import('./collab/vela-cli-resource-adapter.js');
+    const { runVelaResourceCommand } = await import('./local/legacy-bridge.js');
     return runVelaResourceCommand(args, workspaceId);
   };
   const designSystemsTeamResourceShare = createTeamResourceShareService({
@@ -7238,7 +7173,7 @@ export async function startServer({
     });
     if (visibility === 'personal') designSystemBackingProjects.delete(key);
   };
-  registerTeamResourceShareRoutes(app, {
+  registerRemovedResourceShareRoutes(app, {
     basePath: 'design-systems',
     resolveScope: resolveTeamResourceScope,
     authorizeShare: (resourceId, scope) => {
@@ -7280,7 +7215,7 @@ export async function startServer({
     pluginsTeamShare,
     syncSharedTeamPlugin,
   );
-  registerTeamResourceShareRoutes(app, {
+  registerRemovedResourceShareRoutes(app, {
     basePath: 'plugins',
     resolveScope: resolveTeamResourceScope,
     authorizeShare: (id, scope) => {
@@ -7320,7 +7255,7 @@ export async function startServer({
     skillsTeamShare,
     syncSharedTeamSkill,
   );
-  registerTeamResourceShareRoutes(app, {
+  registerRemovedResourceShareRoutes(app, {
     basePath: 'skills',
     resolveScope: resolveTeamResourceScope,
     authorizeShare: (id, scope) => {
@@ -7785,7 +7720,7 @@ export async function startServer({
           : null;
         if (promptBudget) run.promptBudgetDiagnostics = promptBudget;
       },
-      onTerminal: createAmrTerminalReportFinalizer(amrTerminalReportOutbox),
+      onTerminal: createTerminalReportFinalizer(amrTerminalReportOutbox),
       beforeFinish: (run, status, _code, _signal, terminalAt) => {
         if (run.deliverableSyntaxValidation?.metrics) {
           run.deliverableSyntaxValidation = {
@@ -7852,7 +7787,7 @@ export async function startServer({
     appVersionInfo: currentAppVersionInfo(),
     db,
     reportLangfuse: reportRunCompletedFromDaemon,
-    finalizeTerminalLocally: createAmrTerminalReportFinalizer(amrTerminalReportOutbox),
+    finalizeTerminalLocally: createTerminalReportFinalizer(amrTerminalReportOutbox),
     taskObservationModeForRun: (runId) => taskObservationRollout.modeForRun(runId),
     taskObservationRepresentationForRun: (runId) =>
       taskObservationRollout.representationForRun(runId),
@@ -7987,13 +7922,6 @@ export async function startServer({
     isLocalSameOrigin,
     resolvedPortRef,
   };
-  const attributionService = registerAttributionRoutes(app, {
-    analytics: analyticsService,
-    appConfig: { readAppConfig },
-    http: httpDeps,
-    paths: { RUNTIME_DATA_DIR },
-    env: process.env,
-  });
   const pathDeps = {
     PROJECT_ROOT,
     PROJECTS_DIR,
@@ -8105,14 +8033,14 @@ export async function startServer({
     env: process.env,
   });
 
-  const openDesignPublicMetadata = createCapyDesignPublicMetadataService();
-  registerCapyDesignPublicMetadataRoutes(app, {
+  const openDesignPublicMetadata = createPublicMetadataService();
+  registerRemovedMetadataRoutes(app, {
     http: httpDeps,
     openDesignPublicMetadata,
   });
 
-  registerWhatsNewRoutes(app, {
-    whatsNew: createWhatsNewService(),
+  registerRemovedFeedRoutes(app, {
+    whatsNew: createWhatsNewFeedService(),
   });
 
   registerPluginEventRoutes(app, {
@@ -8358,15 +8286,6 @@ export async function startServer({
   const appConfigDeps = {
     readAppConfig,
     writeAppConfig,
-    onAppConfigWritten: () => {
-      // AMR credentials may be overridden through Settings. Observe every
-      // completed write so even an A -> B -> A transition with no intervening
-      // directory/status read fences exact authority from the old A session.
-      refreshWorkspaceHubAccountIdentity();
-      void attributionService.processPending().catch((err: unknown) => {
-        console.warn('[attribution] pending claim failed', err);
-      });
-    },
   };
   const orbitDeps = { orbitService };
   const nativeDialogDeps = { openBrowser, openNativeFolderDialog };
@@ -9102,7 +9021,7 @@ export async function startServer({
     authorizeProjectToolRequest,
   });
 
-  registerVelaRoutes(app, {
+  registerRemovedIntegrationRoutes(app, {
     paths: { RUNTIME_DATA_DIR },
     appConfig: { readAppConfig },
     http: { getPublicBaseUrl },
@@ -11054,7 +10973,7 @@ export async function startServer({
     const transportSourceImages = odNextTaskInputSnapshot?.imagePaths ?? safeImages;
     const amrStagedImages =
       def.id === 'amr' && !odNextTaskInputSnapshot
-        ? await stageAmrImagePaths(cwd ?? PROJECT_ROOT, safeImages, UPLOAD_DIR)
+        ? await stageImagePaths(cwd ?? PROJECT_ROOT, safeImages, UPLOAD_DIR)
         : transportSourceImages;
 
     // Project-scoped attachments: project-relative paths inside cwd. Each
@@ -11727,7 +11646,7 @@ export async function startServer({
       configuredAgentEnv = {};
     }
     const requestedLiveModelScope = def.id === 'amr'
-      ? resolveAmrProfile({
+      ? readSessionProfileKey({
           ...process.env,
           ...(def.env || {}),
           ...configuredAgentEnv,
@@ -11781,10 +11700,10 @@ export async function startServer({
       // same rewrite before spawn; keeping this earlier copy aligned prevents
       // stored concrete session models from comparing against raw `default`.
       try {
-        const resumeProbe = await resolveAmrModelProbe({ dataDir: RUNTIME_DATA_DIR, env: process.env, readAppConfig });
-        const resumeCatalog = await amrModelLoadingCache.get(resumeProbe.cacheKey, {
-          fetchPreset: () => fetchVelaPresetModels(resumeProbe.launchPath, resumeProbe.env),
-          fetchRemote: () => fetchVelaRemoteModelsWithRetry(resumeProbe.launchPath, resumeProbe.env),
+        const resumeProbe = await resolveModelProbe({ dataDir: RUNTIME_DATA_DIR, env: process.env, readAppConfig });
+        const resumeCatalog = await modelLoadingCache.get(resumeProbe.cacheKey, {
+          fetchPreset: () => fetchPresetModels(resumeProbe.launchPath, resumeProbe.env),
+          fetchRemote: () => fetchRemoteModelsWithRetry(resumeProbe.launchPath, resumeProbe.env),
         });
         const resumeLiveModels = preferFreshLiveModels(
           resumeCatalog.models ?? [],
@@ -13163,7 +13082,7 @@ export async function startServer({
         failure.message,
         {
           retryable: false,
-          details: amrAccountFailureDetails(failure),
+          details: accountFailureDetails(failure),
         },
       ));
     };
@@ -13185,7 +13104,7 @@ export async function startServer({
             agentLaunch,
           )
         : null;
-      const amrModelScope = resolveAmrProfile(modelProbeEnv ?? process.env);
+      const amrModelScope = readSessionProfileKey(modelProbeEnv ?? process.env);
       // Resolve the AMR model catalog through the SAME shared cache the UI's
       // `/api/amr/models` endpoint serves (AmrModelLoadingCache): a cached
       // authoritative `vela model list` when it is hot, otherwise the offline
@@ -13204,10 +13123,10 @@ export async function startServer({
       // of fail-closing; vela's own `session/set_model` remains the final gate.
       let liveModels = [];
       try {
-        const probe = await resolveAmrModelProbe({ dataDir: RUNTIME_DATA_DIR, env: process.env, readAppConfig });
-        const catalog = await amrModelLoadingCache.get(probe.cacheKey, {
-          fetchPreset: () => fetchVelaPresetModels(probe.launchPath, probe.env),
-          fetchRemote: () => fetchVelaRemoteModelsWithRetry(probe.launchPath, probe.env),
+        const probe = await resolveModelProbe({ dataDir: RUNTIME_DATA_DIR, env: process.env, readAppConfig });
+        const catalog = await modelLoadingCache.get(probe.cacheKey, {
+          fetchPreset: () => fetchPresetModels(probe.launchPath, probe.env),
+          fetchRemote: () => fetchRemoteModelsWithRetry(probe.launchPath, probe.env),
         });
         liveModels = catalog.models ?? [];
       } catch (error) {
@@ -13254,7 +13173,7 @@ export async function startServer({
         // catalog calls 401) or the CLI is unrunnable. Prefer the relogin
         // affordance over a misleading "choose a model".
         if (def.id === 'amr') {
-          const loginStatus = readVelaLoginStatus(
+          const loginStatus = readSessionStatus(
             modelProbeEnv ?? process.env,
             configuredAgentEnv,
           );
@@ -14026,7 +13945,7 @@ export async function startServer({
       { resolvedBin: agentLaunch.selectedPath },
     );
     if (def.id === 'amr') {
-      const loginStatus = readVelaLoginStatus(agentSpawnEnv, configuredAgentSpawnEnv);
+      const loginStatus = readSessionStatus(agentSpawnEnv, configuredAgentSpawnEnv);
       if (!loginStatus.loggedIn) {
         cleanupPromptFile();
         revokeToolToken('child_exit');
@@ -14093,7 +14012,7 @@ export async function startServer({
     let jsonEventStreamHandler: ReturnType<typeof createJsonEventStreamHandler> | null = null;
     let agentStdoutTail = '';
     let agentStderrTail = '';
-    const agentStderrFilter = createAgentStderrVisibilityFilter(agentId);
+    const agentStderrFilter = createStderrVisibilityFilter(agentId);
     const emitVisibleAgentStderr = (chunk: unknown) => {
       const visibleChunk = agentStderrFilter.write(chunk);
       if (!visibleChunk) return;
@@ -15509,7 +15428,7 @@ export async function startServer({
           if (event === 'error') retireAttemptOnAcpVerdict();
           if (event === 'error') flushVisibleAgentStderr();
           if (def.id === 'amr' && event === 'error') {
-            const failure = classifyAmrAccountFailureSignal({
+            const failure = classifyAccountFailureSignal({
               details: data?.error?.details,
               message: data?.message,
               errorMessage: data?.error?.message,
@@ -16033,7 +15952,7 @@ export async function startServer({
         !run.cancelRequested
       ) {
         if (def.id === 'amr') {
-          const amrFailure = classifyAmrAccountFailureSignal({
+          const amrFailure = classifyAccountFailureSignal({
             stdoutTail: agentStdoutTail,
             stderrTail: agentStderrTail,
           });
@@ -17176,7 +17095,7 @@ export async function startServer({
         const appConfig = await readAppConfig(RUNTIME_DATA_DIR).catch(
           () => ({}),
         );
-        return readVelaLoginStatus(
+        return readSessionStatus(
           process.env,
           agentCliEnvForAgent(appConfig.agentCliEnv, 'amr'),
         ).loggedIn;
@@ -17769,7 +17688,7 @@ export async function startServer({
           return;
         }
         resolvedPort = boundPort;
-        startAmrTerminalReportDeliveryAfterBind(amrTerminalReportDelivery, boundPort);
+        startTerminalReportDeliveryAfterBind(amrTerminalReportDelivery, boundPort);
         // When binding to all interfaces report localhost for local callers;
         // when binding to a specific address (e.g. a Tailscale IP) report that
         // address so remote callers and the sidecar use the correct URL.

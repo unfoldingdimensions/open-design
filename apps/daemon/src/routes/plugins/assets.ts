@@ -5,7 +5,7 @@ import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import {
   resolveOptionalLocalWorkspaceRequestAuthority,
   type VerifyWorkspaceRequestAuthority,
-} from '../../collab/workspace-resource-mutation.js';
+} from '../../local/workspace-resource-mutation.js';
 
 export interface RegisterPluginAssetRoutesDeps {
   db: PluginDbLike;

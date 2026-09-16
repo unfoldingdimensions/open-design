@@ -25,7 +25,7 @@ import {
 import {
   AutomationWorkspaceScopeError,
   normalizePersistedAutomationWorkspaceScope,
-} from '../automations/workspace-scope.js';
+} from '../local/automation-workspace-scope.js';
 import type { PathDeps, RouteDeps } from '../server-context.js';
 
 export interface RegisterRoutineRoutesDeps extends RouteDeps<'db' | 'routines'> {

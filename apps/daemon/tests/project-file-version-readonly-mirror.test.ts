@@ -45,7 +45,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { startServer } from '../src/server.js';
 import { openDatabase, updateProject, updateWorkspaceProject } from '../src/db.js';
-import { SHARED_PROJECT_PLACEHOLDER_METADATA_KEY } from '../src/collab/shared-project-placeholder.js';
+import { SHARED_PROJECT_PLACEHOLDER_METADATA_KEY } from '../src/local/legacy-bridge.js';
 
 const WORKSPACE_ID = 'ws-readonly-mirror';
 const OWNER_MEMBER_ID = 'member-owner-readonly-mirror';

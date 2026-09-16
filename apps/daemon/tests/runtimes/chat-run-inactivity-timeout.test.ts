@@ -22,7 +22,7 @@ import {
   resolveChatRunFirstOutputTimeoutMs,
   resolveChatRunInactivityTimeoutMs,
 } from '../../src/server.js';
-import { amrAgentDef } from '../../src/runtimes/defs/amr.js';
+import { amrAgentDef } from '../../src/local/legacy-bridge.js';
 import { copilotAgentDef } from '../../src/runtimes/defs/copilot.js';
 
 const ENV_KEY = 'OD_CHAT_RUN_INACTIVITY_TIMEOUT_MS';

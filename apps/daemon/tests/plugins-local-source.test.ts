@@ -10,7 +10,7 @@ import {
 import {
   materializeWorkspaceScopedTeamResource,
   teamResourceMaterializationDir,
-} from '../src/collab/team-resource-materialization.js';
+} from '../src/local/legacy-bridge.js';
 import {
   localPluginRegistryScope,
   resolveLocalPluginBySource,
@@ -75,7 +75,7 @@ describe('resolveLocalPluginBySource', () => {
         hubResourceId: 'hub-team-shared-id',
       },
       storageName: 'shared-id',
-      pullInto: (dir) => pluginManifest(dir, 'Team copy'),
+      pullInto: (dir: any) => pluginManifest(dir, 'Team copy'),
       verifyWorkspaceScope: async () => true,
       verifyStillShared: async () => true,
     });
@@ -151,7 +151,7 @@ describe('resolveLocalPluginBySource', () => {
         hubResourceId: 'hub-team-shared-id',
       },
       storageName: 'shared-id',
-      pullInto: (dir) => pluginManifest(dir, 'Retired Team copy'),
+      pullInto: (dir: any) => pluginManifest(dir, 'Retired Team copy'),
       verifyWorkspaceScope: async () => true,
       verifyStillShared: async () => true,
     });

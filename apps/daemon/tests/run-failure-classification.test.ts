@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/integrations/vela-errors.js', () => ({
-  classifyAmrAccountFailure(text: string) {
+  classifyAccountFailure(text: string) {
     const value = String(text || '').toLowerCase();
     // Mirror the real detector's signals exercised by these tests, including
     // the Chinese vela pre-charge text (see integrations/vela-errors.test.ts).

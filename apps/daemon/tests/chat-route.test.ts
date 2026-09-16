@@ -35,7 +35,7 @@ import {
   getProject,
   upsertMessage,
 } from '../src/db.js';
-import { teamResourceWorkspaceRoot } from '../src/collab/team-resource-materialization.js';
+import { teamResourceWorkspaceRoot } from '../src/local/legacy-bridge.js';
 import { workspaceTeamDesignSystemBindingResourceId } from '../src/design-systems/workspace-team-binding.js';
 
 const FAKE_VELA_FIXTURE = resolve(process.cwd(), 'tests', 'fixtures', 'fake-vela.mjs');

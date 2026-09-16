@@ -15,7 +15,7 @@ import { appendMessageStatusEvent } from '../db.js';
 import {
   normalizeAnalyticsCaptureResult,
   type AnalyticsCaptureResult,
-} from '../analytics.js';
+} from '../local/telemetry-sink.js';
 import { reconcileStrategyTaskRunTerminal } from '../strategies/task-store.js';
 import { classifyRunFailure } from '../run-failure-classification.js';
 import { summarizeRunDiagnosticsForAnalytics } from '../run-diagnostics.js';

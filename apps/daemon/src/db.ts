@@ -24,15 +24,7 @@ import {
   stripDoneMarkers,
   stripNextStepMarkers,
 } from '@capydesign/contracts';
-import { migrateCollabSyncSnapshots } from './collab/sync-snapshot-store.js';
 import { resolveDefaultDataDir } from './daemon-paths.js';
-import { migrateCommentRelayOutbox } from './collab/comment-relay-outbox.js';
-import { migratePublicFilePublications } from './collab/public-file-publication-store.js';
-import { migrateAmrTerminalReportOutbox } from './storage/amr-terminal-report-outbox.js';
-import {
-  collapseWorkspaceProjectHomes,
-  type WorkspaceProjectHomeRow,
-} from './collab/workspace-project-home.js';
 import { scrubDsmlToolProtocolTail } from './artifacts/text-suppression.js';
 import {
   listMessageArtifactRows,
@@ -608,112 +600,19 @@ function migrate(db: SqliteDb): void {
   migrateProjectScenarioBindings(db);
   migrateStrategyTaskStore(db);
   migrateChatArtifacts(db);
-  migrateCollabSyncSnapshots(db);
-  migrateCommentRelayOutbox(db);
-  migrateAmrTerminalReportOutbox(db);
-  migratePublicFilePublications(db);
 }
 
 /**
- * Bind every project to exactly ONE workspace, and make any other state
- * unrepresentable.
+ * No-op since the Cloud/workspace identity layer was removed.
  *
- * Product ruling (2026-07-21): a project is created in a workspace and lives
- * there; sharing flips `visibility` within that workspace rather than projecting
- * the project into a second one. See collab/workspace-project-home.ts for the
- * full statement and for the rule that picks the surviving row.
- *
- * Two steps, in this order, inside one transaction:
- *   1. collapse the duplicate rows an older build's blanket back-fill wrote —
- *      on the dogfood database 23 of 31 projects had rows in 2-4 workspaces;
- *   2. narrow the primary key from `(workspace_id, project_id)` back to
- *      `project_id`, which is what it was before a migration widened it (the
- *      table it renamed was called `workspace_projects_legacy_single_project`).
- *
- * The order matters: the rebuild's INSERT would fail on the narrowed key if the
- * duplicates were still there. Step 1 therefore runs on every startup, not just
- * on the one that narrows the key, so a row that predates this build is repaired
- * even if the key was already narrow. It is idempotent and costs one indexed
- * scan.
- *
- * A migration rather than the startup reconciliation used for impossible team
- * shares (server.ts `reconcileImpossibleTeamShares`): that one needs the
- * workspace DIRECTORY to decide, which is a signed-in network fact, so it cannot
- * run before the first read. This one decides from the table alone, so it can —
- * and it must, because the read path below now assumes at most one row.
+ * CapyDesign has one implicit local scope: projects are never bound to a
+ * workspace, so the `workspace_projects` table and its single-home migration
+ * are dead. The table is deliberately left in place (see the SQLite decision in
+ * the WS6 report) — dropping it would be a destructive local-DB migration for
+ * zero product benefit. Nothing reads or writes it.
  */
-function migrateWorkspaceProjectsSingleHome(db: SqliteDb): void {
-  const collapse = db.transaction(() => {
-    const rows = db
-      .prepare(
-        `SELECT project_id AS projectId,
-                workspace_id AS workspaceId,
-                visibility,
-                created_by_workspace_member_id AS createdByWorkspaceMemberId,
-                created_at AS createdAt
-           FROM workspace_projects`,
-      )
-      .all() as WorkspaceProjectHomeRow[];
-    const decisions = collapseWorkspaceProjectHomes(rows);
-    if (decisions.length === 0) return 0;
-    const drop = db.prepare(
-      `DELETE FROM workspace_projects WHERE workspace_id = ? AND project_id = ?`,
-    );
-    let dropped = 0;
-    for (const decision of decisions) {
-      for (const row of decision.drop) {
-        drop.run(row.workspaceId, row.projectId);
-        dropped += 1;
-      }
-    }
-    return dropped;
-  });
-  const dropped = collapse();
-  if (dropped > 0) {
-    console.warn(
-      `[od] bound ${dropped} duplicated workspace project row(s) to a single workspace each. ` +
-        'A project belongs to one workspace; the extras came from an older blanket back-fill.',
-    );
-  }
-
-  const cols = db.prepare(`PRAGMA table_info(workspace_projects)`).all() as DbRow[];
-  const projectPk = cols.find((c: DbRow) => c.name === 'project_id')?.pk ?? 0;
-  const workspacePk = cols.find((c: DbRow) => c.name === 'workspace_id')?.pk ?? 0;
-  if (projectPk === 1 && workspacePk === 0) return;
-
-  db.exec(`
-    DROP INDEX IF EXISTS idx_workspace_projects_workspace_visibility;
-    ALTER TABLE workspace_projects RENAME TO workspace_projects_legacy_multi_workspace;
-    CREATE TABLE workspace_projects (
-      project_id TEXT PRIMARY KEY,
-      workspace_id TEXT NOT NULL,
-      visibility TEXT NOT NULL CHECK (visibility IN ('personal', 'team')),
-      resource_state TEXT NOT NULL CHECK (resource_state IN ('active', 'frozen', 'deleted')),
-      created_by_workspace_member_id TEXT,
-      updated_by_workspace_member_id TEXT,
-      resource_hub_resource_id TEXT,
-      cloud_tombstoned_at INTEGER,
-      sync_state TEXT,
-      metadata_refresh_pending INTEGER NOT NULL DEFAULT 0,
-      version INTEGER NOT NULL DEFAULT 1,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL,
-      FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE
-    );
-    INSERT INTO workspace_projects
-      (project_id, workspace_id, visibility, resource_state,
-       created_by_workspace_member_id, updated_by_workspace_member_id,
-       resource_hub_resource_id, cloud_tombstoned_at,
-       sync_state, version, created_at, updated_at)
-    SELECT project_id, workspace_id, visibility, resource_state,
-           created_by_workspace_member_id, updated_by_workspace_member_id,
-           resource_hub_resource_id, cloud_tombstoned_at,
-           sync_state, version, created_at, updated_at
-      FROM workspace_projects_legacy_multi_workspace;
-    DROP TABLE workspace_projects_legacy_multi_workspace;
-    CREATE INDEX IF NOT EXISTS idx_workspace_projects_workspace_visibility
-      ON workspace_projects(workspace_id, visibility, updated_at DESC);
-  `);
+function migrateWorkspaceProjectsSingleHome(_db: SqliteDb): void {
+  // intentionally empty
 }
 
 function migratePreviewCommentsSlideKey(db: SqliteDb): void {

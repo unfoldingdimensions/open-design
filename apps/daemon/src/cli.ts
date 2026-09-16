@@ -5,7 +5,7 @@ import { basename } from 'node:path';
 import { runDaemonCliStartup, startDaemonRuntime } from './daemon-startup.js';
 import { runLiveArtifactsMcpServer } from './mcp-live-artifacts-server.js';
 import { runArtifactsCli } from './artifacts-cli.js';
-import { runResource } from './resource-cli.js';
+import { runResource } from './local/legacy-bridge.js';
 import { runProjectHandoff } from './handoff-cli.js';
 import { runConnectorsToolCli } from './tools-connectors-cli.js';
 import { runDesignSystemsToolCli } from './tools-design-systems-cli.js';
@@ -29,7 +29,7 @@ import {
   applyJsonInstall,
   removeJsonInstall,
 } from './mcp-agent-install.js';
-import { resolveMcpWorkspaceContext } from './mcp-workspace-context.js';
+import { resolveMcpWorkspaceContext } from './local/legacy-bridge.js';
 
 const argv = process.argv.slice(2);
 

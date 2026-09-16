@@ -13,8 +13,8 @@ import {
   type ReleaseChannel,
 } from '@capydesign/release';
 
-import type { AnalyticsContext, AnalyticsService } from '../analytics.js';
-import { readPosthogConfig } from '../analytics.js';
+import type { AnalyticsContext, AnalyticsService } from '../local/telemetry-sink.js';
+import { readAnalyticsEndpointConfig } from '../local/telemetry-sink.js';
 import { readAppConfig, type AppConfigPrefs } from '../app-config.js';
 
 const INSTALLER_OBSERVATION_SCHEMA_VERSION = 1;
@@ -217,7 +217,7 @@ function deliveryForConfig(
   if (appConfig.telemetry?.metrics !== true) {
     return { delivery: { eventName: 'update_apply_observed', status: 'skipped_no_consent', updatedAt } };
   }
-  if (readPosthogConfig(env) == null) {
+  if (readAnalyticsEndpointConfig(env) == null) {
     return { delivery: { eventName: 'update_apply_observed', status: 'skipped_analytics_disabled', updatedAt } };
   }
   const deviceId = typeof appConfig.installationId === 'string' && appConfig.installationId.length > 0
