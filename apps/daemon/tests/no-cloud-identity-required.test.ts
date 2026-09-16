@@ -86,30 +86,32 @@ describe('daemon runs with no Cloud identity', () => {
     expect(JSON.stringify(body)).not.toContain('WORKSPACE_CONTEXT_REQUIRED');
   });
 
-  it('creates, reads back, and starts a run headerless', async () => {
+  it('creates, reads back, and reaches the run route headerless', async () => {
     const projectId = await createProject('headerless');
 
     const readBack = await fetch(`${baseUrl}/api/projects/${encodeURIComponent(projectId)}`);
     expect(readBack.status).toBe(200);
-    const project = (await readBack.json()) as { id?: string };
-    expect(project.id).toBe(projectId);
+    const project = (await readBack.json()) as { project?: { id?: string } };
+    expect(project.project?.id).toBe(projectId);
 
+    // The run route must be *reachable* without a workspace context: the only
+    // forbidden outcome is the removed workspace gate. An unknown agent is
+    // rejected for being unknown — a local, agent-shaped answer.
     const runResp = await fetch(`${baseUrl}/api/runs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         projectId,
-        agentId: 'claude',
+        agentId: `missing-agent-${Date.now()}`,
         message: 'no-cloud-identity fence',
       }),
     });
-    const runBody = (await runResp.text()).slice(0, 2_000);
-    // The only forbidden outcome is the workspace gate. Anything else (a
-    // missing local agent runtime, an unsupported model, …) is a legitimate
-    // local answer and must not be masked here.
+    const runBody = (await runResp.text()).slice(0, 4_000);
+    expect(runResp.status).not.toBe(401);
     expect(runBody).not.toContain('WORKSPACE_CONTEXT_REQUIRED');
     expect(runBody).not.toContain('WORKSPACE_CONTEXT_INCOMPLETE');
-    expect(runResp.status).not.toBe(401);
+    expect(runBody).not.toContain('WORKSPACE_ACCESS_DENIED');
+    expect([400, 404]).toContain(runResp.status);
   });
 
   it('accepts and ignores x-od-workspace-* headers', async () => {
