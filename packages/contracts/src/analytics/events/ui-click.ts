@@ -1019,10 +1019,6 @@ export interface AmrAuthResultProps {
   entry_id?: string;
   source_detail?: TrackingAmrEntrySource;
   auth_attempt_id?: string;
-  last_stage?: import('./amr-auth.js').AmrAuthStage;
-  last_stage_result?: import('./amr-auth.js').AmrAuthStageResult;
-  last_error_kind?: import('./amr-auth.js').AmrAuthErrorKind;
-  network_path?: import('./amr-auth.js').AmrAuthNetworkPath;
   fallback_used?: boolean;
 }
 

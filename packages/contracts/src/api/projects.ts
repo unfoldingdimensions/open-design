@@ -6,7 +6,6 @@ import type {
   ProjectContextPluginRef,
 } from './context.js';
 import type { ProjectSyncIntent, ProjectSyncIntentEvent, ProjectSyncState } from './project-sync.js';
-import type { TeamResourceState } from './team-resources.js';
 import type { WorkspaceCollabContext } from './collab.js';
 
 export type ProjectKind =
@@ -628,6 +627,12 @@ export interface ProjectAccessFlags {
   canRestoreVersion: boolean;
   disabledReason?: ProjectDisabledReason;
 }
+
+/**
+ * Team-resource lifecycle state. The team-resource module went with the Cloud
+ * surface; the state is retained because local project summaries still carry it.
+ */
+export type TeamResourceState = 'active' | 'frozen' | 'deleted';
 
 export interface WorkspaceProjectSummary {
   id: string;
