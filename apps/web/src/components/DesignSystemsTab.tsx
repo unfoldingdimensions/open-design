@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { coalescedGet, evictCoalescedGet } from '../lib/coalesced-get';
+import type { WorkspaceResourceReadIdentity } from '../runtime/resource-read-identity';
 import { Button, VisuallyHidden } from '@capydesign/components';
 import type { DesignSystemEditClickProps } from '@capydesign/contracts/analytics';
 import type {
@@ -442,7 +443,7 @@ export function DesignSystemsTab({
       const body = await coalescedGet(cacheKey, readTeamIndex);
       if (
         requestGeneration !== teamSharedRequestGenerationRef.current
-        || !read.isStillCurrent(workspaceContextRef.current)
+        || !read.isStillCurrent()
       ) return;
       if (Array.isArray(body.ids)) {
         const next = new Set(body.ids.filter((id): id is string => typeof id === 'string'));
@@ -1117,7 +1118,7 @@ function useProjectLogoSrc(
       cache: 'no-store',
       workspaceContext: read.context,
     }).then((raw) => {
-      if (cancelled || !read.isStillCurrent(resourceReadIdentityRef.current)) return;
+      if (cancelled || !read.isStillCurrent()) return;
       let primary: string | null = null;
       if (raw) {
         try {
@@ -1344,11 +1345,11 @@ function DesignSystemDetail({
       setReloadKey((k) => k + 1);
     }
     void fetchDesignSystem(system.id, read.context).then((d) => {
-      if (cancelled || !read.isStillCurrent(resourceReadIdentityRef.current)) return;
+      if (cancelled || !read.isStillCurrent()) return;
       if (d) setDetail(d);
       setDetailResolved(true);
     }).catch(() => {
-      if (!cancelled && read.isStillCurrent(resourceReadIdentityRef.current)) {
+      if (!cancelled && read.isStillCurrent()) {
         setDetailResolved(true);
       }
     });

@@ -6,7 +6,6 @@ import {
   formatDeepSeekV4FlashCampaignCountdown,
   type DeepSeekV4FlashCampaignAudience,
 } from '../campaigns/deepseek-v4-flash';
-import { goPlanPricingUrl } from '../campaigns/go-plan';
 import { useI18n } from '../i18n';
 import { Icon } from './Icon';
 import { modelProviderIconSrc } from './modelProviderIcon';
@@ -221,26 +220,8 @@ export function DeepSeekV4FlashCampaign({
       window.setTimeout(highlightModelSwitcher, 0);
       return;
     }
-    const attribution = recordAmrEntry(
-      analytics.track,
-      'deepseek_unpaid_modal',
-      new Date(),
-      {
-        metricsConsent,
-        campaignId: 'deepseek_v4_pro',
-        conversionSource: 'deepseek_unpaid_modal',
-      },
-    );
-    const deviceId = amrHandoffDeviceId({
-      metricsConsent,
-      resolvedDeviceId: getResolvedDeviceId(),
-      installationId,
-    });
-    window.open(
-      attributedAmrUrl(goPlanPricingUrl(locale), attribution, deviceId),
-      '_blank',
-      'noopener,noreferrer',
-    );
+    // There is no paid Cloud plan to hand off to, so an unpaid viewer simply
+    // keeps the campaign modal dismissed.
   };
 
   if (!active || !modalOpen || audience === 'unknown' || typeof document === 'undefined') {

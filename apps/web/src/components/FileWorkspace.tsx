@@ -356,6 +356,15 @@ interface Props {
   fileSyncBadge?: FileSyncBadgeState | null;
 }
 
+/**
+ * Team-share sync state for a file tab.
+ *
+ * The Cloud share layer that produced these states is gone, so this is only
+ * ever null now. The type and the props that carry it are retained because
+ * callers still pass them through.
+ */
+type FileSyncBadgeState = 'downloading' | 'uploading';
+
 function noop(): void {}
 
 function rejectRenameWhileMaterializing(): null {
@@ -3785,19 +3794,6 @@ export function FileWorkspace({
   }, [projectShareMenuOpen]);
 
   useEffect(() => {
-    let cancelled = false;
-    const refreshShareAccess = () => void false.then((shared) => {
-      if (!cancelled) setProjectShareAccess(shared ? 'workspace' : 'private');
-    });
-    refreshShareAccess();
-    window.addEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
-    return () => {
-      cancelled = true;
-      window.removeEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
-    };
-  }, [projectId, projectShareMenuOpen, workspaceContext]);
-
-  useEffect(() => {
     if (!projectShareMenuOpen) setProjectShareAccessMenuOpen(false);
   }, [projectShareMenuOpen]);
 
@@ -3986,11 +3982,7 @@ export function FileWorkspace({
             title={designFilesTabTitle}
           >
             <span className="tab-icon" aria-hidden>
-              {fileSyncBadge ? (
-                <FileSyncBadge state={fileSyncBadge} size={14} />
-              ) : (
-                <Icon name="grid" size={14} />
-              )}
+              <Icon name="grid" size={14} />
             </span>
             <span className="ws-tab-label">{designFilesTabLabel}</span>
           </button>
@@ -8365,11 +8357,7 @@ const Tab = memo(function Tab({
       onDrop={draggable ? onDrop : undefined}
       onDragEnd={draggable ? onDragEnd : undefined}
     >
-      {syncBadge ? (
-        <span className="tab-icon">
-          <FileSyncBadge state={syncBadge} size={13} />
-        </span>
-      ) : iconName ? (
+      {iconName ? (
         <span className="tab-icon" aria-hidden>
           <Icon name={iconName} size={13} />
         </span>

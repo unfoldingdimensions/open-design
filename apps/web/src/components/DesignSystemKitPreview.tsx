@@ -131,12 +131,12 @@ function RegistryDesignSystemKitPreview({
     setDetailResolved(false);
     void fetchDesignSystem(system.id, read.context)
       .then((next) => {
-        if (cancelled || !read.isStillCurrent(resourceReadIdentityRef.current)) return;
+        if (cancelled || !read.isStillCurrent()) return;
         setDetail(next);
         setDetailResolved(true);
       })
       .catch(() => {
-        if (!cancelled && read.isStillCurrent(resourceReadIdentityRef.current)) {
+        if (!cancelled && read.isStillCurrent()) {
           setDetailResolved(true);
         }
       });

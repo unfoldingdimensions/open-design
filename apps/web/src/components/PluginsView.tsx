@@ -303,14 +303,14 @@ export function PluginsView({
         listPlugins({ includeHidden: true, workspaceContext: read.context }),
         listPluginMarketplaces(),
       ]);
-      if (!isStillCurrent() || !read.isStillCurrent(pluginsContextRef.current)) return;
+      if (!isStillCurrent() || !read.isStillCurrent()) return;
       setPlugins(rows);
       setAllInstalledPlugins(allRows);
       setMarketplaces(catalogs);
       setLoadedIdentity(issuedIdentity);
       setLoading(false);
     } catch {
-      if (!isStillCurrent() || !read.isStillCurrent(pluginsContextRef.current)) return;
+      if (!isStillCurrent() || !read.isStillCurrent()) return;
       // A failed read for a new identity has no authority to keep rendering the
       // previous identity's installed catalog.
       setPlugins([]);
@@ -927,7 +927,8 @@ export function ExtensionsMarketplace({
   isActiveRef.current = isActive;
   const catalogStaleRef = useRef(false);
   const sharedResourcesStaleRef = useRef(false);
-  const myMemberId = workspaceContext?.workspaceMemberId ?? null;
+  // No workspace identity layer: every plugin resource is local/personal.
+  const myMemberId = null;
   // The 团队 scope is a team-workspace surface backed by the resource hub: it
   // lists the resources shared into the team and offers a share-to-team action.
   // Gate it on TEAM IDENTITY — the same predicate the daemon uses to accept a
@@ -1210,7 +1211,7 @@ export function ExtensionsMarketplace({
     if (
       marketplaceCatalogRequestGenerationRef.current !== requestGeneration
       || 0 !== accountGeneration
-      || !read.isStillCurrent(emContextRef.current)
+      || !read.isStillCurrent()
     ) return;
     setPlugins(rows);
     setAllInstalledPlugins(allRows);
@@ -1294,7 +1295,7 @@ export function ExtensionsMarketplace({
       sharedResourcesRequestGenerationRef.current === requestGeneration
       && 0 === accountGeneration
       && marketplaceIdentityRef.current === issuedIdentity
-      && read.isStillCurrent(emContextRef.current);
+      && read.isStillCurrent();
     if (!read.context || !workspaceContextHasTeamIdentity(read.context)) {
       if (!readIsStillCurrent()) return;
       setSharedPluginIds(new Set());
@@ -3948,7 +3949,7 @@ function TeamPanel({
       !cancelled()
       && 0 === issuedAccountGeneration
       && workspaceIdentityRef.current === issuedIdentity
-      && read.isStillCurrent(contextRef.current);
+      && read.isStillCurrent();
     if (
       workspaceReadModeRef.current !== 'scoped'
       || !read.context

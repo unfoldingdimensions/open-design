@@ -66,7 +66,7 @@ export function DesignSystemPreviewModal({
     const read = ({ context: null, isStillCurrent: () => true });
     setDetail(isDesignSystemDetail(system) ? system : undefined);
     void fetchDesignSystem(system.id, read.context).then((next) => {
-      if (cancelled || !read.isStillCurrent(resourceReadIdentityRef.current)) return;
+      if (cancelled || !read.isStillCurrent()) return;
       if (next) setDetail(next);
     });
     return () => {
@@ -89,14 +89,14 @@ export function DesignSystemPreviewModal({
         const read = ({ context: null, isStillCurrent: () => true });
         setShowcaseHtml(null);
         void fetchDesignSystemShowcase(system.id, read.context).then((html) => {
-          if (read.isStillCurrent(resourceReadIdentityRef.current)) setShowcaseHtml(html);
+          if (read.isStillCurrent()) setShowcaseHtml(html);
         });
       }
       if (viewId === 'tokens' && tokensHtml === undefined) {
         const read = ({ context: null, isStillCurrent: () => true });
         setTokensHtml(null);
         void fetchDesignSystemPreview(system.id, read.context).then((html) => {
-          if (read.isStillCurrent(resourceReadIdentityRef.current)) setTokensHtml(html);
+          if (read.isStillCurrent()) setTokensHtml(html);
         });
       }
     },
@@ -113,7 +113,7 @@ export function DesignSystemPreviewModal({
       const read = ({ context: null, isStillCurrent: () => true });
       setSpecBody(null);
       void fetchDesignSystem(system.id, read.context).then((nextDetail) => {
-        if (read.isStillCurrent(resourceReadIdentityRef.current)) {
+        if (read.isStillCurrent()) {
           setSpecBody(nextDetail?.body ?? null);
         }
       });
