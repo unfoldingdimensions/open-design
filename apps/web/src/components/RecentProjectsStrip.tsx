@@ -126,6 +126,12 @@ interface Props {
 
 const EMPTY_DESIGN_SYSTEMS: DesignSystemSummary[] = [];
 /** Fallback for a caller with no sharing surface (no workspace, no grids). */
+/**
+ * Whether a project is currently shared into the team. CapyDesign has no
+ * workspace identity layer, so nothing is ever shared.
+ */
+type SharedProjectPredicate = (projectId: string) => boolean;
+
 const NOTHING_SHARED: SharedProjectPredicate = () => false;
 /** The chip a design-system project wears. Product name, not a translated
  *  string — shared by the card tag and the type filter so both read alike. */
@@ -356,7 +362,7 @@ export function RecentProjectsStrip({
   ) {
     
   }
-  const selfMemberId = workspaceContext?.workspaceMemberId ?? null;
+  const selfMemberId = null;
   // `canShareProjects` alone is a ROLE permission ("could this member share IF
   // a team existed"), not a "does a team exist" signal — a purely personal
   // workspace's owner still gets `canShareProjects: true`. Without also
@@ -366,19 +372,14 @@ export function RecentProjectsStrip({
   // recvqgif6Xa7Wb "隐藏非 Team workspace 分享到团队的入口") — the exact class
   // of bug `workspaceContextHasTeamIdentity`'s own doc comment warns about:
   // "Deriving it twice is how a UI grows a button that can only ever fail."
-  const collaborationAvailable =
-    collaborationEnabled ??
-    (workspaceContextHasTeamIdentity(workspaceContext) &&
-      workspaceContext?.permissions.canShareProjects === true);
+  // No workspace identity layer: there is no team to collaborate with.
+  const collaborationAvailable = collaborationEnabled ?? false;
   const canAccessInviteFlow = canAccessWorkspaceInviteFlow(workspaceContext);
   // The invite dialog's seat-gate upgrade CTA shares the public Pricing
   // destination owned by `workspaceUpgradeUrl` in EntryNavRail.tsx.
   const inviteUpgradeUrl = workspaceUpgradeUrl(workspaceContext, workspaceBilling);
   const inviteTarget = resolveWorkspaceInviteTarget(workspaceContext);
-  const canManageCollection =
-    canManageProjectCollection ??
-    (workspaceContext?.permissions.canManageSharedResources === true ||
-      workspaceContext?.permissions.canShareProjects === true);
+  const canManageCollection = canManageProjectCollection ?? false;
   const [responsiveLimit, setResponsiveLimit] = useState(DEFAULT_RECENT_PROJECT_LIMIT);
   const resolvedLimit = limit ?? responsiveLimit;
   const hasRecentProjects = projects.length > 0;
@@ -485,16 +486,16 @@ export function RecentProjectsStrip({
   } => {
     const ownerMemberId = projectOwnerMemberIds?.get(projectId) ?? null;
     if (ownerMemberId === selfMemberId || (!ownerMemberId && !isShared(projectId))) {
-      const name = workspaceContext?.displayName?.trim() || t('recentProjects.selfCreator');
+      const name = t('recentProjects.selfCreator');
       const initial = Array.from(name.trim())[0]?.toUpperCase() ?? 'M';
       return {
         name,
         initial,
-        avatarUrl: workspaceContext?.avatarUrl?.trim() || null,
+        avatarUrl: null,
         ownedBySelf: true,
       };
     }
-    const name = resolveMember(ownerMemberId)?.displayName ?? t('recentProjects.teamMemberCreator');
+    const name = t('recentProjects.teamMemberCreator');
     const initial = (Array.from(name.trim())[0] ?? 'T').toUpperCase();
     return { name, initial, avatarUrl: null, ownedBySelf: false };
   };
@@ -521,8 +522,6 @@ export function RecentProjectsStrip({
       showOwnerFilter,
       sortedProjects,
       t,
-      workspaceContext?.avatarUrl,
-      workspaceContext?.displayName,
     ],
   );
   const menuContainerRef = useRef<HTMLDivElement | null>(null);
