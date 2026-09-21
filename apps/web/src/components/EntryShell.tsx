@@ -79,33 +79,11 @@ import {
   buildProjectSearchCatalog,
   ProjectSearchModal,
 } from './ProjectSearchModal';
-import {
-  CloudSignInTip,
-  RailAccountRecoveryTip,
-  RailAccountSyncTip,
-} from './CloudSignInTip';
-import {
-  resolveEntryRailAccountFooterState,
-  requiresAmrReauthentication,
-} from './entry-rail-account-state';
 import { LibrarySection } from './LibrarySection';
 import { UpdaterPopup } from './UpdaterPopup';
 import { WhatsNewPopup } from './WhatsNewPopup';
 import { DeepSeekHarnessSetupDialog } from './DeepSeekHarnessSetupDialog';
-import { AmrBalanceDialog } from './AmrBalanceDialog';
-import { AmrOwnerTopUpDialog } from './chat/AmrOwnerTopUpDialog';
-import {
-  amrBalanceBlockedDialog,
-  amrBalanceDialogUpgradeIntent,
-  resolveAmrBalanceBranch,
-} from '../runtime/amr-balance-branch';
 import { installDeepSeekHarnessCompanion } from '../providers/agent-companion';
-import {
-  amrBalanceGateScopeForWorkspaceContext,
-  checkAmrBalanceGate,
-  retryUnavailableAmrBalanceGate,
-  type AmrBalanceGateScope,
-} from '../runtime/amr-balance-gate';
 import { HomeView, seedHomeComposerPrompt } from './HomeView';
 import { entryStrategyRoutingFields } from './entry-strategy-routing';
 import { EntryBlankState } from './EntryBlankState';
@@ -129,42 +107,8 @@ import {
 import { AgentIcon } from './AgentIcon';
 import { CommunityView } from './CommunityView';
 import { TeamSlotPlaceholder } from './TeamSlotPlaceholder';
-import {
-  notifyTeamProjectsChanged,
-  notifyWorkspaceBillingRefresh,
-  notifyWorkspaceContextRefresh,
-  currentWorkspaceAccountGeneration,
-  useTeamProjects,
-  useWorkspaceBillingResponse,
-  useWorkspaceContext,
-  workspaceResourceReadContext,
-  workspaceBillingBalanceUsd,
-  workspaceBillingSummaryForContext,
-} from '../collab/useWorkspaceContext';
-import { useWorkspaceInvalidation } from '../collab/workspace-events';
-import { resolvePlanLabelTier } from '../collab/team-plan';
 import { resolveDeepSeekV4FlashCampaignAudience } from '../campaigns/deepseek-v4-flash';
 import { useDeepSeekV4FlashCampaignVisibility } from '../campaigns/use-deepseek-v4-flash-campaign';
-import { WorkbenchCampaignBadge } from './WorkbenchCampaignBadge';
-import {
-  beginWorkspaceScopedRead,
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-} from '../collab/workspace-identity';
-import {
-  buildAllProjectsList,
-  buildDraftsList,
-  createSharedProjectPredicate,
-  reconcileSharedProjectCatalogFields,
-} from '../collab/all-projects-list';
-import {
-  forgetOptimisticProjectOwnership,
-  optimisticProjectOwnershipScopeKey,
-  projectOwnerMemberIdsWithOptimisticWitnesses,
-  reconcileOptimisticProjectOwnership,
-  recordOptimisticProjectOwnership,
-  type OptimisticProjectOwnershipWitnesses,
-} from '../collab/optimistic-project-ownership';
 import type { ModelCapabilityTag } from './modelCapabilityTags';
 import { LanguageMenu } from './LanguageMenu';
 import { IntegrationsView, type IntegrationTab } from './IntegrationsView';
@@ -199,13 +143,6 @@ import {
   startVelaLogin,
   type VelaLoginStatus,
 } from '../providers/daemon';
-import {
-  AMR_LOGIN_POLL_INTERVAL_MS,
-  amrLoginPollOutcome,
-  isAmrSessionAuthenticated,
-  notifyAmrLoginStatusChanged,
-} from './amrLoginPolling';
-import { closeAmrActivationWindowBestEffort } from './AmrLoginPill';
 import { isMacPlatform } from '../utils/platform';
 import { smoothScrollToTop } from '../utils/smoothScrollToTop';
 import { summarizeProjectNameFromPrompt } from '../utils/projectName';
@@ -638,7 +575,7 @@ export function EntryShell({
   // The whole state (not just `context`) so workspace-scoped WRITES can go
   // through `resolvedWorkspaceContextForWrite`, which refuses to collapse an
   // unresolved or unavailable authority into an anonymous, unbound create.
-  const workspaceContextState = useWorkspaceContext();
+  const workspaceContextState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const { context: workspaceContext, loading: workspaceLoading } = workspaceContextState;
   const accountFooterState = resolveEntryRailAccountFooterState(
     workspaceContextState,
@@ -676,27 +613,17 @@ export function EntryShell({
   workspaceContextRef.current = workspaceContext;
   const workspaceContextStateRef = useRef(workspaceContextState);
   workspaceContextStateRef.current = workspaceContextState;
-  const workspaceBillingResponse = useWorkspaceBillingResponse();
+  const workspaceBillingResponse = null;
   // Plan and money are both workspace-scoped questions, so both go through a
   // context-partitioned projection. `response.summary` on its own is an ACCOUNT
   // read (`workspaceId: null` by contract) — feeding it to the rail's plan
   // nameplate is what kept a personal Plus badge on a 免费 workspace while the
   // 额度 row beside it correctly followed the switch.
-  const workspaceBilling = workspaceBillingSummaryForContext(
-    workspaceBillingResponse,
-    workspaceContext,
-  );
+  const workspaceBilling = null;
   const [goPlanSunsetMessagePending, setGoPlanSunsetMessagePending] = useState(false);
   const deepSeekCampaignVisibility = useDeepSeekV4FlashCampaignVisibility();
   // Same personal-vs-team accountPlan rule as App's `resolvedAmrPlan`.
-  const deepSeekCampaignPlan = resolvePlanLabelTier({
-    billing: workspaceBilling,
-    context: workspaceContext,
-    accountPlan:
-      workspaceLoading || workspaceContext?.workspaceType === 'team'
-        ? null
-        : amrAccountPlan?.trim() || null,
-  });
+  const deepSeekCampaignPlan = null;
   const resolvedDeepSeekV4FlashCampaignAudience = resolveDeepSeekV4FlashCampaignAudience({
     // Subscription is the only campaign segmentation axis. In particular,
     // `resolvePlanLabelTier` turns the backend-confirmed unsubscribed state into
@@ -712,14 +639,11 @@ export function EntryShell({
     deepSeekV4FlashCampaignAudience === 'unknown'
       ? null
       : deepSeekV4FlashCampaignAudience;
-  const workspaceBalanceUsd = workspaceBillingBalanceUsd(
-    workspaceBillingResponse,
-    workspaceContext,
-  );
+  const workspaceBalanceUsd = null;
   // Team-wide shared-project discovery for the "全部项目" view. The member's own
   // `projects` prop is only their LOCAL list; team-shared projects come from the
   // resource hub through the daemon. Empty off-team / when the hub is unconfigured.
-  const teamProjects = useTeamProjects();
+  const teamProjects = null;
   const hasWorkspaceContext = Boolean(workspaceContext);
   // The "全部项目" grid is the SAME project-card grid used everywhere; its
   // membership rule lives in `buildAllProjectsList`. Rows flow through
@@ -738,7 +662,7 @@ export function EntryShell({
   );
   const optimisticOwnershipScopeKey = optimisticProjectOwnershipScopeKey(
     workspaceContext,
-    currentWorkspaceAccountGeneration(),
+    0,
   );
   const [optimisticOwnershipWitnesses, setOptimisticOwnershipWitnesses] = useState<
     OptimisticProjectOwnershipWitnesses
@@ -848,7 +772,7 @@ export function EntryShell({
   const readyWorkspaceId = workspaceContext?.workspaceId ?? null;
   const readyWorkspaceMemberId = workspaceContext?.workspaceMemberId ?? null;
   const readyScopeKey = workspaceContext
-    ? workspaceIdentityCacheKey(workspaceContext)
+    ? 'none'
     : null;
   const contentReadyScopeKeyRef = useRef<string | null>(null);
   if (contentReadyScopeKeyRef.current !== readyScopeKey) {
@@ -913,28 +837,7 @@ export function EntryShell({
     workspaceContext?.workspaceId,
     workspaceContext?.workspaceType,
   ]);
-  useWorkspaceInvalidation({
-    'team-project-content-ready': ({ projectId, workspaceId }) => {
-      const currentWorkspaceId = workspaceContext?.workspaceId;
-      const currentWorkspaceMemberId = workspaceContext?.workspaceMemberId;
-      if (
-        !currentWorkspaceId ||
-        !currentWorkspaceMemberId ||
-        currentWorkspaceId !== workspaceId
-      ) {
-        return;
-      }
-      pendingContentReadyProjectIdsRef.current.set(projectId, {
-        workspaceId,
-        workspaceMemberId: currentWorkspaceMemberId,
-      });
-      void acceptContentReadyProject(
-        projectId,
-        workspaceId,
-        currentWorkspaceMemberId,
-      );
-    },
-  }, { workspaceContext });
+  void 0;
   useEffect(() => {
     if (!readyScopeKey) return;
     for (const [projectId, eventScope] of pendingContentReadyProjectIdsRef.current) {
@@ -1032,19 +935,19 @@ export function EntryShell({
     // has no bootstrap route; retain the former blocking POST fallback for that
     // compatibility case.
     if (pullingProjectId) return false;
-    const pullRead = beginWorkspaceScopedRead(workspaceContextRef.current);
+    const pullRead = ({ context: null, isStillCurrent: () => true });
     if (!pullRead.context) return false;
     setPullingProjectId(id);
     try {
       const collabRoute = `/api/projects/${encodeURIComponent(id)}/collab`;
       let response = await fetch(`${collabRoute}/bootstrap`, {
         method: 'PUT',
-        headers: workspaceProjectHeaders(pullRead.context),
+        headers: {},
       });
       if (response.status === 404 || response.status === 405) {
         response = await fetch(`${collabRoute}/pull`, {
           method: 'POST',
-          headers: workspaceProjectHeaders(pullRead.context),
+          headers: {},
         });
       }
       if (!pullRead.isStillCurrent(workspaceContextRef.current)) return false;
@@ -1384,13 +1287,13 @@ export function EntryShell({
       // from being reused after the user switches identity while the balance
       // request or dialog is in flight.
       for (let scopeAttempt = 0; scopeAttempt < 2; scopeAttempt += 1) {
-        const gateAccountGeneration = currentWorkspaceAccountGeneration();
+        const gateAccountGeneration = 0;
         const gateWorkspaceState = workspaceContextStateRef.current;
         const gateWorkspaceContext = gateWorkspaceState.failure === 'unsupported'
           ? null
-          : workspaceResourceReadContext(gateWorkspaceState);
-        const gateWorkspaceIdentity = workspaceIdentityCacheKey(gateWorkspaceContext);
-        const gateScope = amrBalanceGateScopeForWorkspaceContext(gateWorkspaceContext);
+          : null;
+        const gateWorkspaceIdentity = 'none';
+        const gateScope = null;
         let gate = await retryUnavailableAmrBalanceGate(
           () => checkAmrBalanceGate(gateScope, amrModelId),
         );
@@ -1441,12 +1344,8 @@ export function EntryShell({
         // through on purpose: it is a stood-down hard block, and Home has no
         // conversation to hang its card on. Do not re-add a branch here.
         if (
-          currentWorkspaceAccountGeneration() !== gateAccountGeneration
-          || workspaceIdentityCacheKey(
-            workspaceContextStateRef.current.failure === 'unsupported'
-              ? null
-              : workspaceResourceReadContext(workspaceContextStateRef.current),
-          ) !== gateWorkspaceIdentity
+          0 !== gateAccountGeneration
+          || 'none' !== gateWorkspaceIdentity
         ) {
           continue;
         }
@@ -1566,9 +1465,9 @@ export function EntryShell({
    * shell on the stale signed-out context.
    */
   function refreshWorkspaceSurfacesAfterOnboarding() {
-    notifyWorkspaceContextRefresh();
-    notifyWorkspaceBillingRefresh();
-    notifyTeamProjectsChanged();
+    void 0;
+    void 0;
+    void 0;
   }
 
   function finishOnboarding() {
@@ -2245,7 +2144,7 @@ function OnboardingView({
     (agent) => agent.id !== 'amr' && (agent.available || deepSeekHarnessNeedsSetup(agent)),
   );
   const visibleAgents = candidateCliAgents.filter((agent) => visibleAgentIds.includes(agent.id));
-  const amrSignedIn = isAmrSessionAuthenticated(amrStatus);
+  const amrSignedIn = false;
   const amrLoginBusy = amrLoginPending || amrStatus?.loginInFlight === true;
   const selectedAgent = visibleAgents.find((agent) => agent.id === config.agentId) ?? null;
   const selectedAgentChoice = selectedAgent ? (config.agentModels?.[selectedAgent.id] ?? {}) : {};
@@ -2933,7 +2832,7 @@ function OnboardingView({
         setAmrStatus(currentStatus);
         onAmrLoginStatusChange?.(currentStatus);
       }
-      if (isAmrSessionAuthenticated(currentStatus)) {
+      if (false) {
         continueAfterCloudSignIn();
         return;
       }
@@ -3128,9 +3027,9 @@ function OnboardingView({
         // shape (still showing the "sign in to CapyDesign Cloud" callout)
         // for however long that gap lasts. Mirrors CloudSignInTip's own
         // finishSignedIn().
-        notifyWorkspaceContextRefresh();
-        notifyWorkspaceBillingRefresh();
-        notifyTeamProjectsChanged();
+        void 0;
+        void 0;
+        void 0;
         return true;
       }
       if (outcome === 'stopped' || outcome === 'timed-out') {

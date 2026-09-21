@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { WorkspaceCollabContext } from '@capydesign/contracts';
-import { workspaceProjectHeaders } from '../../../collab/workspace-identity';
-
 const STORAGE_KEY = 'open-design:config';
 const TOGGLE_EVENT = 'open-design:critique-theater-toggle';
 
@@ -189,7 +187,7 @@ export function setCritiqueTheaterEnabled(
     const projectUrl = `/api/projects/${encodeURIComponent(projectId)}`;
     const projectHeaders = new Headers(
       options.workspaceContext
-        ? workspaceProjectHeaders(options.workspaceContext)
+        ? {}
         : undefined,
     );
     (async () => {

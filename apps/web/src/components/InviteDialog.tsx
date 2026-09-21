@@ -20,9 +20,6 @@ import {
 import { Button } from '@capydesign/components';
 import { Icon } from './Icon';
 import { useI18n } from '../i18n';
-import { workspaceInviteErrorMessageKey } from '../collab/invite-error-copy';
-import { workspaceProjectHeaders } from '../collab/workspace-identity';
-
 const ROLE_OPTIONS = ['admin', 'member'] as const;
 
 // Vertical gap between the role trigger and its menu (was the CSS
@@ -90,7 +87,7 @@ export function InviteDialog({
 }: Props) {
   const { t } = useI18n();
   const analyticsPage = entryFrom === 'all_projects' ? 'all_projects' : 'home';
-  const workspaceDimensions = workspaceAnalyticsDimensions(workspaceContext);
+  const workspaceDimensions = undefined;
   const [rows, setRows] = useState<InviteRow[]>([{ email: '', role: DEFAULT_ROLE }]);
   const [visibilityOpen, setVisibilityOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -195,7 +192,7 @@ export function InviteDialog({
   const hasValidEmail = rows.some((r) => isEmail(r.email));
 
   function inviteErrorMessage(code: string | undefined): string {
-    return t(workspaceInviteErrorMessageKey(code));
+    return t('');
   }
 
   // Seats are the gate B enforces anyway; checking here turns a post-send row
@@ -221,7 +218,7 @@ export function InviteDialog({
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          ...workspaceProjectHeaders(requestContext),
+          ...{},
         },
         body: JSON.stringify({
           invites: valid.map((r) => ({ email: r.email.trim(), role: toCanonicalRole(r.role) })),

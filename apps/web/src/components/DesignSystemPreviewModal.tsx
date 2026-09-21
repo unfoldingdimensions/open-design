@@ -11,15 +11,6 @@ import type { DesignSystemDetail, DesignSystemSummary } from '../types';
 import { DesignSpecView } from './DesignSpecView';
 import { DesignSystemKitPreview } from './DesignSystemKitPreview';
 import { PreviewModal } from './PreviewModal';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import {
-  beginWorkspaceResourceScopedRead,
-  resolveWorkspaceResourceReadIdentity,
-  workspaceResourceReadIdentityFromContext,
-  workspaceResourceReadIdentityKey,
-  type WorkspaceResourceReadIdentity,
-} from '../collab/workspace-identity';
-
 interface Props {
   system: DesignSystemSummary;
   onClose: () => void;
@@ -45,14 +36,14 @@ export function DesignSystemPreviewModal({
   resourceReadIdentity: resourceReadIdentityProp,
 }: Props) {
   const t = useT();
-  const workspaceState = useWorkspaceContext();
-  const ambientResourceReadIdentity = resolveWorkspaceResourceReadIdentity(workspaceState);
+  const workspaceState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
+  const ambientResourceReadIdentity = null;
   const resourceReadIdentity = explicitWorkspaceContext !== undefined
-    ? workspaceResourceReadIdentityFromContext(explicitWorkspaceContext)
+    ? null
     : resourceReadIdentityProp === undefined
       ? ambientResourceReadIdentity
       : resourceReadIdentityProp;
-  const resourceReadIdentityKey = workspaceResourceReadIdentityKey(resourceReadIdentity);
+  const resourceReadIdentityKey = 'none';
   const resourceReadIdentityRef = useRef(resourceReadIdentity);
   resourceReadIdentityRef.current = resourceReadIdentity;
   const surfaceViewFiredRef = useRef<string | null>(null);
@@ -72,7 +63,7 @@ export function DesignSystemPreviewModal({
 
   useEffect(() => {
     let cancelled = false;
-    const read = beginWorkspaceResourceScopedRead(resourceReadIdentityRef.current);
+    const read = ({ context: null, isStillCurrent: () => true });
     setDetail(isDesignSystemDetail(system) ? system : undefined);
     void fetchDesignSystem(system.id, read.context).then((next) => {
       if (cancelled || !read.isStillCurrent(resourceReadIdentityRef.current)) return;
@@ -95,14 +86,14 @@ export function DesignSystemPreviewModal({
         }
       }
       if (viewId === 'showcase' && showcaseHtml === undefined) {
-        const read = beginWorkspaceResourceScopedRead(resourceReadIdentityRef.current);
+        const read = ({ context: null, isStillCurrent: () => true });
         setShowcaseHtml(null);
         void fetchDesignSystemShowcase(system.id, read.context).then((html) => {
           if (read.isStillCurrent(resourceReadIdentityRef.current)) setShowcaseHtml(html);
         });
       }
       if (viewId === 'tokens' && tokensHtml === undefined) {
-        const read = beginWorkspaceResourceScopedRead(resourceReadIdentityRef.current);
+        const read = ({ context: null, isStillCurrent: () => true });
         setTokensHtml(null);
         void fetchDesignSystemPreview(system.id, read.context).then((html) => {
           if (read.isStillCurrent(resourceReadIdentityRef.current)) setTokensHtml(html);
@@ -119,7 +110,7 @@ export function DesignSystemPreviewModal({
         setSpecBody(detailBody);
         return;
       }
-      const read = beginWorkspaceResourceScopedRead(resourceReadIdentityRef.current);
+      const read = ({ context: null, isStillCurrent: () => true });
       setSpecBody(null);
       void fetchDesignSystem(system.id, read.context).then((nextDetail) => {
         if (read.isStillCurrent(resourceReadIdentityRef.current)) {

@@ -26,8 +26,6 @@ import { PluginDetailsModal } from './PluginDetailsModal';
 import { TrustBadge } from './TrustBadge';
 import { authorInitials, derivePluginSourceLinks } from '../runtime/plugin-source';
 import { navigate } from '../router';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-
 export interface PluginLoopSubmit {
   prompt: string;
   pluginId: string | null;
@@ -104,7 +102,7 @@ interface ActivePlugin {
 
 export function PluginLoopHome({ onSubmit }: Props) {
   const { locale, t } = useI18n();
-  const workspaceContextState = useWorkspaceContext();
+  const workspaceContextState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const [plugins, setPlugins] = useState<InstalledPluginRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [pendingApplyId, setPendingApplyId] = useState<string | null>(null);

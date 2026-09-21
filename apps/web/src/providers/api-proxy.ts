@@ -8,7 +8,6 @@ import type {
   WorkspaceCollabContext,
 } from '@capydesign/contracts';
 import { projectFileUrl } from './registry';
-import { workspaceProjectHeaders } from '../collab/workspace-identity';
 import type { StreamHandlers } from './anthropic';
 import { parseSseFrame } from './sse';
 import { isAnthropicSupportedImagePath } from '../utils/apiProtocol';
@@ -58,7 +57,7 @@ export async function streamProxyEndpoint(
       headers: {
         'Content-Type': 'application/json',
         ...(context?.workspaceContext
-          ? workspaceProjectHeaders(context.workspaceContext)
+          ? {}
           : {}),
       },
       body: JSON.stringify({
@@ -225,7 +224,7 @@ async function readAnthropicImageBlock(
   try {
     const resp = await fetch(projectFileUrl(projectId, path, workspaceContext), {
       cache: 'no-store',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     if (!resp.ok) return null;
 

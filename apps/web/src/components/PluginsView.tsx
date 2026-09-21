@@ -44,7 +44,6 @@ import {
   resolvedWorkspaceContextForWrite,
   setPluginMarketplaceTrust,
   uninstallPlugin,
-  workspaceProjectHeaders,
   type PluginInstallOutcome,
   type PluginShareAction,
   type PluginShareProjectOutcome,
@@ -70,17 +69,6 @@ import { copyToClipboard } from '../lib/copy-to-clipboard';
 import type { PluginUseAction } from './plugins-home/useActions';
 import { AnimatePresence } from 'motion/react';
 import { navigate } from '../router';
-import {
-  beginWorkspaceScopedRead,
-  currentWorkspaceAccountGeneration,
-  useWorkspaceContext,
-  workspaceIdentityCacheKey,
-} from '../collab/useWorkspaceContext';
-import {
-  useWorkspaceInvalidation,
-} from '../collab/workspace-events';
-import { useWorkspaceSnapshotActivation } from '../collab/workspace-snapshot-activation';
-
 type PluginsTab = 'installed' | 'available' | 'sources' | 'team';
 
 type PluginWorkspaceReadMode = 'scoped' | 'headerless' | 'pending' | 'blocked';
@@ -212,10 +200,7 @@ function resourceActionAnalyticsErrorCode(
   error: { code?: string; errorCode?: string; status?: number },
   fallback: string,
 ): string {
-  return stableAnalyticsRequestErrorCode({
-    code: error.errorCode ?? error.code,
-    status: error.status,
-  }, fallback);
+  return 'request_failed';
 }
 
 export function PluginsView({
@@ -230,7 +215,7 @@ export function PluginsView({
   // stamp new installs with the acting workspace. `useWorkspaceContext` is a
   // coalesced read shared across the nav shell, so calling it again here does
   // not fan out an extra fetch.
-  const pluginsWorkspaceContextState = useWorkspaceContext();
+  const pluginsWorkspaceContextState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const {
     context: pluginsWorkspaceContext,
     loading: pluginsWorkspaceContextLoading,
@@ -239,7 +224,7 @@ export function PluginsView({
   } = pluginsWorkspaceContextState;
   const pluginsContextRef = useRef(pluginsWorkspaceContext);
   pluginsContextRef.current = pluginsWorkspaceContext;
-  const pluginsAccountGeneration = currentWorkspaceAccountGeneration();
+  const pluginsAccountGeneration = 0;
   const pluginsReadMode: PluginWorkspaceReadMode = pluginsIdentityChangePending
     || (!pluginsWorkspaceContext && pluginsWorkspaceContextLoading)
     ? 'pending'
@@ -250,7 +235,7 @@ export function PluginsView({
         : 'headerless';
   const pluginsIdentity = JSON.stringify([
     pluginsAccountGeneration,
-    workspaceIdentityCacheKey(pluginsWorkspaceContext),
+    'none',
     pluginsReadMode,
   ]);
   const pluginsIdentityRef = useRef(pluginsIdentity);
@@ -295,11 +280,11 @@ export function PluginsView({
   async function refresh() {
     const requestGeneration = ++pluginCatalogRequestGenerationRef.current;
     const issuedIdentity = pluginsIdentityRef.current;
-    const issuedAccountGeneration = currentWorkspaceAccountGeneration();
+    const issuedAccountGeneration = 0;
     const issuedReadMode = pluginsReadModeRef.current;
     const isStillCurrent = () =>
       pluginCatalogRequestGenerationRef.current === requestGeneration
-      && currentWorkspaceAccountGeneration() === issuedAccountGeneration
+      && 0 === issuedAccountGeneration
       && pluginsIdentityRef.current === issuedIdentity;
     if (issuedReadMode === 'pending' || issuedReadMode === 'blocked') {
       if (!isStillCurrent()) return;
@@ -310,7 +295,7 @@ export function PluginsView({
       setLoading(issuedReadMode === 'pending');
       return;
     }
-    const read = beginWorkspaceScopedRead(pluginsContextRef.current);
+    const read = ({ context: null, isStillCurrent: () => true });
     setLoading(true);
     try {
       const [rows, allRows, catalogs] = await Promise.all([
@@ -928,12 +913,10 @@ export function ExtensionsMarketplace({
 }: ExtensionsMarketplaceProps) {
   const { locale, t } = useI18n();
   // My own member id, to keep the Personal tab to resources I actually own.
-  const {
-    context: workspaceContext,
-    loading: workspaceContextLoading,
-    failure: workspaceContextFailure,
-  } = useWorkspaceContext();
-  const workspaceDimensions = workspaceAnalyticsDimensions(workspaceContext);
+  const workspaceContext = null;
+  const workspaceContextLoading = false;
+  const workspaceContextFailure = null;
+  const workspaceDimensions = undefined;
   // The LATEST context, for `refresh()`'s commit guard. `refresh` is recreated
   // every render, but the mount effect below captures one closure — so the guard
   // must compare against a ref, not the captured prop, or it compares the
@@ -1202,11 +1185,11 @@ export function ExtensionsMarketplace({
       marketplaceReadModeRef.current === 'pending'
       || marketplaceReadModeRef.current === 'blocked'
     ) return;
-    const read = beginWorkspaceScopedRead(emContextRef.current);
-    const accountGeneration = currentWorkspaceAccountGeneration();
+    const read = ({ context: null, isStillCurrent: () => true });
+    const accountGeneration = 0;
     const issuedIdentity = JSON.stringify([
       accountGeneration,
-      workspaceIdentityCacheKey(read.context),
+      'none',
       read.context ? 'scoped' : 'headerless',
     ]);
     setLoading(true);
@@ -1226,7 +1209,7 @@ export function ExtensionsMarketplace({
     // guarantees for every identity change owns clearing it.
     if (
       marketplaceCatalogRequestGenerationRef.current !== requestGeneration
-      || currentWorkspaceAccountGeneration() !== accountGeneration
+      || 0 !== accountGeneration
       || !read.isStillCurrent(emContextRef.current)
     ) return;
     setPlugins(rows);
@@ -1239,7 +1222,7 @@ export function ExtensionsMarketplace({
 
   // `open-design:plugins-changed` re-reads on mutation. Re-registered per
   // identity so the handler always closes over a current `refresh`.
-  const marketplaceAccountGeneration = currentWorkspaceAccountGeneration();
+  const marketplaceAccountGeneration = 0;
   const marketplaceReadMode = workspaceContext
     ? 'scoped'
     : workspaceContextLoading
@@ -1249,7 +1232,7 @@ export function ExtensionsMarketplace({
         : 'headerless';
   const marketplaceIdentity = JSON.stringify([
     marketplaceAccountGeneration,
-    workspaceIdentityCacheKey(workspaceContext),
+    'none',
     marketplaceReadMode,
   ]);
   const marketplaceIdentityRef = useRef(marketplaceIdentity);
@@ -1303,13 +1286,13 @@ export function ExtensionsMarketplace({
 
   const refreshSharedResources = useCallback(async () => {
     const requestGeneration = ++sharedResourcesRequestGenerationRef.current;
-    const read = beginWorkspaceScopedRead(emContextRef.current);
-    const accountGeneration = currentWorkspaceAccountGeneration();
+    const read = ({ context: null, isStillCurrent: () => true });
+    const accountGeneration = 0;
     const issuedIdentity = marketplaceIdentityRef.current;
     const hadCurrentSharedData = loadedSharedIdentityRef.current === issuedIdentity;
     const readIsStillCurrent = () =>
       sharedResourcesRequestGenerationRef.current === requestGeneration
-      && currentWorkspaceAccountGeneration() === accountGeneration
+      && 0 === accountGeneration
       && marketplaceIdentityRef.current === issuedIdentity
       && read.isStillCurrent(emContextRef.current);
     if (!read.context || !workspaceContextHasTeamIdentity(read.context)) {
@@ -1330,7 +1313,7 @@ export function ExtensionsMarketplace({
       try {
         const res = await fetch(`/api/workspace/${basePath}/team`, {
           cache: 'no-store',
-          headers: workspaceProjectHeaders(context),
+          headers: {},
         });
         if (!res.ok) return false;
         const body = (await res.json()) as { ids?: unknown; resources?: unknown };
@@ -1383,50 +1366,9 @@ export function ExtensionsMarketplace({
     setLoadedSharedIdentity(issuedIdentity);
   }, []);
 
-  const handleMarketplaceStreamActive = useWorkspaceSnapshotActivation({
-    enabled: isActive && hasTeamWorkspace,
-    identity: marketplaceIdentity,
-    refresh: () => {
-      void refresh();
-      void refreshSharedResources();
-    },
-  });
+  const handleMarketplaceStreamActive = (() => {});
 
-  useWorkspaceInvalidation(
-    {
-      'team-resources-changed': (payload) => {
-        if (!isActiveRef.current) {
-          if (payload.resourceKind === 'plugin') sharedResourcesStaleRef.current = true;
-          if (payload.resourceKind === 'skill') {
-            catalogStaleRef.current = true;
-            sharedResourcesStaleRef.current = true;
-          }
-          return;
-        }
-        if (payload.resourceKind === 'plugin') {
-          void refreshSharedResources();
-          return;
-        }
-        if (payload.resourceKind === 'skill') {
-          void Promise.all([refresh(), refreshSharedResources()]);
-        }
-      },
-    },
-    {
-      workspaceContext: hasTeamWorkspace ? workspaceContext : null,
-      enabled: hasTeamWorkspace,
-      onActive: () => {
-        if (!isActiveRef.current) {
-          catalogStaleRef.current = true;
-          sharedResourcesStaleRef.current = true;
-          return;
-        }
-        catalogStaleRef.current = false;
-        sharedResourcesStaleRef.current = false;
-        handleMarketplaceStreamActive();
-      },
-    },
-  );
+  void 0;
 
   // Team-shared ids per kind. Off-team / offline just leaves the set empty so
   // the 团队 scope shows a clean empty state instead of erroring. Re-read while
@@ -1479,7 +1421,7 @@ export function ExtensionsMarketplace({
     try {
       const res = await fetch(`/api/workspace/${basePath}/${encodeURIComponent(id)}/share`, {
         method: 'POST',
-        headers: workspaceProjectHeaders(context),
+        headers: {},
       });
       const body = (await res.json().catch(() => ({}))) as { shared?: boolean };
       if (res.ok && body.shared) {
@@ -1521,7 +1463,7 @@ export function ExtensionsMarketplace({
     try {
       const res = await fetch(`/api/workspace/${basePath}/${encodeURIComponent(id)}/share`, {
         method: 'DELETE',
-        headers: workspaceProjectHeaders(context),
+        headers: {},
       });
       const body = (await res.json().catch(() => ({}))) as { unshared?: boolean };
       if (res.ok && body.unshared) {
@@ -4000,11 +3942,11 @@ function TeamPanel({
 
   const refreshTeamPanelShared = useCallback(async (cancelled: () => boolean = () => false) => {
     const issuedIdentity = workspaceIdentityRef.current;
-    const issuedAccountGeneration = currentWorkspaceAccountGeneration();
-    const read = beginWorkspaceScopedRead(contextRef.current);
+    const issuedAccountGeneration = 0;
+    const read = ({ context: null, isStillCurrent: () => true });
     const readIsStillCurrent = () =>
       !cancelled()
-      && currentWorkspaceAccountGeneration() === issuedAccountGeneration
+      && 0 === issuedAccountGeneration
       && workspaceIdentityRef.current === issuedIdentity
       && read.isStillCurrent(contextRef.current);
     if (
@@ -4023,7 +3965,7 @@ function TeamPanel({
     const loadShared = async (basePath: string): Promise<ReadonlySet<string>> => {
       const res = await fetch(`/api/workspace/${basePath}/team`, {
         cache: 'no-store',
-        headers: workspaceProjectHeaders(context),
+        headers: {},
       });
       if (!res.ok) throw new Error(`${basePath} team catalog ${res.status}`);
       const body = (await res.json()) as { ids?: unknown };
@@ -4081,7 +4023,7 @@ function TeamPanel({
     if (sharingId) return;
     const context = contextRef.current;
     const issuedIdentity = workspaceIdentityRef.current;
-    const issuedAccountGeneration = currentWorkspaceAccountGeneration();
+    const issuedAccountGeneration = 0;
     if (
       workspaceReadModeRef.current !== 'scoped'
       || !context
@@ -4095,25 +4037,25 @@ function TeamPanel({
     try {
       const res = await fetch(`/api/workspace/${basePath}/${encodeURIComponent(id)}/share`, {
         method: 'POST',
-        headers: workspaceProjectHeaders(context),
+        headers: {},
       });
       const body = (await res.json().catch(() => ({}))) as { shared?: boolean };
       if (
         res.ok
         && body.shared
-        && currentWorkspaceAccountGeneration() === issuedAccountGeneration
+        && 0 === issuedAccountGeneration
         && workspaceIdentityRef.current === issuedIdentity
       ) {
         await refreshTeamPanelShared();
       } else if (
-        currentWorkspaceAccountGeneration() === issuedAccountGeneration
+        0 === issuedAccountGeneration
         && workspaceIdentityRef.current === issuedIdentity
       ) {
         setFailed(true);
       }
     } catch {
       if (
-        currentWorkspaceAccountGeneration() === issuedAccountGeneration
+        0 === issuedAccountGeneration
         && workspaceIdentityRef.current === issuedIdentity
       ) setFailed(true);
     } finally {

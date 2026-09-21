@@ -12,15 +12,6 @@ import {
   designSystemLogoHost,
   isUserSystem,
 } from './design-system-metadata';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import {
-  beginWorkspaceResourceScopedRead,
-  resolveWorkspaceResourceReadIdentity,
-  workspaceResourceReadIdentityFromContext,
-  workspaceResourceReadIdentityKey,
-  type WorkspaceResourceReadIdentity,
-} from '../collab/workspace-identity';
-
 interface DesignSystemKitPreviewProps {
   system: DesignSystemSummary;
   brandSummary?: BrandSummary | null;
@@ -42,13 +33,13 @@ export function DesignSystemKitPreview({
   workspaceContext,
   resourceReadIdentity,
 }: DesignSystemKitPreviewProps) {
-  const workspaceState = useWorkspaceContext();
-  const ambientResourceReadIdentity = resolveWorkspaceResourceReadIdentity(workspaceState);
+  const workspaceState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
+  const ambientResourceReadIdentity = null;
   // ProjectView/Picker already own an exact route context. It must win over
   // ambient provisional identity; only callers without an explicit context
   // consume the ambient `{ context, generation }` read witness.
   const effectiveResourceReadIdentity = workspaceContext !== undefined
-    ? workspaceResourceReadIdentityFromContext(workspaceContext)
+    ? null
     : resourceReadIdentity === undefined
       ? ambientResourceReadIdentity
       : resourceReadIdentity;
@@ -94,7 +85,7 @@ function BrandDesignSystemKitPreview({
 }) {
   const workspaceContext = resourceReadIdentity?.context ?? null;
   const kit = brandSummaryToKit(summary, workspaceContext);
-  const resourceReadIdentityKey = workspaceResourceReadIdentityKey(resourceReadIdentity);
+  const resourceReadIdentityKey = 'none';
   return (
     <div className={className} data-testid={dataTestId}>
       <DesignKitView
@@ -126,7 +117,7 @@ function RegistryDesignSystemKitPreview({
 }) {
   const t = useT();
   const effectiveResourceReadIdentity = resourceReadIdentity;
-  const resourceReadIdentityKey = workspaceResourceReadIdentityKey(effectiveResourceReadIdentity);
+  const resourceReadIdentityKey = 'none';
   const resourceReadIdentityRef = useRef(effectiveResourceReadIdentity);
   resourceReadIdentityRef.current = effectiveResourceReadIdentity;
   const workspaceContext = effectiveResourceReadIdentity?.context ?? null;
@@ -135,7 +126,7 @@ function RegistryDesignSystemKitPreview({
 
   useEffect(() => {
     let cancelled = false;
-    const read = beginWorkspaceResourceScopedRead(resourceReadIdentityRef.current);
+    const read = ({ context: null, isStillCurrent: () => true });
     setDetail(null);
     setDetailResolved(false);
     void fetchDesignSystem(system.id, read.context)

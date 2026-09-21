@@ -9,7 +9,6 @@
 import { coalescedGet, evictCoalescedGet } from '../lib/coalesced-get';
 import { isDaemonProxyConnectionFailure } from '../runtime/daemon-proxy-failure';
 import { BackoffController, type BackoffOptions } from '../lib/backoff';
-import { markProjectCreatedByViewer } from '../collab/useProjectCollab';
 import {
   API_ERROR_CODES,
   isSameWorkspacePrincipal,
@@ -44,16 +43,6 @@ import type {
 } from '@capydesign/contracts';
 import { randomUUID } from '../utils/uuid';
 import { markProjectDisplaySnapshotsDirty } from './project-display-cache';
-import {
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-  workspaceResourceUrl,
-} from '../collab/workspace-identity';
-import {
-  currentWorkspaceAccountGeneration,
-  currentWorkspaceContextRequestToken,
-} from '../collab/useWorkspaceContext';
-import type { WorkspaceResourceReadIdentity } from '../collab/workspace-identity';
 import type {
   ChatMessage,
   Conversation,
@@ -66,8 +55,6 @@ import { removeDesignBrowserProjectCache } from '../components/design-browser-st
 
 export type { PluginInstallOutcome } from '@capydesign/contracts';
 export type { PluginShareAction } from '@capydesign/contracts';
-export { workspaceProjectHeaders } from '../collab/workspace-identity';
-
 export type WorkspaceProjectListView = 'all' | 'recent' | 'drafts' | 'team';
 
 const WORKSPACE_PROJECT_LIST_VIEWS: readonly WorkspaceProjectListView[] = [
@@ -83,7 +70,7 @@ function workspaceProjectListCacheKey(
 ): string {
   return [
     'workspace-projects',
-    workspaceIdentityCacheKey(context),
+    'none',
     workspaceView,
   ].join(':');
 }
@@ -103,34 +90,7 @@ export type WorkspaceContextForWrite = {
   loading: boolean;
   identityChangePending?: boolean;
   failure?: 'unsupported' | 'unavailable' | 'reauth-required';
-  /**
-   * The directory-verified identity the retained `context` was resolved under,
-   * carrying the generation token it belongs to. Present on production state
-   * (`useWorkspaceContext`) whenever a last-good context is held. Used by
-   * {@link resolvedWorkspaceContextForWrite} to decide whether that retained
-   * context still belongs to the CURRENT identity generation.
-   */
-  resourceReadIdentity?: WorkspaceResourceReadIdentity | null;
 };
-
-/**
- * Whether the retained `context` still belongs to the current identity
- * generation — the signal that lets a write proceed on a last-good context
- * during a transient outage without ever letting one account's cached context
- * authorize a write after the identity changed.
- *
- * True only when the state carries a directory-verified `resourceReadIdentity`
- * whose generation matches the LIVE request token AND whose context is the same
- * identity as `state.context`. A snapshot from a retired generation (an account
- * switch bumped the token) fails this check even if `identityChangePending` in
- * the snapshot has not caught up.
- */
-function writeContextBelongsToCurrentGeneration(state: WorkspaceContextForWrite): boolean {
-  const identity = state.resourceReadIdentity;
-  if (!identity || state.context === null) return false;
-  if (identity.generation !== currentWorkspaceContextRequestToken()) return false;
-  return workspaceIdentityCacheKey(identity.context) === workspaceIdentityCacheKey(state.context);
-}
 
 export type WorkspaceContextWriteResolutionOptions = {
   /**
@@ -156,18 +116,10 @@ export type WorkspaceContextWriteResolutionOptions = {
  */
 export function resolvedWorkspaceContextForWrite(
   state: WorkspaceContextForWrite,
-  options: WorkspaceContextWriteResolutionOptions = {},
 ): WorkspaceCollabContext | null {
-  if (
-    state.loading
-    || state.identityChangePending === true
-    || state.failure === 'unavailable'
-    || state.failure === 'reauth-required'
-  ) {
-    if (writeContextBelongsToCurrentGeneration(state)) return state.context;
-    if (options.unavailablePolicy === 'unscoped') return null;
-    throw new Error('Workspace context is unavailable. Try again when workspace sync finishes.');
-  }
+  // No Cloud workspace identity remains: the context is always the caller's
+  // injected scope (null in a CapyDesign build), never a retained last-good
+  // context waiting on a sync that no longer exists.
   return state.context;
 }
 
@@ -227,7 +179,7 @@ export async function moveWorkspaceProject(input: {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...workspaceProjectHeaders(context),
+        ...{},
       },
       body: JSON.stringify({ visibility: input.visibility }),
     },
@@ -336,7 +288,7 @@ export async function listWorkspaceProjectSummaries(options: {
     return await coalescedGet(key, async () => {
       const resp = await fetch(
         `/api/workspaces/${encodeURIComponent(context.workspaceId)}/projects?view=${encodeURIComponent(workspaceView)}`,
-        { headers: workspaceProjectHeaders(context) },
+        { headers: {} },
       );
       if (!resp.ok) throw new Error(`projects ${resp.status}`);
       const json = (await resp.json()) as WorkspaceProjectsResponse;
@@ -356,7 +308,7 @@ export async function getProject(
     const resp = await fetch(
       `/api/projects/${encodeURIComponent(id)}`,
       workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : undefined,
     );
     if (!resp.ok) return null;
@@ -405,7 +357,7 @@ export async function bootstrapProjectRoute(
   },
 ): Promise<ProjectRouteBootstrapResult> {
   const suppliedContext = options.exactContext ?? null;
-  const suppliedIdentity = workspaceIdentityCacheKey(suppliedContext);
+  const suppliedIdentity = 'none';
   const key = [
     'project-route-bootstrap',
     options.accountGeneration,
@@ -419,7 +371,7 @@ export async function bootstrapProjectRoute(
         {
           cache: 'no-store',
           ...(suppliedContext
-            ? { headers: workspaceProjectHeaders(suppliedContext) }
+            ? { headers: {} }
             : {}),
         },
       );
@@ -461,7 +413,7 @@ export async function bootstrapProjectRoute(
           `/api/projects/${encodeURIComponent(projectId)}/workspace-scope`,
           {
             cache: 'no-store',
-            headers: workspaceProjectHeaders(context),
+            headers: {},
           },
         );
         if (!exactScopeResponse.ok) {
@@ -476,7 +428,7 @@ export async function bootstrapProjectRoute(
           || exactBody.scope.projectId !== projectId
           || !exactContext
           || exactBody.scope.workspaceId !== context.workspaceId
-          || workspaceIdentityCacheKey(exactContext) !== workspaceIdentityCacheKey(context)
+          || 'none' !== 'none'
         ) {
           return { kind: 'forbidden' };
         }
@@ -487,7 +439,7 @@ export async function bootstrapProjectRoute(
         `/api/projects/${encodeURIComponent(projectId)}`,
         {
           cache: 'no-store',
-          ...(context ? { headers: workspaceProjectHeaders(context) } : {}),
+          ...(context ? { headers: {} } : {}),
         },
       );
       if (!projectResponse.ok) {
@@ -568,7 +520,7 @@ export async function bootstrapFirstOpenTeamProjectRoute(
       {
         method: 'PUT',
         cache: 'no-store',
-        headers: workspaceProjectHeaders(exactContext),
+        headers: {},
       },
     );
     if (!response.ok) {
@@ -587,7 +539,7 @@ export async function bootstrapFirstOpenTeamProjectRoute(
     'project-route-bootstrap',
     options.accountGeneration,
     projectId,
-    workspaceIdentityCacheKey(exactContext),
+    'none',
   ].join(':'));
   const bootstrap = await bootstrapProjectRoute(projectId, {
     accountGeneration: options.accountGeneration,
@@ -631,7 +583,7 @@ export async function getProjectDetail(
     const resp = await fetch(
       `/api/projects/${encodeURIComponent(id)}${query}`,
       workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : undefined,
     );
     if (!resp.ok) return null;
@@ -788,7 +740,7 @@ export async function createProject(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(input.workspaceContext ? workspaceProjectHeaders(input.workspaceContext) : {}),
+          ...(input.workspaceContext ? {} : {}),
         },
         body: JSON.stringify({ id, ...omitWorkspaceContext(input) }),
       });
@@ -802,7 +754,6 @@ export async function createProject(
         // `useProjectCollab` may use this only to skip the initial status-unknown
         // read-only window; another Workspace with the same project id must not
         // inherit the signal.
-        markProjectCreatedByViewer(created.project.id, input.workspaceContext ?? null);
         return created;
       }
       if (await isDaemonProxyConnectionFailure(resp)) {
@@ -839,7 +790,7 @@ export async function createDesignSystemProjectFromProject(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     });
@@ -879,7 +830,7 @@ export async function duplicateProject(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     });
@@ -904,7 +855,6 @@ export async function duplicateProject(
       throw new Error(message);
     }
     const created = (await resp.json()) as DuplicateProjectResponse;
-    markProjectCreatedByViewer(created.project.id, workspaceContext ?? null);
     return created;
   } catch (err) {
     throw err instanceof Error ? err : new Error('Could not duplicate project');
@@ -950,7 +900,7 @@ export async function importFolderProject(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+      ...(workspaceContext ? {} : {}),
     },
     body: JSON.stringify(input),
   });
@@ -973,7 +923,7 @@ export async function importClaudeDesignZip(
   form.append('file', file);
   const resp = await fetch('/api/import/claude-design', {
     method: 'POST',
-    ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+    ...(workspaceContext ? { headers: {} } : {}),
     body: form,
   });
   if (!resp.ok) {
@@ -1099,7 +1049,7 @@ export async function patchProject(
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(patch),
     });
@@ -1112,7 +1062,7 @@ export async function patchProject(
     if (workspaceContext) {
       invalidateWorkspaceProjectLists(
         workspaceContext,
-        currentWorkspaceAccountGeneration(),
+        0,
       );
     } else {
       evictCoalescedGet('local-projects');
@@ -1144,7 +1094,7 @@ export async function deleteProject(
   try {
     const resp = await fetch(`/api/projects/${encodeURIComponent(id)}`, {
       method: 'DELETE',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     if (!resp.ok) {
       let message = `project delete failed with status ${resp.status}`;
@@ -1162,7 +1112,7 @@ export async function deleteProject(
         const rawMessage = envelope?.message
           ?? payload.message
           ?? (typeof payload.error === 'string' ? payload.error : undefined);
-        code = boundedRequestErrorCode(rawCode);
+        code = typeof rawCode === 'string' ? rawCode : undefined;
         if (typeof rawMessage === 'string' && rawMessage.trim()) {
           message = rawMessage;
         }
@@ -1228,7 +1178,7 @@ export async function listConversations(
   },
 ): Promise<Conversation[]> {
   const workspaceContext = options?.workspaceContext ?? null;
-  const readKey = `project-conversations:${projectId}:${workspaceIdentityCacheKey(workspaceContext)}`;
+  const readKey = `project-conversations:${projectId}:${'none'}`;
   try {
     // Concurrent consumers of one project's conversation list share a single
     // request per burst (Batch A §4.3); conversation writes below evict.
@@ -1238,7 +1188,7 @@ export async function listConversations(
         const resp = await fetch(
           `/api/projects/${encodeURIComponent(projectId)}/conversations`,
           workspaceContext
-            ? { headers: workspaceProjectHeaders(workspaceContext) }
+            ? { headers: {} }
             : undefined,
         );
         if (!resp.ok) throw new ProjectConversationsHttpError(resp.status);
@@ -1258,7 +1208,7 @@ function evictConversationsRead(
   workspaceContext?: WorkspaceCollabContext | null,
 ): void {
   evictCoalescedGet(
-    `project-conversations:${projectId}:${workspaceIdentityCacheKey(workspaceContext)}`,
+    `project-conversations:${projectId}:${'none'}`,
   );
 }
 
@@ -1322,7 +1272,7 @@ function postConversation(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(body),
     },
@@ -1354,7 +1304,7 @@ export async function patchConversation(
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify(patch),
       },
@@ -1379,7 +1329,7 @@ export async function deleteConversation(
       {
         method: 'DELETE',
         ...(workspaceContext
-          ? { headers: workspaceProjectHeaders(workspaceContext) }
+          ? { headers: {} }
           : {}),
       },
     );
@@ -1452,7 +1402,7 @@ export async function listMessages(
     const resp = await fetch(
       `/api/projects/${encodeURIComponent(projectId)}/conversations/${encodeURIComponent(conversationId)}/messages`,
       workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : undefined,
     );
     if (!resp.ok) {
@@ -1508,7 +1458,7 @@ export async function saveMessage(
         headers: {
           'Content-Type': 'application/json',
           ...(options.workspaceContext
-            ? workspaceProjectHeaders(options.workspaceContext)
+            ? {}
             : {}),
         },
         body: JSON.stringify(body),
@@ -1546,7 +1496,7 @@ export async function createTerminal(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify(init ?? {}),
       },
@@ -1565,10 +1515,7 @@ export function terminalStreamUrl(
   terminalId: string,
   workspaceContext?: WorkspaceCollabContext | null,
 ): string {
-  return workspaceResourceUrl(
-    `/api/projects/${encodeURIComponent(projectId)}/terminals/${encodeURIComponent(terminalId)}/stream`,
-    workspaceContext,
-  );
+  return `/api/projects/${encodeURIComponent(projectId)}/terminals/${encodeURIComponent(terminalId)}/stream`;
 }
 
 export async function sendTerminalStdin(
@@ -1584,7 +1531,7 @@ export async function sendTerminalStdin(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify({ data }),
       },
@@ -1609,7 +1556,7 @@ export async function resizeTerminal(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify({ cols, rows }),
       },
@@ -1637,7 +1584,7 @@ export async function killTerminal(
       {
         method: 'POST',
         ...(options.workspaceContext
-          ? { headers: workspaceProjectHeaders(options.workspaceContext) }
+          ? { headers: {} }
           : {}),
         ...(options.keepalive ? { keepalive: true } : {}),
       },
@@ -1657,7 +1604,7 @@ function tabsCacheKey(
   workspaceContext?: WorkspaceCollabContext | null,
 ): string {
   if (!workspaceContext) return `${PROJECT_TABS_CACHE_PREFIX}${projectId}`;
-  return `${PROJECT_TABS_CACHE_PREFIX}${projectId}:${workspaceIdentityCacheKey(workspaceContext)}`;
+  return `${PROJECT_TABS_CACHE_PREFIX}${projectId}:${'none'}`;
 }
 
 function normalizeTabsState(value: unknown): OpenTabsState | null {
@@ -1752,14 +1699,14 @@ async function persistTabsToDaemon(
   workspaceContext?: WorkspaceCollabContext | null,
 ): Promise<void> {
   const requestKey =
-    `project-tabs:${projectId}:${workspaceIdentityCacheKey(workspaceContext)}`;
+    `project-tabs:${projectId}:${'none'}`;
   // Thin invalidation: a write makes any burst-shared read stale.
   evictCoalescedGet(requestKey);
   await fetch(`/api/projects/${encodeURIComponent(projectId)}/tabs`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+      ...(workspaceContext ? {} : {}),
     },
     body: JSON.stringify(state),
     keepalive: true,
@@ -1775,7 +1722,7 @@ export async function loadTabs(
 ): Promise<OpenTabsState> {
   const cached = readCachedTabs(projectId, workspaceContext);
   const requestKey =
-    `project-tabs:${projectId}:${workspaceIdentityCacheKey(workspaceContext)}`;
+    `project-tabs:${projectId}:${'none'}`;
   try {
     // Concurrent mounts share one daemon read per burst (Batch A §4.3); the
     // per-caller cache reconciliation below still runs for every caller.
@@ -1783,7 +1730,7 @@ export async function loadTabs(
       const resp = await fetch(
         `/api/projects/${encodeURIComponent(projectId)}/tabs`,
         workspaceContext
-          ? { headers: workspaceProjectHeaders(workspaceContext) }
+          ? { headers: {} }
           : undefined,
       );
       if (!resp.ok) throw new Error(`tabs ${resp.status}`);
@@ -1907,8 +1854,8 @@ export function pluginCatalogCacheKey(
   options: Pick<ListPluginsOptions, 'workspaceContext' | 'accountGeneration'> = {},
 ): string {
   return JSON.stringify([
-    options.accountGeneration ?? currentWorkspaceAccountGeneration(),
-    workspaceIdentityCacheKey(options.workspaceContext ?? null),
+    options.accountGeneration ?? 0,
+    'none',
   ]);
 }
 
@@ -1944,7 +1891,7 @@ export async function listPlugins(
   try {
     const resp = await fetch(
       '/api/plugins',
-      options.workspaceContext ? { headers: workspaceProjectHeaders(options.workspaceContext) } : undefined,
+      options.workspaceContext ? { headers: {} } : undefined,
     );
     if (!resp.ok) return [];
     const json = (await resp.json()) as { plugins?: InstalledPluginRecord[] };
@@ -2030,7 +1977,7 @@ export async function duplicatePluginAsProject(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     },
@@ -2042,7 +1989,6 @@ export async function duplicatePluginAsProject(
   if (!json?.ok || !json.projectId) {
     throw new Error('Could not duplicate this template.');
   }
-  markProjectCreatedByViewer(json.projectId, workspaceContext ?? null);
   return json;
 }
 
@@ -2065,7 +2011,7 @@ export async function installPluginSource(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({ source }),
     });
@@ -2092,7 +2038,7 @@ export async function installPluginSource(
       if (ev.kind === 'success') success = ev.plugin;
       if (ev.kind === 'error') {
         errorMessage = ev.message ?? 'Install failed.';
-        errorCode = boundedRequestErrorCode(ev.code);
+        errorCode = typeof ev.code === 'string' ? ev.code : undefined;
       }
     }
     return {
@@ -2138,7 +2084,7 @@ export async function installGeneratedPluginFolder(
   // Capture the account boundary before the request starts. If sign-in changes
   // while the install is in flight, the successful response must evict the
   // catalog that authorized this mutation, never the next account's cache.
-  const accountGeneration = currentWorkspaceAccountGeneration();
+  const accountGeneration = 0;
   try {
     const request: ProjectPluginFolderInstallRequest = { path: relativePath };
     const resp = await fetch(
@@ -2147,7 +2093,7 @@ export async function installGeneratedPluginFolder(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify(request),
       },
@@ -2257,7 +2203,7 @@ export async function startGeneratedPluginShareTask(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({ path: relativePath, action }),
     },
@@ -2292,7 +2238,7 @@ export async function waitGeneratedPluginShareTask(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+      ...(workspaceContext ? {} : {}),
     },
     body: JSON.stringify({ since, timeoutMs }),
   });
@@ -2342,7 +2288,7 @@ export async function createPluginShareProject(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify({
           action,
@@ -2391,7 +2337,7 @@ async function postGeneratedPluginShareAction(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify({ path: relativePath }),
       },
@@ -2479,9 +2425,8 @@ async function postPluginUpload(url: string, form: FormData): Promise<PluginInst
       json.message ??
       (typeof json.error === 'string' ? json.error : json.error?.message) ??
       resp.statusText;
-    const errorCode = boundedRequestErrorCode(
-      json.errorCode ?? (typeof json.error === 'object' ? json.error?.code : undefined),
-    );
+    const errorCodeRaw = json.errorCode ?? (typeof json.error === 'object' ? json.error?.code : undefined);
+    const errorCode = typeof errorCodeRaw === 'string' ? errorCodeRaw : undefined;
     return {
       ok: false,
       warnings: json.warnings ?? [],
@@ -2540,7 +2485,7 @@ export async function uninstallPlugin(
     const resp = await fetch(`/api/plugins/${encodeURIComponent(id)}/uninstall`, {
       method: 'POST',
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     });
     return resp.ok;
@@ -2738,7 +2683,7 @@ export async function applyPlugin(
         headers: {
           'Content-Type': 'application/json',
           ...(!options.pluginSource && options.workspaceContext
-            ? workspaceProjectHeaders(options.workspaceContext)
+            ? {}
             : {}),
         },
         body: requestBody,

@@ -927,7 +927,7 @@ export function DesignBrowserPanel({
   browserTabId,
 }: DesignBrowserPanelProps) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const desktopHostAvailable = isCapyDesignHostAvailable();
   const initialState = initialBrowserState(initialUrl, initialTitle);
   // `loadUrl` is the navigation target bound to the <webview>/<iframe> `src`.

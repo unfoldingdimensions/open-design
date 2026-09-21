@@ -12,8 +12,6 @@ import {
   type CritiqueEventsConnection,
   type CritiqueEventsConnectionOptions,
 } from '../state/sse';
-import { workspaceIdentityCacheKey } from '../../../collab/workspace-identity';
-
 export interface UseCritiqueStreamOptions extends CritiqueEventsConnectionOptions {
   /**
    * Test seam: substitute the connection factory. Lets tests drive the
@@ -88,7 +86,7 @@ export function useCritiqueStream(
   }, [
     projectId,
     enabled,
-    workspaceIdentityCacheKey(options.workspaceContext),
+    'none',
     options.EventSourceCtor,
     options.initialBackoffMs,
     options.maxBackoffMs,

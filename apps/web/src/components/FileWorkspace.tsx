@@ -60,10 +60,6 @@ import { removeSpeakerNotesFromHtml } from '../runtime/speaker-notes';
 import { useDesignKit, hostnameOf, type KitColor } from '../runtime/design-kit';
 import { useKitModuleUpload } from '../runtime/kit-upload';
 import {
-  appendResourceQuery,
-  workspaceIdentityCacheKey,
-} from '../collab/workspace-identity';
-import {
   DesignKitView,
   type DesignKitActionFeedbackTone,
   type DesignKitEditFocusRequest,
@@ -101,11 +97,6 @@ import {
   type WorkspaceCollabContext,
   type WorkspaceContextItem,
 } from '@capydesign/contracts';
-import {
-  notifyTeamProjectsChanged,
-  TEAM_PROJECTS_CHANGED_EVENT,
-} from '../collab/useWorkspaceContext';
-import { useProjectCollabContext } from '../collab/collab-context';
 import { createTerminal, killTerminal, listPlugins, moveWorkspaceProject } from '../state/projects';
 import { MoveToTeamConfirmDialog, moveConfirmSkipped } from './MoveToTeamConfirmDialog';
 import { DesignFilesPanel, type DesignFilesNavState } from './DesignFilesPanel';
@@ -122,8 +113,6 @@ import { APP_CHROME_FILE_ACTIONS_ID } from './AppChromeHeader';
 import { FileViewer, LiveArtifactViewer } from './FileViewer';
 import { useIframeKeepAlivePool } from './IframeKeepAlivePool';
 import { Icon, type IconName } from './Icon';
-import { projectIsSharedWithWorkspace } from '../collab/project-shared-status';
-import { FileSyncBadge, type FileSyncBadgeState } from '../collab/FileSyncBadge';
 import { Toast } from './Toast';
 import { TabLauncherMenu } from './workspace/TabLauncherMenu';
 import { buildLauncherActions, type LauncherContext } from './workspace/tab-launcher';
@@ -148,7 +137,6 @@ import { LibraryPicker } from './LibraryPicker';
 import { QuickSwitcher } from './QuickSwitcher';
 import { SketchEditor } from './SketchEditor';
 import { SketchEnginePrewarm } from './SketchEnginePrewarm';
-import { useWorkspaceTabsDockRef } from './workspaceTabsDock';
 import {
   emptySketchScene,
   isSketchJsonFileName,
@@ -1375,7 +1363,7 @@ export function FileWorkspace({
     await onRefreshFiles();
   }, [onRefreshFiles]);
   const { locale, t } = useI18n();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const iframeKeepAlivePool = useIframeKeepAlivePool();
   // P1 page_view page_name=file_manager — once per project the user lands
   // inside the workspace. Re-fire when the projectId changes so a
@@ -1502,7 +1490,7 @@ export function FileWorkspace({
   const projectShareRef = useRef<HTMLDivElement | null>(null);
   const tabsBarRef = useRef<HTMLDivElement | null>(null);
   // Focus-mode dock host for the workspace tab strip (workspaceTabsDock.ts).
-  const focusTabsDockRef = useWorkspaceTabsDockRef();
+  const focusTabsDockRef = ({ current: null });
   const draggedTabNameRef = useRef<string | null>(null);
   const browserTabSequenceRef = useRef(0);
   const openFileRef = useRef<(name: string) => void>(() => {});
@@ -3798,7 +3786,7 @@ export function FileWorkspace({
 
   useEffect(() => {
     let cancelled = false;
-    const refreshShareAccess = () => void projectIsSharedWithWorkspace(projectId, workspaceContext).then((shared) => {
+    const refreshShareAccess = () => void false.then((shared) => {
       if (!cancelled) setProjectShareAccess(shared ? 'workspace' : 'private');
     });
     refreshShareAccess();
@@ -3875,7 +3863,7 @@ export function FileWorkspace({
         workspaceContext,
       });
       setProjectShareAccess(nextAccess);
-      notifyTeamProjectsChanged();
+      void 0;
       setLauncherToast({
         message:
           nextAccess === 'workspace'
@@ -4631,11 +4619,11 @@ function DesignSystemProjectPanel({
   githubConnected?: boolean;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   // Match the exact fields sent by workspaceProjectHeaders. Billing-only
   // refreshes must not blank and reload the kit, while a role, membership, or
   // permission change must discard every prior identity's source snapshot.
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+  const workspaceIdentity = 'none';
   const [reviewDecisions, setReviewDecisions] = useState<Record<string, DesignSystemReviewDecision>>({});
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const [feedbackSection, setFeedbackSection] = useState<string | null>(null);
@@ -7408,7 +7396,7 @@ function DesignSystemInlinePreview({
   projectId: string;
   file: ProjectFile;
 }) {
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const url = projectFileUrl(projectId, file.name, workspaceContext);
   const [srcDoc, setSrcDoc] = useState<string | null>(null);
   const [srcDocReady, setSrcDocReady] = useState(false);
@@ -7459,7 +7447,7 @@ function DesignSystemInlinePreview({
       />
     );
   }
-  return <img src={appendResourceQuery(url, `v=${Math.round(file.mtime)}`)} alt={file.name} />;
+  return <img src={(url + (url.includes('?') ? '&' : '?') + `v=${Math.round(file.mtime)}`.replace(/^[?&]+/, ''))} alt={file.name} />;
 }
 
 async function inlineDesignSystemPreviewRelativeAssets(
@@ -7604,7 +7592,7 @@ function designSystemPreviewAssetUrl(
   const query = (hashIndex >= 0 ? assetPath.suffix.slice(0, hashIndex) : assetPath.suffix)
     .replace(/^\?/, '');
   const hash = hashIndex >= 0 ? assetPath.suffix.slice(hashIndex) : '';
-  return `${query ? appendResourceQuery(baseUrl, query) : baseUrl}${hash}`;
+  return `${query ? (baseUrl + (baseUrl.includes('?') ? '&' : '?') + query.replace(/^[?&]+/, '')) : baseUrl}${hash}`;
 }
 
 function rewriteDesignSystemPreviewCssUrls(

@@ -17,11 +17,6 @@ import {
   applyPlugin,
   resolvedWorkspaceContextForWrite,
 } from '../state/projects';
-import type { WorkspaceContextState } from '../collab/useWorkspaceContext';
-import {
-  workspaceProjectHeaders,
-  workspaceResourceUrl,
-} from '../collab/workspace-identity';
 import { goBack, navigate } from '../router';
 import {
   createPluginUseHandoff,
@@ -203,7 +198,7 @@ export function PluginDetailView(props: Props) {
     let cancelled = false;
     void fetch(`/api/plugins/${encodeURIComponent(props.pluginId)}`, {
       ...(pluginWorkspaceContext
-        ? { headers: workspaceProjectHeaders(pluginWorkspaceContext) }
+        ? { headers: {} }
         : {}),
     })
       .then((response) => {
@@ -401,10 +396,7 @@ export function PluginDetailView(props: Props) {
           >
             <iframe
               title={`${localizedTitle} preview`}
-              src={workspaceResourceUrl(
-                `/api/plugins/${encodeURIComponent(plugin.id)}/preview`,
-                pluginWorkspaceContext,
-              )}
+              src={`/api/plugins/${encodeURIComponent(plugin.id)}/preview`}
               sandbox="allow-scripts"
               className="plugin-detail__preview-frame"
               data-testid="plugin-detail-preview-iframe"
@@ -441,10 +433,7 @@ export function PluginDetailView(props: Props) {
                 >
                   <h3>
                     <a
-                      href={workspaceResourceUrl(
-                        `/api/plugins/${encodeURIComponent(plugin.id)}/example/${encodeURIComponent(stem)}`,
-                        pluginWorkspaceContext,
-                      )}
+                      href={`/api/plugins/${encodeURIComponent(plugin.id)}/example/${encodeURIComponent(stem)}`}
                       target="_blank"
                       rel="noreferrer"
                       data-testid={`plugin-detail-example-${stem}`}

@@ -17,12 +17,6 @@ import { navigate } from '../router';
 import { requestHomeChip } from '../runtime/home-intent';
 import { brandSummaryToKit } from '../runtime/design-kit';
 import { DesignKitView } from './DesignKitView';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import {
-  resolveWorkspaceResourceReadIdentity,
-  workspaceProjectHeaders,
-  workspaceResourceReadIdentityKey,
-} from '../collab/workspace-identity';
 import styles from './BrandPreviewCard.module.css';
 
 // Re-exports preserving the previous public surface of this module.
@@ -49,11 +43,11 @@ export function BrandPreviewCard({
   onOpenProject,
 }: BrandPreviewCardProps) {
   const t = useT();
-  const workspaceState = useWorkspaceContext();
+  const workspaceState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const mutationWorkspaceContext = workspaceState.context;
-  const resourceReadIdentity = resolveWorkspaceResourceReadIdentity(workspaceState);
+  const resourceReadIdentity = null;
   const workspaceContext = resourceReadIdentity?.context ?? null;
-  const workspaceReadGeneration = workspaceResourceReadIdentityKey(resourceReadIdentity);
+  const workspaceReadGeneration = 'none';
   const compact = variant === 'compact';
   const { meta, brand } = summary;
   const name = brand?.name?.trim() || (meta.sourceUrl ? new URL(meta.sourceUrl).hostname.replace(/^www\./, '') : 'Brand');
@@ -118,7 +112,7 @@ export function BrandPreviewCard({
       const response = await fetch(`/api/brands/${encodeURIComponent(meta.id)}`, {
         method: 'DELETE',
         ...(mutationWorkspaceContext
-          ? { headers: workspaceProjectHeaders(mutationWorkspaceContext) }
+          ? { headers: {} }
           : {}),
       });
       if (!response.ok) throw new Error(`brand delete ${response.status}`);

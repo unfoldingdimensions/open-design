@@ -20,8 +20,6 @@ import type {
   FinalizeProviderProtocol,
   WorkspaceCollabContext,
 } from '@capydesign/contracts';
-import { workspaceProjectHeaders } from '../collab/workspace-identity';
-
 // 130 000 ms = daemon timeout (120 s) + 10 s buffer so the daemon's
 // own retry/timeout layer always wins under normal failure modes.
 const FETCH_TIMEOUT_MS = 130_000;
@@ -111,7 +109,7 @@ export function useFinalizeProject(
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+              ...(workspaceContext ? {} : {}),
             },
             body: JSON.stringify(req),
             signal: controller.signal,

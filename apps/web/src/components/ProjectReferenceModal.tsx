@@ -5,7 +5,6 @@ import { useI18n } from '../i18n';
 import { getProjectDetail, listProjects } from '../state/projects';
 import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import { dirExists } from '../providers/registry';
-import { workspaceIdentityCacheKey } from '../collab/workspace-identity';
 import { Icon } from './Icon';
 import styles from './ProjectReferenceModal.module.css';
 
@@ -57,7 +56,7 @@ export function ProjectReferenceModal({
   // caller's authority actually changes (switch Workspace, role/lifecycle
   // transition) and never merely because the parent re-created an equivalent
   // context object.
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+  const workspaceIdentity = 'none';
 
   useEffect(() => {
     let cancelled = false;

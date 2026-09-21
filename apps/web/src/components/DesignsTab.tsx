@@ -4,8 +4,6 @@ import { Dialog, DialogDescription, DialogFooter, DialogTitle } from "@capydesig
 import type { WorkspaceCollabContext } from "@capydesign/contracts";
 import { projectKindFromMetadataToTracking } from "@capydesign/contracts/analytics";
 import { useT } from "../i18n";
-import { useWorkspaceContext } from "../collab/useWorkspaceContext";
-import { workspaceIdentityCacheKey } from "../collab/workspace-identity";
 import {
 	getProjectCoverSnapshot,
 	projectCoverSnapshotKey,
@@ -132,7 +130,8 @@ export function DesignsTab({
 	const renameTitleId = useId();
 	const confirmTitleId = useId();
 	const t = useT();
-	const { context: workspaceContext, loading: workspaceContextLoading } = useWorkspaceContext();
+	const workspaceContext = null;
+	const workspaceContextLoading = false;
 	// P0 page_view page_name=projects — fire once when the tab mounts so
 	// `/projects` landings register even before the user clicks anything.
 	// ref-keyed to survive re-renders that flip parent state without
@@ -191,7 +190,7 @@ export function DesignsTab({
 	useEffect(() => {
 		if (!isActive || workspaceContextLoading) return;
 		const controller = new AbortController();
-		const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+		const workspaceIdentity = 'none';
 		if (liveWorkspaceIdentityRef.current !== workspaceIdentity) {
 			liveWorkspaceIdentityRef.current = workspaceIdentity;
 			setLiveArtifactsByProject({});
@@ -228,7 +227,7 @@ export function DesignsTab({
 			setCoverByProject({});
 			return;
 		}
-		const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+		const workspaceIdentity = 'none';
 		const workspaceIdentityChanged = coverWorkspaceIdentityRef.current !== workspaceIdentity;
 		coverWorkspaceIdentityRef.current = workspaceIdentity;
 		const immediateEntries: Array<readonly [string, ProjectCoverOverride | null]> = [];

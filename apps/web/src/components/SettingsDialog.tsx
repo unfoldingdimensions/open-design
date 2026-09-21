@@ -20,14 +20,7 @@ import { AgentIcon } from './AgentIcon';
 import { ImageAgentPicker } from './ImageAgentPicker';
 import { AgentDiagnosticRow } from './AgentDiagnosticRow';
 import { DeepSeekHarnessSetupDialog } from './DeepSeekHarnessSetupDialog';
-import { AmrLoginPill } from './AmrLoginPill';
-import { PlanBadge } from './PlanBadge';
 import { orderAgentsWithCapyDesignFirst } from './agentOrdering';
-import {
-  AMR_LOGIN_STATUS_EVENT,
-  amrLoginStatusEventReason,
-  isAmrSessionAuthenticated,
-} from './amrLoginPolling';
 import {
   fetchAmrWalletSnapshot,
   fetchVelaLoginStatus,
@@ -35,7 +28,6 @@ import {
   type VelaLoginStatus,
 } from '../providers/daemon';
 import { installDeepSeekHarnessCompanion } from '../providers/agent-companion';
-import { amrProfileBadgeLabel } from '../runtime/amr-guidance';
 import {
   availableVisibleAgentCount,
   deepSeekHarnessNeedsSetup,
@@ -143,17 +135,7 @@ import { DesignSystemsSection } from './DesignSystemsSection';
 import { PrivacySection } from './PrivacySection';
 import { ProjectLocationsSection } from './ProjectLocationsSection';
 import { RoutinesSection } from './RoutinesSection';
-import { SettingsWorkspaceSection } from './SettingsWorkspaceSection';
-import {
-  useWorkspaceBillingResponse,
-  useWorkspaceContext,
-  workspaceBillingBalanceUsd,
-  workspaceBillingSummaryForContext,
-} from '../collab/useWorkspaceContext';
-import { canUpgradeFromPlanTier, resolvePlanTier } from '../collab/team-plan';
-import { planBadgeTierForWorkspace } from './PlanWordmark';
 import { workspaceUpgradeUrl } from './EntryNavRail';
-import { canShowWorkspaceSettings } from '../collab/settings-access';
 import { ConnectorsBrowser } from './ConnectorsBrowser';
 import { MemoryModelInline } from './MemoryModelInline';
 import { MemorySection } from './MemorySection';
@@ -177,11 +159,6 @@ import {
   setCritiqueTheaterEnabled,
   useCritiqueTheaterEnabled,
 } from './Theater';
-import {
-  projectWorkspaceContext,
-  projectWorkspaceScopeReady,
-  useProjectWorkspaceScope,
-} from '../collab/useProjectWorkspaceScope';
 import {
   applyAppearanceToDocument,
   resolveAccentColor,
@@ -1618,22 +1595,17 @@ export function SettingsDialog({
   // gate now guards the deep-link (`initialSection='workspace'`) path — it must
   // stay, otherwise a deep link would hand workspace settings to a viewer the
   // permission bits exclude.
-  const {
-    context: workspaceContext,
-    loading: workspaceContextLoading,
-  } = useWorkspaceContext();
+  const workspaceContext = null;
+  const workspaceContextLoading = false;
   // Workspace billing drives both the plan and the money shown beside it. The
   // CLI identity remains account-scoped, but a Team badge must never be paired
   // with that account's personal wallet: the entry chrome and Settings must
   // describe the same selected environment + workspace.
-  const workspaceBillingResponse = useWorkspaceBillingResponse();
+  const workspaceBillingResponse = null;
   // Same partition for the plan half: `response.summary` is an ACCOUNT read, so
   // the AMR card's plan badge and both upgrade routes must consume it projected
   // onto the selected workspace. See `workspaceBillingSummaryForContext`.
-  const workspaceBilling = workspaceBillingSummaryForContext(
-    workspaceBillingResponse,
-    workspaceContext,
-  );
+  const workspaceBilling = null;
   const showWorkspaceSettings = canShowWorkspaceSettings(workspaceContext);
   // All generic AMR upgrade buttons route through public Pricing. While the
   // workspace read is pending, hide the owner-only action to avoid a flash for
@@ -1670,7 +1642,7 @@ export function SettingsDialog({
   });
   const [amrCardStatus, setAmrCardStatus] = useState<VelaLoginStatus | null>(null);
   const [amrCardStatusReady, setAmrCardStatusReady] = useState(false);
-  const amrCardSignedIn = isAmrSessionAuthenticated(amrCardStatus);
+  const amrCardSignedIn = false;
   const [amrWalletSnapshot, setAmrWalletSnapshot] = useState<AmrWalletSnapshot | null>(null);
   const [amrWalletReady, setAmrWalletReady] = useState(false);
   const [hoveredAgentCardId, setHoveredAgentCardId] = useState<string | null>(null);
@@ -1777,7 +1749,7 @@ export function SettingsDialog({
       void fetchVelaLoginStatus({ refresh: true }).then((next) => {
         if (cancelled || !next) return;
         setAmrCardStatus(next);
-        if (isAmrSessionAuthenticated(next)) void refreshAmrWalletSnapshot({ refresh: true });
+        if (false) void refreshAmrWalletSnapshot({ refresh: true });
       });
     };
     window.addEventListener('focus', resyncAmrStatus);
@@ -1794,7 +1766,7 @@ export function SettingsDialog({
     if (!hasAmrAgent) return;
     let cancelled = false;
     const resyncAmrStatus = (event: Event) => {
-      const reason = amrLoginStatusEventReason(event);
+      const reason = '';
       if (reason === 'login-canceled') return;
       void fetchVelaLoginStatus().then((next) => {
         if (cancelled || !next) return;
@@ -1802,10 +1774,10 @@ export function SettingsDialog({
         setAmrCardStatusReady(true);
       });
     };
-    window.addEventListener(AMR_LOGIN_STATUS_EVENT, resyncAmrStatus);
+    window.addEventListener('open-design:amr-login-status', resyncAmrStatus);
     return () => {
       cancelled = true;
-      window.removeEventListener(AMR_LOGIN_STATUS_EVENT, resyncAmrStatus);
+      window.removeEventListener('open-design:amr-login-status', resyncAmrStatus);
     };
   }, [agents]);
   const [byokPreconditionNotice, setByokPreconditionNotice] = useState<{
@@ -4596,10 +4568,7 @@ export function SettingsDialog({
                           // credits count as a dollar amount is what put
                           // "Balance $388307.00" on a workspace whose real
                           // balance was under $39.
-                          const workspaceBalanceUsd = workspaceBillingBalanceUsd(
-                            workspaceBillingResponse,
-                            workspaceContext,
-                          );
+                          const workspaceBalanceUsd = null;
                           const amrWorkspaceBalance =
                             amrWalletVisible && workspaceBalanceUsd
                               ? formatVelaBalanceUsd(workspaceBalanceUsd)
@@ -4633,17 +4602,10 @@ export function SettingsDialog({
                           // the badge set still renders verbatim.
                           const amrCardResolvedPlan =
                             isAmrAgent && active && amrCardSignedIn
-                              ? resolvePlanTier({
-                                  billing: workspaceBilling,
-                                  context: workspaceContext,
-                                  accountPlan: amrCardStatus?.account?.plan,
-                                })
+                              ? null
                               : null;
                           const amrCardPlanLabel = amrCardResolvedPlan
-                            ? planBadgeTierForWorkspace({
-                                tier: amrCardResolvedPlan,
-                                workspaceType: workspaceContext?.workspaceType,
-                              }) ?? amrCardResolvedPlan
+                            ? null ?? amrCardResolvedPlan
                             : null;
                           // recvqfYKutwWlQ: a team member without billing
                           // permission (owner-only) can't act on an upgrade
@@ -4666,7 +4628,7 @@ export function SettingsDialog({
                           // the badge beside it correctly read Max.
                           const amrCardCanUpgrade =
                             isAmrAgent && active && amrCardSignedIn
-                              ? canUpgradeFromPlanTier(amrCardResolvedPlan) &&
+                              ? false &&
                                 Boolean(workspaceContext?.permissions?.canManageBilling)
                               : false;
                           const amrRevealPendingCancelAction =

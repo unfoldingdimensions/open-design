@@ -131,7 +131,7 @@ export function FileOpsSummary({
   const t = useT();
   const [expanded, setExpanded] = useState(false);
   // 音频胶囊要自己拼文件 URL(它不走 `ArtifactCard`,拿不到那里的上下文)
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
 
   if (entries.length === 0) return null;
 
@@ -554,7 +554,7 @@ function ArtifactCard({
   anchorScope: string;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const src = projectFileUrl(projectId, item.name, workspaceContext);
   const pending = item.pending === true;
   /*

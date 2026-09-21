@@ -28,19 +28,7 @@ import {
   type VelaLoginStatus,
 } from '../providers/daemon';
 import { openExternalUrl } from '../providers/registry';
-import { amrPlansUrlForWorkspace } from '../runtime/amr-guidance';
 import { isMacPlatform } from '../utils/platform';
-import {
-  useWorkspaceBillingResponse,
-  useWorkspaceContext,
-  workspaceBillingSummaryForContext,
-} from '../collab/useWorkspaceContext';
-import {
-  projectWorkspaceContext,
-  projectWorkspaceScopeReady,
-  type ProjectWorkspaceScopeState,
-} from '../collab/useProjectWorkspaceScope';
-
 interface Props {
   config: AppConfig;
   agents: AgentInfo[];
@@ -103,10 +91,8 @@ export function AvatarMenu({
   // recvqfYKutwWlQ: gate the AMR upgrade entry on billing permission below,
   // not just plan tier — a team member without `canManageBilling` (owner-only)
   // can't act on an upgrade even when the tier itself is upgradeable.
-  const {
-    context: ambientWorkspaceContext,
-    loading: ambientWorkspaceContextLoading,
-  } = useWorkspaceContext();
+  const ambientWorkspaceContext = null;
+  const ambientWorkspaceContextLoading = false;
   const workspaceContext = projectWorkspaceScope
     ? projectWorkspaceContext(projectWorkspaceScope.scope)
     : ambientWorkspaceContext;
@@ -114,17 +100,7 @@ export function AvatarMenu({
     ? projectWorkspaceScope.loading ||
       !projectWorkspaceScopeReady(projectWorkspaceScope.scope)
     : ambientWorkspaceContextLoading;
-  const workspaceBillingResponse = useWorkspaceBillingResponse(
-    projectWorkspaceScope
-      ? {
-          context: workspaceContext,
-          loading: workspaceContextLoading,
-          revision: `${projectWorkspaceScope.scope?.projectId ?? 'unknown'}:${
-            projectWorkspaceScope.scope?.workspaceId ?? 'unbound'
-          }`,
-        }
-      : undefined,
-  );
+  const workspaceBillingResponse = null;
   const [open, setOpen] = useState(false);
   // Toggle that reports the closed→open transition (for analytics) without
   // firing on close.
@@ -304,10 +280,7 @@ export function AvatarMenu({
    * corrected tier lands on the same render frame — there is no second async
    * hop that would paint the wrong identity first and fix it later.
    */
-  const scopedWorkspaceBilling = workspaceBillingSummaryForContext(
-    workspaceBillingResponse,
-    workspaceContext,
-  );
+  const scopedWorkspaceBilling = null;
   const scopedPlanId =
     workspaceContext?.workspaceType === 'team'
       ? scopedWorkspaceBilling?.membershipTier?.trim() || null

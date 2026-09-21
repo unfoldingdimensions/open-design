@@ -16,14 +16,6 @@ import {
   listPlugins,
   resolvedWorkspaceContextForWrite,
 } from '../state/projects';
-import { useProjectCollabContext } from '../collab/collab-context';
-import {
-  currentWorkspaceAccountGeneration,
-  useWorkspaceContext,
-  workspaceIdentityCacheKey,
-} from '../collab/useWorkspaceContext';
-import { useWorkspaceInvalidation } from '../collab/workspace-events';
-import { useWorkspaceSnapshotActivation } from '../collab/workspace-snapshot-activation';
 import { useI18n } from '../i18n';
 import { localizePluginDescription, localizePluginTitle } from './plugins-home/localization';
 
@@ -58,8 +50,8 @@ interface Props {
 
 export function InlinePluginsRail(props: Props) {
   const { locale } = useI18n();
-  const shellWorkspace = useWorkspaceContext();
-  const projectCollab = useProjectCollabContext();
+  const shellWorkspace = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
+  const projectCollab = { workspaceContext: null, workspaceContextLoading: false, projectResourceAuthority: null };
   const workspaceContext = props.projectId
     ? projectCollab.workspaceContext
     : shellWorkspace.context;
@@ -69,8 +61,8 @@ export function InlinePluginsRail(props: Props) {
       || shellWorkspace.identityChangePending === true
       || shellWorkspace.failure === 'unavailable';
   const workspaceIdentity = JSON.stringify([
-    currentWorkspaceAccountGeneration(),
-    workspaceContextUnavailable ? 'workspace-unavailable' : workspaceIdentityCacheKey(workspaceContext),
+    0,
+    workspaceContextUnavailable ? 'workspace-unavailable' : 'none',
   ]);
   const workspaceIdentityRef = useRef(workspaceIdentity);
   workspaceIdentityRef.current = workspaceIdentity;
@@ -122,28 +114,9 @@ export function InlinePluginsRail(props: Props) {
     };
   }, [refresh, workspaceContext?.workspaceType]);
 
-  const handlePluginStreamActive = useWorkspaceSnapshotActivation({
-    enabled: !workspaceContextUnavailable && workspaceContext?.workspaceType === 'team',
-    identity: workspaceIdentity,
-    refresh: () => { void refresh(); },
-  });
+  const handlePluginStreamActive = (() => {});
 
-  useWorkspaceInvalidation(
-    {
-      'team-resources-changed': (payload) => {
-        if (payload.resourceKind === 'plugin') void refresh();
-      },
-    },
-    {
-      workspaceContext:
-        !workspaceContextUnavailable && workspaceContext?.workspaceType === 'team'
-          ? workspaceContext
-          : null,
-      enabled:
-        !workspaceContextUnavailable && workspaceContext?.workspaceType === 'team',
-      onActive: handlePluginStreamActive,
-    },
-  );
+  void 0;
 
   const onClick = async (record: InstalledPluginRecord) => {
     const issuedIdentity = workspaceIdentity;

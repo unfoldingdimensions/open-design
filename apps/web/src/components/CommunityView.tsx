@@ -16,8 +16,6 @@ import { canDuplicatePluginPreview } from './plugins-home/duplicate';
 import { PluginDetailsModal } from './PluginDetailsModal';
 import type { PluginUseAction } from './plugins-home/useActions';
 import { useInView } from './plugins-home/useInView';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-
 export interface CommunityTemplateUseTarget {
   templateId: string;
   prompt: string;
@@ -77,8 +75,8 @@ interface CommunityViewProps {
 
 export function CommunityView({ onRemixTemplate, onUsePrompt, onUsePlugin }: CommunityViewProps) {
   const { locale, t } = useI18n();
-  const { context: workspaceContext } = useWorkspaceContext();
-  const workspaceDimensions = workspaceAnalyticsDimensions(workspaceContext);
+  const workspaceContext = null;
+  const workspaceDimensions = undefined;
   const pageViewRecordedRef = useRef(false);
   useEffect(() => {
     // React StrictMode replays mount effects in development. Keep one

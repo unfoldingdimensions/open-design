@@ -49,12 +49,9 @@ import {
   formatVelaBalanceUsd,
   velaLogout,
 } from '../providers/daemon';
-import { resetCloudSignInTipDismissal } from './CloudSignInTip';
 import { SignOutConfirmDialog } from './SignOutConfirmDialog';
-import { notifyAmrLoginStatusChanged } from './amrLoginPolling';
 import { Icon } from './Icon';
 import { GITHUB_STARS_FALLBACK_LABEL, formatStars, useGithubStars } from './useGithubStars';
-import { PlanWordmark, planBadgeTierForWorkspace } from './PlanWordmark';
 import { RemixIcon } from './RemixIcon';
 import { InviteDialog } from './InviteDialog';
 import { MessageCenter } from './MessageCenter';
@@ -62,25 +59,6 @@ import type { EntrySettingsSection } from './EntrySettingsMenu';
 import { isRtlLocale, useI18n } from '../i18n';
 import { useDismissOnOutsideInteraction } from '../hooks/useDismissOnOutsideInteraction';
 import { ENTRY_RAIL_TOGGLE_EVENT } from './entryRailBridge';
-import {
-  beginWorkspaceScopedRead,
-  notifyTeamProjectsChanged,
-  notifyWorkspaceBillingRefresh,
-  notifyWorkspaceContextRefresh,
-  useWorkspaceBillingResponse,
-  useWorkspaceContext,
-  workspaceBillingBalanceUsd,
-  workspaceBillingSummaryForContext,
-  workspaceIdentityCacheKey,
-} from '../collab/useWorkspaceContext';
-import { canUpgradeFromPlanTier, resolvePlanLabelTier } from '../collab/team-plan';
-import { shouldShowCreditsBalance } from './entry-rail-account-state';
-import {
-  AMR_CONSOLE_AUTO_RECHARGE_INTENT,
-  amrAutoRechargeUrlForProfile,
-  amrPlansUrlForProfile,
-} from '../runtime/amr-guidance';
-import { useWorkspaceInvalidation } from '../collab/workspace-events';
 import { resolveDeepSeekV4FlashCampaignAudience } from '../campaigns/deepseek-v4-flash';
 import { useDeepSeekV4FlashCampaignVisibility } from '../campaigns/use-deepseek-v4-flash-campaign';
 import type { EntryHomeView } from '../router';
@@ -88,9 +66,6 @@ import type {
   AccountMenuClickProps,
   TrackingWorkspacePage,
 } from '@capydesign/contracts/analytics';
-import { WorkbenchCampaignBadge } from './WorkbenchCampaignBadge';
-import { workspaceChromeAccountActionsHost } from './workspaceChromeActions';
-
 const REPO_URL = 'https://github.com/nexu-io/open-design';
 const GITHUB_HELP_URL = `${REPO_URL}/issues/new`;
 const GITHUB_FEATURE_URL = `${REPO_URL}/pulls`;
@@ -613,7 +588,7 @@ export function EntryTopRightCluster({
   priorityAnnouncementMetricsConsent,
 }: EntryTopRightClusterProps) {
   const { t } = useI18n();
-  const workspaceDimensions = workspaceAnalyticsDimensions(context);
+  const workspaceDimensions = undefined;
   const [chromeActionsHost, setChromeActionsHost] = useState<HTMLElement | null>(
     workspaceChromeAccountActionsHost,
   );
@@ -653,7 +628,7 @@ export function EntryTopRightCluster({
   // B positively reports an unsubscribed entitlement, and null when it simply
   // has not said — only the null case still falls back to the legacy hint, so
   // a paying member (whom B tells us nothing about) keeps their team label.
-  const labelTier = resolvePlanLabelTier({ billing, context });
+  const labelTier = null;
   const tierLabel = labelTier
     ? formatBillingTier(labelTier, t)
     : isTeam
@@ -673,10 +648,7 @@ export function EntryTopRightCluster({
   // passed because it is the only thing that can name the FREE team tier: B
   // reports it with a null `planId` and an empty `membershipTier`, an id no
   // different from a personal free account.
-  const planTier = planBadgeTierForWorkspace({
-    tier: rawTier || tierLabel,
-    workspaceType: context?.workspaceType,
-  });
+  const planTier = null;
 
   const [accountMenuMode, setAccountMenuMode] = useState<'closed' | 'hover' | 'pinned'>(
     'closed',
@@ -807,14 +779,14 @@ export function EntryTopRightCluster({
   // disagree.
   const canUpgrade =
     Boolean(billingUpgradeUrl && permissions?.canManageBilling)
-    && canUpgradeFromPlanTier(labelTier);
+    && false;
 
   function openBillingUpgrade() {
     if (!billingUpgradeUrl) return;
     window.open(billingUpgradeUrl, '_blank', 'noopener,noreferrer');
     window.setTimeout(() => {
-      notifyWorkspaceBillingRefresh();
-      notifyWorkspaceContextRefresh();
+      void 0;
+      void 0;
     }, 3000);
   }
 
@@ -1065,9 +1037,9 @@ export function EntryTopRightCluster({
                       // silently disappears with nothing left in its place.
                       resetCloudSignInTipDismissal();
                       notifyAmrLoginStatusChanged();
-                      notifyWorkspaceContextRefresh();
-                      notifyWorkspaceBillingRefresh();
-                      notifyTeamProjectsChanged();
+                      void 0;
+                      void 0;
+                      void 0;
                     });
                   }}
                 />
@@ -1139,7 +1111,7 @@ export function WorkspaceTopRightAccountCluster({
   metricsConsent?: boolean;
   installationId?: string | null;
 }) {
-  const ambient = useWorkspaceContext();
+  const ambient = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const hasExplicitWorkspaceContext = workspaceContextOverride !== undefined;
   const context = hasExplicitWorkspaceContext
     ? workspaceContextOverride
@@ -1147,24 +1119,14 @@ export function WorkspaceTopRightAccountCluster({
   const contextLoading = hasExplicitWorkspaceContext
     ? workspaceContextLoading === true
     : ambient.loading;
-  const billingResponse = useWorkspaceBillingResponse({
-    context,
-    loading: contextLoading,
-  });
+  const billingResponse = null;
   // Plan and money are both workspace-scoped questions, so both go through a
   // context-partitioned projection — `response.summary` on its own is an
   // ACCOUNT read (`workspaceId: null` by contract). Same rule as EntryShell.
-  const billing = workspaceBillingSummaryForContext(billingResponse, context);
-  const balanceUsd = workspaceBillingBalanceUsd(billingResponse, context);
+  const billing = null;
+  const balanceUsd = null;
   const deepSeekCampaignVisibility = useDeepSeekV4FlashCampaignVisibility();
-  const campaignPlan = resolvePlanLabelTier({
-    billing,
-    context,
-    accountPlan:
-      contextLoading || context?.workspaceType === 'team'
-        ? null
-        : amrAccountPlan,
-  });
+  const campaignPlan = null;
   const deepSeekCampaignAudience = resolveDeepSeekV4FlashCampaignAudience({
     plan: campaignPlan,
     loggedIn: amrLoggedIn,
@@ -1292,7 +1254,7 @@ export function EntryNavRail({
 }: Props) {
   const { t } = useI18n();
   const analyticsPage = entryViewToTracking(view);
-  const workspaceDimensions = workspaceAnalyticsDimensions(context);
+  const workspaceDimensions = undefined;
   const communityLabel = t('pluginsHome.title');
   // #5517 renamed the rail's first item from 最近 (Recents) to 首页 (Home) —
   // the key keeps its historical name, the VALUE now reads Home in every
@@ -1328,7 +1290,7 @@ export function EntryNavRail({
   const [workspaceItems, setWorkspaceItems] = useState<WorkspaceDirectoryItem[]>(
     () => attributableWorkspaceDirectory(context) ?? [],
   );
-  const railIdentity = workspaceIdentityCacheKey(context);
+  const railIdentity = 'none';
   const [workspaceDirectoryLoading, setWorkspaceDirectoryLoading] = useState(false);
   const [workspaceSwitchingId, setWorkspaceSwitchingId] = useState<string | null>(null);
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -1375,7 +1337,7 @@ export function EntryNavRail({
     // Capture the identity this read is FOR, and compare against `contextRef`
     // (not the closed-over `context`, which is by definition the identity we are
     // reading for) before committing anything — see `beginWorkspaceScopedRead`.
-    const read = beginWorkspaceScopedRead(contextRef.current);
+    const read = ({ context: null, isStillCurrent: () => true });
     // Only show the loading row when there is nothing to show yet. With a warm
     // cache the list is already on screen and this read just revalidates it —
     // but a cache belonging to another account counts as nothing to show.
@@ -1386,7 +1348,7 @@ export function EntryNavRail({
       // The coalescing key carries the caller's identity for the same reason the
       // module cache does: `coalescedGet` shares a settled result for a second,
       // and this read's answer depends on WHO asked.
-      const cacheKey = `workspace-directory:${workspaceIdentityCacheKey(read.context)}`;
+      const cacheKey = `workspace-directory:${'none'}`;
       if (options.force) evictCoalescedGet(cacheKey);
       const readDirectory = async () => {
         const response = await fetch('/api/workspace/directory', { cache: 'no-store' });
@@ -1444,11 +1406,9 @@ export function EntryNavRail({
       // Seed this tab from the authoritatively verified switch response. The
       // selected identity is kept in sessionStorage by the context provider, so
       // another tab remains on its own Workspace.
-      notifyWorkspaceContextRefresh(
-        body?.context ? { context: body.context } : null,
-      );
-      notifyWorkspaceBillingRefresh();
-      notifyTeamProjectsChanged();
+      void 0;
+      void 0;
+      void 0;
       selectView('home');
     } catch {
       
@@ -1486,19 +1446,7 @@ export function EntryNavRail({
   // remote create/join/rename/removal updates the cached list immediately. A
   // reconnect/foreground edge also re-reads once to close a missed-event gap;
   // this is event-driven catch-up, not a timer.
-  useWorkspaceInvalidation(
-    {
-      'workspace-directory-changed': () => {
-        void loadWorkspaceDirectory({ force: true });
-      },
-    },
-    {
-      workspaceContext: context,
-      onActive: () => {
-        void loadWorkspaceDirectory({ force: true });
-      },
-    },
-  );
+  void 0;
 
   // This rail can outlive the identity that filled its list: an account swap
   // (sign out, sign in as someone else) does not necessarily unmount it, and

@@ -5,12 +5,6 @@ import { LIBRARY_UI_VISIBLE } from '../features/libraryUi';
 import type { Dict } from '../i18n/types';
 import { copyToClipboard } from '../lib/copy-to-clipboard';
 import { projectFileUrl, projectRawUrl } from '../providers/registry';
-import {
-  appendResourceQuery,
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-} from '../collab/workspace-identity';
-import { useProjectCollabContext } from '../collab/collab-context';
 import { buildSrcdoc } from '../runtime/srcdoc';
 import type { LiveArtifactWorkspaceEntry, ProjectFile, ProjectFileKind, ProjectFolder } from '../types';
 import {
@@ -21,7 +15,6 @@ import {
 import { isVisualStabilityMode } from '../utils/visualStability';
 import type { PluginFolderAgentAction } from './design-files/pluginFolderActions';
 import { getPluginFolderCandidates } from './design-files/pluginFolders';
-import { FileSyncBadge } from '../collab/FileSyncBadge';
 import { Icon } from './Icon';
 import { LiveArtifactBadges } from './LiveArtifactBadges';
 import { RemixIcon } from './RemixIcon';
@@ -487,7 +480,7 @@ export function DesignFilesPanel({
   navState,
   onNavStateChange,
 }: Props) {
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const t = useT();
   const [draggingFiles, setDraggingFiles] = useState(false);
   const [dropReadError, setDropReadError] = useState<string | null>(null);
@@ -1149,10 +1142,7 @@ export function DesignFilesPanel({
   function renderImageCard(f: ProjectFile, _category: FileCategory) {
     const isSelected = selected.has(f.name);
     const openLabel = `${t('designFiles.previewOpen')} ${f.name}`;
-    const src = appendResourceQuery(
-      projectRawUrl(projectId, f.name, workspaceContext),
-      `v=${Math.round(f.mtime)}`,
-    );
+    const src = (projectRawUrl(projectId, f.name, workspaceContext) + (projectRawUrl(projectId, f.name, workspaceContext).includes('?') ? '&' : '?') + `v=${Math.round(f.mtime)}`.replace(/^[?&]+/, ''));
     return (
       <div
         key={f.name}
@@ -1250,7 +1240,7 @@ export function DesignFilesPanel({
         headers: {
           'Content-Type': 'application/json',
           ...(workspaceContext
-            ? workspaceProjectHeaders(workspaceContext)
+            ? {}
             : {}),
         },
         body: JSON.stringify({ files: fileList }),
@@ -1948,16 +1938,14 @@ function HtmlCardThumbnail({
   file: ProjectFile;
   filesRefreshKey: number;
 }) {
-  const {
-    workspaceContext,
-    workspaceContextLoading,
-  } = useProjectCollabContext();
+  const workspaceContext = null;
+  const workspaceContextLoading = false;
   const tooLargeForThumbnail = file.size > HTML_THUMBNAIL_INLINE_MAX_BYTES;
   const url = projectFileUrl(projectId, file.name, workspaceContext);
   const authorizationScopeKey = workspaceContextLoading
     ? null
     : workspaceContext
-      ? `workspace:${workspaceIdentityCacheKey(workspaceContext)}`
+      ? `workspace:${'none'}`
       : 'local';
   const refreshKey = htmlSourceSnapshotRefreshKey(file, filesRefreshKey);
   const thumbnailIdentity = authorizationScopeKey
@@ -2043,7 +2031,7 @@ function HtmlCardThumbnail({
         thumbnailIdentity,
         async () => {
           const response = await fetch(
-            appendResourceQuery(url, `v=${Math.round(file.mtime)}`),
+            (url + (url.includes('?') ? '&' : '?') + `v=${Math.round(file.mtime)}`.replace(/^[?&]+/, '')),
             {},
           );
           return response?.ok ? response.text() : null;

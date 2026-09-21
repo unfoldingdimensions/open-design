@@ -48,10 +48,6 @@ import { fetchMcpServers } from '../state/mcp';
 import { takeHomeComposerAssetSeed } from '../state/libraryHandoff';
 import { useI18n, useT } from '../i18n';
 import {
-  formatModelWindowRetryAt,
-  modelWindowLimitCopy,
-} from '../runtime/amr-guidance';
-import {
   localizeSkillName,
   localizeSkillPrompt,
 } from '../i18n/content';
@@ -97,15 +93,6 @@ import type { PlaceholderScenario } from './home-hero/placeholderScenarios';
 import { consumePendingHomeChip, HOME_CHIP_INTENT_EVENT } from '../runtime/home-intent';
 import { navigate } from '../router';
 import { setPendingDesignSystemCreateEntry } from '../analytics/ds-create-entry';
-import { workspaceContextLinkedDirs } from './workspace-context';
-import {
-  currentWorkspaceAccountGeneration,
-  useTeamProjects,
-  useWorkspaceContext,
-  workspaceResourceReadContext,
-} from '../collab/useWorkspaceContext';
-import { useWorkspaceInvalidation } from '../collab/workspace-events';
-import { useWorkspaceSnapshotActivation } from '../collab/workspace-snapshot-activation';
 import {
   buildHomeMediaComposer,
   homeMediaSurfaceForChipId,
@@ -133,7 +120,6 @@ import { localizePluginTitle } from './plugins-home/localization';
 import type { PluginUseAction } from './plugins-home/useActions';
 import { examplePresetSeedPrompt } from './plugins-home/presetSeedPrompt';
 import { localizePluginDescription } from './plugins-home/localization';
-import type { SharedProjectPredicate } from '../collab/all-projects-list';
 import { RecentProjectsStrip } from './RecentProjectsStrip';
 import type { Recommendation } from '../onboarding/recommendation';
 import type { OnboardingEntry } from '../onboarding/onboarding-entry';
@@ -516,9 +502,9 @@ export function HomeView({
   deepSeekV4FlashCampaignInstallationId = null,
 }: Props) {
   const { locale, t } = useI18n();
-  const workspaceContextState = useWorkspaceContext();
+  const workspaceContextState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const { context: workspaceContext } = workspaceContextState;
-  const pluginCatalogWorkspaceContext = workspaceResourceReadContext(workspaceContextState);
+  const pluginCatalogWorkspaceContext = null;
   const lastSettledLocalCatalogScopeRef = useRef<LocalCatalogScope | null>(
     localCatalogScopeFromWorkspaceContext(workspaceContext),
   );
@@ -526,7 +512,7 @@ export function HomeView({
     lastSettledLocalCatalogScopeRef.current =
       localCatalogScopeFromWorkspaceContext(workspaceContext);
   }
-  const pluginAccountGeneration = currentWorkspaceAccountGeneration();
+  const pluginAccountGeneration = 0;
   const pluginCatalogOptions = {
     workspaceContext: pluginCatalogWorkspaceContext,
     accountGeneration: pluginAccountGeneration,
@@ -543,7 +529,7 @@ export function HomeView({
   // the hub is unconfigured. Only the creator attribution is derived here — the
   // shared/not-shared answer arrives as `isSharedProject` from EntryShell, which
   // owns the optimistic layer the 全部项目 / 草稿 grids read from too.
-  const homeTeamProjects = useTeamProjects();
+  const homeTeamProjects = null;
   // projectId → sharing member id, so the strip can resolve "{creator}创建" for a
   // teammate's shared project (a project absent here is the member's own local
   // project → "我创建").
@@ -949,25 +935,9 @@ export function HomeView({
     pluginCatalogReloadRef.current(true);
   }, [desiredPluginCatalogKey, isActive, pluginCatalogWorkspaceContext?.workspaceType]);
 
-  const handlePluginStreamActive = useWorkspaceSnapshotActivation({
-    enabled: isActive && pluginCatalogWorkspaceContext?.workspaceType === 'team',
-    identity: desiredPluginCatalogKey ?? 'no-plugin-catalog',
-    refresh: () => { void pluginCatalogReloadRef.current(true, true); },
-  });
+  const handlePluginStreamActive = (() => {});
 
-  useWorkspaceInvalidation({}, {
-    workspaceContext:
-      isActive && pluginCatalogWorkspaceContext?.workspaceType === 'team'
-        ? pluginCatalogWorkspaceContext
-        : null,
-    enabled: isActive && pluginCatalogWorkspaceContext?.workspaceType === 'team',
-    // App owns the global Skill/Design System catch-up. Home only refreshes
-    // its plugin projection.
-    onActive: () => {
-      pluginCatalogStaleRef.current = false;
-      handlePluginStreamActive();
-    },
-  });
+  void 0;
 
   useEffect(() => {
     let cancelled = false;

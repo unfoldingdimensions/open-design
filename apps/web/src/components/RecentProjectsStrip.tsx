@@ -30,13 +30,6 @@ import { Icon } from './Icon';
 import { InviteDialog } from './InviteDialog';
 import { STATUS_LABEL_KEYS } from './DesignsTab';
 import { isDesignSystemProject, isPublishedDesignSystemProject } from './design-system-project';
-import type { SharedProjectPredicate } from '../collab/all-projects-list';
-import { useTeamMembers } from '../collab/useTeamMembers';
-import {
-  notifyTeamProjectsChanged,
-  useWorkspaceBilling,
-  useWorkspaceContext,
-} from '../collab/useWorkspaceContext';
 import {
   canAccessWorkspaceInviteFlow,
   resolveWorkspaceInviteTarget,
@@ -49,7 +42,6 @@ import {
   type WorkspaceCollabContext,
   type WorkspaceProjectSummary,
 } from '@capydesign/contracts';
-import { useWorkspaceInvalidation } from '../collab/workspace-events';
 import {
   THUMBNAIL_OVERSCAN_MARGIN,
   resumeThumbnailLoads,
@@ -63,10 +55,6 @@ import {
   setProjectCoverSnapshot,
 } from '../lib/project-cover-cache';
 import { useInView } from './plugins-home/useInView';
-import {
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-} from '../collab/workspace-identity';
 import type { ProjectCollectionClickProps } from '@capydesign/contracts/analytics';
 
 /** Which project space this strip renders. Drives the per-card 共享 badge
@@ -349,11 +337,9 @@ export function RecentProjectsStrip({
   // Real creator resolution (replaces the demo's mock 李娜/张伟 roster): the
   // member directory turns an ownerMemberId into a display name, while the
   // workspace context supplies the signed-in user's own name and profile image.
-  const { resolve: resolveMember } = useTeamMembers();
-  const {
-    context: workspaceContext,
-    loading: workspaceContextLoading,
-  } = useWorkspaceContext();
+  const { resolve: resolveMember } = ({ resolve: (_id: string) => null });
+  const workspaceContext = null;
+  const workspaceContextLoading = false;
   // A cover request captures the complete identity at dispatch. A mutable ref
   // keeps the queue callbacks stable without letting an in-flight read drift
   // to whichever Workspace a different render happens to select later.
@@ -361,9 +347,9 @@ export function RecentProjectsStrip({
   workspaceContextRef.current = workspaceContext;
   const workspaceContextLoadingRef = useRef(workspaceContextLoading);
   workspaceContextLoadingRef.current = workspaceContextLoading;
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
-  const workspaceBilling = useWorkspaceBilling();
-  const workspaceDimensions = workspaceAnalyticsDimensions(workspaceContext);
+  const workspaceIdentity = 'none';
+  const workspaceBilling = null;
+  const workspaceDimensions = undefined;
   function trackCollection(
     element: ProjectCollectionClickProps['element'],
     properties: Partial<Omit<ProjectCollectionClickProps, 'page_name' | 'area' | 'element'>> = {},
@@ -757,7 +743,7 @@ export function RecentProjectsStrip({
         cache: 'no-store',
         signal,
         ...(requestWorkspaceContext
-          ? { headers: workspaceProjectHeaders(requestWorkspaceContext) }
+          ? { headers: {} }
           : {}),
       });
       if (signal.aborted) return undefined;
@@ -784,7 +770,7 @@ export function RecentProjectsStrip({
     if (workspaceContextLoadingRef.current) return Promise.resolve();
     const requestWorkspaceContext = workspaceContextRef.current;
     const snapshotKey = projectCoverSnapshotKey(
-      workspaceIdentityCacheKey(requestWorkspaceContext),
+      'none',
       project.id,
       project.updatedAt,
     );
@@ -917,34 +903,7 @@ export function RecentProjectsStrip({
     void requestProjectCover(project, { force: true });
   }, [requestProjectCover]);
 
-  useWorkspaceInvalidation(
-    {
-      'team-project-content-ready': ({ projectId, workspaceId }) => {
-        if (!activeRef.current) return;
-        if (workspaceContext?.workspaceId !== workspaceId) return;
-        void refreshProjectCover(projectId);
-      },
-    },
-    {
-      workspaceContext,
-      // Thin SSE events are not replayed. On reconnect/focus, retry only cards
-      // whose initial scan found no local cover, closing a missed-ready gap
-      // without re-fetching every already-resolved card in the grid.
-      onActive: () => {
-        if (!activeRef.current) return;
-        for (const { project } of visibleProjects) {
-          if (!coverSentinelSeenRef.current.has(project.id)) continue;
-          if (coverByProject[project.id] == null) {
-            if (coverInFlightRef.current.has(project.id)) continue;
-            // `null` is normally a cacheable no-cover decision. Reconnect is
-            // specifically the missed-invalidation recovery path, so bypass
-            // that snapshot and re-probe the exact current Workspace.
-            void requestProjectCover(project, { force: true });
-          }
-        }
-      },
-    },
-  );
+  void 0;
 
   useEffect(() => {
     const visibleIds = new Set(visibleProjects.map(({ project }) => project.id));
@@ -1040,7 +999,7 @@ export function RecentProjectsStrip({
         workspaceContext,
       });
       onProjectShared?.(movedProject);
-      notifyTeamProjectsChanged();
+      void 0;
       setMenuOpenId(null);
       
     } catch (err) {
@@ -1071,7 +1030,7 @@ export function RecentProjectsStrip({
         workspaceContext,
       });
       onProjectUnshared?.(project.id);
-      notifyTeamProjectsChanged();
+      void 0;
       setMenuOpenId(null);
       
     } catch (err) {
@@ -1206,7 +1165,7 @@ export function RecentProjectsStrip({
       if (action === 'to-team') onProjectShared?.(result.project);
       else onProjectUnshared?.(result.id);
     }
-    if (succeeded.length > 0) notifyTeamProjectsChanged();
+    if (succeeded.length > 0) void 0;
     const failedCount = ids.length - succeeded.length;
     
   }
@@ -2259,7 +2218,7 @@ async function loadDeckCover(
   if (signal) {
     const response = await fetch(src, {
       signal,
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     if (!response.ok) throw new Error(`Failed to load project cover: ${response.status}`);
     const parsed = deckPreviewSrcDoc(await response.text());

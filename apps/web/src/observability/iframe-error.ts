@@ -303,7 +303,7 @@ function boundedNumber(value: unknown): number | undefined {
 function sanitizePreviewText(value: unknown, limit: number): string | undefined {
   const bounded = boundedText(value, limit);
   if (!bounded) return undefined;
-  const pathScrubbed = scrubFilePath(bounded);
+  const pathScrubbed = (bounded);
   if (typeof pathScrubbed !== 'string') return undefined;
   return pathScrubbed
     .replace(/\b(?:data|blob):[^\s)]+/gi, '[inline-url]')
@@ -319,7 +319,7 @@ function sanitizePreviewUrl(value: unknown): string | undefined {
     const parsed = new URL(raw, typeof window !== 'undefined' ? window.location.href : 'http://localhost');
     return `${parsed.origin}${parsed.pathname}`.slice(0, 500);
   } catch {
-    const scrubbed = scrubFilePath(raw);
+    const scrubbed = (raw);
     return typeof scrubbed === 'string' ? scrubbed.slice(0, 500) : undefined;
   }
 }

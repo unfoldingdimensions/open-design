@@ -18,15 +18,6 @@ import {
   updateSkill,
   type SkillFileEntry,
 } from '../providers/registry';
-import {
-  beginWorkspaceScopedRead,
-  currentWorkspaceAccountGeneration,
-  useWorkspaceContext,
-  workspaceIdentityCacheKey,
-} from '../collab/useWorkspaceContext';
-import { useWorkspaceInvalidation } from '../collab/workspace-events';
-import { useWorkspaceSnapshotActivation } from '../collab/workspace-snapshot-activation';
-
 // Functional skills only — design templates render in EntryView's
 // Templates tab and are managed under their own daemon registry. See
 // specs/current/skills-and-design-templates.md.
@@ -105,11 +96,11 @@ function skillMatchesSearch(skill: SkillSummary, q: string, locale: Locale): boo
 
 export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }: Props) {
   const { locale, t } = useI18n();
-  const workspaceContextState = useWorkspaceContext();
+  const workspaceContextState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const { context: workspaceContext } = workspaceContextState;
   const workspaceContextRef = useRef(workspaceContext);
   workspaceContextRef.current = workspaceContext;
-  const accountGeneration = currentWorkspaceAccountGeneration();
+  const accountGeneration = 0;
   const workspaceReadMode = workspaceContextState.identityChangePending
     || (!workspaceContext && workspaceContextState.loading)
     ? 'pending'
@@ -120,7 +111,7 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
         : 'headerless';
   const workspaceCatalogIdentity = JSON.stringify([
     accountGeneration,
-    workspaceIdentityCacheKey(workspaceContext),
+    'none',
     workspaceReadMode,
   ]);
   const workspaceCatalogIdentityRef = useRef(workspaceCatalogIdentity);
@@ -201,13 +192,13 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
   const refresh = useCallback(async () => {
     if (workspaceReadMode === 'pending' || workspaceReadMode === 'blocked') return [];
     const requestGeneration = ++skillsRequestGenerationRef.current;
-    const issuedGeneration = currentWorkspaceAccountGeneration();
+    const issuedGeneration = 0;
     const issuedIdentity = workspaceCatalogIdentity;
-    const read = beginWorkspaceScopedRead(workspaceContext);
+    const read = ({ context: null, isStillCurrent: () => true });
     const list = await fetchSkills(read.context);
     if (
       skillsRequestGenerationRef.current !== requestGeneration
-      || currentWorkspaceAccountGeneration() !== issuedGeneration
+      || 0 !== issuedGeneration
       || workspaceCatalogIdentityRef.current !== issuedIdentity
       || !read.isStillCurrent(workspaceContextRef.current)
     ) return [];
@@ -220,24 +211,9 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
     void refresh();
   }, [refresh, workspaceContext?.workspaceType]);
 
-  const handleSkillStreamActive = useWorkspaceSnapshotActivation({
-    enabled: workspaceReadMode === 'scoped' && workspaceContext?.workspaceType === 'team',
-    identity: workspaceCatalogIdentity,
-    refresh: () => { void refresh(); },
-  });
+  const handleSkillStreamActive = (() => {});
 
-  useWorkspaceInvalidation(
-    {
-      'team-resources-changed': (payload) => {
-        if (payload.resourceKind === 'skill') void refresh();
-      },
-    },
-    {
-      workspaceContext: workspaceReadMode === 'scoped' ? workspaceContext : null,
-      enabled: workspaceReadMode === 'scoped',
-      onActive: handleSkillStreamActive,
-    },
-  );
+  void 0;
 
   const disabledSkills = useMemo(
     () => new Set(cfg.disabledSkills ?? []),
@@ -361,14 +337,14 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
     async (id: string) => {
       if (workspaceWriteBlocked) return undefined;
       if (bodyById[id] !== undefined) return bodyById[id];
-      const issuedGeneration = currentWorkspaceAccountGeneration();
+      const issuedGeneration = 0;
       const issuedIdentity = workspaceCatalogIdentity;
-      const read = beginWorkspaceScopedRead(workspaceContextRef.current);
+      const read = ({ context: null, isStillCurrent: () => true });
       setBodyLoadingId(id);
       try {
         const detail = await fetchSkill(id, read.context);
         if (
-          currentWorkspaceAccountGeneration() !== issuedGeneration
+          0 !== issuedGeneration
           || workspaceCatalogIdentityRef.current !== issuedIdentity
           || !read.isStillCurrent(workspaceContextRef.current)
         ) return undefined;
@@ -388,14 +364,14 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
     async (id: string) => {
       if (workspaceWriteBlocked) return undefined;
       if (filesById[id]) return filesById[id]!;
-      const issuedGeneration = currentWorkspaceAccountGeneration();
+      const issuedGeneration = 0;
       const issuedIdentity = workspaceCatalogIdentity;
-      const read = beginWorkspaceScopedRead(workspaceContextRef.current);
+      const read = ({ context: null, isStillCurrent: () => true });
       setFilesLoadingId(id);
       try {
         const files = await fetchSkillFiles(id, read.context);
         if (
-          currentWorkspaceAccountGeneration() !== issuedGeneration
+          0 !== issuedGeneration
           || workspaceCatalogIdentityRef.current !== issuedIdentity
           || !read.isStillCurrent(workspaceContextRef.current)
         ) return undefined;
@@ -501,7 +477,7 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
       body,
       triggers,
     };
-    const issuedGeneration = currentWorkspaceAccountGeneration();
+    const issuedGeneration = 0;
     const issuedIdentity = workspaceCatalogIdentity;
     const issuedContext = workspaceContextRef.current;
     setDraftSaving(true);
@@ -511,7 +487,7 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
         ? await updateSkill(editingId, payload, issuedContext)
         : await importSkill(payload, issuedContext);
     if (
-      currentWorkspaceAccountGeneration() !== issuedGeneration
+      0 !== issuedGeneration
       || workspaceCatalogIdentityRef.current !== issuedIdentity
     ) return;
     setDraftSaving(false);
@@ -522,12 +498,12 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
     const updated = result.skill;
     await refresh();
     if (
-      currentWorkspaceAccountGeneration() !== issuedGeneration
+      0 !== issuedGeneration
       || workspaceCatalogIdentityRef.current !== issuedIdentity
     ) return;
     await onSkillsRefresh?.();
     if (
-      currentWorkspaceAccountGeneration() !== issuedGeneration
+      0 !== issuedGeneration
       || workspaceCatalogIdentityRef.current !== issuedIdentity
     ) return;
     setBodyById((cur) => ({ ...cur, [updated.id]: body }));
@@ -548,7 +524,7 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
     try {
       const files = await fetchSkillFiles(updated.id, issuedContext);
       if (
-        currentWorkspaceAccountGeneration() !== issuedGeneration
+        0 !== issuedGeneration
         || workspaceCatalogIdentityRef.current !== issuedIdentity
       ) return;
       setFilesById((cur) => ({ ...cur, [updated.id]: files }));
@@ -581,11 +557,11 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
   const commitDelete = useCallback(
     async (id: string) => {
       if (workspaceWriteBlocked) return;
-      const issuedGeneration = currentWorkspaceAccountGeneration();
+      const issuedGeneration = 0;
       const issuedIdentity = workspaceCatalogIdentity;
       const result = await deleteSkill(id, workspaceContextRef.current);
       if (
-        currentWorkspaceAccountGeneration() !== issuedGeneration
+        0 !== issuedGeneration
         || workspaceCatalogIdentityRef.current !== issuedIdentity
       ) return;
       if ('error' in result) {
@@ -595,12 +571,12 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
       setConfirmDeleteId(null);
       await refresh();
       if (
-        currentWorkspaceAccountGeneration() !== issuedGeneration
+        0 !== issuedGeneration
         || workspaceCatalogIdentityRef.current !== issuedIdentity
       ) return;
       await onSkillsRefresh?.();
       if (
-        currentWorkspaceAccountGeneration() !== issuedGeneration
+        0 !== issuedGeneration
         || workspaceCatalogIdentityRef.current !== issuedIdentity
       ) return;
       setBodyById((cur) => {

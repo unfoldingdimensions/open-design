@@ -7,20 +7,6 @@ import type {
   TrackingDesignSystemStatusValue,
 } from '@capydesign/contracts/analytics';
 import { useI18n } from '../i18n';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import {
-  beginWorkspaceResourceScopedRead,
-  beginWorkspaceScopedRead,
-  resolveWorkspaceResourceReadIdentity,
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-  workspaceResourceReadIdentityKey,
-  type WorkspaceResourceReadIdentity,
-} from '../collab/workspace-identity';
-import {
-  useWorkspaceInvalidation,
-} from '../collab/workspace-events';
-import { useWorkspaceSnapshotActivation } from '../collab/workspace-snapshot-activation';
 import {
   workspaceContextHasTeamIdentity,
   type WorkspaceCollabContext,
@@ -197,10 +183,10 @@ export function DesignSystemsTab({
   // The 团队 collection is a team-workspace surface (B's resource plane is
   // team-only): signed-out / personal-workspace users get no team tab, and a
   // sign-out while on it falls back to 你的体系 (#5517 signed-out form).
-  const workspaceState = useWorkspaceContext();
+  const workspaceState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const { context: workspaceContext } = workspaceState;
-  const resourceReadIdentity = resolveWorkspaceResourceReadIdentity(workspaceState);
-  const workspaceDimensions = workspaceAnalyticsDimensions(workspaceContext);
+  const resourceReadIdentity = null;
+  const workspaceDimensions = undefined;
   const workspaceContextRef = useRef(workspaceContext);
   workspaceContextRef.current = workspaceContext;
   const systemsRef = useRef(systems);
@@ -208,7 +194,7 @@ export function DesignSystemsTab({
   const isActiveRef = useRef(isActive);
   isActiveRef.current = isActive;
   const teamSharedStaleRef = useRef(false);
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+  const workspaceIdentity = 'none';
   // Gate on TEAM IDENTITY — the same predicate the daemon uses to accept a hub
   // share (workspaceContextHasTeamIdentity; see team-resource-share.ts) — NOT on
   // the billing plan. A team on a free/unpaid tier (trial, lapsed, or billing not
@@ -424,10 +410,10 @@ export function DesignSystemsTab({
     options: { refreshSystems?: boolean; invalidate?: boolean; fresh?: boolean } = {},
   ) => {
     const requestGeneration = ++teamSharedRequestGenerationRef.current;
-    const read = beginWorkspaceScopedRead(workspaceContextRef.current);
+    const read = ({ context: null, isStillCurrent: () => true });
     if (!read.context || !workspaceContextHasTeamIdentity(read.context)) {
       setTeamSharedState({
-        workspaceIdentity: workspaceIdentityCacheKey(read.context),
+        workspaceIdentity: 'none',
         ids: new Set(),
         meta: new Map(),
       });
@@ -439,12 +425,12 @@ export function DesignSystemsTab({
       // ACTIVE workspace's shared set, so a constant key let a switch that
       // landed inside the in-flight/TTL window serve the previous workspace's
       // ids to the new one.
-      const scopedWorkspaceIdentity = workspaceIdentityCacheKey(context);
+      const scopedWorkspaceIdentity = 'none';
       const cacheKey = `workspace-design-systems-team:${scopedWorkspaceIdentity}`;
       const readTeamIndex = async () => {
         const res = await fetch('/api/workspace/design-systems/team', {
           cache: 'no-store',
-          headers: workspaceProjectHeaders(context),
+          headers: {},
         });
         if (!res.ok) throw new Error(`design-systems-team ${res.status}`);
         return (await res.json()) as { ids?: unknown; resources?: unknown };
@@ -507,39 +493,9 @@ export function DesignSystemsTab({
     void refreshTeamShared();
   }, [isActive, refreshTeamShared]);
 
-  const handleTeamIndexStreamActive = useWorkspaceSnapshotActivation({
-    enabled: isActive && hasTeamWorkspace,
-    identity: workspaceIdentity,
-    // The active-mount read above is the initial exact-scope snapshot. Join it
-    // when stream activation lands concurrently; real change events still use
-    // `invalidate: true` below and therefore supersede any older snapshot.
-    refresh: () => { void refreshTeamShared(); },
-  });
+  const handleTeamIndexStreamActive = (() => {});
 
-  useWorkspaceInvalidation(
-    {
-      'team-resources-changed': (payload) => {
-        if (payload.resourceKind !== 'design_system') return;
-        if (!isActiveRef.current) {
-          teamSharedStaleRef.current = true;
-          return;
-        }
-        void refreshTeamShared({ invalidate: true });
-      },
-    },
-    {
-      workspaceContext: hasTeamWorkspace ? workspaceContext : null,
-      enabled: hasTeamWorkspace,
-      onActive: () => {
-        if (!isActiveRef.current) {
-          teamSharedStaleRef.current = true;
-          return;
-        }
-        teamSharedStaleRef.current = false;
-        handleTeamIndexStreamActive();
-      },
-    },
-  );
+  void 0;
 
   useEffect(() => {
     if (!isActive) return;
@@ -573,7 +529,7 @@ export function DesignSystemsTab({
     try {
       const res = await fetch(`/api/workspace/design-systems/${encodeURIComponent(system.id)}/share`, {
         method: 'POST',
-        headers: workspaceProjectHeaders(context),
+        headers: {},
       });
       const body = (await res.json().catch(() => ({}))) as { shared?: boolean };
       if (res.ok && body.shared) {
@@ -614,7 +570,7 @@ export function DesignSystemsTab({
     try {
       const res = await fetch(`/api/workspace/design-systems/${encodeURIComponent(system.id)}/share`, {
         method: 'DELETE',
-        headers: workspaceProjectHeaders(context),
+        headers: {},
       });
       const body = (await res.json().catch(() => ({}))) as { unshared?: boolean };
       if (res.ok && body.unshared) {
@@ -1145,7 +1101,7 @@ function useProjectLogoSrc(
   projectId: string | undefined,
   resourceReadIdentity: WorkspaceResourceReadIdentity | null,
 ): string | null | undefined {
-  const resourceReadIdentityKey = workspaceResourceReadIdentityKey(resourceReadIdentity);
+  const resourceReadIdentityKey = 'none';
   const resourceReadIdentityRef = useRef(resourceReadIdentity);
   resourceReadIdentityRef.current = resourceReadIdentity;
   const [src, setSrc] = useState<string | null | undefined>(projectId ? undefined : null);
@@ -1155,7 +1111,7 @@ function useProjectLogoSrc(
       return;
     }
     let cancelled = false;
-    const read = beginWorkspaceResourceScopedRead(resourceReadIdentityRef.current);
+    const read = ({ context: null, isStillCurrent: () => true });
     setSrc(undefined);
     void fetchProjectFileText(projectId, 'brand.json', {
       cache: 'no-store',
@@ -1328,11 +1284,11 @@ function DesignSystemDetail({
   canUnshareFromTeam,
   unsharing,
 }: DetailProps) {
-  const resourceReadIdentityKey = workspaceResourceReadIdentityKey(resourceReadIdentity);
+  const resourceReadIdentityKey = 'none';
   const resourceReadIdentityRef = useRef(resourceReadIdentity);
   resourceReadIdentityRef.current = resourceReadIdentity;
   const resourceReadContext = resourceReadIdentity?.context ?? null;
-  const detailWorkspaceDimensions = workspaceAnalyticsDimensions(workspaceContext);
+  const detailWorkspaceDimensions = undefined;
   const isUser = isUserSystem(system);
   const detailResourceScope: TrackingWorkspaceScope =
     system.teamSynced || isTeamShared ? 'team' : isUser ? 'personal' : 'official';
@@ -1377,7 +1333,7 @@ function DesignSystemDetail({
   // palette) re-read too.
   useEffect(() => {
     let cancelled = false;
-    const read = beginWorkspaceResourceScopedRead(resourceReadIdentityRef.current);
+    const read = ({ context: null, isStillCurrent: () => true });
     const isNewSelection = lastSystemIdRef.current !== system.id;
     lastSystemIdRef.current = system.id;
     if (isNewSelection) {

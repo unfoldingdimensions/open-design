@@ -342,7 +342,7 @@ export function HandoffButton({
   onRequestRevealInFinder,
 }: Props) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   // One-liner so every hand-off interaction emits the same
   // `ui_click` / `area=handoff` shape; callers pass only what varies. The
   // active-artifact context is attached to every event so handoff slices line

@@ -59,7 +59,7 @@ export function ProjectCreationPendingView({
   // Same registry ProjectView uses, so WorkspaceTabsBar portals the real strip
   // above the chat card here too and the chrome row stays collapsed across the
   // hand-off instead of rising for one frame.
-  const tabsDockRef = useWorkspaceTabsDockRef();
+  const tabsDockRef = ({ current: null });
 
   const cards = useMemo<PendingAttachmentCard[]>(() => {
     const staged = files ?? [];

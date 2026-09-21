@@ -97,16 +97,6 @@ import {
   forceSharedCancellableGet,
   sharedCancellableGet,
 } from '../lib/shared-cancellable-get';
-import { workspaceProjectHeaders } from '../state/projects';
-import {
-  appendResourceQuery,
-  workspaceIdentityCacheKey,
-  workspaceResourceUrl,
-  workspaceAccountScopedCacheKey,
-  currentWorkspaceAccountGeneration,
-} from '../collab/workspace-identity';
-import { PublicFilePublishError } from '../collab/public-file-publish';
-
 /**
  * `coalescedGet` ttl for reads that may only JOIN a request still on the wire.
  *
@@ -281,7 +271,7 @@ export async function fetchSkills(
   try {
     const resp = await fetch(
       '/api/skills',
-      workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+      workspaceContext ? { headers: {} } : undefined,
     );
     if (!resp.ok) return [];
     const json = (await resp.json()) as { skills: SkillSummary[] };
@@ -299,7 +289,7 @@ export async function fetchProjectMediaTasks(
     `/api/projects/${encodeURIComponent(projectId)}/media/tasks?includeDone=1`,
     {
       cache: 'no-store',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     },
   );
   if (!resp.ok) throw new Error(`media tasks ${resp.status}`);
@@ -421,7 +411,7 @@ async function readSkillOperationError(resp: Response): Promise<SkillImportError
       ? payload.error
       : null;
     const rawCode = envelope?.code ?? payload.code;
-    const boundedCode = boundedRequestErrorCode(rawCode);
+    const boundedCode = (rawCode as string | undefined);
     const rawMessage = envelope?.message
       ?? payload.message
       ?? (typeof payload.error === 'string' ? payload.error : undefined);
@@ -451,7 +441,7 @@ export async function importSkill(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     });
@@ -496,7 +486,7 @@ export async function updateSkill(
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     });
@@ -535,7 +525,7 @@ export async function fetchSkillFiles(
   try {
     const resp = await fetch(
       `/api/skills/${encodeURIComponent(id)}/files`,
-      workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+      workspaceContext ? { headers: {} } : undefined,
     );
     if (!resp.ok) return [];
     const json = (await resp.json()) as { files: SkillFileEntry[] };
@@ -557,7 +547,7 @@ export async function deleteSkill(
   try {
     const resp = await fetch(`/api/skills/${encodeURIComponent(id)}`, {
       method: 'DELETE',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     if (!resp.ok) {
       const payload = (await resp.json().catch(() => null)) as
@@ -587,7 +577,7 @@ export async function fetchSkill(
   try {
     const resp = await fetch(
       `/api/skills/${encodeURIComponent(id)}`,
-      workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+      workspaceContext ? { headers: {} } : undefined,
     );
     if (!resp.ok) return null;
     return (await resp.json()) as SkillDetail;
@@ -661,11 +651,11 @@ async function materializeTeamDesignSystems(
     // post-boundary reader — that would stamp the new account's rows with the
     // previous account's Team-share flags.
     const cacheKey = `design-system-team-materialization:`
-      + `${workspaceAccountScopedCacheKey(workspaceContext, accountGeneration)}`;
+      + `${'0:none'}`;
     const readTeamIndex = async () => {
       const response = await fetch('/api/workspace/design-systems/team', {
         cache: 'no-store',
-        headers: workspaceProjectHeaders(workspaceContext),
+        headers: {},
       });
       if (!response.ok) {
         throw new Error(`design-systems-team ${response.status}`);
@@ -757,7 +747,7 @@ async function readDesignSystemCatalog(
   // settled-result reuse, not a post-boundary reader joining a request issued
   // before the boundary.
   const cacheKey = `design-system-catalog:${designSystemCatalogMutationGeneration}`
-    + `:${workspaceAccountScopedCacheKey(workspaceContext, accountGeneration)}`;
+    + `:${'0:none'}`;
   // Same rule as the Team index above: a forced call is an authoritative read
   // for one mutation and must never join a snapshot issued before it.
   //
@@ -774,7 +764,7 @@ async function readDesignSystemCatalog(
   }
   return coalescedGet(cacheKey, async () => {
     const resp = await fetch('/api/design-systems', {
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     // Throw rather than return a sentinel: `coalescedGet` never caches a
     // failure, so the next reader retries instead of joining a dead entry.
@@ -804,7 +794,7 @@ export async function fetchDesignSystemsResult(
   // coalescing — each of those readers had it when every call made its own
   // request — and closing it means giving those three readers a generation
   // guard, which is its own change.
-  const accountGeneration = currentWorkspaceAccountGeneration();
+  const accountGeneration = 0;
   try {
     const teamSharedIds = await materializeTeamDesignSystems(
       workspaceContext,
@@ -840,7 +830,7 @@ export async function fetchDesignSystem(
     // reflected the next time the manager / a consumer re-reads the system.
     const resp = await fetch(`/api/design-systems/${encodeURIComponent(id)}`, {
       cache: 'no-store',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     if (!resp.ok) return null;
     return parseDesignSystemDetail(await resp.json());
@@ -856,7 +846,7 @@ export async function fetchDesignSystemFiles(
   try {
     const resp = await fetch(
       `/api/design-systems/${encodeURIComponent(id)}/files`,
-      workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+      workspaceContext ? { headers: {} } : undefined,
     );
     if (!resp.ok) return [];
     const json = (await resp.json()) as { files: DesignSystemFileSummary[] };
@@ -874,7 +864,7 @@ export async function fetchDesignSystemFile(
   try {
     const resp = await fetch(
       `/api/design-systems/${encodeURIComponent(id)}/file?path=${encodeURIComponent(filePath)}`,
-      workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+      workspaceContext ? { headers: {} } : undefined,
     );
     if (!resp.ok) return null;
     const json = (await resp.json()) as { file?: DesignSystemFileDetail };
@@ -891,7 +881,7 @@ export async function ensureDesignSystemWorkspace(
   try {
     const resp = await fetch(`/api/design-systems/${encodeURIComponent(id)}/workspace`, {
       method: 'POST',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     if (!resp.ok) return null;
     return (await resp.json()) as { project: Project; files: ProjectFile[] };
@@ -927,7 +917,7 @@ export async function createDesignSystemDraft(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     });
@@ -948,7 +938,7 @@ export async function startDesignSystemGenerationJob(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     });
@@ -967,7 +957,7 @@ export async function fetchDesignSystemGenerationJob(
   try {
     const url = `/api/design-systems/generation-jobs/${encodeURIComponent(id)}`;
     const resp = workspaceContext
-      ? await fetch(url, { headers: workspaceProjectHeaders(workspaceContext) })
+      ? await fetch(url, { headers: {} })
       : await fetch(url);
     if (!resp.ok) return null;
     const json = (await resp.json()) as { job?: DesignSystemGenerationJob };
@@ -986,7 +976,7 @@ export async function fetchProjectDesignSystemPackageAudit(
       `/api/projects/${encodeURIComponent(projectId)}/design-system-package-audit`,
       {
         cache: 'no-store',
-        ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+        ...(workspaceContext ? { headers: {} } : {}),
       },
     );
     if (!resp.ok) return null;
@@ -1004,7 +994,7 @@ export async function fetchDesignSystemRevisions(
   try {
     const url = `/api/design-systems/${encodeURIComponent(id)}/revisions`;
     const resp = workspaceContext
-      ? await fetch(url, { headers: workspaceProjectHeaders(workspaceContext) })
+      ? await fetch(url, { headers: {} })
       : await fetch(url);
     if (!resp.ok) return [];
     const json = (await resp.json()) as { revisions?: DesignSystemRevision[] };
@@ -1027,7 +1017,7 @@ export async function updateDesignSystemRevisionStatus(
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify({ status }),
       },
@@ -1051,7 +1041,7 @@ export async function startDesignSystemRevisionJob(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     });
@@ -1073,7 +1063,7 @@ export async function startDesignSystemTokenContractRebuildJob(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     });
@@ -1094,7 +1084,7 @@ export async function updateDesignSystemDraft(
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     });
@@ -1125,7 +1115,7 @@ export async function syncDesignSystemAssetsFromWorkspace(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
     });
     if (!resp.ok) return null;
@@ -1157,7 +1147,7 @@ export async function deleteDesignSystemDraft(
       {
         method: 'DELETE',
         ...(workspaceContext
-          ? { headers: workspaceProjectHeaders(workspaceContext) }
+          ? { headers: {} }
           : {}),
       },
     );
@@ -1777,7 +1767,7 @@ export async function fetchSkillExample(
   try {
     const url = `/api/skills/${encodeURIComponent(id)}/example`;
     const resp = workspaceContext
-      ? await fetch(url, { headers: workspaceProjectHeaders(workspaceContext) })
+      ? await fetch(url, { headers: {} })
       : await fetch(url);
     if (!resp.ok) {
       if (resp.status === 404) {
@@ -1851,12 +1841,12 @@ export async function fetchProjectDeployments(
   // read settles keeps the popover's on-demand refresh a real request — it
   // exists precisely to observe a deploy that happened since the mount read.
   return coalescedGet(
-    `project-deployments:${projectId}:${workspaceIdentityCacheKey(workspaceContext)}`,
+    `project-deployments:${projectId}:${'none'}`,
     async () => {
       try {
         const resp = await fetch(
           `/api/projects/${encodeURIComponent(projectId)}/deployments`,
-          workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+          workspaceContext ? { headers: {} } : undefined,
         );
         if (!resp.ok) return [];
         const json = (await resp.json()) as ProjectDeploymentsResponse;
@@ -1887,7 +1877,7 @@ export async function deployProjectFile(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+      ...(workspaceContext ? {} : {}),
     },
     body: JSON.stringify(body),
   });
@@ -1950,7 +1940,7 @@ export async function publishProjectFilePublic(
     `/api/projects/${encodeURIComponent(projectId)}/files/${encodeURIComponent(fileName)}/publish-public`,
     {
       method: 'POST',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     },
   );
   if (!resp.ok) {
@@ -1998,7 +1988,7 @@ export async function fetchProjectFilePublicPublication(
 ): Promise<WebPublicProjectFileResponse | null> {
   const resp = await fetch(
     `/api/projects/${encodeURIComponent(projectId)}/files/${encodeURIComponent(fileName)}/publish-public`,
-    workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+    workspaceContext ? { headers: {} } : undefined,
   );
   if (!resp.ok) {
     const payload = (await resp.json().catch(() => null)) as
@@ -2028,7 +2018,7 @@ export async function unpublishProjectFilePublic(
       method: 'DELETE',
       headers: {
         'content-type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({ slug }),
     },
@@ -2057,7 +2047,7 @@ export async function checkDeploymentLink(
     `/api/projects/${encodeURIComponent(projectId)}/deployments/${encodeURIComponent(deploymentId)}/check-link`,
     {
       method: 'POST',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     },
   );
   if (!resp.ok) {
@@ -2093,7 +2083,7 @@ function projectFilesCacheKey(
   projectId: string,
   workspaceContext?: WorkspaceCollabContext | null,
 ): string {
-  return `project-files:${projectId}:${workspaceIdentityCacheKey(workspaceContext)}`;
+  return `project-files:${projectId}:${'none'}`;
 }
 
 const projectFilesCacheGenerations = new Map<string, number>();
@@ -2145,7 +2135,7 @@ export async function fetchProjectFiles(
           // read must reach the daemon instead of reusing a browser/proxy 200.
           cache: 'no-store',
           ...(options?.workspaceContext
-            ? { headers: workspaceProjectHeaders(options.workspaceContext) }
+            ? { headers: {} }
             : {}),
         });
         if (!resp.ok) {
@@ -2201,7 +2191,7 @@ export async function fetchProjectDesignTokenSuggestions(
   try {
     const resp = await fetch(`/api/projects/${encodeURIComponent(projectId)}/design-token-suggestions?${params.toString()}`, {
       cache: 'no-store',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     if (!resp.ok) return [];
     const json = (await resp.json()) as { suggestions?: ProjectDesignTokenSuggestion[] };
@@ -2219,12 +2209,12 @@ export async function fetchProjectFolders(
   // two readers may only share a request that carries the same Workspace
   // headers, or one identity's answer could satisfy another's read.
   return coalescedGet(
-    `project-folders:${projectId}:${workspaceIdentityCacheKey(workspaceContext)}`,
+    `project-folders:${projectId}:${'none'}`,
     async () => {
       try {
         const resp = await fetch(
           `/api/projects/${encodeURIComponent(projectId)}/folders`,
-          workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+          workspaceContext ? { headers: {} } : undefined,
         );
         if (!resp.ok) return [];
         const json = (await resp.json()) as { folders?: ProjectFolder[] };
@@ -2247,7 +2237,7 @@ export async function createProjectFolder(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({ name }),
     });
@@ -2269,7 +2259,7 @@ export async function deleteProjectFolder(
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({ path: folderPath }),
     });
@@ -2290,14 +2280,11 @@ export async function fetchLiveArtifacts(
 ): Promise<LiveArtifactSummary[]> {
   const run = async () => {
     try {
-      const url = workspaceResourceUrl(
-        `/api/live-artifacts?projectId=${encodeURIComponent(projectId)}`,
-        options?.workspaceContext,
-      );
+      const url = `/api/live-artifacts?projectId=${encodeURIComponent(projectId)}`;
       const resp = await fetch(url, {
         ...(options?.signal ? { signal: options.signal } : {}),
         ...(options?.workspaceContext
-          ? { headers: workspaceProjectHeaders(options.workspaceContext) }
+          ? { headers: {} }
           : {}),
       });
       if (!resp.ok) return [];
@@ -2316,7 +2303,7 @@ export async function fetchLiveArtifacts(
   // during a reopen.
   if (options?.signal) return run();
   return coalescedGet(
-    `live-artifacts:${workspaceIdentityCacheKey(options?.workspaceContext)}:${projectId}`,
+    `live-artifacts:${'none'}:${projectId}`,
     run,
   );
 }
@@ -2329,7 +2316,7 @@ export async function fetchLiveArtifact(
   try {
     const resp = await fetch(
       liveArtifactDetailUrl(projectId, artifactId, workspaceContext),
-      workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+      workspaceContext ? { headers: {} } : undefined,
     );
     if (!resp.ok) return null;
     const json = (await resp.json()) as {
@@ -2370,13 +2357,10 @@ export async function refreshLiveArtifact(
   let resp: Response;
   try {
     resp = await fetch(
-      workspaceResourceUrl(
-        `/api/live-artifacts/${encodeURIComponent(artifactId)}/refresh?projectId=${encodeURIComponent(projectId)}`,
-        workspaceContext,
-      ),
+      `/api/live-artifacts/${encodeURIComponent(artifactId)}/refresh?projectId=${encodeURIComponent(projectId)}`,
       {
         method: 'POST',
-        ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+        ...(workspaceContext ? { headers: {} } : {}),
       },
     );
   } catch (error) {
@@ -2401,11 +2385,8 @@ export async function fetchLiveArtifactRefreshes(
 ): Promise<LiveArtifactRefreshLogEntry[]> {
   try {
     const resp = await fetch(
-      workspaceResourceUrl(
-        `/api/live-artifacts/${encodeURIComponent(artifactId)}/refreshes?projectId=${encodeURIComponent(projectId)}`,
-        workspaceContext,
-      ),
-      workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+      `/api/live-artifacts/${encodeURIComponent(artifactId)}/refreshes?projectId=${encodeURIComponent(projectId)}`,
+      workspaceContext ? { headers: {} } : undefined,
     );
     if (!resp.ok) return [];
     const json = (await resp.json()) as { refreshes?: LiveArtifactRefreshLogEntry[] };
@@ -2427,15 +2408,12 @@ export async function updateLiveArtifact(
   let resp: Response;
   try {
     resp = await fetch(
-      workspaceResourceUrl(
-        `/api/live-artifacts/${encodeURIComponent(artifactId)}?projectId=${encodeURIComponent(projectId)}`,
-        workspaceContext,
-      ),
+      `/api/live-artifacts/${encodeURIComponent(artifactId)}?projectId=${encodeURIComponent(projectId)}`,
       {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify(input),
       },
@@ -2465,13 +2443,10 @@ export async function deleteLiveArtifact(
 ): Promise<boolean> {
   try {
     const resp = await fetch(
-      workspaceResourceUrl(
-        `/api/live-artifacts/${encodeURIComponent(artifactId)}?projectId=${encodeURIComponent(projectId)}`,
-        workspaceContext,
-      ),
+      `/api/live-artifacts/${encodeURIComponent(artifactId)}?projectId=${encodeURIComponent(projectId)}`,
       {
         method: 'DELETE',
-        ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+        ...(workspaceContext ? { headers: {} } : {}),
       },
     );
     return resp.ok;
@@ -2498,10 +2473,7 @@ export function liveArtifactDetailUrl(
   artifactId: string,
   workspaceContext?: WorkspaceCollabContext | null,
 ): string {
-  return workspaceResourceUrl(
-    `/api/live-artifacts/${encodeURIComponent(artifactId)}?projectId=${encodeURIComponent(projectId)}`,
-    workspaceContext,
-  );
+  return `/api/live-artifacts/${encodeURIComponent(artifactId)}?projectId=${encodeURIComponent(projectId)}`;
 }
 
 export type LiveArtifactPreviewVariant = 'rendered' | 'template' | 'rendered-source';
@@ -2512,13 +2484,10 @@ export function liveArtifactPreviewUrl(
   variant: LiveArtifactPreviewVariant = 'rendered',
   workspaceContext?: WorkspaceCollabContext | null,
 ): string {
-  const baseUrl = workspaceResourceUrl(
-    `/api/live-artifacts/${encodeURIComponent(artifactId)}/preview?projectId=${encodeURIComponent(projectId)}`,
-    workspaceContext,
-  );
+  const baseUrl = `/api/live-artifacts/${encodeURIComponent(artifactId)}/preview?projectId=${encodeURIComponent(projectId)}`;
   return variant === 'rendered'
     ? baseUrl
-    : appendResourceQuery(baseUrl, `variant=${encodeURIComponent(variant)}`);
+    : (baseUrl + (baseUrl.includes('?') ? '&' : '?') + `variant=${encodeURIComponent(variant)}`.replace(/^[?&]+/, ''));
 }
 
 export async function fetchLiveArtifactCode(
@@ -2532,7 +2501,7 @@ export async function fetchLiveArtifactCode(
       liveArtifactPreviewUrl(projectId, artifactId, variant, workspaceContext),
       {
         cache: 'no-store',
-        ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+        ...(workspaceContext ? { headers: {} } : {}),
       },
     );
     if (!resp.ok) return null;
@@ -2661,7 +2630,7 @@ export async function fetchProjectFilePreview(
     const resp = await fetch(
       `/api/projects/${encodeURIComponent(projectId)}/files/${encodeURIComponent(name)}/preview`,
       workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : undefined,
     );
     if (!resp.ok) return null;
@@ -2691,7 +2660,7 @@ export async function fetchProjectFileText(
   if (options?.cache) init.cache = options.cache;
   if (options?.signal) init.signal = options.signal;
   if (options?.workspaceContext) {
-    init.headers = workspaceProjectHeaders(options.workspaceContext);
+    init.headers = {};
   }
 
   try {
@@ -2750,7 +2719,7 @@ export async function fetchProjectFileTextPreview(
     const resp = await fetch(url, {
       cache: 'no-store',
       ...(options?.workspaceContext
-        ? { headers: workspaceProjectHeaders(options.workspaceContext) }
+        ? { headers: {} }
         : {}),
     });
     if (!resp.ok) {
@@ -2801,7 +2770,7 @@ export async function fetchProjectFileVersions(
   try {
     const resp = await fetch(projectFileVersionsUrl(projectId, name), {
       cache: 'no-store',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     if (!resp.ok) return null;
     return (await resp.json()) as ProjectFileVersionsResponse;
@@ -2821,7 +2790,7 @@ export async function fetchProjectFileVersion(
       `${projectFileVersionsUrl(projectId, name)}/${encodeURIComponent(versionId)}`,
       {
         cache: 'no-store',
-        ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+        ...(workspaceContext ? { headers: {} } : {}),
       },
     );
     if (!resp.ok) return null;
@@ -2844,7 +2813,7 @@ export async function restoreProjectFileVersion(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify({}),
       },
@@ -2867,7 +2836,7 @@ export async function fetchPreviewComments(
       `/api/projects/${encodeURIComponent(projectId)}/conversations/${encodeURIComponent(conversationId)}/comments`,
       {
         headers: workspaceContext
-          ? workspaceProjectHeaders(workspaceContext)
+          ? {}
           : undefined,
       },
     );
@@ -2900,7 +2869,7 @@ export async function upsertPreviewComment(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify(input),
       },
@@ -2927,7 +2896,7 @@ export async function patchPreviewCommentStatus(
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify({ status }),
       },
@@ -2967,7 +2936,7 @@ export async function patchPreviewCommentSortKey(
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify({ sortKey }),
       },
@@ -2991,7 +2960,7 @@ export async function deletePreviewComment(
       `/api/projects/${encodeURIComponent(projectId)}/conversations/${encodeURIComponent(conversationId)}/comments/${encodeURIComponent(commentId)}`,
       {
         method: 'DELETE',
-        headers: workspaceContext ? workspaceProjectHeaders(workspaceContext) : undefined,
+        headers: workspaceContext ? {} : undefined,
       },
     );
     return resp.ok;
@@ -3039,7 +3008,7 @@ export async function writeProjectTextFileDetailed(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({
         name,
@@ -3083,7 +3052,7 @@ export async function writeProjectBase64File(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({ name, content: base64, encoding: 'base64' }),
     });
@@ -3108,7 +3077,7 @@ export async function uploadProjectFile(
     if (desiredName) form.append('name', desiredName);
     const resp = await fetch(`/api/projects/${encodeURIComponent(projectId)}/files`, {
       method: 'POST',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
       body: form,
     });
     if (!resp.ok) return null;
@@ -3138,7 +3107,7 @@ export async function importProjectFigma(
     const resp = await fetch(`/api/projects/${encodeURIComponent(projectId)}/figma/import`, {
       method: 'POST',
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
       body: form,
     });
@@ -3207,7 +3176,7 @@ export async function uploadProjectFiles(
         `/api/projects/${encodeURIComponent(projectId)}/upload`,
         {
           method: 'POST',
-          ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+          ...(workspaceContext ? { headers: {} } : {}),
           body: form,
         },
       );
@@ -3286,10 +3255,7 @@ export function designSystemStaticUrl(
   filePath: string,
   workspaceContext?: WorkspaceCollabContext | null,
 ): string {
-  return workspaceResourceUrl(
-    `/api/design-systems/${encodeURIComponent(designSystemId)}/static?path=${encodeURIComponent(filePath)}`,
-    workspaceContext,
-  );
+  return `/api/design-systems/${encodeURIComponent(designSystemId)}/static?path=${encodeURIComponent(filePath)}`;
 }
 
 function looksLikeImage(name: string): boolean {
@@ -3306,7 +3272,7 @@ export async function deleteProjectFile(
       projectRawUrl(projectId, name, workspaceContext),
       {
         method: 'DELETE',
-        ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+        ...(workspaceContext ? { headers: {} } : {}),
       },
     );
     if (!resp.ok) return false;
@@ -3327,7 +3293,7 @@ export async function renameProjectFile(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+      ...(workspaceContext ? {} : {}),
     },
     body: JSON.stringify({ from, to }),
   });
@@ -3438,7 +3404,7 @@ export async function replaceProjectWorkingDir(
     headers['x-od-desktop-import-token'] = desktopImportToken;
   }
   if (workspaceContext) {
-    Object.assign(headers, workspaceProjectHeaders(workspaceContext));
+    Object.assign(headers, {});
   }
   const resp = await fetch(
     `/api/projects/${encodeURIComponent(projectId)}/working-dir`,
@@ -3483,7 +3449,7 @@ export async function openProjectInEditor(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({ editorId }),
     },
@@ -3501,11 +3467,8 @@ export async function fetchDesignSystemPreview(
 ): Promise<string | null> {
   try {
     const resp = await fetch(
-      workspaceResourceUrl(
-        `/api/design-systems/${encodeURIComponent(id)}/preview`,
-        workspaceContext,
-      ),
-      workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+      `/api/design-systems/${encodeURIComponent(id)}/preview`,
+      workspaceContext ? { headers: {} } : undefined,
     );
     if (!resp.ok) return null;
     return await resp.text();
@@ -3520,11 +3483,8 @@ export async function fetchDesignSystemShowcase(
 ): Promise<string | null> {
   try {
     const resp = await fetch(
-      workspaceResourceUrl(
-        `/api/design-systems/${encodeURIComponent(id)}/showcase`,
-        workspaceContext,
-      ),
-      workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+      `/api/design-systems/${encodeURIComponent(id)}/showcase`,
+      workspaceContext ? { headers: {} } : undefined,
     );
     if (!resp.ok) return null;
     return await resp.text();
@@ -3551,7 +3511,7 @@ export async function fetchPluginPreviewHtml(
   try {
     const url = `/api/plugins/${encodeURIComponent(id)}/preview`;
     const resp = workspaceContext
-      ? await fetch(url, { headers: workspaceProjectHeaders(workspaceContext) })
+      ? await fetch(url, { headers: {} })
       : await fetch(url);
     if (!resp.ok) {
       if (resp.status === 404) return { unavailable: true, kind: 'html' };
@@ -3576,7 +3536,7 @@ export async function fetchPluginExampleHtml(
     const url =
       `/api/plugins/${encodeURIComponent(pluginId)}/example/${encodeURIComponent(stem)}`;
     const resp = workspaceContext
-      ? await fetch(url, { headers: workspaceProjectHeaders(workspaceContext) })
+      ? await fetch(url, { headers: {} })
       : await fetch(url);
     if (!resp.ok) {
       if (resp.status === 404) return { unavailable: true, kind: 'html' };
@@ -3603,7 +3563,7 @@ export async function fetchPluginAssetText(
     const url =
       `/api/plugins/${encodeURIComponent(pluginId)}/asset/${encodePluginAssetPath(relpath)}`;
     const resp = workspaceContext
-      ? await fetch(url, { headers: workspaceProjectHeaders(workspaceContext) })
+      ? await fetch(url, { headers: {} })
       : await fetch(url);
     if (!resp.ok) return null;
     return await resp.text();
@@ -3630,7 +3590,7 @@ export async function installSkill(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(input),
     });
@@ -3654,7 +3614,7 @@ export async function uninstallSkill(
   try {
     const resp = await fetch(`/api/skills/${encodeURIComponent(id)}`, {
       method: 'DELETE',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     const json = await resp.json();
     if (!resp.ok) return { error: json.error ?? 'Uninstall failed' };
@@ -3690,7 +3650,7 @@ export async function uninstallDesignSystem(
     const resp = await fetch(`/api/design-systems/${encodeURIComponent(id)}`, {
       method: 'DELETE',
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     });
     // Success is decided by the status, not by a parsed body: this route can
@@ -3805,7 +3765,7 @@ export async function applyLibraryAsset(
       method: 'POST',
       headers: {
         'content-type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({
         projectId,

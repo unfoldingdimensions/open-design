@@ -16,7 +16,6 @@ import type {
   BrandSummary,
   WorkspaceCollabContext,
 } from '@capydesign/contracts';
-import { workspaceProjectHeaders } from '../state/projects';
 
 // One-shot cross-route handoff: the design-system id a navigation wants the
 // Design systems tab to preselect when it mounts. ProjectView's "design system
@@ -65,7 +64,7 @@ export async function finalizeBrandProject(
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({ projectId }),
     });

@@ -22,8 +22,6 @@ import {
 import { Button } from "@capydesign/components";
 import { navigate } from "../router";
 import { deleteProjectFile, projectFileUrl, uploadProjectFiles } from "../providers/registry";
-import { useProjectCollabContext } from "../collab/collab-context";
-import { workspaceProjectHeaders } from "../collab/workspace-identity";
 import {
   feedbackAgentProviderIdToTracking,
   modelIdForTracking,
@@ -218,7 +216,7 @@ function SkillPluginCandidateCard({
   onRequestOpenFile?: (name: string) => void;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const [busy, setBusy] = useState<null | "draft" | "contribute">(null);
   const [notice, setNotice] = useState<ActionNotice | null>(null);
   const disabled = !projectId || busy !== null;
@@ -233,7 +231,7 @@ function SkillPluginCandidateCard({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(body),
     });
@@ -649,7 +647,7 @@ function AssistantMessageImpl({
   nextStepVariant = 'default',
 }: Props) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const imageSrc = useCallback(
     (path: string) => projectId ? projectFileUrl(projectId, path, workspaceContext) : path,
     [projectId, workspaceContext],
@@ -3759,7 +3757,7 @@ function FormBlock({
   visualStyleContext?: VisualStyleContext;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const formKey =
     projectId && conversationId
       ? `${projectId}:${conversationId}:${assistantMessageId}:${form.id}`

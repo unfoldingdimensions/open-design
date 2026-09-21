@@ -52,10 +52,6 @@ import { LibraryPreviewModal } from './LibraryPreviewModal';
 import { LibraryUploadModal } from './LibraryUploadModal';
 import styles from './LibrarySection.module.css';
 import { useT } from '../i18n';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import { workspaceIdentityCacheKey } from '../collab/workspace-identity';
-import { resolveProjectWorkspaceContext } from '../collab/useProjectWorkspaceScope';
-
 type Translate = ReturnType<typeof useT>;
 
 interface Props {
@@ -498,8 +494,8 @@ const LibraryCard = memo(function LibraryCard({
 
 export function LibrarySection({ active, onOpenProject }: Props) {
   const t = useT();
-  const { context: workspaceContext } = useWorkspaceContext();
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+  const workspaceContext = null;
+  const workspaceIdentity = 'none';
   const [assets, setAssets] = useState<LibraryAsset[]>([]);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -837,11 +833,7 @@ export function LibrarySection({ active, onOpenProject }: Props) {
           setDsMenuOpen(false);
           return;
         }
-        const projectWorkspaceContext = await resolveProjectWorkspaceContext(
-          projectId,
-          mutationWorkspaceContext,
-          mutationWorkspaceContext?.workspaceId ?? null,
-        );
+        const projectWorkspaceContext = await null;
         const attachments: ChatAttachment[] = [];
         for (const a of chosen) {
           const res = await applyLibraryAsset(

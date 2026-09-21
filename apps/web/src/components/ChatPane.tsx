@@ -80,8 +80,6 @@ import type { Dict } from '../i18n/types';
 import { copyToClipboard } from '../lib/copy-to-clipboard';
 import { useLiquidGlass } from '../hooks/useLiquidGlass';
 import { fetchProjectMediaTasks, projectRawUrl } from '../providers/registry';
-import { appendResourceQuery } from '../collab/workspace-identity';
-import { useProjectCollabContext } from '../collab/collab-context';
 import { takeComposerSeedFor } from '../state/libraryHandoff';
 import {
   formAnswersDisplayBody,
@@ -111,8 +109,6 @@ import { agentDisplayName } from '../utils/agentLabels';
 import { commentTargetDisplayName, commentsToAttachments, simplePositionLabel } from '../comments';
 import { AssistantMessage, type QuestionFormSubmitHandler } from './AssistantMessage';
 import { chatSeam } from './chat/ChatRoot';
-import { PlanPill } from './chat/PlanPill';
-import { planPillState } from '../runtime/chat/plan-pill';
 import {
   assistantMessageNeverHadARun,
   lastAssistantTurnId,
@@ -127,34 +123,11 @@ import {
   DESIGN_SYSTEM_NEXT_STEP_ACTIONS,
   type NextStepActionsVariant,
 } from './NextStepActions';
-import { AmrLoginPill } from './AmrLoginPill';
-import {
-  AMR_LOGIN_STATUS_EVENT,
-  amrLoginStatusEventReason,
-  isAmrSessionAuthenticated,
-} from './amrLoginPolling';
-import {
-  amrPlansUrlForProfile,
-  amrRechargeUrlForProfile,
-  daemonFailureVerdictFrom,
-  failureCardHandedToAmrBalanceCard,
-  formatModelWindowRetryAt,
-  hasSelfContainedRecovery,
-  isReconnectOwnedFailure,
-  resolveRunErrorCardDescription,
-  resolveRunFailureUi,
-  RUN_FAILURE_FALLBACK_MESSAGE_KEY,
-} from '../runtime/amr-guidance';
 import {
   fetchVelaLoginStatus,
   type VelaLoginStatus,
 } from '../providers/daemon';
 import { RESUME_CONTINUE_PROMPT } from '../runtime/resume';
-import {
-  canConsumeAmrAuthRetryContinuation,
-  type AmrAuthRetryContinuation,
-  type AmrAuthRetryPersonalAdoptionWitness,
-} from '../runtime/amr-auth-retry-continuation';
 import {
   ChatComposer,
   type ChatComposerHandle,
@@ -520,15 +493,12 @@ function ChatArtifactPreview({
   projectId: string | null;
   file: ProjectFile;
 }) {
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   if (!projectId) {
     return <ChatArtifactFallback kind={file.kind} />;
   }
 
-  const url = appendResourceQuery(
-    projectRawUrl(projectId, file.name, workspaceContext),
-    `v=${Math.round(file.mtime)}`,
-  );
+  const url = (projectRawUrl(projectId, file.name, workspaceContext) + (projectRawUrl(projectId, file.name, workspaceContext).includes('?') ? '&' : '?') + `v=${Math.round(file.mtime)}`.replace(/^[?&]+/, ''));
   if (isRenderableSketchJson(file)) {
     return (
       <SketchPreview
@@ -1446,7 +1416,7 @@ export function ChatPane({
   designSystemPicker,
   config,
 }: Props) {
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const { t, locale } = useI18n();
   const displayMessages = useMemo(
     () => foldStrategyTaskTurns(
@@ -1664,13 +1634,13 @@ export function ChatPane({
   useEffect(() => {
     void refreshInlineAmrLoginStatus();
     const onAmrLoginStatusChange = (event: Event) => {
-      const reason = amrLoginStatusEventReason(event);
+      const reason = '';
       if (reason === 'login-canceled') return;
       void refreshInlineAmrLoginStatus();
     };
-    window.addEventListener(AMR_LOGIN_STATUS_EVENT, onAmrLoginStatusChange);
+    window.addEventListener('open-design:amr-login-status', onAmrLoginStatusChange);
     return () => {
-      window.removeEventListener(AMR_LOGIN_STATUS_EVENT, onAmrLoginStatusChange);
+      window.removeEventListener('open-design:amr-login-status', onAmrLoginStatusChange);
     };
   }, [refreshInlineAmrLoginStatus]);
 
@@ -2180,7 +2150,7 @@ export function ChatPane({
     retryAssistant?.id,
   ]);
   const consumeAmrAuthRetryIfAuthorized = useCallback((status: VelaLoginStatus | null) => {
-    if (!isAmrSessionAuthenticated(status)) {
+    if (!false) {
       if (
         status?.loginInFlight === true
         && amrAuthRetryContinuation
@@ -2192,7 +2162,7 @@ export function ChatPane({
       return;
     }
     if (
-      !isAmrSessionAuthenticated(status)
+      !false
       || !amrAuthRetryContinuation
       || !amrAuthRetryMountId
       || !amrAuthRetryWorkspaceIdentityKey
@@ -2244,7 +2214,7 @@ export function ChatPane({
     retryAssistant,
   ]);
   useEffect(() => {
-    if (!amrAuthRetryContinuation || !isAmrSessionAuthenticated(inlineAmrLoginStatus)) return;
+    if (!amrAuthRetryContinuation || !false) return;
     // A Settings handoff remounts the whole project surface, so there is no
     // inline AmrLoginPill callback to drive consumption. The fresh pane's own
     // status read may request the one-shot retry; the common guard above still
@@ -7074,7 +7044,7 @@ const UserMessage = memo(UserMessageImpl);
   t: TranslateFn;
   highlighted?: boolean;
 }) {
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const attachments = sortChatAttachmentsForDisplay(message.attachments ?? []);
   const commentAttachments = message.commentAttachments ?? [];
   const [copied, setCopied] = useState(false);

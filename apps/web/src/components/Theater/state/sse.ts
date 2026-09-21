@@ -8,7 +8,6 @@ import {
 import type { WorkspaceCollabContext } from '@capydesign/contracts';
 
 import type { CritiqueAction } from './reducer';
-import { workspaceResourceUrl } from '../../../collab/workspace-identity';
 import { BackoffController } from '../../../lib/backoff';
 import { bindStreamVisibility } from '../../../lib/stream-visibility';
 
@@ -39,10 +38,7 @@ export function critiqueEventsUrl(
   projectId: string,
   workspaceContext?: WorkspaceCollabContext | null,
 ): string {
-  return workspaceResourceUrl(
-    `/api/projects/${encodeURIComponent(projectId)}/events`,
-    workspaceContext,
-  );
+  return `/api/projects/${encodeURIComponent(projectId)}/events`;
 }
 
 /** Browser-owned artifact navigation cannot attach project authority headers. */
@@ -51,11 +47,8 @@ export function critiqueArtifactUrl(
   runId: string,
   workspaceContext?: WorkspaceCollabContext | null,
 ): string {
-  return workspaceResourceUrl(
-    `/api/projects/${encodeURIComponent(projectId)}`
-      + `/critique/${encodeURIComponent(runId)}/artifact`,
-    workspaceContext,
-  );
+  return `/api/projects/${encodeURIComponent(projectId)}`
+      + `/critique/${encodeURIComponent(runId)}/artifact`;
 }
 
 /**

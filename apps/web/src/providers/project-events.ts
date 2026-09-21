@@ -12,10 +12,6 @@ import {
   type ProjectContentTransferStateSsePayload,
   type WorkspaceCollabContext,
 } from '@capydesign/contracts';
-import {
-  workspaceIdentityCacheKey,
-  workspaceResourceUrl,
-} from '../collab/workspace-identity';
 export interface ProjectFileChangeEvent {
   type: 'file-changed';
   path: string;
@@ -87,10 +83,7 @@ export function projectEventsUrl(
   projectId: string,
   workspaceContext?: WorkspaceCollabContext | null,
 ): string {
-  return workspaceResourceUrl(
-    `/api/projects/${encodeURIComponent(projectId)}/events`,
-    workspaceContext,
-  );
+  return `/api/projects/${encodeURIComponent(projectId)}/events`;
 }
 
 export interface ProjectEventsConnection {
@@ -364,7 +357,7 @@ export function useProjectFileEvents(
   }, [
     projectId,
     enabled,
-    workspaceIdentityCacheKey(workspaceContext),
+    'none',
     options.EventSourceCtor,
     options.initialBackoffMs,
     options.maxBackoffMs,

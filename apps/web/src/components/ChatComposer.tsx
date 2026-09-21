@@ -605,7 +605,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
     ref
   ) {
     const { locale, t } = useI18n();
-    const { workspaceContext } = useProjectCollabContext();
+    const workspaceContext = null;
     const activeFileContext =
       projectMetadata?.importedFrom === 'folder' && activeProjectFileName
         ? activeProjectFileName
@@ -4243,7 +4243,7 @@ function StagedRunContexts({
   onSkillDetails?: (id: string) => void;
   t: TranslateFn;
 }) {
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   return (
     <div
       className="staged-row staged-context-row"
@@ -4419,7 +4419,7 @@ export function StagedAttachmentTray({
   onRetryPending: (pendingId: string) => void;
   t: TranslateFn;
 }) {
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const rowRef = useRef<HTMLDivElement>(null);
   const { prev, next, page } = useStagedTrayNav(rowRef, cards.length);
   // 点缩略图看大图 —— 这是产品**已有**的能力,稿子那一格把卡画成了不可点的

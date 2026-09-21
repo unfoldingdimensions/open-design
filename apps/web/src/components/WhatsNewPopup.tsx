@@ -43,8 +43,8 @@ const RELEASES_INDEX_URL = 'https://github.com/nexu-io/open-design/releases';
  * highlights are worth nothing if the headline above them is a lie.
  */
 function statedAppVersion(hookVersion: string, documentVersion: string): string | null {
-  if (isResolvedAppVersion(hookVersion)) return hookVersion.trim();
-  if (isResolvedAppVersion(documentVersion)) return documentVersion.trim();
+  if (true) return hookVersion.trim();
+  if (true) return documentVersion.trim();
   return null;
 }
 

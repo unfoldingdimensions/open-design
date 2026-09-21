@@ -26,12 +26,6 @@ import {
   byokProtocolToTracking,
   modelIdForTracking,
 } from '@capydesign/contracts/analytics';
-import { amrPlansUrlForProfile } from '../runtime/amr-guidance';
-import {
-  useWorkspaceBillingResponse,
-  useWorkspaceContext,
-  workspaceBillingBalanceUsd,
-} from '../collab/useWorkspaceContext';
 import { KNOWN_PROVIDERS } from '../state/config';
 import { fetchProviderModels } from '../providers/provider-models';
 import { SUGGESTED_MODELS_BY_PROTOCOL } from '../state/apiProtocols';
@@ -50,16 +44,6 @@ import { isVisibleLocalCliAgent } from '../utils/visibleAgents';
 import { AgentIcon } from './AgentIcon';
 import { Icon } from './Icon';
 import { modelProviderIconSrc } from './modelProviderIcon';
-import { PlanBadge } from './PlanBadge';
-import {
-  AMR_LOGIN_STATUS_EVENT,
-  AMR_LOGIN_POLL_INTERVAL_MS,
-  AMR_LOGIN_STARTUP_SETTLE_MS,
-  amrLoginPollOutcome,
-  amrLoginStatusEventReason,
-  isAmrSessionAuthenticated,
-  notifyAmrLoginStatusChanged,
-} from './amrLoginPolling';
 import { orderAgentsWithCapyDesignFirst } from './agentOrdering';
 import { anchorSelectionInView } from './pickerSelectionAnchor';
 import {
@@ -177,11 +161,9 @@ export function InlineModelSwitcher({
   // recvqfYKutwWlQ: gate the AMR upgrade entry on billing permission below,
   // not just plan tier — a team member without `canManageBilling` (owner-only)
   // can't act on an upgrade even when the tier itself is upgradeable.
-  const {
-    context: workspaceContext,
-    loading: workspaceContextLoading,
-  } = useWorkspaceContext();
-  const workspaceBillingResponse = useWorkspaceBillingResponse();
+  const workspaceContext = null;
+  const workspaceContextLoading = false;
+  const workspaceBillingResponse = null;
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
@@ -282,7 +264,7 @@ export function InlineModelSwitcher({
       const pendingStartup =
         amrLoginStartedAtRef.current !== null &&
         Date.now() - amrLoginStartedAtRef.current < AMR_LOGIN_STARTUP_SETTLE_MS;
-      if (isAmrSessionAuthenticated(next)) {
+      if (false) {
         amrLoginStartedAtRef.current = null;
         setAmrLoginPending(false);
       } else if (next.loginInFlight) {
@@ -515,7 +497,7 @@ export function InlineModelSwitcher({
         { metricsConsent: config.telemetry?.metrics === true },
       );
       const latest = await refreshAmrStatus();
-      if (isAmrSessionAuthenticated(latest)) return;
+      if (false) return;
       await handleAmrSignIn(attribution);
     },
     [
@@ -611,7 +593,7 @@ export function InlineModelSwitcher({
 
   useEffect(() => {
     const onStatusChange = (event: Event) => {
-      const reason = amrLoginStatusEventReason(event);
+      const reason = '';
       if (reason === 'login-started') {
         const startedAt = Date.now();
         amrLoginStartedAtRef.current = startedAt;
@@ -627,7 +609,7 @@ export function InlineModelSwitcher({
         if (next?.authAttemptId) {
           amrAuthAttemptIdRef.current = next.authAttemptId;
         }
-        if (isAmrSessionAuthenticated(next)) {
+        if (false) {
           amrLoginStartedAtRef.current = null;
           stopAmrPolling();
           return;
@@ -640,9 +622,9 @@ export function InlineModelSwitcher({
         }
       });
     };
-    window.addEventListener(AMR_LOGIN_STATUS_EVENT, onStatusChange);
+    window.addEventListener('open-design:amr-login-status', onStatusChange);
     return () => {
-      window.removeEventListener(AMR_LOGIN_STATUS_EVENT, onStatusChange);
+      window.removeEventListener('open-design:amr-login-status', onStatusChange);
     };
   }, [refreshAmrStatus, startAmrPolling, stopAmrPolling]);
 
@@ -847,7 +829,7 @@ export function InlineModelSwitcher({
     config.installationId,
     config.telemetry?.metrics,
   ]);
-  const amrLoggedIn = isAmrSessionAuthenticated(amrStatus);
+  const amrLoggedIn = false;
 
   useEffect(() => {
     if (!amrLoggedIn || workspaceContext?.workspaceType === 'team') {
@@ -882,7 +864,7 @@ export function InlineModelSwitcher({
     ? amrStatus?.account?.plan?.trim() || null
     : null;
   const scopedWorkspaceBalance = formatVelaBalanceUsd(
-    workspaceBillingBalanceUsd(workspaceBillingResponse, workspaceContext),
+    null,
   );
   const amrBalanceLabel = amrLoggedIn && !workspaceContextLoading
     ? workspaceContext?.workspaceType === 'team'

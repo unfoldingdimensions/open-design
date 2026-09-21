@@ -27,10 +27,6 @@ import {
   printHostPdf,
 } from '@capydesign/host';
 import type { WorkspaceCollabContext } from '@capydesign/contracts';
-import {
-  workspaceProjectHeaders,
-  workspaceResourceUrl,
-} from '../collab/workspace-identity';
 import { sourceHasLegacyDeckScreenSlides } from './deck-slide-structure';
 
 // Re-exported so app components can gate desktop-only export paths without
@@ -100,7 +96,7 @@ export async function exportProjectAsHtml(opts: {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      ...(opts.workspaceContext ? workspaceProjectHeaders(opts.workspaceContext) : {}),
+      ...(opts.workspaceContext ? {} : {}),
     },
     body: JSON.stringify({
       fileName: opts.filePath,
@@ -798,7 +794,7 @@ export async function exportProjectAsPdf(opts: {
       headers: {
         'content-type': 'application/json',
         ...(opts.workspaceContext
-          ? workspaceProjectHeaders(opts.workspaceContext)
+          ? {}
           : {}),
       },
       method: 'POST',
@@ -890,7 +886,7 @@ export async function exportProjectAsZip(opts: {
       const url = `/api/projects/${encodeURIComponent(opts.projectId)}/export/${segments}?${query.toString()}`;
       const resp = opts.workspaceContext
         ? await fetch(url, {
-            headers: workspaceProjectHeaders(opts.workspaceContext),
+            headers: {},
           })
         : await fetch(url);
       if (!resp.ok) throw new Error(`version html export request failed (${resp.status})`);
@@ -909,7 +905,7 @@ export async function exportProjectAsZip(opts: {
   try {
     const resp = opts.workspaceContext
       ? await fetch(url, {
-          headers: workspaceProjectHeaders(opts.workspaceContext),
+          headers: {},
         })
       : await fetch(url);
     if (!resp.ok) throw new Error(`archive request failed (${resp.status})`);
@@ -978,7 +974,7 @@ export async function exportProjectAsPptx(opts: {
       headers: {
         'content-type': 'application/json',
         ...(opts.workspaceContext
-          ? workspaceProjectHeaders(opts.workspaceContext)
+          ? {}
           : {}),
       },
       body: JSON.stringify({
@@ -1152,7 +1148,7 @@ export async function exportProjectImageDataUrl(opts: {
       headers: {
         'content-type': 'application/json',
         ...(opts.workspaceContext
-          ? workspaceProjectHeaders(opts.workspaceContext)
+          ? {}
           : {}),
       },
       body: JSON.stringify({
@@ -1236,13 +1232,10 @@ export async function downloadDesignSystemArchive(opts: {
   fallbackTitle: string;
   workspaceContext?: WorkspaceCollabContext | null;
 }): Promise<boolean> {
-  const url = workspaceResourceUrl(
-    `/api/design-systems/${encodeURIComponent(opts.designSystemId)}/archive`,
-    opts.workspaceContext,
-  );
+  const url = `/api/design-systems/${encodeURIComponent(opts.designSystemId)}/archive`;
   try {
     const resp = opts.workspaceContext
-      ? await fetch(url, { headers: workspaceProjectHeaders(opts.workspaceContext) })
+      ? await fetch(url, { headers: {} })
       : await fetch(url);
     if (!resp.ok) throw new Error(`archive request failed (${resp.status})`);
     const blob = await resp.blob();
@@ -1267,7 +1260,7 @@ export async function downloadProjectArchive(opts: {
   try {
     const resp = opts.workspaceContext
       ? await fetch(url, {
-          headers: workspaceProjectHeaders(opts.workspaceContext),
+          headers: {},
         })
       : await fetch(url);
     if (!resp.ok) throw new Error(`archive request failed (${resp.status})`);

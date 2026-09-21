@@ -2,7 +2,6 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import { flushSync } from 'react-dom';
 import { AnimatePresence, motion, MotionConfig } from 'motion/react';
 import { Button } from '@capydesign/components';
-import { reportAgentDetectDiagnostics } from './analytics/agent-detect';
 import { deriveUploadCohort } from './analytics/upload-tracking';
 import { setPendingDesignSystemCreateEntry } from './analytics/ds-create-entry';
 import {
@@ -49,19 +48,11 @@ import {
   type ProjectNameAuthorityResolution,
 } from './components/ProjectView';
 import { ProjectCreationPendingView } from './components/ProjectCreationPendingView';
-import { AmrArtifactUpgradeGate } from './components/AmrArtifactUpgradeGate';
-import { AmrArtifactUpgradeHomeCard } from './components/AmrArtifactUpgradeHomeCard';
 import { ExperienceSurvey } from './components/ExperienceSurvey';
 import { TooltipLayer } from './components/TooltipLayer';
 import { UpdateDialog } from './components/UpdateDialog';
 import { UpdaterPopup } from './components/UpdaterPopup';
-import {
-  openWorkspaceTab,
-  removeWorkspaceProjectTabs,
-  WorkspaceTabsBar,
-} from './components/WorkspaceTabsBar';
 import { WorkspaceTopRightAccountCluster } from './components/EntryNavRail';
-import { ProjectWorkspaceRecoveryTip } from './components/ProjectWorkspaceRecoveryTip';
 import {
   DesignSystemCreationFlow,
   DesignSystemDetailView,
@@ -99,41 +90,6 @@ import {
   listProjectRuns,
   type VelaLoginStatus,
 } from './providers/daemon';
-import {
-  AMR_LOGIN_STATUS_EVENT,
-  amrLoginStatusEventReason,
-  isAmrSessionAuthenticated,
-} from './components/amrLoginPolling';
-import { CollabDemoView } from './collab/CollabDemoView';
-import {
-  WorkspaceMemberDirectoryPreloader,
-} from './collab/WorkspaceMemberDirectoryPreloader';
-import {
-  beginTeamProjectMetadataRefresh,
-  fetchTeamProjectCatalogEntry as fetchScopedTeamProjectCatalogEntry,
-  fetchTeamProjectsCatalog,
-} from './collab/team-projects-catalog';
-import { useWorkspaceInvalidation } from './collab/workspace-events';
-import { useWorkspaceSnapshotActivation } from './collab/workspace-snapshot-activation';
-import { workspaceProjectHeaders } from './collab/workspace-identity';
-import {
-  beginWorkspaceScopedRead,
-  currentWorkspaceAccountGeneration,
-  notifyWorkspaceContextRefresh,
-  resolveBoundProjectWorkspaceContext,
-  resolveCurrentWorkspaceContextReadWitness,
-  useWorkspaceBillingResponse,
-  useWorkspaceContext,
-  workspaceBillingSummaryForContext,
-  workspaceIdentityCacheKey,
-  workspaceResourceReadContext,
-} from './collab/useWorkspaceContext';
-import {
-  projectResourceReadsCanStart,
-  useProjectRouteWorkspaceContext,
-} from './collab/useProjectRouteWorkspaceContext';
-import { resolvePlanTier } from './collab/team-plan';
-import { deriveTabIdentityScope, UNSET_ACCOUNT_BUCKET } from './collab/tab-scope';
 import { CommunityView } from './components/CommunityView';
 import { seedHomeComposerPrompt } from './components/HomeView';
 import {
@@ -164,20 +120,6 @@ import { isMacPlatform } from './utils/platform';
 import { randomUUID } from './utils/uuid';
 import { summarizeProjectNameFromPrompt } from './utils/projectName';
 import { armCompletionFeedbackOnFirstGesture } from './utils/notifications';
-import {
-  amrArtifactUpgradeHomeMockOffer,
-  type AmrArtifactUpgradeHomeOffer,
-} from './runtime/amr-artifact-upgrade';
-import {
-  amrBalanceGateScopeForWorkspaceContext,
-  amrBalanceGateScopesMatch,
-  type AmrBalanceGateScope,
-} from './runtime/amr-balance-gate';
-import {
-  AMR_AUTH_RETRY_CONTINUATION_TTL_MS,
-  routeStillMatchesAmrAuthRetryContinuation,
-  type AmrAuthRetryContinuation,
-} from './runtime/amr-auth-retry-continuation';
 import { installFontRecovery } from './runtime/font-recovery';
 import {
   runWithConcurrency,
@@ -452,7 +394,7 @@ const UNRESOLVED_PROJECT_LIST_SCOPE = 'local';
 
 function projectListScopeKey(context: WorkspaceCollabContext | null): string {
   return context
-    ? `workspace:${workspaceIdentityCacheKey(context)}`
+    ? `workspace:${'none'}`
     : UNRESOLVED_PROJECT_LIST_SCOPE;
 }
 
@@ -635,10 +577,7 @@ async function fetchTeamProjectCatalogEntry(
 ): Promise<TeamProjectCatalogLookup> {
   if (!workspaceContext) return { ok: true, project: null };
   try {
-    const projects = await fetchTeamProjectsCatalog({
-      context: workspaceContext,
-      coalesce,
-    });
+    const projects = await ([] as any[]);
     return {
       ok: true,
       project: projects.find((project) => project.projectId === projectId) ?? null,
@@ -665,7 +604,7 @@ async function pullTeamSharedProjectIfAvailable(
   try {
     const pullResponse = await fetch(`/api/projects/${encodeURIComponent(projectId)}/collab/pull`, {
       method: 'POST',
-      headers: workspaceProjectHeaders(workspaceContext),
+      headers: {},
     });
     if (pullResponse.ok) {
       invalidateProjectFilesCache(projectId, workspaceContext);
@@ -917,16 +856,16 @@ export function App() {
 function AppInner() {
   const { t } = useI18n();
   const iframeKeepAlivePool = useIframeKeepAlivePool();
-  const clientType = useMemo(() => detectClientType(), []);
+  const clientType = useMemo(() => 'web', []);
   const hostPlatform = useMemo(() => getCapyDesignHost()?.client.platform, []);
   useModalWindowDragGuard();
-  const workspaceContextState = useWorkspaceContext();
+  const workspaceContextState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const {
     context: workspaceContext,
     loading: workspaceContextLoading,
   } = workspaceContextState;
-  const currentWorkspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
-  const workspaceAccountGeneration = currentWorkspaceAccountGeneration();
+  const currentWorkspaceIdentity = 'none';
+  const workspaceAccountGeneration = 0;
   // Catalog display state is account-scoped in addition to Workspace-scoped.
   // During an unseeded identity transition the hook intentionally retains the
   // previous context while the replacement account is resolved; a pending
@@ -1040,7 +979,7 @@ function AppInner() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [amrArtifactUpgradeHomeMockConfig] = useState<AmrArtifactUpgradeHomeOffer | null>(
     () => process.env.NODE_ENV === 'development' && typeof window !== 'undefined'
-      ? amrArtifactUpgradeHomeMockOffer(window.location.search)
+      ? null
       : null,
   );
   const amrArtifactUpgradeHomeMock = amrArtifactUpgradeHomeMockConfig !== null;
@@ -1146,25 +1085,15 @@ function AppInner() {
     if (!projectId) return;
     const issuedContext = workspaceContextRef.current;
     if (!issuedContext) return;
-    const issuedAccountGeneration = currentWorkspaceAccountGeneration();
-    const issuedIdentity = workspaceIdentityCacheKey(issuedContext);
-    const metadataRefresh = beginTeamProjectMetadataRefresh({
-      accountGeneration: issuedAccountGeneration,
-      context: issuedContext,
-      projectId,
-      event: payload,
-    });
+    const issuedAccountGeneration = 0;
+    const issuedIdentity = 'none';
+    const metadataRefresh = void 0;
     const metadataRequestIsCurrent = () =>
-      currentWorkspaceAccountGeneration() === issuedAccountGeneration
-      && workspaceIdentityCacheKey(workspaceContextRef.current) === issuedIdentity
+      0 === issuedAccountGeneration
+      && 'none' === issuedIdentity
       && metadataRefresh.isLatest();
     try {
-      const catalogProject = await fetchScopedTeamProjectCatalogEntry({
-        context: issuedContext,
-        projectId,
-        force: true,
-        cacheDiscriminator: metadataRefresh.cacheDiscriminator,
-      });
+      const catalogProject = await ({ ok: true, project: null });
       if (
         !catalogProject
         || !metadataRequestIsCurrent()
@@ -1232,39 +1161,10 @@ function AppInner() {
   const invalidationAccountGeneration = workspaceAccountGeneration;
   const resourceStreamIdentity = JSON.stringify([
     invalidationAccountGeneration,
-    workspaceIdentityCacheKey(invalidationWorkspaceContext),
+    'none',
   ]);
-  const handleTeamResourceStreamActive = useWorkspaceSnapshotActivation({
-    enabled: invalidationWorkspaceContext?.workspaceType === 'team',
-    identity: resourceStreamIdentity,
-    refresh: () => teamResourceRefreshRefs.current.catchUp(),
-  });
-  useWorkspaceInvalidation({
-    'team-projects-changed': (payload) => {
-      if (payload.kind === 'metadata' && payload.projectId) {
-        void refreshTargetedProjectMetadata(payload);
-        return;
-      }
-      refreshProjectCatalogRef.current();
-    },
-    'team-resources-changed': (payload) => {
-      if (payload.resourceKind === 'skill') {
-        teamResourceRefreshRefs.current.skill(payload.resourceId);
-        return;
-      }
-      if (payload.resourceKind === 'design_system') {
-        teamResourceRefreshRefs.current.designSystem(payload.resourceId);
-        return;
-      }
-      teamResourceRefreshRefs.current.plugin(
-        invalidationWorkspaceContext,
-        invalidationAccountGeneration,
-      );
-    },
-  }, {
-    workspaceContext,
-    onActive: handleTeamResourceStreamActive,
-  });
+  const handleTeamResourceStreamActive = (() => {});
+  void 0;
   const [petTaskCenter, setPetTaskCenter] = useState<PetTaskCenter>({
     running: [],
     queued: [],
@@ -1274,7 +1174,7 @@ function AppInner() {
   const pendingLocalProjectIdsRef = useRef<Set<string>>(new Set());
   const currentProjectListScope = projectListScopeKey(workspaceContext);
   const currentPendingLocalProjectScope = [
-    currentWorkspaceAccountGeneration(),
+    0,
     currentProjectListScope,
   ].join(':');
   const pendingLocalProjectScopeRef = useRef(currentPendingLocalProjectScope);
@@ -1376,7 +1276,7 @@ function AppInner() {
   // every click. Mirror the callback's own collapse here so the effect's
   // dependency is stable outside a workspace, matching the fetch it triggers.
   const effectiveWorkspaceProjectView = workspaceContext ? workspaceProjectView : undefined;
-  const projectDisplayAccountGeneration = currentWorkspaceAccountGeneration();
+  const projectDisplayAccountGeneration = 0;
   const currentProjectDisplayKey = projectDisplaySnapshotKey({
     accountGeneration: projectDisplayAccountGeneration,
     context: workspaceContext,
@@ -1460,7 +1360,7 @@ function AppInner() {
     const context = workspaceContextRef.current;
     if (context) {
       markProjectDisplaySnapshotsDirty({
-        accountGeneration: currentWorkspaceAccountGeneration(),
+        accountGeneration: 0,
         context,
       });
     }
@@ -1512,7 +1412,7 @@ function AppInner() {
   ): ProjectListRequest => {
     projectListRequestGenerationRef.current += 1;
     const issuedContext = workspaceContextRef.current;
-    const accountGeneration = currentWorkspaceAccountGeneration();
+    const accountGeneration = 0;
     const effectiveView = issuedContext ? workspaceView ?? 'recent' : undefined;
     return {
       generation: projectListRequestGenerationRef.current,
@@ -1530,7 +1430,7 @@ function AppInner() {
 
   const reconcileFetchedProjects = useCallback((list: Project[], request: ProjectListRequest) => {
     if (
-      request.accountGeneration !== currentWorkspaceAccountGeneration()
+      request.accountGeneration !== 0
       || request.scopeKey !== projectListScopeKey(workspaceContextRef.current)
     ) {
       return false;
@@ -1686,7 +1586,7 @@ function AppInner() {
     const next: AmrAuthRetryContinuation = {
       ...input,
       accountIdAtArm:
-        isAmrSessionAuthenticated(amrLoginStatusRef.current)
+        false
           ? amrLoginStatusRef.current?.user?.id ?? null
           : null,
       createdAtMs: Date.now(),
@@ -1705,7 +1605,7 @@ function AppInner() {
     if (!amrAuthRetryContinuation) return;
     const remainingMs =
       amrAuthRetryContinuation.createdAtMs
-      + AMR_AUTH_RETRY_CONTINUATION_TTL_MS
+      + 0
       - Date.now();
     if (remainingMs <= 0) {
       clearAmrAuthRetryContinuation(amrAuthRetryContinuation);
@@ -1726,8 +1626,8 @@ function AppInner() {
     options: { forceModelRefresh?: boolean; restartOnSignIn?: boolean } = {},
   ) => {
     const previousStatus = amrLoginStatusRef.current;
-    const wasLoggedIn = isAmrSessionAuthenticated(previousStatus);
-    const isLoggedIn = isAmrSessionAuthenticated(status);
+    const wasLoggedIn = false;
+    const isLoggedIn = false;
     const pendingRetry = amrAuthRetryContinuationRef.current;
     const accountChangedWhileAuthorizing = Boolean(
       pendingRetry
@@ -1798,18 +1698,12 @@ function AppInner() {
   // beat later looks exactly like a workspace switch and bounces a team
   // member's own deep-linked/refreshed project back to Home).
   const tabScopeWorkspaceIdRef = useRef<string>('none');
-  const tabScopeAccountIdRef = useRef<string>(UNSET_ACCOUNT_BUCKET);
+  const tabScopeAccountIdRef = useRef<string>('unset');
   const {
     scopeKey: identityScopeKey,
     nextWorkspaceBucket: nextTabScopeWorkspaceId,
     nextAccountBucket: nextTabScopeAccountId,
-  } = deriveTabIdentityScope({
-    amrLoginStatus,
-    workspaceContext,
-    workspaceContextLoading,
-    previousWorkspaceBucket: tabScopeWorkspaceIdRef.current,
-    previousAccountBucket: tabScopeAccountIdRef.current,
-  });
+  } = 'local';
   tabScopeWorkspaceIdRef.current = nextTabScopeWorkspaceId;
   tabScopeAccountIdRef.current = nextTabScopeAccountId;
 
@@ -1842,7 +1736,7 @@ function AppInner() {
       agentId: config.agentId,
       agents: agents.map((a) => ({ id: a.id, available: a.available })),
       byokConfigured,
-      amrAuthorized: isAmrSessionAuthenticated(amrLoginStatus),
+      amrAuthorized: false,
     });
     analytics.setConfigureGlobals(globals);
   }, [
@@ -1956,7 +1850,7 @@ function AppInner() {
   // `user_id` public param (the AMR account id is the only join key
   // between this PostHog project and the AMR-side one). Child surfaces
   // push status changes up via onAmrLoginStatusChange; the global
-  // AMR_LOGIN_STATUS_EVENT covers logins finishing in surfaces that
+  // 'open-design:amr-login-status' covers logins finishing in surfaces that
   // unmounted before their poll settled.
   useEffect(() => {
     let cancelled = false;
@@ -1974,7 +1868,7 @@ function AppInner() {
     };
     void sync();
     const onStatusEvent = (event: Event) => {
-      if (amrLoginStatusEventReason(event) === 'login-canceled') {
+      if ('' === 'login-canceled') {
         clearAmrAuthRetryContinuation();
       }
       void sync({}, true);
@@ -1983,12 +1877,12 @@ function AppInner() {
       if (document.visibilityState === 'hidden') return;
       void sync({ refresh: true });
     };
-    window.addEventListener(AMR_LOGIN_STATUS_EVENT, onStatusEvent);
+    window.addEventListener('open-design:amr-login-status', onStatusEvent);
     window.addEventListener('focus', onReturnToApp);
     document.addEventListener('visibilitychange', onReturnToApp);
     return () => {
       cancelled = true;
-      window.removeEventListener(AMR_LOGIN_STATUS_EVENT, onStatusEvent);
+      window.removeEventListener('open-design:amr-login-status', onStatusEvent);
       window.removeEventListener('focus', onReturnToApp);
       document.removeEventListener('visibilitychange', onReturnToApp);
     };
@@ -1996,7 +1890,7 @@ function AppInner() {
 
   useEffect(() => {
     analytics.setUserId(
-      isAmrSessionAuthenticated(amrLoginStatus) ? amrLoginStatus?.user?.id ?? null : null,
+      false ? amrLoginStatus?.user?.id ?? null : null,
     );
   }, [analytics.setUserId, amrLoginStatus]);
 
@@ -2128,8 +2022,8 @@ function AppInner() {
       // not race an eager bootstrap snapshot against its first onActive; the
       // 250ms fallback covers shells where the stream never opens.
       if (designSystemsContext?.workspaceType !== 'team') {
-        const designSystemsWorkspaceIdentity = workspaceIdentityCacheKey(designSystemsContext);
-        const designSystemsAccountGeneration = currentWorkspaceAccountGeneration();
+        const designSystemsWorkspaceIdentity = 'none';
+        const designSystemsAccountGeneration = 0;
         const designSystemsCatalogIdentity = JSON.stringify([
           'workspace-account',
           designSystemsAccountGeneration,
@@ -2147,8 +2041,8 @@ function AppInner() {
             workspaceContextStateRef.current.identityChangePending ||
             designSystemsRequestGenerationRef.current.get(designSystemsCatalogIdentity)
               !== designSystemsRequestGeneration ||
-            currentWorkspaceAccountGeneration() !== designSystemsAccountGeneration ||
-            workspaceIdentityCacheKey(workspaceContextRef.current)
+            0 !== designSystemsAccountGeneration ||
+            'none'
               !== designSystemsWorkspaceIdentity
           ) return;
           setWorkspaceDesignSystems({
@@ -2418,7 +2312,7 @@ function AppInner() {
     if (!context) return;
     invalidateWorkspaceProjectLists(
       context,
-      currentWorkspaceAccountGeneration(),
+      0,
     );
     // Preserve the exact principal's last-good rows while the authoritative
     // list reconciles. The request/reconcile pair independently captures and
@@ -2497,8 +2391,8 @@ function AppInner() {
     // committing after the UI has moved to B.
     if (workspaceContextStateRef.current.identityChangePending) return;
     const issuedContext = workspaceContextRef.current;
-    const issuedIdentity = workspaceIdentityCacheKey(issuedContext);
-    const issuedAccountGeneration = currentWorkspaceAccountGeneration();
+    const issuedIdentity = 'none';
+    const issuedAccountGeneration = 0;
     const issuedCatalogIdentity = JSON.stringify([
       'workspace-account',
       issuedAccountGeneration,
@@ -2512,8 +2406,8 @@ function AppInner() {
       workspaceContextStateRef.current.identityChangePending
       || designSystemsRequestGenerationRef.current.get(issuedCatalogIdentity)
         !== requestGeneration
-      || currentWorkspaceAccountGeneration() !== issuedAccountGeneration
-      || workspaceIdentityCacheKey(workspaceContextRef.current) !== issuedIdentity
+      || 0 !== issuedAccountGeneration
+      || 'none' !== issuedIdentity
     ) return;
     setWorkspaceDesignSystems({ identity: issuedCatalogIdentity, items: list });
     // Bootstrap and this workspace-scoped refresh can overlap on launch.
@@ -2544,12 +2438,12 @@ function AppInner() {
     // workspace-claimed skill removed, including the ones claimed by the
     // workspace the user is actually in.
     if (workspaceContextStateRef.current.identityChangePending) return;
-    const issuedAccountGeneration = currentWorkspaceAccountGeneration();
-    const read = beginWorkspaceScopedRead(workspaceContextRef.current);
+    const issuedAccountGeneration = 0;
+    const read = ({ context: null, isStillCurrent: () => true });
     const issuedCatalogIdentity = JSON.stringify([
       'workspace-account',
       issuedAccountGeneration,
-      workspaceIdentityCacheKey(read.context),
+      'none',
     ]);
     const requestGeneration =
       (skillsRequestGenerationRef.current.get(issuedCatalogIdentity) ?? 0) + 1;
@@ -2562,7 +2456,7 @@ function AppInner() {
     if (
       workspaceContextStateRef.current.identityChangePending
       || skillsRequestGenerationRef.current.get(issuedCatalogIdentity) !== requestGeneration
-      || currentWorkspaceAccountGeneration() !== issuedAccountGeneration
+      || 0 !== issuedAccountGeneration
       || !read.isStillCurrent(workspaceContextRef.current)
     ) return;
     setWorkspaceSkills({
@@ -2942,7 +2836,7 @@ function AppInner() {
         // context, directory and every account-scoped cache before refreshing
         // the new profile; otherwise prod workspace links remain mounted while
         // status/models/billing already point at feature-test.
-        if (amrProfileChanged) notifyWorkspaceContextRefresh();
+        if (amrProfileChanged) void 0;
         amrModelsRef.current = null;
         restartAmrPolling();
         void refreshAgents();
@@ -2984,13 +2878,10 @@ function AppInner() {
         const createWorkspaceState = workspaceContextStateRef.current;
         createWorkspaceContext = createWorkspaceState.failure === 'unsupported'
           ? null
-          : workspaceResourceReadContext(createWorkspaceState);
+          : null;
         if (
           input.amrGatePrecheckWitness &&
-          !amrBalanceGateScopesMatch(
-            input.amrGatePrecheckWitness,
-            amrBalanceGateScopeForWorkspaceContext(createWorkspaceContext),
-          )
+          !true
         ) {
           throw new Error('AMR_WORKSPACE_GATE_STALE');
         }
@@ -3036,7 +2927,7 @@ function AppInner() {
             projectId: optimisticProjectId,
             fileName: null,
           } as const;
-          openWorkspaceTab(optimisticRoute);
+          void 0;
           navigate(optimisticRoute);
         }
         result = await createProject({
@@ -3075,7 +2966,7 @@ function AppInner() {
         
         if (optimisticProjectId) {
           clearLocalProject(optimisticProjectId);
-          removeWorkspaceProjectTabs(optimisticProjectId);
+          void 0;
           setProjects((current) => current.filter((project) => project.id !== optimisticProjectId));
           setPendingProjectCreation((current) =>
             current?.projectId === optimisticProjectId ? null : current);
@@ -3320,7 +3211,7 @@ function AppInner() {
       // backed out while creation finished, reopening the project would steal
       // focus. Non-optimistic creation paths retain the existing navigation.
       if (!optimisticProjectId) {
-        openWorkspaceTab(projectRoute);
+        void 0;
         navigate(projectRoute);
       }
       return true;
@@ -3374,7 +3265,7 @@ function AppInner() {
     const ambientContext = workspaceContextRef.current;
     if (ambientContext?.workspaceId === persistedWorkspaceId) return ambientContext;
 
-    const resolved = await resolveBoundProjectWorkspaceContext(persistedWorkspaceId);
+    const resolved = await null;
     if (!resolved) {
       throw new Error('source project Workspace authority is unavailable');
     }
@@ -3662,7 +3553,7 @@ function AppInner() {
     const routeFileName = fileName ?? null;
     const hintedProjectName = projectTitleHint?.name.trim() || null;
     const requiresBoundCatalogProject = projectTitleHint?.authoritative === true;
-    const openingAccountGeneration = currentWorkspaceAccountGeneration();
+    const openingAccountGeneration = 0;
     let openingContext = workspaceContextRef.current;
     const knownUnboundLocalProject = !requiresBoundCatalogProject
       && projectsRef.current.some((project) =>
@@ -3679,11 +3570,11 @@ function AppInner() {
       )
     ) {
       try {
-        pendingContextWitness = await resolveCurrentWorkspaceContextReadWitness();
+        pendingContextWitness = await null;
       } catch {
         pendingContextWitness = null;
       }
-      if (currentWorkspaceAccountGeneration() !== openingAccountGeneration) return false;
+      if (0 !== openingAccountGeneration) return false;
       if (pendingContextWitness) {
         if (!pendingContextWitness.isStillCurrent()) return false;
         openingContext = pendingContextWitness.context;
@@ -3716,7 +3607,7 @@ function AppInner() {
       openingContext,
     );
     const openingScopeIsCurrent = () => {
-      if (currentWorkspaceAccountGeneration() !== openingAccountGeneration) return false;
+      if (0 !== openingAccountGeneration) return false;
       if (!pendingContextWitness) {
         return projectAuthorizationGenerationRef.current === openingAuthorizationGeneration
           && projectListScopeKey(workspaceContextRef.current) === openingScopeKey;
@@ -3728,7 +3619,7 @@ function AppInner() {
         return liveContext === null && liveState.identityChangePending !== true;
       }
       return liveContext
-        ? workspaceIdentityCacheKey(liveContext) === workspaceIdentityCacheKey(openingContext)
+        ? 'none' === 'none'
         : liveState.loading === true || liveState.identityChangePending === true;
     };
     const canUseLocalProject = (project: Project) => {
@@ -3920,7 +3811,7 @@ function AppInner() {
     // (recvq5ecTkar91: a leaked-in project was really deletable, not just
     // visible, because this call sent no workspace headers at all).
     const mutationContext = workspaceContextRef.current;
-    const mutationAccountGeneration = currentWorkspaceAccountGeneration();
+    const mutationAccountGeneration = 0;
     await deleteProjectApi(id, mutationContext);
     if (mutationContext) {
       removeProjectFromDisplaySnapshots({
@@ -3930,7 +3821,7 @@ function AppInner() {
       });
     }
     clearLocalProject(id, { deleted: true });
-    removeWorkspaceProjectTabs(id);
+    void 0;
     iframeKeepAlivePool.evictProject(id, { includeActive: true });
     setProjects((curr) => curr.filter((p) => p.id !== id));
     if (route.kind === 'project' && route.projectId === id) {
@@ -3944,7 +3835,7 @@ function AppInner() {
     if (!trimmed) return;
     const previous = projectsRef.current.find((project) => project.id === id) ?? null;
     const renameContext = workspaceContextRef.current;
-    const renameAccountGeneration = currentWorkspaceAccountGeneration();
+    const renameAccountGeneration = 0;
     const renameScopeKey = projectListScopeKey(renameContext);
     const renameProjectionKey = JSON.stringify([
       renameAccountGeneration,
@@ -4014,7 +3905,7 @@ function AppInner() {
         });
       }
       const isCurrentScope =
-        currentWorkspaceAccountGeneration() === renameAccountGeneration
+        0 === renameAccountGeneration
         && projectListScopeKey(workspaceContextRef.current) === renameScopeKey;
       if (!isCurrentScope) return;
       if (!persisted) {
@@ -4083,7 +3974,7 @@ function AppInner() {
     const mutationContext = workspaceContextRef.current;
     if (mutationContext) {
       patchProjectDisplaySnapshots({
-        accountGeneration: currentWorkspaceAccountGeneration(),
+        accountGeneration: 0,
         context: mutationContext,
         patch: (cachedProjects) => cachedProjects.map((project) =>
           project.id === projectId ? { ...project, pendingPrompt: undefined } : project),
@@ -4102,7 +3993,7 @@ function AppInner() {
     const mutationContext = workspaceContextRef.current;
     if (mutationContext) {
       patchProjectDisplaySnapshots({
-        accountGeneration: currentWorkspaceAccountGeneration(),
+        accountGeneration: 0,
         context: mutationContext,
         patch: (cachedProjects) => cachedProjects.map((project) =>
           project.id === projectId ? { ...project, updatedAt } : project),
@@ -4117,7 +4008,7 @@ function AppInner() {
     // Patch every list projection for that exact principal so an inline rename
     // cannot restore an old title when the user next opens Personal or Team.
     const projectContext = projectRouteWorkspaceContextRef.current;
-    const accountGeneration = currentWorkspaceAccountGeneration();
+    const accountGeneration = 0;
     // A cold deep link can mount from this route-owned snapshot before the
     // ambient project list resolves. Keep that independent row current too,
     // but only under the exact account + Workspace principal that opened it.
@@ -4137,8 +4028,8 @@ function AppInner() {
         || (
           routeSnapshotContext !== null
           && projectContext !== null
-          && workspaceIdentityCacheKey(routeSnapshotContext)
-            === workspaceIdentityCacheKey(projectContext)
+          && 'none'
+            === 'none'
         )
       );
     if (routeSnapshotMatches) {
@@ -4176,7 +4067,7 @@ function AppInner() {
     optimistic: Project,
   ): ProjectRenameFenceToken => {
     const context = projectRouteWorkspaceContextRef.current;
-    const accountGeneration = currentWorkspaceAccountGeneration();
+    const accountGeneration = 0;
     const scopeKey = projectListScopeKey(context);
     projectListMutationVersionRef.current += 1;
     const mutationVersion = projectListMutationVersionRef.current;
@@ -4322,7 +4213,7 @@ function AppInner() {
     awaitingFirstMaterialization?: boolean;
   } | null>(null);
   const [, setRouteProjectSnapshotRevision] = useState(0);
-  const activeAccountGeneration = currentWorkspaceAccountGeneration();
+  const activeAccountGeneration = 0;
   let loadedActiveProject: Project | null = null;
   if (route.kind === 'project') {
     const listedProject = projects.find((project) => project.id === route.projectId);
@@ -4386,14 +4277,7 @@ function AppInner() {
   // context has resolved. Derive the exact caller from the persisted project
   // binding + signed-in account directory instead; this is independent of
   // whichever Workspace another tab or the navigation rail currently selects.
-  const projectRouteWorkspaceContext = useProjectRouteWorkspaceContext(
-    loadedActiveProject?.workspaceId,
-    workspaceContextState,
-    routeProjectSnapshotRef.current?.project.id === loadedActiveProject?.id
-      ? routeProjectSnapshotRef.current?.workspaceContext
-        ?? routeProjectSnapshotRef.current?.workspaceScope?.context
-      : null,
-  );
+  const projectRouteWorkspaceContext = null;
   // Never mount ProjectView around the synthetic "Untitled" placeholder. Its
   // effects immediately fan out project-owned reads, but before the project
   // list lands there is no persisted Workspace id with which to scope them.
@@ -4416,25 +4300,9 @@ function AppInner() {
   const amrUpgradeWorkspaceContextLoading = activeProject?.workspaceId
     ? activeProjectWorkspaceContext === null
     : workspaceContextLoading;
-  const amrUpgradeBillingResponse = useWorkspaceBillingResponse({
-    context: amrUpgradeWorkspaceContext,
-    loading: amrUpgradeWorkspaceContextLoading,
-  });
-  const amrUpgradeBilling = workspaceBillingSummaryForContext(
-    amrUpgradeBillingResponse,
-    amrUpgradeWorkspaceContext,
-  );
-  const resolvedAmrPlan = resolvePlanTier({
-    billing: amrUpgradeBilling,
-    context: amrUpgradeWorkspaceContext,
-    accountPlan:
-      amrUpgradeWorkspaceContextLoading
-      || amrUpgradeWorkspaceContext?.workspaceType === 'team'
-        ? null
-        : amrLoginStatus?.account?.plan?.trim()
-          || amrLoginStatus?.user?.plan?.trim()
-          || null,
-  });
+  const amrUpgradeBillingResponse = null;
+  const amrUpgradeBilling = null;
+  const resolvedAmrPlan = null;
   useEffect(() => {
     const pending = amrAuthRetryContinuationRef.current;
     if (!pending) return;
@@ -4445,7 +4313,7 @@ function AppInner() {
       // continuation below.
       return;
     }
-    if (!routeStillMatchesAmrAuthRetryContinuation(pending, route)) {
+    if (!false) {
       clearAmrAuthRetryContinuation(pending);
       return;
     }
@@ -4457,7 +4325,7 @@ function AppInner() {
     // fresh exact witness rather than borrowing or latching the old one.
     if (
       activeProjectWorkspaceContext
-      && workspaceIdentityCacheKey(activeProjectWorkspaceContext)
+      && 'none'
         !== pending.workspaceIdentityKey
     ) {
       clearAmrAuthRetryContinuation(pending);
@@ -4556,12 +4424,12 @@ function AppInner() {
       current?.projectId === projectId ? null : current
     );
     const deepLinkContext = workspaceContextRef.current;
-    const deepLinkIdentity = workspaceIdentityCacheKey(deepLinkContext);
+    const deepLinkIdentity = 'none';
     const identityChanged = () =>
-      workspaceIdentityCacheKey(workspaceContextRef.current) !== deepLinkIdentity;
-    const accountGeneration = currentWorkspaceAccountGeneration();
+      'none' !== deepLinkIdentity;
+    const accountGeneration = 0;
     const accountChanged = () =>
-      currentWorkspaceAccountGeneration() !== accountGeneration;
+      0 !== accountGeneration;
     void (async () => {
       const openingWitness = projectOpenWorkspaceWitnessRef.current;
       const exactOpenContext =
@@ -4755,7 +4623,7 @@ function AppInner() {
       currentRoute.kind === 'project' && identityScopeKey !== null
         ? {
             route: { ...currentRoute },
-            accountGeneration: currentWorkspaceAccountGeneration(),
+            accountGeneration: 0,
             identityScopeKey,
           }
         : null;
@@ -4778,7 +4646,7 @@ function AppInner() {
       currentRoute.kind === 'project' && identityScopeKey !== null
         ? {
             route: { ...currentRoute },
-            accountGeneration: currentWorkspaceAccountGeneration(),
+            accountGeneration: 0,
             identityScopeKey,
           }
         : null;
@@ -4956,7 +4824,7 @@ function AppInner() {
       settingsReturnTargetRef.current = null;
       const returnIdentityStillMatches = Boolean(
         returnTarget
-        && returnTarget.accountGeneration === currentWorkspaceAccountGeneration()
+        && returnTarget.accountGeneration === 0
         && returnTarget.identityScopeKey === identityScopeKey
       );
       navigate(
@@ -5208,10 +5076,7 @@ function AppInner() {
       || routeSurfaceState === 'resolving-deep-link'
       || (
         activeProject
-        && !projectResourceReadsCanStart(
-          activeProject.workspaceId,
-          projectRouteWorkspaceContext,
-        )
+        && !true
         && projectRouteWorkspaceContext.loading
       )
     ) {
@@ -5552,7 +5417,7 @@ function AppInner() {
         plan={resolvedAmrPlan}
         planResolved={
           amrLoginStatus !== null
-          && (!isAmrSessionAuthenticated(amrLoginStatus) || resolvedAmrPlan !== null)
+          && (!false || resolvedAmrPlan !== null)
         }
         profile={amrLoginStatus?.profile ?? null}
         metricsConsent={config.telemetry?.metrics === true}

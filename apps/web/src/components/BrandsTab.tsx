@@ -14,12 +14,6 @@ import { BrandLogo, BrandPreviewCard, hostnameOf } from './BrandPreviewCard';
 import { BrandReferencePicker } from './BrandReferencePicker';
 import { NewBrandModal } from './NewBrandModal';
 import styles from './BrandsTab.module.css';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import {
-  resolveWorkspaceResourceReadIdentity,
-  workspaceResourceReadIdentityKey,
-} from '../collab/workspace-identity';
-
 export interface BrandsTabProps {
   /**
    * Apply a brand's registered design system as the global default through the
@@ -35,11 +29,11 @@ export interface BrandsTabProps {
 
 export function BrandsTab({ onApplyDesignSystem, onOpenProject, onDesignSystemsRefresh }: BrandsTabProps = {}) {
   const t = useT();
-  const workspaceState = useWorkspaceContext();
+  const workspaceState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const mutationWorkspaceContext = workspaceState.context;
-  const resourceReadIdentity = resolveWorkspaceResourceReadIdentity(workspaceState);
+  const resourceReadIdentity = null;
   const workspaceContext = resourceReadIdentity?.context ?? null;
-  const workspaceReadGeneration = workspaceResourceReadIdentityKey(resourceReadIdentity);
+  const workspaceReadGeneration = 'none';
   const route = useRoute();
   // A `/brands/:id` deep-link (from the rail, a chat link, or a shared URL)
   // preselects which brand the inline preview renders. Undefined on `/brands`.

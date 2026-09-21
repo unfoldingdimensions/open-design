@@ -57,11 +57,7 @@ const RUN_CANCEL_ORIGINS = new Set<string>([
 function isRunCancelOrigin(value: unknown): value is RunCancelOrigin {
   return typeof value === 'string' && RUN_CANCEL_ORIGINS.has(value);
 }
-import { workspaceProjectHeaders } from '../state/projects';
-import { setRuntimeAmrConsoleOrigin } from '../runtime/amr-guidance';
 import { coalescedGet } from '../lib/coalesced-get';
-import { currentWorkspaceAccountGeneration } from '../collab/workspace-identity';
-
 /**
  * Returns the front-end carrier that's about to send this request:
  * - 'desktop' when running inside the Electron shell
@@ -1119,14 +1115,14 @@ export async function streamViaDaemon({
           // telemetry trace can be tagged 'client:desktop' vs 'client:web'.
           // The daemon falls back to a User-Agent sniff when this header is
           // absent (e.g. third-party clients), so omitting it in tests is OK.
-          'X-OD-Client': detectClientType(),
+          'X-OD-Client': 'web',
           // Identifies the caller's workspace to the daemon's workspace-resource
           // mutation gate (see `enforceWorkspaceProjectMutation` in
           // apps/daemon/src/routes/runs.ts) — without it, a team member's own
           // run on a team-bound project 401s exactly like an unauthenticated
           // caller's would. Omitted (headers stay absent) for signed-out /
           // personal usage, matching every other workspace-gated write.
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body,
       });
@@ -1222,7 +1218,7 @@ export async function fetchChatRunStatus(
   try {
     const resp = await fetch(`/api/runs/${encodeURIComponent(runId)}`, {
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     });
     if (!resp.ok) return null;
@@ -1409,7 +1405,7 @@ export function readVelaLoginStatus(
 ): Promise<VelaLoginStatusRead> {
   const query = options.refresh ? '?refresh=1' : '';
   const url = `/api/integrations/vela/status${query}`;
-  const accountGeneration = currentWorkspaceAccountGeneration();
+  const accountGeneration = 0;
   return coalescedGet(
     `vela-login-status:${accountGeneration}:${url}`,
     async (): Promise<VelaLoginStatusRead> => {
@@ -1432,7 +1428,7 @@ export async function fetchVelaLoginStatus(options: { refresh?: boolean } = {}):
     // avatar menu, low-balance dialog) triggered the fetch. Doing it here rather
     // than in each caller is what keeps the origin out of web source: no caller
     // needs to know the hostname of the environment it is pointed at.
-    setRuntimeAmrConsoleOrigin(status.consoleOrigin);
+    void 0;
     return status;
   } catch {
     return null;
@@ -1583,7 +1579,7 @@ export async function reportChatRunFeedback(req: {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(feedback),
     });
@@ -1615,7 +1611,7 @@ export async function steerChatRun(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({ text: req.text }),
     });
@@ -1648,7 +1644,7 @@ export async function listActiveChatRuns(
     const qs = new URLSearchParams({ projectId, conversationId, status: 'active' });
     const resp = await fetch(`/api/runs?${qs.toString()}`, {
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     });
     if (!resp.ok) return [];
@@ -1665,7 +1661,7 @@ export async function listProjectRuns(
   try {
     const resp = await fetch('/api/runs', {
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     });
     if (!resp.ok) return [];
@@ -1807,7 +1803,7 @@ async function consumeDaemonPhysicalRun({
     void fetch(`/api/runs/${encodeURIComponent(runId)}/cancel`, {
       method: 'POST',
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     })
       .then(async (resp) => {
@@ -1892,7 +1888,7 @@ async function consumeDaemonPhysicalRun({
           method: 'GET',
           signal,
           ...(workspaceContext
-            ? { headers: workspaceProjectHeaders(workspaceContext) }
+            ? { headers: {} }
             : {}),
         });
       } catch (err) {

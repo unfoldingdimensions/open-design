@@ -119,9 +119,6 @@ import type {
   TrackingDesignSystemsEntryFrom,
 } from '@capydesign/contracts/analytics';
 import { useI18n } from '../i18n';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import { workspaceIdentityCacheKey } from '../collab/workspace-identity';
-
 // Source counts the embedded DS creation flow can report back to its
 // wrapper at Generate-click time. OnboardingView uses this to emit the
 // `generate` ui_click + `onboarding_complete_result` events with the
@@ -341,7 +338,7 @@ export function DesignSystemCreationFlow({
   designSystems = [],
 }: CreationProps) {
   const { t } = useI18n();
-  const { context: workspaceContext } = useWorkspaceContext();
+  const workspaceContext = null;
   const [step, setStep] = useState<SetupStep>('setup');
   // A Library "create design system from selection" hand-off pre-fills the
   // source material with the chosen assets (single-shot; cleared on read).
@@ -1589,7 +1586,7 @@ export function DesignSystemDetailView({
   onInitialRevisionJobConsumed,
 }: DetailProps) {
   const { locale, t } = useI18n();
-  const { context: workspaceContext } = useWorkspaceContext();
+  const workspaceContext = null;
   const [system, setSystem] = useState<DesignSystemDetail | null>(null);
   const [body, setBody] = useState('');
   const [tab, setTab] = useState<ReviewTab>('system');
@@ -1608,7 +1605,7 @@ export function DesignSystemDetailView({
   const workspaceProjectFilesRef = useRef<ProjectFile[]>([]);
   const [workspaceFilesGeneration, setWorkspaceFilesGeneration] = useState(0);
   const workspaceFilesGenerationRef = useRef(0);
-  const workspaceFilesScopeKey = `${id}:${workspaceIdentityCacheKey(workspaceContext)}`;
+  const workspaceFilesScopeKey = `${id}:${'none'}`;
   const workspaceFilesScopeKeyRef = useRef(workspaceFilesScopeKey);
   workspaceFilesScopeKeyRef.current = workspaceFilesScopeKey;
   const workspaceFilesRequestSeqRef = useRef(0);

@@ -15,11 +15,6 @@ import type {
 import { parseProvenance } from '../lib/parse-provenance';
 import { fetchProjectFiles } from '../providers/registry';
 import { listConversations } from '../state/projects';
-import {
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-} from '../collab/workspace-identity';
-
 const DESIGN_MD = 'DESIGN.md';
 
 // 'unknown-provenance' is the round-7 (mrcfps @ useDesignMdState.ts:160)
@@ -132,7 +127,7 @@ export function useDesignMdState(
           {
             signal,
             ...(workspaceContext
-              ? { headers: workspaceProjectHeaders(workspaceContext) }
+              ? { headers: {} }
               : {}),
           },
         );
@@ -186,7 +181,7 @@ export function useDesignMdState(
     // (file-changed events, chat-turn completion) re-runs compute without
     // forcing the caller to drill `refresh()` through props. Round 7
     // (mrcfps @ useDesignMdState.ts:131).
-    [projectId, refreshKey, workspaceIdentityCacheKey(workspaceContext)],
+    [projectId, refreshKey, 'none'],
   );
 
   useEffect(() => {

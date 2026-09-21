@@ -14,8 +14,6 @@ import { navigate } from '../router';
 import { useT } from '../i18n';
 import { localizeRunFailureReason } from '../i18n/runErrors';
 import type { Dict } from '../i18n/types';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import { workspaceProjectHeaders } from '../collab/workspace-identity';
 import { listProjects } from '../state/projects';
 
 // Shared translator signature: every sub-component in this file is module-scoped,
@@ -509,7 +507,7 @@ export function RoutinesSection({ onClose }: RoutinesSectionProps) {
   // is omitted (that default is right for the Home "Drafts" tab, wrong here —
   // see `workspaceProjectListViewForRoute` in App.tsx for the same per-surface
   // view choice made project-browsing routes).
-  const { context: routinesWorkspaceContext } = useWorkspaceContext();
+  const routinesWorkspaceContext = null;
   const fireAutomation = (element: 'new_automation' | 'create' | 'save' | 'cancel' | 'run_now' | 'edit' | 'pause' | 'resume' | 'delete' | 'history') => {
     
   };
@@ -541,7 +539,7 @@ export function RoutinesSection({ onClose }: RoutinesSectionProps) {
       const [rRes, projectList] = await Promise.all([
         fetch('/api/routines', {
           headers: requestWorkspaceContext
-            ? workspaceProjectHeaders(requestWorkspaceContext)
+            ? {}
             : {},
         }),
         listProjects({ workspaceContext: requestWorkspaceContext, workspaceView: 'all' }),
@@ -632,7 +630,7 @@ export function RoutinesSection({ onClose }: RoutinesSectionProps) {
           ...(isEdit
             ? routineWorkspaceHeaders(requestScope)
             : routinesWorkspaceContext
-            ? workspaceProjectHeaders(routinesWorkspaceContext)
+            ? {}
             : {}),
         },
         body: JSON.stringify(payload),

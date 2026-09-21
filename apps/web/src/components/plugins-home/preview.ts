@@ -20,8 +20,6 @@ import type {
   InstalledPluginRecord,
   WorkspaceCollabContext,
 } from '@capydesign/contracts';
-import { workspaceResourceUrl } from '../../collab/workspace-identity';
-
 export type PluginPreviewKind = 'media' | 'html' | 'design' | 'text';
 
 export interface MediaPreviewSpec {
@@ -256,10 +254,7 @@ export function inferPluginPreview(
     if (t === 'html' && entry) {
       return {
         kind: 'html',
-        src: workspaceResourceUrl(
-          `/api/plugins/${encodeURIComponent(record.id)}/preview`,
-          opts?.workspaceContext,
-        ),
+        src: `/api/plugins/${encodeURIComponent(record.id)}/preview`,
         label: entry.replace(/^\.\//, '').split(/[\\/]/).pop() ?? entry,
         source: 'preview',
       };
@@ -273,10 +268,7 @@ export function inferPluginPreview(
         typeof examples[0]!.title === 'string' ? (examples[0]!.title as string) : stem;
       return {
         kind: 'html',
-        src: workspaceResourceUrl(
-          `/api/plugins/${encodeURIComponent(record.id)}/example/${encodeURIComponent(stem)}`,
-          opts?.workspaceContext,
-        ),
+        src: `/api/plugins/${encodeURIComponent(record.id)}/example/${encodeURIComponent(stem)}`,
         label: title,
         source: 'example',
         exampleStem: stem,

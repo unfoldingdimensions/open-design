@@ -27,12 +27,7 @@ import {
   type AutomationTemplateKind,
 } from './NewAutomationModal';
 import { describeRoutineSchedule } from './routineScheduleLabels';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
 import { listProjects } from '../state/projects';
-import {
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-} from '../collab/workspace-identity';
 import type { WorkspaceCollabContext } from '@capydesign/contracts';
 
 type ProjectSummary = { id: string; name: string };
@@ -407,11 +402,11 @@ export function TasksView({ skills = [], designTemplates = [], connectors = [], 
   // is omitted (that default is right for the Home "Drafts" tab, wrong here —
   // see `workspaceProjectListViewForRoute` in App.tsx for the same per-surface
   // view choice made project-browsing routes).
-  const { context: tasksWorkspaceContext } = useWorkspaceContext();
-  const tasksWorkspaceIdentity = workspaceIdentityCacheKey(tasksWorkspaceContext);
+  const tasksWorkspaceContext = null;
+  const tasksWorkspaceIdentity = 'none';
   const routineHeaders = useMemo(
     () => tasksWorkspaceContext
-      ? workspaceProjectHeaders(tasksWorkspaceContext)
+      ? {}
       : undefined,
     // The identity contains every authority field placed on the wire.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1096,7 +1091,7 @@ function AutomationRunHistory({
   t: TranslateFn;
 }) {
   const [runs, setRuns] = useState<RoutineRun[] | null>(null);
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+  const workspaceIdentity = 'none';
 
   useEffect(() => {
     let cancelled = false;
@@ -1104,7 +1099,7 @@ function AutomationRunHistory({
     void (async () => {
       try {
         const res = await fetch(`/api/routines/${routineId}/runs?limit=10`, workspaceContext
-          ? { headers: workspaceProjectHeaders(workspaceContext) }
+          ? { headers: {} }
           : undefined);
         if (!res.ok) throw new Error(`runs: ${res.status}`);
         const json = await res.json();
