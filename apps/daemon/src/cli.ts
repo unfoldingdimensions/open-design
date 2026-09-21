@@ -5,7 +5,6 @@ import { basename } from 'node:path';
 import { runDaemonCliStartup, startDaemonRuntime } from './daemon-startup.js';
 import { runLiveArtifactsMcpServer } from './mcp-live-artifacts-server.js';
 import { runArtifactsCli } from './artifacts-cli.js';
-import { runResource } from './local/legacy-bridge.js';
 import { runProjectHandoff } from './handoff-cli.js';
 import { runConnectorsToolCli } from './tools-connectors-cli.js';
 import { runDesignSystemsToolCli } from './tools-design-systems-cli.js';
@@ -29,7 +28,6 @@ import {
   applyJsonInstall,
   removeJsonInstall,
 } from './mcp-agent-install.js';
-import { resolveMcpWorkspaceContext } from './local/legacy-bridge.js';
 
 const argv = process.argv.slice(2);
 
@@ -417,7 +415,6 @@ const SUBCOMMAND_MAP = {
   skill: runSkills,
   skills: runSkills,
   'design-systems': runDesignSystems,
-  resource: runResource,
   craft: runCraft,
   diagnostics: runDiagnostics,
   export: runExport,
@@ -7086,15 +7083,6 @@ Common options:
           `${base}/api/workspaces/${encodeURIComponent(workspaceId)}/projects`,
           { headers: scopeHeaders },
         );
-      } else {
-        const ctx = await resolveMcpWorkspaceContext(base);
-        if (ctx) {
-          scopeHeaders = ctx.headers;
-          listResp = await fetch(
-            `${base}/api/workspaces/${encodeURIComponent(ctx.workspaceId)}/projects`,
-            { headers: scopeHeaders },
-          );
-        }
       }
       if (!listResp) {
         listResp = await fetch(`${base}/api/projects`, { headers: workspaceHeaders });

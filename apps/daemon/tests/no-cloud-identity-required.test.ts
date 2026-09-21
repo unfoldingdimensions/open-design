@@ -107,11 +107,29 @@ describe('daemon runs with no Cloud identity', () => {
       }),
     });
     const runBody = (await runResp.text()).slice(0, 4_000);
+    // Never the removed workspace gate, and never an auth refusal.
     expect(runResp.status).not.toBe(401);
+    expect(runResp.status).not.toBe(403);
     expect(runBody).not.toContain('WORKSPACE_CONTEXT_REQUIRED');
     expect(runBody).not.toContain('WORKSPACE_CONTEXT_INCOMPLETE');
     expect(runBody).not.toContain('WORKSPACE_ACCESS_DENIED');
-    expect([400, 404]).toContain(runResp.status);
+    // A local daemon either accepts the run (202) or rejects the *agent*
+    // (400/404) — both are local answers, neither is a workspace answer.
+    expect([202, 400, 404]).toContain(runResp.status);
+
+    if (runResp.status === 202) {
+      const runId = (JSON.parse(runBody) as { runId?: string }).runId;
+      expect(typeof runId).toBe('string');
+      const statusResp = await fetch(`${baseUrl}/api/runs/${encodeURIComponent(runId!)}`);
+      expect(statusResp.status).toBe(200);
+      const statusBody = (await statusResp.json()) as { agentId?: string | null };
+      expect(statusBody.agentId).toBeTruthy();
+      await fetch(`${baseUrl}/api/runs/${encodeURIComponent(runId!)}/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+    }
   });
 
   it('accepts and ignores x-od-workspace-* headers', async () => {
