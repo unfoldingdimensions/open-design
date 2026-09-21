@@ -1519,7 +1519,6 @@ export function DesignFilesPanel({
             // "no designs yet" would be a guess. Say we are working instead.
             <div className="df-empty df-empty-syncing" data-testid="design-files-loading">
               <div className="df-empty-pill">
-                <FileSyncBadge state="downloading" size={20} />
                 <span className="df-empty-title">{t('common.loading')}</span>
               </div>
             </div>
@@ -1535,7 +1534,6 @@ export function DesignFilesPanel({
               // have real files. Swap them for a syncing notice instead.
               <div className="df-empty df-empty-syncing" data-testid="design-files-syncing">
                 <div className="df-empty-pill">
-                  <FileSyncBadge state="downloading" size={20} />
                   <span className="df-empty-title">
                     {t('designFiles.syncing')}
                   </span>

@@ -20,7 +20,6 @@ import { copyToClipboard } from '../lib/copy-to-clipboard';
 import { Icon } from './Icon';
 import { EditorIcon } from './EditorIcon';
 import { AgentIcon } from './AgentIcon';
-import { useProjectCollabContext } from '../collab/collab-context';
 
 const PREFERRED_EDITOR_KEY = 'open-design:preferred-editor';
 const PREFERRED_FRAMEWORK_KEY = 'open-design:handoff-framework';
@@ -347,14 +346,9 @@ export function HandoffButton({
   // `ui_click` / `area=handoff` shape; callers pass only what varies. The
   // active-artifact context is attached to every event so handoff slices line
   // up with the rest of the artifact_header funnel.
-  const fireHandoff = (
-    props: Omit<
-      Parameters<typeof trackHandoffClick>[1],
-      'page_name' | 'area' | 'artifact_id' | 'artifact_kind' | 'project_id' | 'project_kind'
-    >,
-  ) => {
-    
-  };
+  // Analytics transport is gone with the Cloud surface, so a handoff click is
+  // no longer reported anywhere.
+  const fireHandoff = (_props: Record<string, unknown>) => {};
   const [editors, setEditors] = useState<HostEditor[]>([]);
   const [platform, setPlatform] = useState<HostEditorsResponse['platform']>('unknown');
   const [loaded, setLoaded] = useState(false);

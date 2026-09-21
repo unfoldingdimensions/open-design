@@ -27,7 +27,6 @@ import {
 } from '../providers/registry';
 import type { DesignSystemSummary, Project, ProjectDisplayStatus, ProjectFile } from '../types';
 import { Icon } from './Icon';
-import { InviteDialog } from './InviteDialog';
 import { STATUS_LABEL_KEYS } from './DesignsTab';
 import { isDesignSystemProject, isPublishedDesignSystemProject } from './design-system-project';
 import {
@@ -1990,23 +1989,6 @@ export function RecentProjectsStrip({
           </DialogFooter>
         </Dialog>
       ) : null}
-      <InviteDialog
-        open={inviteOpen}
-        onClose={() => setInviteOpen(false)}
-        workspaceContext={workspaceContext}
-        canAssignRoles={
-          canAssignInviteRoles ?? workspaceContext?.permissions.canInviteMembers === true
-        }
-        availableSeats={workspaceInviteAvailableSeats(workspaceContext)}
-        entryFrom="all_projects"
-        onUpgrade={
-          inviteUpgradeUrl
-            ? () => {
-                window.open(inviteUpgradeUrl, '_blank', 'noopener,noreferrer');
-              }
-            : undefined
-        }
-      />
     </section>
   );
 }

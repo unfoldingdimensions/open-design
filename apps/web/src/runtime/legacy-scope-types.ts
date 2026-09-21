@@ -6,7 +6,18 @@
  * resolution: a project surface resolves to "unbound" (one implicit local
  * scope), and a run retry continuation is plain local run state.
  */
-import type { ProjectWorkspaceScope } from '@capydesign/contracts';
+import type { ProjectWorkspaceScope, WorkspaceCollabContext } from '@capydesign/contracts';
+
+/**
+ * Workspace-context resolution state for a surface. Local-only builds are
+ * context-less, so `context` is always null and nothing is ever loading.
+ */
+export interface WorkspaceContextState {
+  context: WorkspaceCollabContext | null;
+  loading: boolean;
+  identityChangePending?: boolean;
+  failure?: 'unsupported' | 'unavailable' | 'reauth-required';
+}
 
 /**
  * Workspace-scope resolution state for a project surface. `scope` is null until

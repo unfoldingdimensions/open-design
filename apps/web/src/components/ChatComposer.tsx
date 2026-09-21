@@ -88,8 +88,18 @@ import {
   mentionTokenPresent,
   type InlineMentionEntity,
 } from '../utils/inlineMentions';
-import { workspaceContextLinkedDir, workspaceContextLinkedDirs } from './workspace-context';
-import { useProjectCollabContext } from '../collab/collab-context';
+/**
+ * Workspace-context chips used to carry the directories they linked into the
+ * shared workspace. CapyDesign has no workspace identity layer, so a chip never
+ * links a directory and these stay empty.
+ */
+function workspaceContextLinkedDir(_item: { id: string }): string | null {
+  return null;
+}
+
+function workspaceContextLinkedDirs(_items: readonly { id: string }[]): string[] {
+  return [];
+}
 import {
   LexicalComposerInput,
   type LexicalComposerInputHandle,

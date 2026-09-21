@@ -8,6 +8,7 @@
 // a collapsed disclosure.
 
 import { useEffect, useState, type ReactNode } from 'react';
+import type { WorkspaceContextState } from '../runtime/legacy-scope-types';
 import { Button } from '@capydesign/components';
 import type {
   InstalledPluginRecord,

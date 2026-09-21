@@ -53,7 +53,6 @@ import { SignOutConfirmDialog } from './SignOutConfirmDialog';
 import { Icon } from './Icon';
 import { GITHUB_STARS_FALLBACK_LABEL, formatStars, useGithubStars } from './useGithubStars';
 import { RemixIcon } from './RemixIcon';
-import { InviteDialog } from './InviteDialog';
 import { MessageCenter } from './MessageCenter';
 import type { EntrySettingsSection } from './EntrySettingsMenu';
 import { isRtlLocale, useI18n } from '../i18n';
@@ -1805,22 +1804,6 @@ export function EntryNavRail({
           priorityAnnouncementMetricsConsent={priorityAnnouncementMetricsConsent}
         />
       )}
-
-      <InviteDialog
-        open={inviteOpen}
-        onClose={() => setInviteOpen(false)}
-        workspaceContext={context}
-        canAssignRoles={canInviteMembers}
-        availableSeats={workspaceInviteAvailableSeats(context)}
-        entryFrom="workspace_switcher"
-        onUpgrade={
-          upgradeUrl
-            ? () => {
-                window.open(upgradeUrl, '_blank', 'noopener,noreferrer');
-              }
-            : undefined
-        }
-      />
       {/* Top-right chrome cluster: campaign badge (slot) + credits pill +
           the account module, mounted into the tabs chrome's no-drag actions
           host so Electron includes it in the first native hit map. Extracted so the project

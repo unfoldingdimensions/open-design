@@ -105,14 +105,13 @@ export function InlinePluginsRail(props: Props) {
   ]);
 
   useEffect(() => {
-    if (workspaceContext?.workspaceType === 'team') return;
     void refresh();
     return () => {
       // Prevent an in-flight read from committing after unmount or after a
       // successor identity/filter effect has taken ownership.
       pluginCatalogRequestGenerationRef.current += 1;
     };
-  }, [refresh, workspaceContext?.workspaceType]);
+  }, [refresh]);
 
   const handlePluginStreamActive = (() => {});
 
