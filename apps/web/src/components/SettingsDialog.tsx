@@ -1606,7 +1606,7 @@ export function SettingsDialog({
   // the AMR card's plan badge and both upgrade routes must consume it projected
   // onto the selected workspace. See `workspaceBillingSummaryForContext`.
   const workspaceBilling = null;
-  const showWorkspaceSettings = canShowWorkspaceSettings(workspaceContext);
+  const showWorkspaceSettings = false;
   // All generic AMR upgrade buttons route through public Pricing. While the
   // workspace read is pending, hide the owner-only action to avoid a flash for
   // admins or members.
@@ -1658,7 +1658,7 @@ export function SettingsDialog({
     // The wallet endpoint is account-scoped. Until the selected workspace is
     // known, fetching it can race a Team context read and briefly put personal
     // money (or a personal auth error) on the Team card.
-    if (workspaceContextLoading || workspaceContext?.workspaceType === 'team') {
+    if (workspaceContextLoading) {
       setAmrWalletSnapshot(null);
       setAmrWalletReady(false);
       return;
@@ -1667,7 +1667,7 @@ export function SettingsDialog({
     const next = await fetchAmrWalletSnapshot(options);
     setAmrWalletSnapshot(next);
     setAmrWalletReady(true);
-  }, [workspaceContext?.workspaceType, workspaceContextLoading]);
+  }, [workspaceContextLoading]);
 
   useEffect(() => {
     const hasAmrAgent = agents.some((agent) => agent.id === 'amr' && agent.available);
@@ -1701,8 +1701,7 @@ export function SettingsDialog({
     if (
       !hasAmrAgent ||
       !amrCardSignedIn ||
-      workspaceContextLoading ||
-      workspaceContext?.workspaceType === 'team'
+      workspaceContextLoading
     ) {
       setAmrWalletSnapshot(null);
       setAmrWalletReady(false);
@@ -1724,7 +1723,6 @@ export function SettingsDialog({
     amrCardStatus?.profile,
     amrCardStatus?.user?.id,
     amrCardStatus?.user?.email,
-    workspaceContext?.workspaceType,
     workspaceContextLoading,
   ]);
 
@@ -1766,8 +1764,6 @@ export function SettingsDialog({
     if (!hasAmrAgent) return;
     let cancelled = false;
     const resyncAmrStatus = (event: Event) => {
-      const reason = '';
-      if (reason === 'login-canceled') return;
       void fetchVelaLoginStatus().then((next) => {
         if (cancelled || !next) return;
         setAmrCardStatus(next);
@@ -2324,30 +2320,17 @@ export function SettingsDialog({
       });
     }
   };
-  const attributedAmrSettingsUrl = (
-    url: string,
-    sourceDetail: TrackingAmrEntrySource,
-  ) => {
-    const attribution = recordAmrEntry(analytics.track, sourceDetail, new Date(), {
-      metricsConsent: cfg.telemetry?.metrics === true,
-    });
-    const deviceId = amrHandoffDeviceId({
-      metricsConsent: cfg.telemetry?.metrics === true,
-      resolvedDeviceId: getResolvedDeviceId(),
-      installationId: cfg.installationId,
-    });
-    return attributedAmrUrl(url, attribution, deviceId);
-  };
+  const attributedAmrSettingsUrl = (url: string) => url;
   const openAgentFixUrl = (
     url: string | undefined,
-    amrEntrySourceDetail?: TrackingAmrEntrySource,
+    amrEntrySourceDetail?: string,
   ) => {
     const href = sanitizeHttpsUrl(url);
     if (!href) return;
     markAgentInstallIntent();
     void openExternalUrl(
       amrEntrySourceDetail
-        ? attributedAmrSettingsUrl(href, amrEntrySourceDetail)
+        ? attributedAmrSettingsUrl(href)
         : href,
     );
   };
@@ -2636,7 +2619,7 @@ export function SettingsDialog({
     const byokProviderId = byokProtocolToTracking(apiProtocol);
     const trackModelsFetchResult = (
       props: Omit<
-        Parameters<typeof trackSettingsByokModelsFetchResult>[1],
+        Record<string, unknown>,
         'page_name' | 'area' | 'provider_id' | 'trigger' | 'source'
       >,
       source: 'network' | 'cache' = 'network',
@@ -4004,12 +3987,12 @@ export function SettingsDialog({
                     selected.id === 'amr' &&
                     !workspaceContextLoading &&
                     (!workspaceContext ||
-                      workspaceContext.permissions?.canManageBilling === true)
+                      false)
                       ? () => {
                           const upgradeUrl = amrUpgradeUrl(amrCardStatus?.profile);
                           if (!upgradeUrl) return;
                           void openExternalUrl(
-                            attributedAmrSettingsUrl(upgradeUrl, 'settings_amr_upgrade'),
+                            attributedAmrSettingsUrl(upgradeUrl),
                           );
                         }
                       : undefined
@@ -4359,25 +4342,6 @@ export function SettingsDialog({
                     <strong>{t('settings.cloudCalloutTitle')}</strong>
                     <p>{t('settings.cloudCalloutBody')}</p>
                   </div>
-                  {/* Same device-auth flow as the 授权 button on the CapyDesign
-                      agent card below — the AMR/vela session IS the cloud
-                      identity, so signing in here is that one flow. This used to
-                      navigate to onboarding, which walked the user through the
-                      whole first-run tour to reach the same authorization. */}
-                  <AmrLoginPill
-                    className="settings-cloud-signin-callout__button"
-                    hideSignedOutStatus
-                    hideSignedInStatus
-                    initialStatus={amrCardStatus}
-                    skipInitialRefresh
-                    signInLabel={t('settings.cloudCalloutButton')}
-                    signInIcon="log-in"
-                    amrEntrySourceDetail="settings_cloud_callout"
-                    metricsConsent={cfg.telemetry?.metrics === true}
-                    installationId={cfg.installationId}
-                    onStatusChange={setAmrCardStatus}
-                    onSignedOut={onAmrSignedOut}
-                  />
                 </div>
               ) : null}
               {cfg.mode === 'api' ? (
@@ -4548,7 +4512,7 @@ export function SettingsDialog({
                               : '';
                           const amrCardProfileBadge =
                             isAmrAgent && active && amrCardSignedIn
-                              ? amrProfileBadgeLabel(amrCardStatus?.profile)
+                              ? null
                               : null;
                           const amrWalletVisible =
                             isAmrAgent && active && amrCardSignedIn;
@@ -4574,7 +4538,7 @@ export function SettingsDialog({
                               ? formatVelaBalanceUsd(workspaceBalanceUsd)
                               : null;
                           const amrCardIsTeam =
-                            workspaceContext?.workspaceType === 'team';
+                            false;
                           const amrCardBalanceLabel =
                             isAmrAgent &&
                             active &&
@@ -4604,9 +4568,7 @@ export function SettingsDialog({
                             isAmrAgent && active && amrCardSignedIn
                               ? null
                               : null;
-                          const amrCardPlanLabel = amrCardResolvedPlan
-                            ? null ?? amrCardResolvedPlan
-                            : null;
+                          const amrCardPlanLabel = amrCardResolvedPlan ?? null;
                           // recvqfYKutwWlQ: a team member without billing
                           // permission (owner-only) can't act on an upgrade
                           // even when the plan tier itself is upgradeable, so
@@ -4626,11 +4588,7 @@ export function SettingsDialog({
                           // 团队版 Max owner was measured as "free" and offered
                           // an upgrade to the top tier they already hold, while
                           // the badge beside it correctly read Max.
-                          const amrCardCanUpgrade =
-                            isAmrAgent && active && amrCardSignedIn
-                              ? false &&
-                                Boolean(workspaceContext?.permissions?.canManageBilling)
-                              : false;
+                          const amrCardCanUpgrade = false;
                           const amrRevealPendingCancelAction =
                             isAmrAgent &&
                             active &&
@@ -4667,17 +4625,6 @@ export function SettingsDialog({
                                     if (needsSetup) {
                                       setDshSetup({ busy: false, error: null });
                                       return;
-                                    }
-                                    if (isAmrAgent) {
-                                      recordAmrEntry(
-                                        analytics.track,
-                                        'settings_amr_agent_card',
-                                        new Date(),
-                                        {
-                                          metricsConsent:
-                                            cfg.telemetry?.metrics === true,
-                                        },
-                                      );
                                     }
                                     setCfg((c) => ({ ...c, agentId: a.id }));
                                   }}
@@ -4750,16 +4697,6 @@ export function SettingsDialog({
                                               className="agent-card-plan-badge-slot"
                                               aria-hidden="true"
                                             >
-                                              <PlanBadge
-                                                plan={amrCardPlanLabel}
-                                                size="sm"
-                                                className="agent-card-plan-badge"
-                                                title={
-                                                  amrCardPlanLabel
-                                                    ? `${t('settings.amrPlan')} ${amrCardPlanLabel}`
-                                                    : undefined
-                                                }
-                                              />
                                             </span>
                                           ) : null}
                                           {amrCardProfileBadge ? (
@@ -4832,10 +4769,7 @@ export function SettingsDialog({
                                             );
                                             if (!upgradeUrl) return;
                                             void openExternalUrl(
-                                              attributedAmrSettingsUrl(
-                                                upgradeUrl,
-                                                'settings_amr_upgrade',
-                                              ),
+                                              attributedAmrSettingsUrl(upgradeUrl),
                                             );
                                           }}
                                         >
@@ -4852,22 +4786,6 @@ export function SettingsDialog({
                                           {t('settings.amrUpgrade')}
                                         </button>
                                       ) : null}
-                                      <AmrLoginPill
-                                        className="agent-card-amr-auth"
-                                        hideSignedOutStatus
-                                        hideSignedInStatus
-                                        initialStatus={amrCardStatus}
-                                        skipInitialRefresh
-                                        signInLabel={t('settings.amrAuthorize')}
-                                        showConsoleAction={amrCardSignedIn}
-                                        iconOnlySignOut
-                                        amrEntrySourceDetail="settings_amr_authorize"
-                                        metricsConsent={cfg.telemetry?.metrics === true}
-                                        installationId={cfg.installationId}
-                                        revealPendingCancelAction={amrRevealPendingCancelAction}
-                                        onStatusChange={setAmrCardStatus}
-                                        onSignedOut={onAmrSignedOut}
-                                      />
                                     </span>
                                   ) : (
                                     <div
@@ -5128,10 +5046,7 @@ export function SettingsDialog({
                                     onClick={(event) => {
                                       markAgentInstallIntent();
                                       if (a.id === 'amr') {
-                                        event.currentTarget.href = attributedAmrSettingsUrl(
-                                          installUrl,
-                                          'settings_amr_install',
-                                        );
+                                        event.currentTarget.href = attributedAmrSettingsUrl(installUrl);
                                       }
                                     }}
                                   >
@@ -6064,9 +5979,6 @@ export function SettingsDialog({
             </section>
           ) : null}
 
-          {activeSection === 'workspace' && showWorkspaceSettings ? (
-            <SettingsWorkspaceSection context={workspaceContext} />
-          ) : null}
           {aboutToast ? (
             <Toast
               message={aboutToast}
@@ -8678,16 +8590,11 @@ function ProjectScopedCritiqueTheaterSection({
   callerWorkspaceContext: WorkspaceCollabContext | null;
   persistedProjectWorkspaceId: string | null;
 }) {
-  const projectScope = useProjectWorkspaceScope(
-    projectId,
-    callerWorkspaceContext,
-    persistedProjectWorkspaceId,
-  );
   return (
     <CritiqueTheaterSectionContent
       activeProjectId={projectId}
-      projectScopeReady={projectWorkspaceScopeReady(projectScope.scope)}
-      workspaceContext={projectWorkspaceContext(projectScope.scope)}
+      projectScopeReady
+      workspaceContext={callerWorkspaceContext}
     />
   );
 }
