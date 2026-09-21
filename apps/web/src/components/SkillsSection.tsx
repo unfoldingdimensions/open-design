@@ -200,16 +200,15 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
       skillsRequestGenerationRef.current !== requestGeneration
       || 0 !== issuedGeneration
       || workspaceCatalogIdentityRef.current !== issuedIdentity
-      || !read.isStillCurrent(workspaceContextRef.current)
+      || !read.isStillCurrent()
     ) return [];
     setSkillsCatalog({ identity: issuedIdentity, items: list });
     return list;
   }, [workspaceCatalogIdentity, workspaceContext, workspaceReadMode]);
 
   useEffect(() => {
-    if (workspaceContext?.workspaceType === 'team') return;
     void refresh();
-  }, [refresh, workspaceContext?.workspaceType]);
+  }, [refresh]);
 
   const handleSkillStreamActive = (() => {});
 
@@ -346,7 +345,7 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
         if (
           0 !== issuedGeneration
           || workspaceCatalogIdentityRef.current !== issuedIdentity
-          || !read.isStillCurrent(workspaceContextRef.current)
+          || !read.isStillCurrent()
         ) return undefined;
         const body = detail?.body ?? '';
         setBodyById((cur) => ({ ...cur, [id]: body }));
@@ -373,7 +372,7 @@ export function SkillsSection({ cfg, setCfg, onSkillsRefresh, onSkillsChanged }:
         if (
           0 !== issuedGeneration
           || workspaceCatalogIdentityRef.current !== issuedIdentity
-          || !read.isStillCurrent(workspaceContextRef.current)
+          || !read.isStillCurrent()
         ) return undefined;
         setFilesById((cur) => ({ ...cur, [id]: files }));
         return files;
