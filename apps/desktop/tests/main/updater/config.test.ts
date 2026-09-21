@@ -25,7 +25,27 @@ describe("desktop updater config", () => {
       });
 
       expect(config.channel).toBe(DESKTOP_UPDATE_CHANNELS.BETA);
-      expect(config.metadataUrl).toContain("/beta/latest/metadata.json");
+      // No default feed is synthesized — an unconfigured build checks nothing.
+      expect(config.metadataUrl).toBeUndefined();
+    } finally {
+      rmSync(root, { force: true, recursive: true });
+    }
+  });
+
+  it("honors an explicitly configured update feed", () => {
+    const root = makeRoot();
+    try {
+      const config = resolveDesktopUpdaterConfig({
+        currentVersion: "1.2.3-beta.4",
+        downloadRoot: root,
+        env: {
+          [DESKTOP_UPDATE_ENV.ENABLED]: "1",
+          [DESKTOP_UPDATE_ENV.METADATA_URL]: "https://updates.example.test/channel/latest/metadata.json",
+        },
+        source: SIDECAR_SOURCES.PACKAGED,
+      });
+
+      expect(config.metadataUrl).toBe("https://updates.example.test/channel/latest/metadata.json");
     } finally {
       rmSync(root, { force: true, recursive: true });
     }
@@ -63,7 +83,7 @@ describe("desktop updater config", () => {
       });
 
       expect(config.channel).toBe(DESKTOP_UPDATE_CHANNELS.PRERELEASE);
-      expect(config.metadataUrl).toContain("/prerelease/latest/metadata.json");
+      expect(config.metadataUrl).toBeUndefined();
     } finally {
       rmSync(root, { force: true, recursive: true });
     }
@@ -82,7 +102,7 @@ describe("desktop updater config", () => {
       });
 
       expect(config.channel).toBe("preview");
-      expect(config.metadataUrl).toContain("/preview/latest/metadata.json");
+      expect(config.metadataUrl).toBeUndefined();
     } finally {
       rmSync(root, { force: true, recursive: true });
     }

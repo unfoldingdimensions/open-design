@@ -383,6 +383,41 @@ describe("desktop updater", () => {
     }
   });
 
+  it("fails closed: no network fetch when no update feed is configured", async () => {
+    const root = makeRoot();
+    const fetchImpl = vi.fn(async () => {
+      throw new Error("network fetch must not happen without OD_UPDATE_METADATA_URL");
+    });
+    try {
+      const updater = createDesktopUpdater(
+        {
+          arch: "arm64",
+          downloadRoot: root,
+          env: {
+            [DESKTOP_UPDATE_ENV.AUTO_DOWNLOAD]: "1",
+            [DESKTOP_UPDATE_ENV.CURRENT_VERSION]: "1.0.0",
+            [DESKTOP_UPDATE_ENV.ENABLED]: "1",
+            [DESKTOP_UPDATE_ENV.PLATFORM]: "darwin",
+          },
+          source: SIDECAR_SOURCES.PACKAGED,
+        },
+        { fetch: fetchImpl as unknown as typeof fetch },
+      );
+
+      // A packaged build with no configured feed must not auto-check either.
+      expect(updater.shouldAutoCheck()).toBe(false);
+
+      const status = await updater.checkForUpdates({ autoDownload: false });
+
+      expect(fetchImpl).not.toHaveBeenCalled();
+      expect(status.supported).toBe(false);
+      expect(status.state).toBe(DESKTOP_UPDATE_STATES.UNSUPPORTED);
+      expect(status.error?.code).toBe("update-not-configured");
+    } finally {
+      rmSync(root, { force: true, recursive: true });
+    }
+  });
+
   it("downloads, verifies, persists, and dry-runs opening a mac package", async () => {
     const root = makeRoot();
     const fixture = await createUpdaterFixture();

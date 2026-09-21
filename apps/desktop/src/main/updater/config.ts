@@ -38,7 +38,6 @@ export const DESKTOP_UPDATE_ENV = Object.freeze({
   PLATFORM: "OD_UPDATE_PLATFORM",
 } as const);
 
-const DEFAULT_RELEASE_ORIGIN = "https://releases.open-design.ai";
 const BETA_POLL_INTERVAL_MS = 15 * 60 * 1000;
 const STABLE_POLL_INTERVAL_MS = 6 * 60 * 60 * 1000;
 const DEFAULT_POLL_INITIAL_DELAY_MS = 5000;
@@ -82,7 +81,13 @@ export type DesktopUpdaterConfig = {
   launcherRoot?: string;
   launcherPayloadExtractorPath?: string;
   launcherRuntimePath?: string;
-  metadataUrl: string;
+  /**
+   * Remote release feed to check. Deliberately has **no default**: a build with
+   * no configured feed performs no update check at all (fail closed) rather than
+   * silently reading another vendor's release origin. Set `OD_UPDATE_METADATA_URL`
+   * to enable checks.
+   */
+  metadataUrl?: string;
   mode: DesktopUpdateMode;
   namespace?: string;
   openDryRun: boolean;
@@ -112,10 +117,6 @@ function normalizeChannel(value: string | undefined, fallback: DesktopUpdateChan
 
 export function isDesktopUpdateChannel(value: unknown): value is DesktopUpdateChannel {
   return isReleaseChannel(value);
-}
-
-function defaultMetadataUrl(channel: DesktopUpdateChannel): string {
-  return `${DEFAULT_RELEASE_ORIGIN}/${channel}/latest/metadata.json`;
 }
 
 export function normalizeDownloadRoot(value: string): string {
@@ -183,6 +184,8 @@ export function resolveDesktopUpdaterConfig(input: DesktopUpdaterConfigInput): D
   const launcherPayloadExtractorPath = normalizeOptionalRoot(input.launcherPayloadExtractorPath, "launcher payload extractor path");
   const launcherRuntimePath = normalizeOptionalRoot(input.launcherRuntimePath, "launcher runtime path");
   const namespace = normalizeOptionalNonEmpty(input.namespace);
+  // No default feed: only an explicit OD_UPDATE_METADATA_URL enables update checks.
+  const metadataUrl = normalizeOptionalNonEmpty(env[DESKTOP_UPDATE_ENV.METADATA_URL]);
 
   return {
     arch: env[DESKTOP_UPDATE_ENV.ARCH] ?? input.arch ?? process.arch,
@@ -219,7 +222,7 @@ export function resolveDesktopUpdaterConfig(input: DesktopUpdaterConfigInput): D
     ...(launcherRoot == null ? {} : { launcherRoot }),
     ...(launcherPayloadExtractorPath == null ? {} : { launcherPayloadExtractorPath }),
     ...(launcherRuntimePath == null ? {} : { launcherRuntimePath }),
-    metadataUrl: env[DESKTOP_UPDATE_ENV.METADATA_URL] ?? defaultMetadataUrl(channel),
+    ...(metadataUrl == null ? {} : { metadataUrl }),
     mode,
     ...(namespace == null ? {} : { namespace }),
     openDryRun: isTruthyEnv(env[DESKTOP_UPDATE_ENV.OPEN_DRY_RUN]) ?? false,
