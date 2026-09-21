@@ -17,7 +17,6 @@
 //
 // Fires at most once per page load.
 
-import { reportSafetyEvent } from '../analytics/error-tracking';
 
 let captured = false;
 
@@ -66,17 +65,7 @@ function emit(): void {
   const nav = readNavigationTiming();
   if (!nav) return;
 
-  reportSafetyEvent('client_boot_timing', {
-    navigation_start_offset_ms: round(nav.navigationStart),
-    dom_interactive_ms: round(nav.domInteractive),
-    dom_content_loaded_ms: round(nav.domContentLoadedEventStart),
-    dom_complete_ms: round(nav.domComplete),
-    load_event_ms: round(nav.loadEventStart),
-    transfer_size_bytes:
-      typeof nav.transferSize === 'number' && nav.transferSize > 0 ? nav.transferSize : undefined,
-    next_render_mode: detectNextRenderMode(),
-    visibility_state: typeof document !== 'undefined' ? document.visibilityState : undefined,
-  });
+  
 }
 
 interface BootTimingsShape {

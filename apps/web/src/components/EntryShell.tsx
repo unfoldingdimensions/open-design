@@ -35,27 +35,6 @@ import {
   type WorkspaceProjectSummary,
 } from '@capydesign/contracts';
 import type { CapyDesignHostProjectImportSuccess } from '@capydesign/host';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackHomeNavClick,
-  trackOnboardingClick,
-  trackOnboardingCompleteResult,
-  trackOnboardingRuntimeScanResult,
-  trackPageView,
-} from '../analytics/events';
-import {
-  amrHandoffDeviceId,
-  recordAmrEntry,
-  type AmrEntryAttribution,
-} from '../analytics/amr-attribution';
-import { getResolvedDeviceId } from '../analytics/client';
-import {
-  beginAmrAuthTracking,
-  confirmAmrAuthTracking,
-  observeAmrAuthTracking,
-  reconcileAmrAuthAttemptId,
-  resolveAmrAuthTracking,
-} from '../analytics/amr-auth';
 import {
   clearOnboardingSessionId,
   getOrCreateOnboardingSessionId,
@@ -1221,7 +1200,6 @@ export function EntryShell({
     if (!scrollContainer) return;
     scrollContainer.scrollTop = 0;
   }, [view]);
-  const analytics = useAnalytics();
   // 产品拍板 D5: the campaign modal's paid 立即使用 performs the REAL switch —
   // daemon execution mode + Cloud agent (amr) + DeepSeek V4 Flash — through
   // the same persistence callbacks the InlineModelSwitcher writes through.
@@ -1238,11 +1216,7 @@ export function EntryShell({
   function changeView(next: EntryViewKind) {
     const navElement = navElementForView(next);
     if (navElement) {
-      trackHomeNavClick(analytics.track, {
-        page_name: 'home',
-        area: 'nav',
-        element: navElement,
-      });
+      
     }
     navigate({ kind: 'home', view: next });
   }
@@ -1251,9 +1225,7 @@ export function EntryShell({
   // is conditionally mounted and tracks its own visit; always-mounted library
   // surfaces receive an explicit isActive prop below.
   useEffect(() => {
-    if (view === 'drafts') trackPageView(analytics.track, { page_name: 'drafts' });
-    else if (view === 'all-projects') trackPageView(analytics.track, { page_name: 'all_projects' });
-  }, [analytics.track, view]);
+  }, [ view]);
 
   function startPluginAuthoring(goal?: string) {
     setHomePromptHandoff(
@@ -1686,11 +1658,7 @@ export function EntryShell({
           view={view}
           onViewChange={changeView}
           onNewProject={() => {
-            trackHomeNavClick(analytics.track, {
-              page_name: 'home',
-              area: 'nav',
-              element: 'new_project_plus',
-            });
+            
             openNewProject();
           }}
           onOpenSearch={() => setProjectSearchOpen(true)}
@@ -2147,7 +2115,6 @@ function OnboardingView({
   onFinish: () => void;
 }) {
   const t = useT();
-  const analytics = useAnalytics();
   const [step, setStep] = useState(0);
   const [runtime, setRuntime] = useState<'amr' | 'local' | 'byok' | null>(null);
   const [runtimeSetupEntry, setRuntimeSetupEntry] = useState<'cloud' | 'chooser'>('chooser');
@@ -2485,14 +2452,8 @@ function OnboardingView({
     const onboardingSessionId = onboardingSessionIdRef.current;
     if (!onboardingSessionId) return;
     const info = stepInfo(step);
-    trackPageView(analytics.track, {
-      page_name: 'onboarding',
-      area: info.area,
-      step_index: info.stepIndex,
-      step_name: info.stepName,
-      onboarding_session_id: onboardingSessionId,
-    });
-  }, [analytics.track, step]);
+    
+  }, [ step]);
 
   // Onboarding analytics helpers. Wall-clock start so the lifecycle
   // result event can carry `duration_ms`; `runtime` state is the user's
@@ -2529,16 +2490,7 @@ function OnboardingView({
     const onboardingSessionId = onboardingSessionIdRef.current;
     if (!onboardingSessionId) return;
     const info = stepInfo(step);
-    trackOnboardingClick(analytics.track, {
-      page_name: 'onboarding',
-      area: info.area,
-      element,
-      action,
-      step_index: info.stepIndex,
-      step_name: info.stepName,
-      onboarding_session_id: onboardingSessionId,
-      ...extra,
-    });
+    
   }
   function emitOnboardingComplete(
     result: TrackingOnboardingCompletionResult,
@@ -2553,20 +2505,7 @@ function OnboardingView({
     if (!onboardingSessionId) return;
     lifecycleReportedRef.current = true;
     const info = stepInfo(step);
-    trackOnboardingCompleteResult(analytics.track, {
-      page_name: 'onboarding',
-      area: 'onboarding',
-      result,
-      exit_step_name: info.stepName,
-      completion_type: completionType,
-      runtime_type: extra.runtimeType ?? currentRuntimeType(),
-      has_about_you: false,
-      has_design_system_request: false,
-      source_count: 0,
-      ...(extra.errorCode ? { error_code: extra.errorCode } : {}),
-      duration_ms: Math.max(0, Date.now() - onboardingStartedAtRef.current),
-      onboarding_session_id: onboardingSessionId,
-    });
+    
   }
   const protocolProviders = KNOWN_PROVIDERS.filter((provider) => provider.protocol === apiProtocol);
   const hasProtocolOwnedEmptyProvider =
@@ -2711,18 +2650,7 @@ function OnboardingView({
     const telemetry = cliScanTelemetryRef.current;
     if (!telemetry || telemetry.token !== token) return;
     cliScanTelemetryRef.current = null;
-    trackOnboardingRuntimeScanResult(analytics.track, {
-      page_name: 'onboarding',
-      area: 'runtime',
-      runtime_type: 'local_cli',
-      result: args.result,
-      detected_cli_count: args.detected,
-      available_cli_count: args.available,
-      ...(args.selectedCliId ? { selected_cli_id: args.selectedCliId } : {}),
-      ...(args.errorCode ? { error_code: args.errorCode } : {}),
-      duration_ms: Math.max(0, Date.now() - telemetry.startedAt),
-      onboarding_session_id: telemetry.onboardingSessionId,
-    });
+    
   }
 
   function beginCliScan(options: { clearVisible: boolean }): number {

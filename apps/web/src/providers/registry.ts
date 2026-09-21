@@ -4,7 +4,6 @@ import {
   type PublicFileManualRevokeRequiredData,
   type PublicProjectFilePublication,
 } from '@capydesign/contracts';
-import { boundedRequestErrorCode } from '../analytics/workspace';
 import type {
   ConnectorAuthConfigPrepareResponse,
   ConnectorDetail,

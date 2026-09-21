@@ -4,13 +4,6 @@ import { Dialog, DialogDescription, DialogFooter, DialogTitle } from '@capydesig
 import { createTabToTracking } from '@capydesign/contracts/analytics';
 import { isCapyDesignHostAvailable, pickHostWorkingDir } from '@capydesign/host';
 import type { CapyDesignHostProjectImportSuccess } from '@capydesign/host';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackDesignSystemApplyResult,
-  trackNewProjectModalElementClick,
-  trackNewProjectModalSurfaceView,
-  trackNewProjectModalTabClick,
-} from '../analytics/events';
 import type { ConnectorDetail } from '@capydesign/contracts';
 import type {
   TrackingDesignSystemApplyTargetKind,
@@ -294,7 +287,6 @@ export function NewProjectPanel({
 }: Props) {
   const t = useT();
   const { locale } = useI18n();
-  const analytics = useAnalytics();
   const importInputRef = useRef<HTMLInputElement | null>(null);
   const [importing, setImporting] = useState(false);
   const [importZipError, setImportZipError] = useState<
@@ -315,12 +307,8 @@ export function NewProjectPanel({
   useEffect(() => {
     if (newProjectViewedTabRef.current === tab) return;
     newProjectViewedTabRef.current = tab;
-    trackNewProjectModalSurfaceView(analytics.track, {
-      page_name: 'home',
-      area: 'new_project_modal',
-      tab_name: createTabToTracking(tab),
-    });
-  }, [tab, analytics.track]);
+    
+  }, [tab]);
   // Media tab consolidates image / video / audio. The active surface picks
   // which set of options + skill resolution applies; submission still maps
   // back to the existing image/video/audio ProjectKind branches so the
@@ -451,24 +439,8 @@ export function NewProjectPanel({
     if (autoSelectFiredForRef.current === primary) return;
     autoSelectFiredForRef.current = primary;
     const picked = selectableDesignSystems.find((d) => d.id === primary);
-    trackDesignSystemApplyResult(analytics.track, {
-      page_name: 'home',
-      area: 'design_system_picker',
-      action: 'auto_select',
-      result: 'success',
-      target_project_kind: newProjectTabToApplyKind(tab),
-      design_system_id: primary,
-      design_system_source: deriveDesignSystemOrigin(picked),
-      design_system_status: deriveDesignSystemStatusValue(picked),
-      design_system_applied: true,
-      design_system_selection_mode: 'default',
-      is_default: true,
-      is_auto_selected: true,
-      available_design_system_count: designSystems.length,
-      duration_ms: 0,
-    });
+    
   }, [
-    analytics.track,
     dsSelectionTouched,
     initialDefaultDsSelection,
     selectableDesignSystems,
@@ -656,44 +628,13 @@ export function NewProjectPanel({
     if (previousPrimary === nextPrimary) return;
     const targetKind = newProjectTabToApplyKind(tab);
     if (ids.length === 0) {
-      trackDesignSystemApplyResult(analytics.track, {
-        page_name: 'home',
-        area: 'design_system_picker',
-        action: 'clear_selection',
-        result: 'success',
-        target_project_kind: targetKind,
-        design_system_applied: false,
-        design_system_selection_mode: 'none',
-        is_default: false,
-        is_auto_selected: false,
-        available_design_system_count: designSystems.length,
-        duration_ms: 0,
-      });
+      
       return;
     }
     if (!nextPrimary) return;
     const picked = designSystems.find((d) => d.id === nextPrimary);
     const isDefault = nextPrimary === defaultDesignSystemId;
-    trackDesignSystemApplyResult(analytics.track, {
-      page_name: 'home',
-      area: 'design_system_picker',
-      action: 'select_design_system',
-      result: 'success',
-      target_project_kind: targetKind,
-      design_system_id: nextPrimary,
-      design_system_source: deriveDesignSystemOrigin(picked),
-      design_system_status: deriveDesignSystemStatusValue(picked),
-      design_system_applied: true,
-      design_system_selection_mode: isDefault ? 'default' : 'manual',
-      is_default: isDefault,
-      // `is_auto_selected` reports whether this row was picked by the
-      // app (initial default selection from `initialDefaultDsSelection`)
-      // rather than by the user. Once `dsSelectionTouched` is set we
-      // know any subsequent change came from a click.
-      is_auto_selected: false,
-      available_design_system_count: designSystems.length,
-      duration_ms: 0,
-    });
+    
   }
 
   useEffect(() => {
@@ -759,21 +700,12 @@ export function NewProjectPanel({
     });
     // Generate the click→result correlation id here so the home_click and
     // the eventual project_create_result share request_id.
-    const requestId = analytics.newRequestId();
+    const requestId = crypto.randomUUID();
     // v2 emits ui_click element=create on the New project modal; the
     // project_create_result correlated through `requestId` carries the
     // project_kind / fidelity payload, so we no longer duplicate them
     // on the click event.
-    trackNewProjectModalElementClick(
-      analytics.track,
-      {
-        page_name: 'home',
-        area: 'new_project_modal',
-        element: 'create',
-        tab_name: createTabToTracking(tab),
-      },
-      { requestId },
-    );
+    
     onCreate({
       name: trimmedName || autoName(tab, mediaSurface, t),
       skillId: startTemplateId ?? skillIdForTab,
@@ -875,12 +807,7 @@ export function NewProjectPanel({
               className={`newproj-tab ${tab === entry ? 'active' : ''}`}
               onClick={() => {
                 if (entry !== tab) {
-                  trackNewProjectModalTabClick(analytics.track, {
-                    page_name: 'home',
-                    area: 'new_project_modal',
-                    element: 'tab',
-                    tab_name: createTabToTracking(entry),
-                  });
+                  
                 }
                 setTab(entry);
               }}

@@ -31,24 +31,6 @@ import {
 } from '../providers/registry';
 import { localizeSkillDescription, localizeSkillName } from '../i18n/content';
 import type { Locale } from '../i18n/types';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackPageView,
-  trackPluginImportModalClick,
-  trackPluginImportModalSurfaceView,
-  trackPluginImportResult,
-  trackPluginsAvailableTabClick,
-  trackPluginsInstalledTabClick,
-  trackPluginsSourcesTabClick,
-  trackPluginsTemplatesDropdownClick,
-  trackPluginsTopClick,
-  trackExtensionMarketplaceClick,
-  trackWorkspaceResourceActionResult,
-} from '../analytics/events';
-import {
-  stableAnalyticsRequestErrorCode,
-  workspaceAnalyticsDimensions,
-} from '../analytics/workspace';
 import type { TrackingWorkspaceScope } from '@capydesign/contracts/analytics';
 import {
   addPluginMarketplace,
@@ -242,7 +224,6 @@ export function PluginsView({
   onCreatePluginShareProject,
 }: PluginsViewProps) {
   const { locale, t } = useI18n();
-  const analytics = useAnalytics();
   // Attaches the same workspace identity headers project reads already carry
   // (`workspaceProjectHeaders`), so the daemon's `GET /api/plugins` /
   // `POST /api/plugins/install` can apply the workspace-scoped filter and
@@ -280,8 +261,8 @@ export function PluginsView({
   useEffect(() => {
     if (pluginsPageViewFiredRef.current) return;
     pluginsPageViewFiredRef.current = true;
-    trackPageView(analytics.track, { page_name: 'plugins' });
-  }, [analytics.track]);
+    
+  }, []);
   const [plugins, setPlugins] = useState<InstalledPluginRecord[]>([]);
   const [allInstalledPlugins, setAllInstalledPlugins] = useState<InstalledPluginRecord[]>([]);
   const [marketplaces, setMarketplaces] = useState<PluginMarketplace[]>([]);
@@ -521,11 +502,7 @@ export function PluginsView({
             type="button"
             className="plugins-view__primary"
             onClick={() => {
-              trackPluginsTopClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'plugins',
-                element: 'create_plugin',
-              });
+              
               onCreatePlugin?.();
             }}
             data-testid="plugins-create-button"
@@ -537,11 +514,7 @@ export function PluginsView({
             type="button"
             className="plugins-view__secondary"
             onClick={() => {
-              trackPluginsTopClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'plugins',
-                element: 'import_plugin',
-              });
+              
               setImportOpen(true);
             }}
             aria-haspopup="dialog"
@@ -579,11 +552,7 @@ export function PluginsView({
                 .filter(Boolean)
                 .join('')}
               onClick={() => {
-                trackPluginsTopClick(analytics.track, {
-                  page_name: 'plugins',
-                  area: 'plugins',
-                  element: `${tab.id}_tab` as const,
-                });
+                
                 setActiveTab(tab.id);
               }}
               data-testid={`plugins-tab-${tab.id}`}
@@ -610,51 +579,21 @@ export function PluginsView({
             pendingDuplicateId={pendingDuplicatePluginId}
             pendingShareAction={pendingShareAction}
             onUse={(record, action) => {
-              trackPluginsInstalledTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'installed_tab',
-                element: action === 'use-with-query' ? 'templates_use_dropdown' : 'templates_use',
-                template_id: record.id,
-                template_type: record.sourceKind,
-              });
+              
               if (action === 'use-with-query') {
-                trackPluginsTemplatesDropdownClick(analytics.track, {
-                  page_name: 'plugins',
-                  area: 'templates_dropdown',
-                  element: 'use_with_query',
-                  template_id: record.id,
-                  template_type: record.sourceKind,
-                });
+                
               } else {
-                trackPluginsTemplatesDropdownClick(analytics.track, {
-                  page_name: 'plugins',
-                  area: 'templates_dropdown',
-                  element: 'use',
-                  template_id: record.id,
-                  template_type: record.sourceKind,
-                });
+                
               }
               void handleUsePlugin(record, action);
             }}
             onDuplicate={(record) => void handleDuplicatePlugin(record)}
             onOpenDetails={(record) => {
-              trackPluginsInstalledTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'installed_tab',
-                element: 'templates_details',
-                template_id: record.id,
-                template_type: record.sourceKind,
-              });
+              
               setDetailsRecord(record);
             }}
             onPluginShareAction={(record, action) => {
-              trackPluginsInstalledTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'installed_tab',
-                element: action === 'publish-github' ? 'templates_publish' : 'templates_contribute',
-                template_id: record.id,
-                template_type: record.sourceKind,
-              });
+              
               requestPluginShareTask(record, action);
             }}
             preferDefaultFacet={false}
@@ -669,49 +608,19 @@ export function PluginsView({
             plugins={availablePlugins}
             pendingKey={pendingInstallEntry}
             onOpenDetails={(plugin) => {
-              trackPluginsAvailableTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'available_tab',
-                element: 'details',
-                plugin_id: plugin.entry.name,
-                plugin_type: plugin.marketplace.trust,
-              });
+              
               setAvailableDetails(plugin);
             }}
             onUseInstalled={(record) => {
-              trackPluginsAvailableTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'available_tab',
-                element: 'install',
-                plugin_id: record.sourceMarketplaceEntryName ?? record.id,
-                plugin_type: record.marketplaceTrust ?? 'official',
-              });
+              
               void handleUsePlugin(record, 'use');
             }}
             onInstall={(plugin) => {
-              trackPluginsAvailableTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'available_tab',
-                element: 'install',
-                plugin_id: plugin.entry.name,
-                plugin_type: plugin.marketplace.trust,
-              });
+              
               void handleInstallAvailable(plugin);
             }}
-            onSearchInput={() =>
-              trackPluginsAvailableTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'available_tab',
-                element: 'search_input',
-              })
-            }
-            onSourceDropdown={() =>
-              trackPluginsAvailableTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'available_tab',
-                element: 'source_dropdown',
-              })
-            }
+            onSearchInput={() => {}}
+            onSourceDropdown={() => {}}
             t={t}
           />
         ) : null}
@@ -721,36 +630,18 @@ export function PluginsView({
             marketplaces={visibleMarketplaces}
             pendingAction={pendingSourceAction}
             onAdd={(url, trust) => {
-              trackPluginsSourcesTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'sources_tab',
-                element: 'add_source',
-              });
+              
               void handleMarketplaceMutation('add', () => addPluginMarketplace({ url, trust }));
             }}
-            onSourceUrlInput={() =>
-              trackPluginsSourcesTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'sources_tab',
-                element: 'source_url_input',
-              })
-            }
+            onSourceUrlInput={() => {}}
             onRefresh={(marketplace) => {
-              trackPluginsSourcesTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'sources_tab',
-                element: 'refresh',
-              });
+              
               void handleMarketplaceMutation(`refresh:${marketplace.id}`, () =>
                 refreshPluginMarketplace(marketplace.id),
               );
             }}
             onRemove={(marketplace) => {
-              trackPluginsSourcesTabClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'sources_tab',
-                element: 'remove',
-              });
+              
               void handleMarketplaceMutation(`remove:${marketplace.id}`, () =>
                 removePluginMarketplace(marketplace.id),
               );
@@ -1036,7 +927,6 @@ export function ExtensionsMarketplace({
   onUseSkill,
 }: ExtensionsMarketplaceProps) {
   const { locale, t } = useI18n();
-  const analytics = useAnalytics();
   // My own member id, to keep the Personal tab to resources I actually own.
   const {
     context: workspaceContext,
@@ -1070,8 +960,8 @@ export function ExtensionsMarketplace({
     if (!isActive) return;
     if (pageViewFiredRef.current) return;
     pageViewFiredRef.current = true;
-    trackPageView(analytics.track, { page_name: 'plugins' });
-  }, [analytics.track, isActive]);
+    
+  }, [ isActive]);
 
   const [mode, setMode] = useState<MarketMode>('plugins');
   // #5517 lands on the official catalog first — a new workspace's personal
@@ -1085,15 +975,7 @@ export function ExtensionsMarketplace({
       scope?: TrackingWorkspaceScope;
     } = {},
   ) {
-    trackExtensionMarketplaceClick(analytics.track, {
-      page_name: 'plugins',
-      area: 'extension_marketplace',
-      element,
-      extension_kind: input.kind ?? (mode === 'plugins' ? 'expert_plugin' : 'skill'),
-      resource_scope: input.scope ?? scope,
-      ...(input.id ? { extension_key: input.id } : {}),
-      ...workspaceDimensions,
-    });
+    
   }
   function trackResourceResult(input: {
     kind: 'expert_plugin' | 'skill';
@@ -1103,17 +985,7 @@ export function ExtensionsMarketplace({
     startedAt: number;
     errorCode?: string;
   }) {
-    trackWorkspaceResourceActionResult(analytics.track, {
-      page_name: 'plugins',
-      area: 'workspace_resource',
-      resource_kind: input.kind,
-      resource_scope: input.scope,
-      action: input.action,
-      result: input.result,
-      duration_ms: Math.round(performance.now() - input.startedAt),
-      ...(input.errorCode ? { error_code: input.errorCode } : {}),
-      ...workspaceDimensions,
-    });
+    
   }
   useEffect(() => {
     if (scope === 'team' && !hasTeamWorkspace) setScope('official');
@@ -1164,15 +1036,7 @@ export function ExtensionsMarketplace({
 
   function openCardDetail(detail: MarketCardDetail | null) {
     if (!detail) return;
-    trackExtension('details', {
-      id:
-        detail.kind === 'plugin'
-          ? detail.record.id
-          : detail.kind === 'skill'
-            ? detail.skill.id
-            : detail.plugin.key,
-      kind: detail.kind === 'skill' ? 'skill' : 'expert_plugin',
-    });
+    
     setMenuId(null);
     setConfirmUninstallId(null);
     if (detail.kind === 'plugin') {
@@ -1197,10 +1061,7 @@ export function ExtensionsMarketplace({
   const createFolderInputRef = useRef<HTMLInputElement>(null);
 
   function openCreateDialog() {
-    trackExtension('add', {
-      kind: mode === 'skills' ? 'skill' : 'expert_plugin',
-      scope: 'personal',
-    });
+    
     setCreateKind(mode === 'skills' ? 'skill' : 'plugin');
     setCreateUrl('');
     setCreateFolderFiles([]);
@@ -1240,17 +1101,13 @@ export function ExtensionsMarketplace({
     if (!url || createBusy || workspaceContextLoading) return;
     const startedAt = performance.now();
     const trackingKind = createKind === 'skill' ? 'skill' : 'expert_plugin';
-    trackExtension('add', { kind: trackingKind, scope: 'personal' });
+    
     if (createKind === 'skill') {
       setCreateBusy('import');
       try {
         const result = await installSkill({ source: url }, workspaceContext);
         if ('error' in result) {
-          trackResourceResult({
-            kind: 'skill', scope: 'personal', action: 'add', result: 'failed',
-            startedAt,
-            errorCode: resourceActionAnalyticsErrorCode(result.error, 'import_failed'),
-          });
+          
           setToast({ message: result.error.message || t('pluginsView.importFailed'), tone: 'error' });
           return;
         }
@@ -1263,9 +1120,7 @@ export function ExtensionsMarketplace({
           }),
           tone: 'success',
         });
-        trackResourceResult({
-          kind: 'skill', scope: 'personal', action: 'add', result: 'success', startedAt,
-        });
+        
       } finally {
         setCreateBusy(null);
       }
@@ -1279,16 +1134,10 @@ export function ExtensionsMarketplace({
         setCreateOpen(false);
         revealImported('plugin');
         setToast({ message: t('pluginsView.importPluginSuccess'), tone: 'success' });
-        trackResourceResult({
-          kind: 'expert_plugin', scope: 'personal', action: 'add', result: 'success', startedAt,
-        });
+        
       } else {
         setToast({ message: outcome.message || t('pluginsView.importFailed'), tone: 'error' });
-        trackResourceResult({
-          kind: 'expert_plugin', scope: 'personal', action: 'add', result: 'failed',
-          startedAt,
-          errorCode: resourceActionAnalyticsErrorCode(outcome, 'import_failed'),
-        });
+        
       }
     } finally {
       setCreateBusy(null);
@@ -1299,7 +1148,7 @@ export function ExtensionsMarketplace({
     if (createFolderFiles.length === 0 || createBusy || workspaceContextLoading) return;
     const startedAt = performance.now();
     const trackingKind = createKind === 'skill' ? 'skill' : 'expert_plugin';
-    trackExtension('add', { kind: trackingKind, scope: 'personal' });
+    
     setCreateBusy('upload');
     try {
       if (createKind === 'plugin') {
@@ -1309,16 +1158,10 @@ export function ExtensionsMarketplace({
           setCreateOpen(false);
           revealImported('plugin');
           setToast({ message: t('pluginsView.uploadPluginSuccess'), tone: 'success' });
-          trackResourceResult({
-            kind: 'expert_plugin', scope: 'personal', action: 'add', result: 'success', startedAt,
-          });
+          
         } else {
           setToast({ message: outcome.message || t('pluginsView.uploadFailed'), tone: 'error' });
-          trackResourceResult({
-            kind: 'expert_plugin', scope: 'personal', action: 'add', result: 'failed',
-            startedAt,
-            errorCode: resourceActionAnalyticsErrorCode(outcome, 'upload_failed'),
-          });
+          
         }
         return;
       }
@@ -1327,10 +1170,7 @@ export function ExtensionsMarketplace({
       // (个人的) registry; promoting to the team is the existing 转为团队共享 action.
       const input = await readSkillImportInputFromFolder(createFolderFiles, t);
       if ('error' in input) {
-        trackResourceResult({
-          kind: 'skill', scope: 'personal', action: 'add', result: 'failed',
-          startedAt, errorCode: 'invalid_skill_folder',
-        });
+        
         setToast({ message: input.error.message, tone: 'error' });
         return;
       }
@@ -1339,11 +1179,7 @@ export function ExtensionsMarketplace({
       // in `refresh()` below for the read-side counterpart.
       const result = await importSkill(input, workspaceContext);
       if ('error' in result) {
-        trackResourceResult({
-          kind: 'skill', scope: 'personal', action: 'add', result: 'failed',
-          startedAt,
-          errorCode: resourceActionAnalyticsErrorCode(result.error, 'import_failed'),
-        });
+        
         setToast({ message: result.error.message, tone: 'error' });
         return;
       }
@@ -1354,9 +1190,7 @@ export function ExtensionsMarketplace({
         message: t('pluginsView.importSkillSuccess', { name: localizeSkillName(locale, result.skill) }),
         tone: 'success',
       });
-      trackResourceResult({
-        kind: 'skill', scope: 'personal', action: 'add', result: 'success', startedAt,
-      });
+      
     } finally {
       setCreateBusy(null);
     }
@@ -1654,40 +1488,20 @@ export function ExtensionsMarketplace({
           message: t(wasAlreadyShared ? 'pluginsView.syncSuccess' : 'pluginsView.shareSuccess', { title }),
           tone: 'success',
         });
-        trackResourceResult({
-          kind: kind === 'plugins' ? 'expert_plugin' : 'skill',
-          scope: 'personal',
-          action: wasAlreadyShared ? 'sync_to_team' : 'share_to_team',
-          result: 'success',
-          startedAt,
-        });
+        
       } else {
         setToast({
           message: t(wasAlreadyShared ? 'pluginsView.syncUnavailable' : 'pluginsView.shareUnavailable', { title }),
           tone: 'error',
         });
-        trackResourceResult({
-          kind: kind === 'plugins' ? 'expert_plugin' : 'skill',
-          scope: 'personal',
-          action: wasAlreadyShared ? 'sync_to_team' : 'share_to_team',
-          result: 'failed',
-          startedAt,
-          errorCode: res.ok ? 'resource_not_shared' : `http_${res.status}`,
-        });
+        
       }
     } catch {
       setToast({
         message: t(wasAlreadyShared ? 'pluginsView.syncFailed' : 'pluginsView.shareFailed', { title }),
         tone: 'error',
       });
-      trackResourceResult({
-        kind: kind === 'plugins' ? 'expert_plugin' : 'skill',
-        scope: 'personal',
-        action: wasAlreadyShared ? 'sync_to_team' : 'share_to_team',
-        result: 'failed',
-        startedAt,
-        errorCode: 'network_error',
-      });
+      
     } finally {
       setSharingId(null);
     }
@@ -1713,34 +1527,14 @@ export function ExtensionsMarketplace({
       if (res.ok && body.unshared) {
         await refreshSharedResources();
         setToast({ message: t('pluginsView.unshareSuccess', { title }), tone: 'success' });
-        trackResourceResult({
-          kind: kind === 'plugins' ? 'expert_plugin' : 'skill',
-          scope: 'team',
-          action: 'remove_from_team',
-          result: 'success',
-          startedAt,
-        });
+        
       } else {
         setToast({ message: t('pluginsView.unshareUnavailable', { title }), tone: 'error' });
-        trackResourceResult({
-          kind: kind === 'plugins' ? 'expert_plugin' : 'skill',
-          scope: 'team',
-          action: 'remove_from_team',
-          result: 'failed',
-          startedAt,
-          errorCode: res.ok ? 'resource_not_removed' : `http_${res.status}`,
-        });
+        
       }
     } catch {
       setToast({ message: t('pluginsView.unshareFailed', { title }), tone: 'error' });
-      trackResourceResult({
-        kind: kind === 'plugins' ? 'expert_plugin' : 'skill',
-        scope: 'team',
-        action: 'remove_from_team',
-        result: 'failed',
-        startedAt,
-        errorCode: 'network_error',
-      });
+      
     } finally {
       setUnsharingId(null);
     }
@@ -1790,33 +1584,13 @@ export function ExtensionsMarketplace({
           current?.kind === 'available' && current.plugin.key === plugin.key ? null : current,
         );
         setToast({ message: t('pluginsView.installSuccess', { title }), tone: 'success' });
-        trackResourceResult({
-          kind: 'expert_plugin',
-          scope: 'official',
-          action: 'add',
-          result: 'success',
-          startedAt,
-        });
+        
       } else {
         setToast({ message: outcome.message || t('pluginsView.installFailed', { title }), tone: 'error' });
-        trackResourceResult({
-          kind: 'expert_plugin',
-          scope: 'official',
-          action: 'add',
-          result: 'failed',
-          startedAt,
-          errorCode: resourceActionAnalyticsErrorCode(outcome, 'install_failed'),
-        });
+        
       }
     } catch {
-      trackResourceResult({
-        kind: 'expert_plugin',
-        scope: 'official',
-        action: 'add',
-        result: 'failed',
-        startedAt,
-        errorCode: 'network_error',
-      });
+      
     } finally {
       setInstallingKeys((prev) => {
         const next = new Set(prev);
@@ -2070,10 +1844,7 @@ export function ExtensionsMarketplace({
         {...(onUseSkill
           ? {
             onUse: () => {
-              trackExtension('use', {
-                id: selectedSkill.id,
-                kind: 'skill',
-              });
+              
               setCardDetail(null);
               onUseSkill(selectedSkill);
             },
@@ -2112,7 +1883,7 @@ export function ExtensionsMarketplace({
             type="button"
             className={mode === 'plugins' ? 'is-active' : ''}
             onClick={() => {
-              trackExtension('filter', { kind: 'expert_plugin' });
+              
               setMode('plugins');
               setMenuId(null);
               setConfirmUninstallId(null);
@@ -2124,7 +1895,7 @@ export function ExtensionsMarketplace({
             type="button"
             className={mode === 'skills' ? 'is-active' : ''}
             onClick={() => {
-              trackExtension('filter', { kind: 'skill' });
+              
               setMode('skills');
               setMenuId(null);
             }}
@@ -2145,7 +1916,7 @@ export function ExtensionsMarketplace({
               className={scope === item.id ? 'is-active' : ''}
               {...(item.id === 'personal' ? { 'data-testid': 'plugins-tab-installed' } : {})}
               onClick={() => {
-                trackExtension('filter', { scope: item.id });
+                
                 setScope(item.id);
                 setMenuId(null);
               }}
@@ -2279,10 +2050,7 @@ export function ExtensionsMarketplace({
                         onClick={(event) => {
                           event.stopPropagation();
                           const action = card.action as { kind: 'try'; record: InstalledPluginRecord };
-                          trackExtension('use', {
-                            id: action.record.id,
-                            kind: 'expert_plugin',
-                          });
+                          
                           onUsePlugin(action.record, 'use');
                         }}
                       >
@@ -2296,10 +2064,7 @@ export function ExtensionsMarketplace({
                         onClick={(event) => {
                           event.stopPropagation();
                           const action = card.action as { kind: 'use-skill'; skill: SkillSummary };
-                          trackExtension('use', {
-                            id: action.skill.id,
-                            kind: 'skill',
-                          });
+                          
                           onUseSkill(action.skill);
                         }}
                       >
@@ -2314,11 +2079,7 @@ export function ExtensionsMarketplace({
                         onClick={(event) => {
                           event.stopPropagation();
                           const action = card.action as { kind: 'install'; plugin: AvailableMarketplacePlugin };
-                          trackExtension('add', {
-                            id: action.plugin.key,
-                            kind: 'expert_plugin',
-                            scope: 'official',
-                          });
+                          
                           void installAvailable(action.plugin, card.title);
                         }}
                       >
@@ -2538,10 +2299,7 @@ export function ExtensionsMarketplace({
                       disabled={createBusy !== null}
                       data-testid="plugin-create-with-agent"
                       onClick={() => {
-                        trackExtension('create', {
-                          kind: 'expert_plugin',
-                          scope: 'personal',
-                        });
+                        
                         closeCreateDialog();
                         onCreatePlugin();
                       }}
@@ -3696,16 +3454,12 @@ function PluginImportModal({
   onUploadZip: (file: File) => Promise<PluginInstallOutcome>;
   onUploadFolder: (files: File[]) => Promise<PluginInstallOutcome>;
 }) {
-  const analytics = useAnalytics();
   const importModalViewFiredRef = useRef(false);
   useEffect(() => {
     if (importModalViewFiredRef.current) return;
     importModalViewFiredRef.current = true;
-    trackPluginImportModalSurfaceView(analytics.track, {
-      page_name: 'plugins',
-      area: 'import_modal',
-    });
-  }, [analytics.track]);
+    
+  }, []);
   const [kind, setKind] = useState<ImportKind>('github');
   const [source, setSource] = useState('');
   const [zipFile, setZipFile] = useState<File | null>(null);
@@ -3713,22 +3467,12 @@ function PluginImportModal({
   const [working, setWorking] = useState(false);
 
   function selectKind(next: ImportKind) {
-    trackPluginImportModalClick(analytics.track, {
-      page_name: 'plugins',
-      area: 'import_modal',
-      element: 'source_tab',
-      import_source: next,
-    });
+    
     setKind(next);
   }
 
   async function runImport() {
-    trackPluginImportModalClick(analytics.track, {
-      page_name: 'plugins',
-      area: 'import_modal',
-      element: 'import',
-      import_source: kind,
-    });
+    
     setWorking(true);
     try {
       let outcome: PluginInstallOutcome | null = null;
@@ -3741,15 +3485,7 @@ function PluginImportModal({
         outcome = await onUploadFolder(folderFiles);
       }
       if (outcome) {
-        trackPluginImportResult(analytics.track, {
-          page_name: 'plugins',
-          area: 'import_modal',
-          import_source: kind,
-          result: outcome.ok ? 'success' : 'failed',
-          ...(outcome.ok ? {} : {
-            error_code: resourceActionAnalyticsErrorCode(outcome, 'install_failed'),
-          }),
-        });
+        
       }
     } finally {
       setWorking(false);
@@ -3878,11 +3614,7 @@ function PluginImportModal({
             type="button"
             className="plugins-view__secondary"
             onClick={() => {
-              trackPluginImportModalClick(analytics.track, {
-                page_name: 'plugins',
-                area: 'import_modal',
-                element: 'cancel',
-              });
+              
               onClose();
             }}
           >

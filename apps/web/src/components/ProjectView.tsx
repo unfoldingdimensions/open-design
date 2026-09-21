@@ -63,7 +63,6 @@ import {
   writeProjectTextFile,
 } from '../providers/registry';
 import { useProjectFileEvents, type ProjectEvent } from '../providers/project-events';
-import { claimProjectTurnIndex, claimRunTurnIndex } from '../analytics/identity';
 import {
   buildInitialTaskAnalytics,
   buildRecoveryTaskAnalytics,
@@ -105,21 +104,6 @@ import type {
   TrackingDesignSystemStatusValue,
   TrackingRunRecoveryActionType,
 } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackByokPreflightBlocked,
-  trackComposerBarClick,
-  trackConversationForkClick,
-  trackConversationForkResult,
-  trackDesignSystemApplyResult,
-  trackDesignSystemEnrichClick,
-  trackPageView,
-  trackOnboardingPromptPrefilled,
-  trackOnboardingFirstPromptSent,
-  trackOnboardingFirstGenerationCompleted,
-  trackRunRecoveryActionClick,
-  trackRunStartBlockedSurfaceView,
-} from '../analytics/events';
 import { byokPreflightBlockReason } from './byok/preflight';
 import {
   clearOnboardingSessionId,
@@ -181,12 +165,6 @@ import { AmrBalanceDialog } from './AmrBalanceDialog';
 import { AmrOwnerTopUpDialog } from './chat/AmrOwnerTopUpDialog';
 import { markHistoryReplayLanded } from './chat/useCharReveal';
 import { workspaceAutoRechargeUrl, workspaceUpgradeUrl } from './EntryNavRail';
-import {
-  amrHandoffDeviceId,
-  attributedAmrUrl,
-  recordAmrEntry,
-} from '../analytics/amr-attribution';
-import { getResolvedDeviceId } from '../analytics/client';
 import {
   cancelBrandExtraction,
   continueBrandExtraction,
@@ -2222,7 +2200,6 @@ export function ProjectView({
       }
     };
   }, [projectAuthorizationKey]);
-  const analytics = useAnalytics();
   const ambientWorkspaceContextState = useWorkspaceContext();
   const workspaceContextState = workspaceContextOverride !== undefined
     ? {
@@ -2558,7 +2535,7 @@ export function ProjectView({
   useEffect(() => {
     if (chatPanelPageViewFiredRef.current === project.id) return;
     chatPanelPageViewFiredRef.current = project.id;
-    trackPageView(analytics.track, { page_name: 'chat_panel' });
+    
     // Onboarding's 4th step ("生成进度页") fires here, not in
     // `DesignSystemDetailView`: the Generate path navigates
     // straight to the project's chat_panel, not to the design
@@ -2571,16 +2548,10 @@ export function ProjectView({
     // route isn't visited from the embedded onboarding generate.
     const onboardingSessionId = peekOnboardingSessionId();
     if (onboardingSessionId) {
-      trackPageView(analytics.track, {
-        page_name: 'onboarding',
-        area: 'generation_progress',
-        step_index: 'progress',
-        step_name: 'generation',
-        onboarding_session_id: onboardingSessionId,
-      });
+      
       clearOnboardingSessionId();
     }
-  }, [analytics.track, project.id]);
+  }, [ project.id]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const conversationsRef = useRef<Conversation[]>([]);
   useEffect(() => {
@@ -3146,7 +3117,6 @@ export function ProjectView({
     );
   }, [
     amrBalanceCardProfile,
-    analytics.track,
     config.installationId,
     config.telemetry?.metrics,
     projectRunBillingAuthorityContext,
@@ -4790,7 +4760,7 @@ export function ProjectView({
     if (!onboardingEntryRef.current) return;
     firstLoopViewedRef.current = true;
     recordFirstLoopStep(analytics.track, 'artifact_viewed', project.id);
-  }, [hasPreviewableArtifact, analytics.track, project.id]);
+  }, [hasPreviewableArtifact, project.id]);
   const activeProjectFileName = useMemo(
     () => (
       openTabsState.active && projectFileNames.has(openTabsState.active)
@@ -8083,22 +8053,8 @@ export function ProjectView({
           requestKey: blockedRequestKey,
           taskAnalytics,
         };
-        trackByokPreflightBlocked(analytics.track, {
-          source: 'run',
-          reason: blockReason,
-          provider_id: byokProtocolToTracking(config.apiProtocol) ?? 'unknown',
-          active_execution_mode: executionModeToTracking(config.mode),
-        });
-        trackRunStartBlockedSurfaceView(analytics.track, {
-          page_name: 'chat_panel',
-          area: 'chat_composer',
-          element: 'run_start_blocked',
-          task_execution_id: taskAnalytics.taskExecutionId,
-          recovery_action_instance_id: recoveryActionInstanceId,
-          block_reason: blockReason,
-          agent_provider_id: byokProtocolToTracking(config.apiProtocol) ?? 'unknown',
-          model_id: config.model?.trim() || 'default',
-        });
+        
+        
         setError(BYOK_PROVIDER_REQUIRED_MESSAGE);
         onOpenSettings('execution');
         return false;
@@ -8429,16 +8385,7 @@ export function ProjectView({
           }
           if (gate.kind === 'hard') {
             const recoveryActionInstanceId = `blocked:${taskAnalytics.taskExecutionId}`;
-            trackRunStartBlockedSurfaceView(analytics.track, {
-              page_name: 'chat_panel',
-              area: 'chat_composer',
-              element: 'run_start_blocked',
-              task_execution_id: taskAnalytics.taskExecutionId,
-              recovery_action_instance_id: recoveryActionInstanceId,
-              block_reason: gate.reason,
-              agent_provider_id: 'amr',
-              model_id: config.agentModels?.amr?.model?.trim() || 'default',
-            });
+            
             taskAnalytics = {
               ...taskAnalytics,
               recoveryActionType: 'manual_retry',
@@ -8564,16 +8511,7 @@ export function ProjectView({
       ) {
         markFirstOnboardingPromptSent(project.id);
         const entry = onboardingEntryRef.current;
-        trackOnboardingFirstPromptSent(analytics.track, {
-          entry_source: entry.source,
-          product_type: entry.productType,
-          recommendation_id: entry.recommendationId,
-          // True only when the user sent the prefilled suggestion unmodified;
-          // an edited, cleared, replaced, or starter-swapped prompt (or an
-          // attachments-only send) reports false so the send-through split
-          // stays honest.
-          has_prefilled_prompt: sentPrefilledPrompt(onboardingSeedPromptRef.current, prompt),
-        });
+        
         recordFirstLoopStep(analytics.track, 'prompt_sent', project.id);
       }
       activeCompletionNotificationRunsRef.current.add(assistantId);
@@ -9250,11 +9188,7 @@ export function ProjectView({
               ) {
                 markFirstOnboardingGenerationCompleted(project.id);
                 const entry = onboardingEntryRef.current;
-                trackOnboardingFirstGenerationCompleted(analytics.track, {
-                  entry_source: entry.source,
-                  product_type: entry.productType,
-                  recommendation_id: entry.recommendationId,
-                });
+                
                 recordFirstLoopStep(analytics.track, 'generated', project.id);
               }
               const traceObjectFiles = computeTraceObjectFiles(
@@ -11424,7 +11358,7 @@ export function ProjectView({
   const handleForkFromMessage = useCallback(
     async (assistantMessage: ChatMessage) => {
       if (!activeConversationId || forkingMessageId || projectMutationReadOnly) return;
-      const requestId = analytics.newRequestId();
+      const requestId = crypto.randomUUID();
       const startedAt = Date.now();
       /*
        * `assistantMessage` 是**渲染**出来的那一格 —— 一条 OD Next Full Plan 回合的
@@ -11453,7 +11387,7 @@ export function ProjectView({
         conversation_message_count: messages.length,
         messages_after_fork_count: forkIndex < 0 ? null : messages.length - forkIndex - 1,
       };
-      trackConversationForkClick(analytics.track, forkContext, { requestId });
+      
       setForkingMessageId(assistantMessage.id);
       setConversationLoadError(null);
       let emptyResponse = false;
@@ -11493,16 +11427,7 @@ export function ProjectView({
           emptyResponse = true;
           throw new Error(t('chat.forkConversationFailed'));
         }
-        trackConversationForkResult(
-          analytics.track,
-          {
-            ...forkContext,
-            target_conversation_id: fresh.id,
-            result: 'success',
-            duration_ms: Math.max(0, Date.now() - startedAt),
-          },
-          { requestId },
-        );
+        
         /*
          * 分界线**不落在源会话**(2026-08-26 用户裁决:「要在新的 fork 里出现,
          * 而不是旧会话里出现啊」)。
@@ -11541,17 +11466,7 @@ export function ProjectView({
         onProjectsRefresh();
         setError(null);
       } catch (err) {
-        trackConversationForkResult(
-          analytics.track,
-          {
-            ...forkContext,
-            target_conversation_id: null,
-            result: 'failed',
-            error_code: emptyResponse ? 'empty_response' : conversationForkErrorCode(err),
-            duration_ms: Math.max(0, Date.now() - startedAt),
-          },
-          { requestId },
-        );
+        
         const message = err instanceof Error ? err.message : t('chat.forkConversationFailed');
         setConversationLoadError(message);
         setError(message);
@@ -11785,36 +11700,9 @@ export function ProjectView({
           : 'unknown'
         : undefined;
       if (nextId === null) {
-        trackDesignSystemApplyResult(analytics.track, {
-          page_name: 'studio',
-          area: 'design_system_picker',
-          action: 'clear_selection',
-          result: 'success',
-          target_project_kind: target,
-          design_system_applied: false,
-          design_system_selection_mode: 'none',
-          is_default: false,
-          is_auto_selected: false,
-          available_design_system_count: designSystems.length,
-          duration_ms: 0,
-        });
+        
       } else {
-        trackDesignSystemApplyResult(analytics.track, {
-          page_name: 'studio',
-          area: 'design_system_picker',
-          action: 'select_design_system',
-          result: 'success',
-          target_project_kind: target,
-          design_system_id: nextId,
-          design_system_source: origin,
-          design_system_status: status,
-          design_system_applied: true,
-          design_system_selection_mode: 'manual',
-          is_default: false,
-          is_auto_selected: false,
-          available_design_system_count: designSystems.length,
-          duration_ms: 0,
-        });
+        
       }
       const updated: Project = {
         ...project,
@@ -11829,7 +11717,6 @@ export function ProjectView({
       projectDesignSystemId,
       onProjectChange,
       designSystems,
-      analytics.track,
       projectMutationReadOnly,
       projectRunWorkspaceContext,
     ],
@@ -12435,14 +12322,8 @@ export function ProjectView({
     if (!entry || onboardingPrefilledFiredRef.current) return;
     if (typeof chatInitialDraft !== 'string' || chatInitialDraft.trim().length === 0) return;
     onboardingPrefilledFiredRef.current = true;
-    trackOnboardingPromptPrefilled(analytics.track, {
-      entry_source: entry.source,
-      product_type: entry.productType,
-      recommendation_id: entry.recommendationId,
-      ...(entry.role ? { role: entry.role } : {}),
-      ...(entry.useCases && entry.useCases.length > 0 ? { use_cases: entry.useCases } : {}),
-    });
-  }, [chatInitialDraft, analytics.track]);
+    
+  }, [chatInitialDraft]);
   const brandEnrichmentPromptSeed =
     project.pendingPrompt?.trim() ||
     (initialDraft?.projectId === project.id ? initialDraft.value.trim() : '');
@@ -12711,13 +12592,7 @@ export function ProjectView({
     if (config.mode !== 'daemon') return;
     const system = designSystemProject ?? activeDesignSystemSummary;
     const skillIds = installedBrandEnrichmentSkillIds(skills);
-    trackDesignSystemEnrichClick(analytics.track, {
-      page_name: 'design_system_project',
-      area: 'design_system_enrich',
-      element: 'ai_optimize',
-      design_system_id: projectDesignSystemId ?? undefined,
-      project_kind: 'design_system',
-    });
+    
     setBrandEnrichmentStarting(true);
     return handleSend(
       buildBrandEnrichmentPrompt(brandEnrichmentPromptSeed || brandEnrichmentPromptSeedCache, {
@@ -13157,32 +13032,14 @@ export function ProjectView({
         daemonLive={daemonLive}
         onModeChange={onModeChange}
         onOpen={() => {
-          trackComposerBarClick(analytics.track, {
-            page_name: 'chat_panel',
-            area: 'chat_composer',
-            element: 'agent_selector_open',
-            ...(project?.id ? { project_id: project.id } : {}),
-          });
+          
         }}
         onAgentChange={(id) => {
-          trackComposerBarClick(analytics.track, {
-            page_name: 'chat_panel',
-            area: 'chat_composer',
-            element: 'agent_select',
-            agent_id: id,
-            ...(project?.id ? { project_id: project.id } : {}),
-          });
+          
           onAgentChange(id);
         }}
         onAgentModelChange={(agentId, choice) => {
-          trackComposerBarClick(analytics.track, {
-            page_name: 'chat_panel',
-            area: 'chat_composer',
-            element: 'agent_model_select',
-            agent_id: agentId,
-            ...(choice?.model ? { model_id: choice.model } : {}),
-            ...(project?.id ? { project_id: project.id } : {}),
-          });
+          
           onAgentModelChange(agentId, choice);
           /*
            * 「选完自动重跑」的那一半。只有确实是从报错卡那颗〔更换模型〕进来的
@@ -13193,13 +13050,7 @@ export function ProjectView({
           if (pending) handleRetry(pending, 'switch_model_retry');
         }}
         onApiModelChange={(model) => {
-          trackComposerBarClick(analytics.track, {
-            page_name: 'chat_panel',
-            area: 'chat_composer',
-            element: 'agent_model_select',
-            model_id: model,
-            ...(project?.id ? { project_id: project.id } : {}),
-          });
+          
           onApiModelChange?.(model);
         }}
         onOpenSettings={onOpenSettings}
@@ -13408,21 +13259,7 @@ export function ProjectView({
                     )
                   : undefined;
                 if (sourceAssistant && questionTaskAnalytics) {
-                  trackRunRecoveryActionClick(analytics.track, {
-                    page_name: 'chat_panel',
-                    area: 'chat_panel',
-                    element: 'run_recovery_action',
-                    task_execution_id: questionTaskAnalytics.taskExecutionId,
-                    recovery_action_instance_id:
-                      questionTaskAnalytics.recoveryActionInstanceId!,
-                    recovery_action_type: 'question_answer',
-                    ...(questionTaskAnalytics.sourceRunId
-                      ? { source_run_id: questionTaskAnalytics.sourceRunId }
-                      : {}),
-                    ...(sourceAssistant.agentId
-                      ? { source_agent_provider_id: runAgentProviderId(sourceAssistant.agentId) }
-                      : {}),
-                  });
+                  
                 }
                 return handleSend(text, attachments, [], {
                   entryFrom: 'question_answer',

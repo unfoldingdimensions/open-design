@@ -21,8 +21,6 @@ import { useT } from '../i18n';
 import type { SkillSummary } from '../types';
 
 type TranslateFn = ReturnType<typeof useT>;
-import { useAnalytics } from '../analytics/provider';
-import { trackAutomationsClick, trackPageView } from '../analytics/events';
 import {
   NewAutomationModal,
   type AutomationTemplate,
@@ -396,7 +394,6 @@ function errorMessage(err: unknown): string {
 
 export function TasksView({ skills = [], designTemplates = [], connectors = [], isActive = true }: Props) {
   const t = useT();
-  const analytics = useAnalytics();
   // Attaches the same workspace identity headers project reads already carry,
   // so the daemon's `GET /api/workspaces/:id/projects` returns the caller's
   // team projects instead of falling back to the no-scope `GET /api/projects`
@@ -426,8 +423,8 @@ export function TasksView({ skills = [], designTemplates = [], connectors = [], 
   useEffect(() => {
     if (pageViewFiredRef.fired) return;
     pageViewFiredRef.fired = true;
-    trackPageView(analytics.track, { page_name: 'automations' });
-  }, [analytics.track, pageViewFiredRef]);
+    
+  }, [ pageViewFiredRef]);
   // P2 ui_click page_name=automations. Fire on every actionable click inside
   // the tab before running the handler, so navigations that unmount the view
   // still report.
@@ -436,14 +433,9 @@ export function TasksView({ skills = [], designTemplates = [], connectors = [], 
       element: AutomationsClickProps['element'],
       extra?: Pick<AutomationsClickProps, 'type_id' | 'filter_id' | 'template_kind'>,
     ) => {
-      trackAutomationsClick(analytics.track, {
-        page_name: 'automations',
-        area: 'automations',
-        element,
-        ...extra,
-      });
+      
     },
-    [analytics.track],
+    [],
   );
   const [routines, setRoutines] = useState<Routine[]>([]);
   const [projects, setProjects] = useState<ProjectSummary[]>([]);

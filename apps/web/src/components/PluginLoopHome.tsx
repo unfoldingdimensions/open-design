@@ -25,8 +25,6 @@ import { Icon } from './Icon';
 import { PluginDetailsModal } from './PluginDetailsModal';
 import { TrustBadge } from './TrustBadge';
 import { authorInitials, derivePluginSourceLinks } from '../runtime/plugin-source';
-import { useAnalytics } from '../analytics/provider';
-import { trackPluginLoopClick } from '../analytics/events';
 import { navigate } from '../router';
 import { useWorkspaceContext } from '../collab/useWorkspaceContext';
 
@@ -106,7 +104,6 @@ interface ActivePlugin {
 
 export function PluginLoopHome({ onSubmit }: Props) {
   const { locale, t } = useI18n();
-  const analytics = useAnalytics();
   const workspaceContextState = useWorkspaceContext();
   const [plugins, setPlugins] = useState<InstalledPluginRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -204,7 +201,7 @@ export function PluginLoopHome({ onSubmit }: Props) {
   function submit() {
     const trimmed = prompt.trim();
     if (!trimmed) return;
-    trackPluginLoopClick(analytics.track, { page_name: 'plugins', area: 'plugin_loop', element: 'submit', plugin_id: active?.record.id });
+    
     onSubmit({
       prompt: trimmed,
       pluginId: active?.record.id ?? null,
@@ -245,7 +242,7 @@ export function PluginLoopHome({ onSubmit }: Props) {
               <button
                 type="button"
                 className="plugin-loop-home__active-clear"
-                onClick={() => { trackPluginLoopClick(analytics.track, { page_name: 'plugins', area: 'plugin_loop', element: 'clear_active', plugin_id: active?.record.id }); clearActive(); }}
+                onClick={() => { clearActive(); }}
                 aria-label="Clear active plugin"
                 title="Clear active plugin"
               >
@@ -372,7 +369,7 @@ export function PluginLoopHome({ onSubmit }: Props) {
                   <button
                     type="button"
                     className="plugin-loop-home__card-details"
-                    onClick={() => { trackPluginLoopClick(analytics.track, { page_name: 'plugins', area: 'plugin_loop', element: 'card_details', plugin_id: p.id }); openDetails(p); }}
+                    onClick={() => { openDetails(p); }}
                     aria-label={t('pluginCard.detailsAria', { title: cardTitle })}
                     data-testid={`view-details-${p.id}`}
                     title={t('pluginCard.details')}
@@ -383,7 +380,7 @@ export function PluginLoopHome({ onSubmit }: Props) {
                   <button
                     type="button"
                     className="plugin-loop-home__card-action"
-                    onClick={() => { trackPluginLoopClick(analytics.track, { page_name: 'plugins', area: 'plugin_loop', element: 'card_use', plugin_id: p.id }); void usePlugin(p); }}
+                    onClick={() => { void usePlugin(p); }}
                     disabled={isPending || pendingApplyId !== null}
                     aria-busy={isPending ? 'true' : undefined}
                     data-testid={`use-example-${p.id}`}

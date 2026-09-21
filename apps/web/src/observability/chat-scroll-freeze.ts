@@ -119,7 +119,6 @@
 
 import type { ChatScrollFreezeProps } from '@capydesign/contracts/analytics';
 
-import { reportSafetyEvent } from '../analytics/error-tracking';
 import { chatCorrelation } from './chat-context';
 import {
   ACTIVITY_NEAR_WINDOW_MS,
@@ -1821,7 +1820,7 @@ function report(
     ...runtime,
   };
 
-  reportSafetyEvent('client_chat_scroll_frozen', { ...props });
+  
 
   // After the report, deliberately. Whatever a consumer does about this — and
   // the only consumer today is an off-by-default wheel takeover — must not be

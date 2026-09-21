@@ -33,7 +33,6 @@
 
 import type { ChatInteractionLatencyProps } from '@capydesign/contracts/analytics';
 
-import { reportSafetyEvent } from '../analytics/error-tracking';
 import { chatCorrelation } from './chat-context';
 
 /**
@@ -149,7 +148,7 @@ function flush(): void {
     area: state.area,
     streaming: state.streaming,
   };
-  reportSafetyEvent('client_chat_interaction_latency', { ...props });
+  
 }
 
 /**

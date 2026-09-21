@@ -1,6 +1,4 @@
 import type { Dispatch, SetStateAction } from 'react';
-import { useAnalytics } from '../analytics/provider';
-import { trackSettingsPrivacyClick } from '../analytics/events';
 import { useT } from '../i18n';
 import { Icon } from './Icon';
 import type { AppConfig, TelemetryConfig } from '../types';
@@ -21,7 +19,6 @@ function generateInstallationId(): string {
 
 export function PrivacySection({ cfg, setCfg }: Props): JSX.Element {
   const t = useT();
-  const analytics = useAnalytics();
   const telemetry: TelemetryConfig = cfg.telemetry ?? {};
   // `privacyDecisionAt` gates the consent surface. installationId is only
   // the anonymous reporting id and can be rotated by Delete my data without
@@ -87,12 +84,7 @@ export function PrivacySection({ cfg, setCfg }: Props): JSX.Element {
               hint={t('settings.privacyMetricsHint')}
               checked={telemetry.metrics === true}
               onChange={(v) => {
-                trackSettingsPrivacyClick(analytics.track, {
-                  page_name: 'settings',
-                  area: 'privacy',
-                  element: 'anonymous_metrics',
-                  anonymous_metrics_status: v ? 'on' : 'off',
-                });
+                
                 patchTelemetry({ metrics: v });
               }}
             />
@@ -101,12 +93,7 @@ export function PrivacySection({ cfg, setCfg }: Props): JSX.Element {
               hint={t('settings.privacyContentHint')}
               checked={telemetry.content === true}
               onChange={(v) => {
-                trackSettingsPrivacyClick(analytics.track, {
-                  page_name: 'settings',
-                  area: 'privacy',
-                  element: 'conversation_and_tool_content',
-                  conversation_and_tool_content_status: v ? 'on' : 'off',
-                });
+                
                 patchTelemetry({ content: v });
               }}
             />
@@ -131,11 +118,7 @@ export function PrivacySection({ cfg, setCfg }: Props): JSX.Element {
               type="button"
               className="ghost"
               onClick={() => {
-                trackSettingsPrivacyClick(analytics.track, {
-                  page_name: 'settings',
-                  area: 'privacy',
-                  element: 'delete_my_data',
-                });
+                
                 deleteMyData();
               }}
               style={{ alignSelf: 'flex-start', marginTop: 12, paddingLeft: 0 }}

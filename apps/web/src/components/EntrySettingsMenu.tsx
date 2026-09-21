@@ -17,11 +17,6 @@ import {
   useT,
   type Locale,
 } from '../i18n';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackSettingsPopoverClick,
-  trackSettingsPopoverSurfaceView,
-} from '../analytics/events';
 import { createSocialSharePayload } from '../providers/registry';
 import type { AppConfig } from '../types';
 import { formatDiscordPresenceCount, useDiscordPresence } from './useDiscordPresence';
@@ -77,7 +72,6 @@ export function EntrySettingsMenu({
   trackingPageName,
 }: Props) {
   const pageName = trackingPageName ?? 'home';
-  const analytics = useAnalytics();
   const t = useT();
   const { locale, setLocale } = useI18n();
   const discordPresence = useDiscordPresence();
@@ -148,11 +142,8 @@ export function EntrySettingsMenu({
   // share / language funnels have a denominator.
   useEffect(() => {
     if (!open) return;
-    trackSettingsPopoverSurfaceView(analytics.track, {
-      page_name: pageName,
-      area: 'settings_popover',
-    });
-  }, [open, analytics.track, pageName]);
+    
+  }, [open, pageName]);
 
   useEffect(() => {
     if (!open) return;
@@ -244,13 +235,7 @@ export function EntrySettingsMenu({
                             active ? ' is-active' : ''
                           }`}
                           onClick={() => {
-                            trackSettingsPopoverClick(analytics.track, {
-                              page_name: pageName,
-                              area: 'settings_popover',
-                              element: 'language_select',
-                              // kebab-case locales (zh-CN) → snake_case (zh_cn).
-                              value: code.toLowerCase().replace(/-/g, '_'),
-                            });
+                            
                             setLocale(code as Locale);
                             setLangOpen(false);
                             setOpen(false);
@@ -284,12 +269,7 @@ export function EntrySettingsMenu({
               share={openDesignShare ?? fallbackCapyDesignShare}
               className="entry-settings-social-share"
               onShare={(platform) => {
-                trackSettingsPopoverClick(analytics.track, {
-                  page_name: pageName,
-                  area: 'settings_popover',
-                  element: 'share_channel',
-                  channel: platform,
-                });
+                
               }}
               onAfterShare={() => setOpen(false)}
             />
@@ -304,11 +284,7 @@ export function EntrySettingsMenu({
             rel="noreferrer noopener"
             role="menuitem"
             onClick={() => {
-              trackSettingsPopoverClick(analytics.track, {
-                page_name: pageName,
-                area: 'settings_popover',
-                element: 'workspace_teams',
-              });
+              
               setOpen(false);
             }}
           >
@@ -325,11 +301,7 @@ export function EntrySettingsMenu({
             rel="noreferrer noopener"
             role="menuitem"
             onClick={() => {
-              trackSettingsPopoverClick(analytics.track, {
-                page_name: pageName,
-                area: 'settings_popover',
-                element: 'join_discord',
-              });
+              
               setOpen(false);
             }}
           >
@@ -351,11 +323,7 @@ export function EntrySettingsMenu({
             rel="noreferrer noopener"
             role="menuitem"
             onClick={() => {
-              trackSettingsPopoverClick(analytics.track, {
-                page_name: pageName,
-                area: 'settings_popover',
-                element: 'follow_x',
-              });
+              
               setOpen(false);
             }}
           >
@@ -375,11 +343,7 @@ export function EntrySettingsMenu({
             rel="noreferrer noopener"
             role="menuitem"
             onClick={() => {
-              trackSettingsPopoverClick(analytics.track, {
-                page_name: pageName,
-                area: 'settings_popover',
-                element: 'follow_threads',
-              });
+              
               setOpen(false);
             }}
           >
@@ -399,11 +363,7 @@ export function EntrySettingsMenu({
             rel="noreferrer noopener"
             role="menuitem"
             onClick={() => {
-              trackSettingsPopoverClick(analytics.track, {
-                page_name: pageName,
-                area: 'settings_popover',
-                element: 'open_youtube',
-              });
+              
               setOpen(false);
             }}
           >
@@ -423,11 +383,7 @@ export function EntrySettingsMenu({
             rel="noreferrer noopener"
             role="menuitem"
             onClick={() => {
-              trackSettingsPopoverClick(analytics.track, {
-                page_name: pageName,
-                area: 'settings_popover',
-                element: 'follow_instagram',
-              });
+              
               setOpen(false);
             }}
           >
@@ -447,11 +403,7 @@ export function EntrySettingsMenu({
             rel="noreferrer noopener"
             role="menuitem"
             onClick={() => {
-              trackSettingsPopoverClick(analytics.track, {
-                page_name: pageName,
-                area: 'settings_popover',
-                element: 'follow_linkedin',
-              });
+              
               setOpen(false);
             }}
           >
@@ -471,11 +423,7 @@ export function EntrySettingsMenu({
             rel="noreferrer noopener"
             role="menuitem"
             onClick={() => {
-              trackSettingsPopoverClick(analytics.track, {
-                page_name: pageName,
-                area: 'settings_popover',
-                element: 'follow_xiaohongshu',
-              });
+              
               setOpen(false);
             }}
           >
@@ -497,11 +445,7 @@ export function EntrySettingsMenu({
             data-testid="entry-settings-open-details"
             role="menuitem"
             onClick={() => {
-              trackSettingsPopoverClick(analytics.track, {
-                page_name: pageName,
-                area: 'settings_popover',
-                element: 'open_settings',
-              });
+              
               setOpen(false);
               onOpenSettings();
             }}

@@ -10,7 +10,6 @@
  *                 non-zero (tail appended to the error message).
  */
 import type { AgentEvent, ChatCommentAttachment, ChatMessage } from '../types';
-import type { AmrEntryAttribution } from '../analytics/amr-attribution';
 import type {
   AmrAuthErrorKind,
   AmrAuthNetworkPath,
@@ -1159,12 +1158,7 @@ export async function streamViaDaemon({
     // Start the stuck-run watchdog. trackRunProgress is called inside the
     // SSE consumer below on every event; trackRunTerminal fires when the
     // stream resolves to a terminal state (or errors out).
-    trackRunStart(runId, {
-      agent_id: agentId,
-      project_id: projectId ?? undefined,
-      conversation_id: conversationId ?? undefined,
-      client_type: detectClientType(),
-    });
+    
     // Chat-health first, correlation second — the same rule as the terminal
     // path below. `runStarted` flushes any window a previous run left open
     // (its terminal event never arrived), and that flush belongs to the OLD
@@ -1716,12 +1710,7 @@ async function consumeDaemonRun(options: DaemonReattachOptions): Promise<void> {
     if (!result?.nextRunId) return;
     runId = result.nextRunId;
     initialLastEventId = null;
-    trackRunStart(runId, {
-      agent_id: options.agentId,
-      project_id: options.projectId ?? undefined,
-      conversation_id: options.conversationId ?? undefined,
-      client_type: detectClientType(),
-    });
+    
     // The next physical run of a strategy-task chain is a run start like any
     // other. Skipping it here would leave the correlation block pointing at
     // the run that just ended, so every stall in the rest of the chain would
@@ -1986,13 +1975,13 @@ async function consumeDaemonPhysicalRun({
           if (!parsed) continue;
           if (parsed.kind === 'comment') {
             sawStreamProgress = true;
-            trackRunProgress(runId);
+            
             continue;
           }
           if (parsed.kind !== 'event') continue;
           sawStreamProgress = true;
           sawRunEvent = true;
-          trackRunProgress(runId);
+          
           /*
            * S12 的静默计时就认这一刻 —— **上游给过我们东西**的唯一如实证据。
            *
@@ -2386,7 +2375,7 @@ async function consumeDaemonPhysicalRun({
     // resolved. If the watchdog was never armed (reattach paths that
     // hit the daemon for an already-finished run), trackRunTerminal
     // is a no-op for unknown runIds.
-    trackRunTerminal(runId, endStatus ?? (canceled ? 'canceled' : 'unknown'));
+    
     /*
      * ORDER IS THE POINT, and it is the same defect this whole change exists
      * to remove.

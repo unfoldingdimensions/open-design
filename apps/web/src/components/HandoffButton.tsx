@@ -15,8 +15,6 @@ import {
   type TrackingProjectKind,
 } from '@capydesign/contracts/analytics';
 import { fetchHostEditors, openProjectInEditor } from '../providers/registry';
-import { useAnalytics } from '../analytics/provider';
-import { trackHandoffClick } from '../analytics/events';
 import { useT } from '../i18n';
 import { copyToClipboard } from '../lib/copy-to-clipboard';
 import { Icon } from './Icon';
@@ -344,7 +342,6 @@ export function HandoffButton({
   onRequestRevealInFinder,
 }: Props) {
   const t = useT();
-  const analytics = useAnalytics();
   const { workspaceContext } = useProjectCollabContext();
   // One-liner so every hand-off interaction emits the same
   // `ui_click` / `area=handoff` shape; callers pass only what varies. The
@@ -356,15 +353,7 @@ export function HandoffButton({
       'page_name' | 'area' | 'artifact_id' | 'artifact_kind' | 'project_id' | 'project_kind'
     >,
   ) => {
-    trackHandoffClick(analytics.track, {
-      page_name: 'artifact',
-      area: 'handoff',
-      artifact_id: artifactId,
-      artifact_kind: artifactKind,
-      project_id: projectId,
-      project_kind: projectKind,
-      ...props,
-    });
+    
   };
   const [editors, setEditors] = useState<HostEditor[]>([]);
   const [platform, setPlatform] = useState<HostEditorsResponse['platform']>('unknown');

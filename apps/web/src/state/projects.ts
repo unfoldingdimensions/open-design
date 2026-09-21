@@ -63,7 +63,6 @@ import type {
   ProjectTemplate,
 } from '../types';
 import { removeDesignBrowserProjectCache } from '../components/design-browser-storage';
-import { boundedRequestErrorCode } from '../analytics/workspace';
 
 export type { PluginInstallOutcome } from '@capydesign/contracts';
 export type { PluginShareAction } from '@capydesign/contracts';

@@ -12,32 +12,7 @@ import {
   executionModeToTracking,
   settingsSectionToTracking,
 } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
 import { byokErrorCode } from '../analytics/byok-error-code';
-import {
-  amrHandoffDeviceId,
-  attributedAmrUrl,
-  recordAmrEntry,
-  type TrackingAmrEntrySource,
-} from '../analytics/amr-attribution';
-import { getResolvedDeviceId } from '../analytics/client';
-import {
-  trackByokPreflightBlocked,
-  trackSettingsByokModelsFetchResult,
-  trackSettingsByokTestResult,
-  trackSettingsCliTestResult,
-  trackSettingsByokFieldClick,
-  trackSettingsByokProviderOptionClick,
-  trackSettingsConnectorAuthResult,
-  trackSettingsDesignReviewClick,
-  trackSettingsLanguageClick,
-  trackSettingsLocalCliClick,
-  trackSettingsExecutionModeTabClick,
-  trackSettingsMediaProvidersClick,
-  trackSettingsNotificationsClick,
-  trackSettingsPrivacyClick,
-  trackSettingsView,
-} from '../analytics/events';
 import { LOCALE_LABEL, LOCALES, useI18n } from '../i18n';
 import type { Locale } from '../i18n';
 import type { Dict } from '../i18n/types';
@@ -1529,7 +1504,6 @@ export function SettingsDialog({
   onDraftChange,
 }: Props) {
   const { t, locale, setLocale } = useI18n();
-  const analytics = useAnalytics();
   // Backfill the fixed-origin base URL on mount too, so a config persisted with
   // an empty baseUrl (e.g. selected AIHubMix before this resolution existed)
   // isn't stuck blocking the live model fetch until the user re-selects the tab.
@@ -2060,11 +2034,8 @@ export function SettingsDialog({
     // execution_mode / has_available_cli / selected_cli_id signal that v1
     // tagged onto every view now lives in the configure-state global
     // properties (registered once and inherited by every event).
-    trackSettingsView(analytics.track, {
-      page_name: 'settings',
-      area: settingsSectionToTracking(activeSection),
-    });
-  }, [activeSection, analytics.track]);
+    
+  }, [activeSection]);
   useEffect(() => {
     const el = settingsContentRef.current;
     if (el) el.scrollTop = 0;
@@ -2195,14 +2166,7 @@ export function SettingsDialog({
       const modeBefore = executionModeToTracking(c.mode);
       const modeAfter = executionModeToTracking(mode);
       if (modeBefore !== modeAfter) {
-        trackSettingsExecutionModeTabClick(analytics.track, {
-          page_name: 'settings',
-          area: 'configure_execution_mode',
-          element: 'execution_mode_tab',
-          action: 'switch_execution_mode',
-          mode_before: modeBefore,
-          mode_after: modeAfter,
-        });
+        
       }
       if (mode === 'api' && c.mode !== 'api') {
         return restorePendingByokProviderDraft({ ...c, mode });
@@ -2548,14 +2512,7 @@ export function SettingsDialog({
         return;
       }
       setAgentTestState({ status: 'done', result });
-      trackSettingsCliTestResult(analytics.track, {
-        page_name: 'settings',
-        area: 'configure_execution_mode',
-        cli_provider_id: cliProviderId,
-        result: result.ok ? 'success' : 'failed',
-        ...(result.ok ? {} : { error_code: result.kind || 'UNKNOWN' }),
-        duration_ms: Math.round(performance.now() - startedAt),
-      });
+      
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') return;
       if (agentTestRevisionRef.current !== revision) {
@@ -2572,14 +2529,7 @@ export function SettingsDialog({
           detail: err instanceof Error ? err.message : 'Test request failed',
         },
       });
-      trackSettingsCliTestResult(analytics.track, {
-        page_name: 'settings',
-        area: 'configure_execution_mode',
-        cli_provider_id: cliProviderId,
-        result: 'failed',
-        error_code: err instanceof Error ? err.name : 'UNKNOWN',
-        duration_ms: Math.round(performance.now() - startedAt),
-      });
+      
     } finally {
       if (agentTestAbortRef.current === controller) {
         agentTestAbortRef.current = null;
@@ -2618,18 +2568,7 @@ export function SettingsDialog({
       showByokDraftValidationNotice('test', byokDraftValidation);
       const byokProviderId = byokProtocolToTracking(apiProtocol);
       if (byokProviderId) {
-        trackSettingsByokTestResult(analytics.track, {
-          page_name: 'settings',
-          area: 'execution_model',
-          provider_id: byokProviderId,
-          result: 'failed',
-          error_code: byokErrorKindFromIssues(blockingIssues),
-          error_kind: byokErrorKindFromIssues(blockingIssues),
-          field_missing: byokFieldMissingFromIssues(blockingIssues),
-          config_key_changed: configKeyChanged,
-          success_after_action: false,
-          duration_ms: 0,
-        });
+        
       }
       byokLastUnsuccessfulTestKeyRef.current = currentConfigKey;
       return;
@@ -2669,18 +2608,7 @@ export function SettingsDialog({
       }
       const byokProviderId = byokProtocolToTracking(apiProtocol);
       if (byokProviderId) {
-        trackSettingsByokTestResult(analytics.track, {
-          page_name: 'settings',
-          area: 'execution_model',
-          provider_id: byokProviderId,
-          result: byokTrackingTestResult(result),
-          ...(result.ok ? {} : { error_code: byokErrorCode(result) }),
-          ...(result.ok ? {} : { error_kind: result.kind || 'UNKNOWN' }),
-          field_missing: 'none',
-          config_key_changed: configKeyChanged,
-          success_after_action: result.ok && configKeyChanged,
-          duration_ms: Math.round(performance.now() - startedAt),
-        });
+        
       }
       byokLastUnsuccessfulTestKeyRef.current = result.ok ? null : currentConfigKey;
     } catch (err) {
@@ -2701,18 +2629,7 @@ export function SettingsDialog({
       });
       const byokProviderId = byokProtocolToTracking(apiProtocol);
       if (byokProviderId) {
-        trackSettingsByokTestResult(analytics.track, {
-          page_name: 'settings',
-          area: 'execution_model',
-          provider_id: byokProviderId,
-          result: 'failed',
-          error_code: err instanceof Error ? err.name : 'UNKNOWN',
-          error_kind: err instanceof Error ? err.name : 'UNKNOWN',
-          field_missing: 'none',
-          config_key_changed: configKeyChanged,
-          success_after_action: false,
-          duration_ms: Math.round(performance.now() - startedAt),
-        });
+        
       }
       byokLastUnsuccessfulTestKeyRef.current = currentConfigKey;
     } finally {
@@ -2753,25 +2670,13 @@ export function SettingsDialog({
       source: 'network' | 'cache' = 'network',
     ) => {
       if (!byokProviderId) return;
-      trackSettingsByokModelsFetchResult(analytics.track, {
-        page_name: 'settings',
-        area: 'configure_execution_mode_byok',
-        provider_id: byokProviderId,
-        trigger,
-        source,
-        ...props,
-      });
+      
     };
     if (providerModelsState.status === 'running') {
       return;
     }
     if (apiProtocol === 'azure') {
-      trackModelsFetchResult({
-        result: 'failed',
-        error_code: 'unsupported_azure',
-        error_kind: 'unsupported_azure',
-        duration_ms: 0,
-      });
+      
       if (!options.silent) {
         setByokPreconditionNotice({
           action: 'test',
@@ -2781,12 +2686,7 @@ export function SettingsDialog({
       return;
     }
     if (apiProtocol === 'ollama') {
-      trackModelsFetchResult({
-        result: 'failed',
-        error_code: 'unsupported_ollama',
-        error_kind: 'unsupported_ollama',
-        duration_ms: 0,
-      });
+      
       if (!options.silent) {
         setByokPreconditionNotice({
           action: 'test',
@@ -2796,12 +2696,7 @@ export function SettingsDialog({
       return;
     }
     if (isProviderModelDiscoveryUnsupported(apiProtocol, cfg.baseUrl)) {
-      trackModelsFetchResult({
-        result: 'failed',
-        error_code: 'unsupported_provider_models',
-        error_kind: 'unsupported_provider_models',
-        duration_ms: 0,
-      });
+      
       if (!options.silent) {
         setByokPreconditionNotice({
           action: 'test',
@@ -2825,13 +2720,7 @@ export function SettingsDialog({
       return;
     }
     if (modelFetchBlockingIssues.length > 0) {
-      trackModelsFetchResult({
-        result: 'failed',
-        error_code: byokErrorKindFromIssues(modelFetchBlockingIssues),
-        error_kind: byokErrorKindFromIssues(modelFetchBlockingIssues),
-        field_missing: byokFieldMissingFromIssues(modelFetchBlockingIssues),
-        duration_ms: 0,
-      });
+      
       if (!options.silent) {
         showByokDraftValidationNotice('test', byokModelFetchDraftValidation);
       }
@@ -2845,14 +2734,7 @@ export function SettingsDialog({
     );
     const cachedModels = activeProviderModelsCache[cacheKey];
     if (cachedModels) {
-      trackModelsFetchResult(
-        {
-          result: 'success',
-          model_count: cachedModels.length,
-          duration_ms: 0,
-        },
-        'cache',
-      );
+      
       setProviderModelsState({
         status: 'done',
         cacheKey,
@@ -2895,13 +2777,7 @@ export function SettingsDialog({
           [cacheKey]: result.models ?? [],
         }));
       }
-      trackModelsFetchResult({
-        result: result.ok ? 'success' : 'failed',
-        ...(result.ok ? {} : { error_code: result.kind || 'UNKNOWN' }),
-        ...(result.ok ? {} : { error_kind: result.kind || 'UNKNOWN' }),
-        model_count: result.ok ? result.models?.length ?? 0 : 0,
-        duration_ms: Math.round(performance.now() - startedAt),
-      });
+      
       setProviderModelsState({ status: 'done', cacheKey, result });
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') return;
@@ -2919,13 +2795,7 @@ export function SettingsDialog({
           detail: err instanceof Error ? err.message : 'Model list request failed',
         },
       });
-      trackModelsFetchResult({
-        result: 'failed',
-        error_code: err instanceof Error ? err.name : 'UNKNOWN',
-        error_kind: err instanceof Error ? err.name : 'UNKNOWN',
-        model_count: 0,
-        duration_ms: Math.round(performance.now() - startedAt),
-      });
+      
     } finally {
       if (providerModelsAbortRef.current === controller) {
         providerModelsAbortRef.current = null;
@@ -3298,12 +3168,7 @@ export function SettingsDialog({
         ].join(':');
         if (byokPreflightTrackingRef.current !== trackingKey) {
           byokPreflightTrackingRef.current = trackingKey;
-          trackByokPreflightBlocked(analytics.track, {
-            source: 'settings',
-            reason: preflightReason,
-            provider_id: providerId,
-            active_execution_mode: activeExecutionMode,
-          });
+          
         }
       } else {
         byokPreflightTrackingRef.current = null;
@@ -3401,7 +3266,6 @@ export function SettingsDialog({
       }
     };
   }, [
-    analytics.track,
     autosaveCommitTick,
     autosaveRetryTick,
     cfg,
@@ -4570,14 +4434,7 @@ export function SettingsDialog({
                             onClick={() => {
                               const byokProviderId = byokProtocolToTracking(provider.protocol);
                               if (byokProviderId) {
-                                trackSettingsByokProviderOptionClick(analytics.track, {
-                                  page_name: 'settings',
-                                  area: 'configure_execution_mode_byok',
-                                  element: 'byok_provider_option',
-                                  action: 'select_byok_provider',
-                                  provider_id: byokProviderId,
-                                  is_selected: active,
-                                });
+                                
                               }
                               if (!active) {
                                 setByokProvider(provider);
@@ -4844,13 +4701,7 @@ export function SettingsDialog({
                                   className="agent-card-select"
                                   data-testid={`settings-agent-select-${a.id}`}
                                   onClick={() => {
-                                    trackSettingsLocalCliClick(analytics.track, {
-                                      page_name: 'settings',
-                                      area: 'configure_execution_mode_local_cli',
-                                      element: 'cli_provider',
-                                      cli_provider_id: agentIdToTracking(a.id),
-                                      install_status: 'installed',
-                                    });
+                                    
                                     if (needsSetup) {
                                       setDshSetup({ busy: false, error: null });
                                       return;
@@ -5626,13 +5477,7 @@ export function SettingsDialog({
                 onFocus={() => {
                   const byokProviderId = byokProtocolToTracking(apiProtocol);
                   if (byokProviderId) {
-                    trackSettingsByokFieldClick(analytics.track, {
-                      page_name: 'settings',
-                      area: 'configure_execution_mode_byok',
-                      element: 'api_key',
-                      provider_id: byokProviderId,
-                      has_value: Boolean(cfg.apiKey?.trim()),
-                    });
+                    
                   }
                 }}
                 onToggleShowApiKey={() => setShowApiKey((v) => !v)}
@@ -5668,13 +5513,7 @@ export function SettingsDialog({
                   onFocus={() => {
                     const byokProviderId = byokProtocolToTracking(apiProtocol);
                     if (byokProviderId) {
-                      trackSettingsByokFieldClick(analytics.track, {
-                        page_name: 'settings',
-                        area: 'configure_execution_mode_byok',
-                        element: 'base_url',
-                        provider_id: byokProviderId,
-                        has_value: Boolean(cfg.baseUrl?.trim()),
-                      });
+                      
                     }
                   }}
                 />
@@ -5756,13 +5595,7 @@ export function SettingsDialog({
                 onFocus={() => {
                   const byokProviderId = byokProtocolToTracking(apiProtocol);
                   if (byokProviderId) {
-                    trackSettingsByokFieldClick(analytics.track, {
-                      page_name: 'settings',
-                      area: 'configure_execution_mode_byok',
-                      element: 'model',
-                      provider_id: byokProviderId,
-                      has_value: Boolean(cfg.model?.trim()),
-                    });
+                    
                   }
                 }}
                 onModelSelect={(nextValue) => {
@@ -5924,16 +5757,7 @@ export function SettingsDialog({
               setCfg={setCfg}
               composioConfigLoading={composioConfigLoading}
               onPersistComposioKey={onPersistComposioKey}
-              onConnectorAuthResult={({ connectorId, action, result, errorCode }) =>
-                trackSettingsConnectorAuthResult(analytics.track, {
-                  page_name: 'settings',
-                  area: 'connectors',
-                  connector_id: connectorId,
-                  action,
-                  result,
-                  ...(errorCode ? { error_code: errorCode } : {}),
-                })
-              }
+              onConnectorAuthResult={({ connectorId, action, result, errorCode }) => {}}
             />
           ) : null}
 
@@ -5981,11 +5805,7 @@ export function SettingsDialog({
                         // P1 ui_click area=language — record the locale id
                         // that was picked, regardless of whether it differs
                         // from the current one (user clicked = signal).
-                        trackSettingsLanguageClick(analytics.track, {
-                          page_name: 'settings',
-                          area: 'language',
-                          element: next,
-                        });
+                        
                         setLocale(next);
                       }}
                     >
@@ -7735,7 +7555,6 @@ function MediaProvidersSection({
   onChange: (providerId: string) => void;
 }) {
   const { t } = useI18n();
-  const analytics = useAnalytics();
   const [reloadRunning, setReloadRunning] = useState(false);
   const [reloadNotice, setReloadNotice] = useState<{ kind: 'error' | 'success'; message: string } | null>(null);
   const [visibleApiKeys, setVisibleApiKeys] = useState<ReadonlySet<string>>(
@@ -7917,11 +7736,7 @@ function MediaProvidersSection({
               reloadNotice?.kind === 'success' ? ' is-success-flash' : ''
             }`}
             onClick={() => {
-              trackSettingsMediaProvidersClick(analytics.track, {
-                page_name: 'settings',
-                area: 'media_providers',
-                element: 'reload',
-              });
+              
               void handleReload();
             }}
             disabled={reloadRunning}
@@ -8021,13 +7836,7 @@ function MediaProvidersSection({
                     placeholder={activeIsSavedState ? t('settings.connectorsReplaceKeyPlaceholder') : t('settings.mediaProviderPlaceholder')}
                     aria-label={`${activeProvider.label} ${t('settings.mediaProviderApiKey')}`}
                     onFocus={() => {
-                      trackSettingsMediaProvidersClick(analytics.track, {
-                        page_name: 'settings',
-                        area: 'media_providers',
-                        element: 'key_input',
-                        providers_id: activeProvider.id,
-                        is_configured: activeClearable,
-                      });
+                      
                     }}
                     onChange={(e) => updateProvider(activeProvider, { apiKey: e.target.value })}
                   />
@@ -8053,13 +7862,7 @@ function MediaProvidersSection({
                   placeholder={activeProvider.defaultBaseUrl || t('settings.mediaProviderBaseUrlPlaceholder')}
                   aria-label={`${activeProvider.label} ${t('settings.mediaProviderBaseUrl')}`}
                   onFocus={() => {
-                    trackSettingsMediaProvidersClick(analytics.track, {
-                      page_name: 'settings',
-                      area: 'media_providers',
-                      element: 'url_input',
-                      providers_id: activeProvider.id,
-                      is_configured: activeClearable,
-                    });
+                    
                   }}
                   onChange={(e) => updateProvider(activeProvider, { baseUrl: e.target.value })}
                 />
@@ -8107,17 +7910,7 @@ function MediaProvidersSection({
               className="ghost"
               disabled={!activeClearable}
               onClick={() => {
-                trackSettingsMediaProvidersClick(analytics.track, {
-                  page_name: 'settings',
-                  area: 'media_providers',
-                  element: 'clear',
-                  providers_id: activeProvider.id,
-                  // The click reports the state at the moment the
-                  // user pressed Clear; the actual clear only lands
-                  // after they confirm the dialog below, but the
-                  // dashboard cares about the intent signal.
-                  is_configured: activeClearable,
-                });
+                
                 // Match the existing window.confirm guard the rest of
                 // the app uses for destructive actions (conversation
                 // delete, design delete, file delete in FileWorkspace).
@@ -8947,19 +8740,11 @@ function CritiqueTheaterSectionContent({
   workspaceContext: WorkspaceCollabContext | null;
 }) {
   const { t } = useI18n();
-  const analytics = useAnalytics();
   const enabled = useCritiqueTheaterEnabled();
 
   const handleToggle = () => {
     const next = !enabled;
-    trackSettingsDesignReviewClick(analytics.track, {
-      page_name: 'settings',
-      area: 'design_review',
-      element: 'enable_toggle',
-      status_before: enabled ? 'on' : 'off',
-      status_after: next ? 'on' : 'off',
-      has_active_project: activeProjectId !== null,
-    });
+    
     if (activeProjectId !== null && projectScopeReady) {
       void setCritiqueTheaterEnabled(next, {
         projectId: activeProjectId,
@@ -9050,7 +8835,6 @@ function NotificationsSection({
   setCfg: Dispatch<SetStateAction<AppConfig>>;
 }) {
   const { t } = useI18n();
-  const analytics = useAnalytics();
   const notif = cfg.notifications ?? DEFAULT_NOTIFICATIONS;
   const [permission, setPermission] = useState<NotificationPermission | 'unsupported'>(
     () => notificationPermission(),
@@ -9071,12 +8855,7 @@ function NotificationsSection({
     // P1 ui_click area=notifications element=completion_sound — the toggle
     // emits the post-click state on `completion_sound_status` so a single
     // event captures intent + outcome.
-    trackSettingsNotificationsClick(analytics.track, {
-      page_name: 'settings',
-      area: 'notifications',
-      element: 'completion_sound',
-      completion_sound_status: next ? 'on' : 'off',
-    });
+    
     updateNotif({ soundEnabled: next });
     // Give the user immediate audible feedback when turning the master
     // switch on so they know which sound they're signing up for. Resuming
@@ -9086,32 +8865,17 @@ function NotificationsSection({
 
   const toggleDesktop = async () => {
     if (notif.desktopEnabled) {
-      trackSettingsNotificationsClick(analytics.track, {
-        page_name: 'settings',
-        area: 'notifications',
-        element: 'desktop_notification',
-        desktop_notification_status: 'off',
-      });
+      
       updateNotif({ desktopEnabled: false });
       return;
     }
     const result = await requestNotificationPermission();
     setPermission(result);
     if (result === 'granted') {
-      trackSettingsNotificationsClick(analytics.track, {
-        page_name: 'settings',
-        area: 'notifications',
-        element: 'desktop_notification',
-        desktop_notification_status: 'on',
-      });
+      
       updateNotif({ desktopEnabled: true });
     } else {
-      trackSettingsNotificationsClick(analytics.track, {
-        page_name: 'settings',
-        area: 'notifications',
-        element: 'desktop_notification',
-        desktop_notification_status: 'off',
-      });
+      
       updateNotif({ desktopEnabled: false });
     }
   };
@@ -9168,12 +8932,7 @@ function NotificationsSection({
                     aria-pressed={notif.successSoundId === sound.id}
                     onClick={() => {
                       const trackingSoundId = soundIdToTracking(sound.id);
-                      trackSettingsNotificationsClick(analytics.track, {
-                        page_name: 'settings',
-                        area: 'notifications',
-                        element: 'success_sound',
-                        ...(trackingSoundId ? { sound_id: trackingSoundId } : {}),
-                      });
+                      
                       updateNotif({ successSoundId: sound.id });
                       playSound(sound.id);
                     }}
@@ -9195,12 +8954,7 @@ function NotificationsSection({
                     aria-pressed={notif.failureSoundId === sound.id}
                     onClick={() => {
                       const trackingSoundId = soundIdToTracking(sound.id);
-                      trackSettingsNotificationsClick(analytics.track, {
-                        page_name: 'settings',
-                        area: 'notifications',
-                        element: 'failure_sound',
-                        ...(trackingSoundId ? { sound_id: trackingSoundId } : {}),
-                      });
+                      
                       updateNotif({ failureSoundId: sound.id });
                       playSound(sound.id);
                     }}
@@ -9251,11 +9005,7 @@ function NotificationsSection({
         {notif.desktopEnabled && permission === 'granted' ? (
           <>
             <Button variant="ghost" onClick={() => {
-              trackSettingsNotificationsClick(analytics.track, {
-                page_name: 'settings',
-                area: 'notifications',
-                element: 'send_test',
-              });
+              
               void sendTestNotification();
             }}>
               {t('settings.notifyTest')}

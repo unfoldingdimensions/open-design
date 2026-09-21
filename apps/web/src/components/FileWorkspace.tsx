@@ -13,16 +13,6 @@ import {
 import { Button } from '@capydesign/components';
 import { createPortal } from 'react-dom';
 import type { DesignSystemEditClickProps, TrackingArtifactKind, TrackingProjectKind } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackFileManagerClick,
-  trackDesignSystemEditClick,
-  trackFileUploadResult,
-  trackPageView,
-  trackTabLauncherClick,
-  trackSketchSaveResult,
-  trackSketchExportResult,
-} from '../analytics/events';
 import { deriveUploadCohort } from '../analytics/upload-tracking';
 import { useI18n, useT, type Locale } from '../i18n';
 import { useStableHandler } from '../lib/use-stable-handler';
@@ -1387,7 +1377,6 @@ export function FileWorkspace({
   const { locale, t } = useI18n();
   const { workspaceContext } = useProjectCollabContext();
   const iframeKeepAlivePool = useIframeKeepAlivePool();
-  const analytics = useAnalytics();
   // P1 page_view page_name=file_manager — once per project the user lands
   // inside the workspace. Re-fire when the projectId changes so a
   // project-switch session shows up as a fresh view rather than reusing
@@ -1396,8 +1385,8 @@ export function FileWorkspace({
   useEffect(() => {
     if (fileManagerViewedProjectRef.current === projectId) return;
     fileManagerViewedProjectRef.current = projectId;
-    trackPageView(analytics.track, { page_name: 'file_manager' });
-  }, [projectId, analytics.track]);
+    
+  }, [projectId]);
   const defaultRootTab = designSystemProject ? DESIGN_SYSTEM_TAB : DESIGN_FILES_TAB;
   // Persisted tabs come from the parent. Active tab can transiently point
   // at a pending sketch — pending sketches are not in tabsState.tabs.
@@ -2394,14 +2383,7 @@ export function FileWorkspace({
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       setUploadError(`Upload failed for ${picked.length} file(s) (${detail}).`);
-      trackFileUploadResult(analytics.track, {
-        page_name: 'file_manager',
-        area: 'file_manager',
-        project_id: projectId,
-        ...cohort,
-        result: 'failed',
-        error_code: detail,
-      });
+      
       return;
     }
     if (result.uploaded.length > 0) {
@@ -2420,22 +2402,9 @@ export function FileWorkspace({
           : `Upload failed for ${failedCount} file(s)${detail}.`,
       );
       console.warn('Project upload had failures', result.failed);
-      trackFileUploadResult(analytics.track, {
-        page_name: 'file_manager',
-        area: 'file_manager',
-        project_id: projectId,
-        ...cohort,
-        result: 'failed',
-        ...(result.error ? { error_code: result.error } : {}),
-      });
+      
     } else if (result.uploaded.length > 0) {
-      trackFileUploadResult(analytics.track, {
-        page_name: 'file_manager',
-        area: 'file_manager',
-        project_id: projectId,
-        ...cohort,
-        result: 'success',
-      });
+      
     }
   }
 
@@ -4174,14 +4143,7 @@ export function FileWorkspace({
           launcherContext={launcherContext}
           onOpenFile={openFile}
           onOpenTab={focusWorkspaceTab}
-          onTrack={(input) =>
-            trackTabLauncherClick(analytics.track, {
-              page_name: 'file_manager',
-              area: 'tab_launcher',
-              ...(projectId ? { project_id: projectId } : {}),
-              ...input,
-            })
-          }
+          onTrack={(input) => {}}
           onClose={() => setLauncherOpen(false)}
         />
       ) : null}
@@ -4352,87 +4314,39 @@ export function FileWorkspace({
               // Re-engagement entry: opening an existing sketch from the file
               // list (new_sketch already covers fresh creation).
               if (isSketchName(name)) {
-                trackFileManagerClick(analytics.track, {
-                  page_name: 'file_manager',
-                  area: 'file_manager',
-                  element: 'open_sketch',
-                  project_id: projectId,
-                  project_kind: projectKind,
-                });
+                
               }
               openFile(name);
             }}
             onOpenLiveArtifact={(tabId) => openFile(tabId)}
             onRenameFile={handleRename}
             onDeleteFile={(name) => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'delete',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               void handleDelete(name);
             }}
             onDeleteFiles={(names) => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'delete',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               return handleDeleteMany(names);
             }}
             onUpload={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'upload',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               fileInputRef.current?.click();
             }}
             onUploadFiles={(picked) => void uploadFiles(picked)}
             onPaste={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'paste',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               void createMarkdownDocument();
             }}
             onNewSketch={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'new_sketch',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               void startNewSketch();
             }}
             onOpenBrowser={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'new_browser',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               openBrowserTab();
             }}
             onCreateDesignSystem={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'create_design_system',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               setPendingDesignSystemCreateEntry('project_canvas');
               navigate({ kind: 'design-system-create' });
             }}
@@ -4441,13 +4355,7 @@ export function FileWorkspace({
             onDuplicateProject={onDuplicateProject}
             duplicateProjectBusy={duplicateProjectBusy}
             onSelectFromLibrary={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'library',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               setShowLibraryPicker(true);
             }}
             uploadError={uploadError}
@@ -4473,24 +4381,12 @@ export function FileWorkspace({
                 // Fires only on the explicit "Save" button — background
                 // autosave calls saveSketch() directly and is not tracked.
                 const result = await saveSketch(activeFile.name, scene);
-                trackSketchSaveResult(analytics.track, {
-                  page_name: 'file_manager',
-                  area: 'sketch_editor',
-                  result: result === false ? 'failed' : 'success',
-                  project_id: projectId,
-                  project_kind: projectKind,
-                });
+                
                 return result;
               }}
               onExportImage={async (base64, fileName) => {
                 const result = await exportSketchImage(activeFile.name, base64, fileName);
-                trackSketchExportResult(analytics.track, {
-                  page_name: 'file_manager',
-                  area: 'sketch_editor',
-                  result: result === false ? 'failed' : 'success',
-                  project_id: projectId,
-                  project_kind: projectKind,
-                });
+                
                 return result;
               }}
               onOpenExportedImage={openFile}
@@ -4735,7 +4631,6 @@ function DesignSystemProjectPanel({
   githubConnected?: boolean;
 }) {
   const t = useT();
-  const analytics = useAnalytics();
   const { workspaceContext } = useProjectCollabContext();
   // Match the exact fields sent by workspaceProjectHeaders. Billing-only
   // refreshes must not blank and reload the kit, while a role, membership, or
@@ -4791,16 +4686,7 @@ function DesignSystemProjectPanel({
     element: DesignSystemEditClickProps['element'],
     module: DesignSystemEditClickProps['module'],
   ) {
-    trackDesignSystemEditClick(analytics.track, {
-      page_name: 'design_system_project',
-      area: 'design_system_edit',
-      element,
-      module,
-      edit_surface: 'direct_module',
-      artifact_kind: 'design_system',
-      design_system_id: system.id,
-      project_id: projectId,
-    });
+    
   }
 
   const refreshKitDependencies = useCallback(async (options?: { finalizeBrand?: boolean }) => {

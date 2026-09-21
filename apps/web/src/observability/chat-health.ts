@@ -51,7 +51,6 @@ import type {
   ChatStreamHealthProps,
 } from '@capydesign/contracts/analytics';
 
-import { reportSafetyEvent } from '../analytics/error-tracking';
 import {
   chatBreadcrumbTrail,
   chatCorrelation,
@@ -298,7 +297,7 @@ class ChatSurface implements ChatSurfaceHandle {
         ? { stream_event_count: this.streamEventCount }
         : {}),
     };
-    reportSafetyEvent('client_chat_first_paint', { ...props });
+    
   }
 
   setMessageCount(count: number): void {
@@ -342,7 +341,7 @@ class ChatSurface implements ChatSurfaceHandle {
           }
         : {}),
     };
-    reportSafetyEvent('client_chat_dom_growth', { ...props });
+    
 
     if (heap) this.evaluateHeapPressure(heap, domNodeCount);
   }
@@ -459,7 +458,7 @@ class ChatSurface implements ChatSurfaceHandle {
       run_completed: runCompleted,
       details_count: this.element.getElementsByTagName('details').length,
     };
-    reportSafetyEvent('client_chat_stream_health', { ...props });
+    
   }
 
   private evaluateHeapPressure(heap: HeapSnapshot, domNodeCount: number): void {
@@ -488,7 +487,7 @@ class ChatSurface implements ChatSurfaceHandle {
       breadcrumbs: chatBreadcrumbTrail(),
       heap_trend_mb: chatHeapTrend(),
     };
-    reportSafetyEvent('client_chat_memory_pressure', { ...props });
+    
   }
 
   /**

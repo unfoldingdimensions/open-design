@@ -5,8 +5,6 @@ import { MAX_NEXT_STEP_SUGGESTIONS } from '@capydesign/contracts';
 import { useI18n } from '../i18n';
 import { localizeSkillDescription, localizeSkillName } from '../i18n/content';
 import type { Dict } from '../i18n/types';
-import { useAnalytics } from '../analytics/provider';
-import { trackNextStepActionClick } from '../analytics/events';
 import { Icon, type IconName } from './Icon';
 import {
   DESIGN_TOOLBOX_ACTIONS,
@@ -356,7 +354,6 @@ export function NextStepActions({
   variant = 'default',
 }: Props) {
   const { t, locale } = useI18n();
-  const analytics = useAnalytics();
 
   /*
    * 稿子第 41 / 42 格:回合末尾三行**由 agent 现写**的行为引导。
@@ -387,12 +384,8 @@ export function NextStepActions({
     if (renderNothing) return;
     if (exposedRef.current) return;
     exposedRef.current = true;
-    trackNextStepActionClick(analytics.track, {
-      page_name: 'chat_panel',
-      area: 'next_step',
-      element: 'next_step_exposed',
-    });
-  }, [analytics.track, renderNothing]);
+    
+  }, [ renderNothing]);
 
   // Three-level cascading hover menu, all portaled to <body> with fixed
   // positioning so the narrow chat column never clips or occludes them.
@@ -474,14 +467,9 @@ export function NextStepActions({
         | 'suggestion',
       chipId?: string,
     ) => {
-      trackNextStepActionClick(analytics.track, {
-        page_name: 'chat_panel',
-        area: 'next_step',
-        element,
-        ...(chipId ? { chip_id: chipId } : {}),
-      });
+      
     },
-    [analytics.track],
+    [],
   );
 
   /**

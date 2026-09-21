@@ -15,11 +15,6 @@ import {
   isCapyDesignHostAvailable,
 } from '@capydesign/host';
 import type { TrackingReferenceBoardCategory } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackReferenceBoardClick,
-  trackReferenceBoardSurfaceView,
-} from '../analytics/events';
 import {
   openExternalUrl,
   projectRawUrl,
@@ -3271,18 +3266,13 @@ function DesignBrowserStart({
   projectId?: string;
 }) {
   const t = useT();
-  const analytics = useAnalytics();
   const [activeCategory, setActiveCategory] = useState<string>(REFERENCE_ALL_CATEGORY);
   const [query, setQuery] = useState('');
   const searchRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    trackReferenceBoardSurfaceView(analytics.track, {
-      page_name: 'file_manager',
-      area: 'reference_board',
-      ...(projectId ? { project_id: projectId } : {}),
-    });
-  }, [analytics.track, projectId]);
+    
+  }, [ projectId]);
 
   const visibleGroups = useMemo(
     () => filterReferenceGroups(REFERENCE_GROUPS, activeCategory, query, t),
@@ -3299,23 +3289,11 @@ function DesignBrowserStart({
 
   const selectCategory = (categoryId: string) => {
     setActiveCategory(categoryId);
-    trackReferenceBoardClick(analytics.track, {
-      page_name: 'file_manager',
-      area: 'reference_board',
-      element: 'category_chip',
-      category_id: categoryId as TrackingReferenceBoardCategory,
-      ...(projectId ? { project_id: projectId } : {}),
-    });
+    
   };
 
   const openSite = (site: ReferenceSite) => {
-    trackReferenceBoardClick(analytics.track, {
-      page_name: 'file_manager',
-      area: 'reference_board',
-      element: 'open_site',
-      site_id: referenceSiteId(site.url),
-      ...(projectId ? { project_id: projectId } : {}),
-    });
+    
     onNavigate(site.url);
   };
 
@@ -3373,12 +3351,7 @@ function DesignBrowserStart({
             onFocus={() => {
               // Tracked on focus rather than every keystroke so each
               // engagement counts once.
-              trackReferenceBoardClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'reference_board',
-                element: 'search_input',
-                ...(projectId ? { project_id: projectId } : {}),
-              });
+              
             }}
             onKeyDown={(event) => {
               if (event.key === 'Escape' && query) {

@@ -50,21 +50,10 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { hasOdCard, OD_NEXT_STRATEGY_ID, type ProjectMediaTask } from '@capydesign/contracts';
-import { useAnalytics } from '../analytics/provider';
-import { getResolvedDeviceId } from '../analytics/client';
-import {
-  trackChatPanelClick,
-  trackMessageQueueClick,
-  trackRunFailedToastGoAmrClick,
-  trackRunFailedToastSurfaceView,
-  trackRunRecoveryActionClick,
-  trackRunRecoveryActionSurfaceView,
-} from '../analytics/events';
 import {
   buildRecoveryTaskAnalytics,
   runAgentProviderId,
 } from '../analytics/run-task';
-import { amrHandoffDeviceId, attributedAmrUrl, recordAmrEntry } from '../analytics/amr-attribution';
 import { setChatCorrelation } from '../observability/chat-context';
 import {
   chatSurfaceSample,
@@ -1459,7 +1448,6 @@ export function ChatPane({
 }: Props) {
   const { workspaceContext } = useProjectCollabContext();
   const { t, locale } = useI18n();
-  const analytics = useAnalytics();
   const displayMessages = useMemo(
     () => foldStrategyTaskTurns(
       messages.filter((message) => !shouldHideEmptyBrandAssistantMessage(message, projectMetadata)),
@@ -2602,7 +2590,7 @@ export function ChatPane({
       '_blank',
       'noopener,noreferrer',
     );
-  }, [amrProfile, analytics.track, config?.installationId, config?.telemetry?.metrics]);
+  }, [amrProfile, config?.installationId, config?.telemetry?.metrics]);
   const visibleRecoveryActionTypes = useMemo(() => {
     const actions: TrackingRunRecoveryActionType[] = [];
     if (!retryAssistant || !onRetry || !runFailureUi) return actions;
@@ -2650,30 +2638,16 @@ export function ChatPane({
       const key = `${props.recovery_action_instance_id}:surface`;
       if (runRecoverySurfaceKeysRef.current.has(key)) continue;
       runRecoverySurfaceKeysRef.current.add(key);
-      trackRunRecoveryActionSurfaceView(analytics.track, {
-        page_name: 'chat_panel',
-        area: 'chat_panel',
-        element: 'run_recovery_action',
-        ...props,
-      });
+      
     }
-  }, [analytics.track, recoveryAnalyticsProps, retryAssistant, visibleRecoveryActionTypes]);
+  }, [ recoveryAnalyticsProps, retryAssistant, visibleRecoveryActionTypes]);
   const trackRecoveryClick = useCallback((
     assistantMessage: ChatMessage,
     actionType: TrackingRunRecoveryActionType,
     target?: { agentProviderId?: string; modelId?: string },
   ) => {
-    trackRunRecoveryActionClick(analytics.track, {
-      page_name: 'chat_panel',
-      area: 'chat_panel',
-      element: 'run_recovery_action',
-      ...recoveryAnalyticsProps(assistantMessage, actionType),
-      ...(target?.agentProviderId
-        ? { target_agent_provider_id: target.agentProviderId }
-        : {}),
-      ...(target?.modelId ? { target_model_id: target.modelId } : {}),
-    });
-  }, [analytics.track, recoveryAnalyticsProps]);
+    
+  }, [ recoveryAnalyticsProps]);
   useEffect(() => {
     if (!displayError || !failedRunErrorEvent?.code || !retryAssistant) return;
     /*
@@ -2695,35 +2669,9 @@ export function ChatPane({
     if (runFailedToastSurfaceKeysRef.current.has(key)) return;
     runFailedToastSurfaceKeysRef.current.add(key);
 
-    trackRunFailedToastSurfaceView(analytics.track, {
-      page_name: 'chat_panel',
-      area: 'chat_panel',
-      element: 'run_failed_toast',
-      error_code: failedRunErrorEvent.code,
-      /*
-       * 卡上那句话**到底是哪一句**,以及它是不是兜底那句。
-       *
-       * `error_code` 回答的是「daemon 说这是什么错」,回答不了「用户读到了什么」——
-       * 这两件事之间隔着一张映射表,而映射表**总会少一行**
-       * (`resolveRunErrorCardDescription` 的注释把这件事写死了:表可以短一行,
-       * 判据不能)。少那一行的时候用户看到的是一句空洞的「任务失败了」,
-       * 这正是最该被量出来的一格。
-       *
-       * 判据现成:`runFailureUi.messageKey` 为 null 就是「表里没有这条文案」
-       * (`amr-guidance.ts` 的 `RunErrorCardDescription`)。
-       * 兜底那一格**必须有自己的值而不是缺字段** —— 缺了,兜底率的分母就没了。
-       */
-      message_key: runFailureUi?.messageKey ?? 'generic_fallback',
-      failure_category: failedRunErrorEvent.failureCategory ?? 'unknown',
-      project_id: projectId ?? '',
-      project_kind: projectKindForTracking,
-      conversation_id: activeConversationId,
-      assistant_message_id: retryAssistant.id,
-      run_id: retryAssistant.runId ?? null,
-    });
+    
   }, [
     activeConversationId,
-    analytics.track,
     displayError,
     failedRunErrorEvent?.code,
     failedRunErrorEvent?.failureCategory,
@@ -4319,11 +4267,7 @@ export function ChatPane({
                 setShowConvList((v) => {
                   const next = !v;
                   if (next) {
-                    trackChatPanelClick(analytics.track, {
-                      page_name: 'chat_panel',
-                      area: 'chat_panel',
-                      element: 'history',
-                    });
+                    
                   }
                   return next;
                 });
@@ -4432,11 +4376,7 @@ export function ChatPane({
               disabled={newConversationDisabled}
               onClick={() => {
                 if (newConversationDisabled) return;
-                trackChatPanelClick(analytics.track, {
-                  page_name: 'chat_panel',
-                  area: 'chat_panel',
-                  element: 'new_chat',
-                });
+                
                 onNewConversation();
                 setShowConvList(false);
               }}
@@ -4725,10 +4665,7 @@ export function ChatPane({
                                 hideSignedOutStatus
                                 revealPendingCancelAction
                                 onSignInStarted={() => {
-                                  trackRecoveryClick(
-                                    retryAssistant,
-                                    'authorize_and_retry',
-                                  );
+                                  
                                   if (
                                     projectId
                                     && activeConversationId
@@ -4787,7 +4724,7 @@ export function ChatPane({
                                 // 只会把选择器打开然后什么都不发生。
                                 disabled={recoveryActionsDisabled}
                                 onClick={() => {
-                                  trackRecoveryClick(retryAssistant, 'switch_model_retry');
+                                  
                                   if (onSwitchModel && retryAssistant) onSwitchModel(retryAssistant);
                                   else onOpenSettings?.('execution');
                                 }}
@@ -4904,7 +4841,7 @@ export function ChatPane({
                                 disabled={recoveryActionsDisabled}
                                 onClick={() =>
                                   {
-                                    trackRecoveryClick(retryAssistant, 'resume_run');
+                                    
                                     if (onResumeRun) onResumeRun(retryAssistant);
                                     else onSend(RESUME_CONTINUE_PROMPT, [], []);
                                   }
@@ -4942,7 +4879,7 @@ export function ChatPane({
                                 data-testid="chat-error-retry"
                                 disabled={recoveryActionsDisabled}
                                 onClick={() => {
-                                  trackRecoveryClick(retryAssistant, 'manual_retry');
+                                  
                                   onRetry(retryAssistant, 'manual_retry');
                                 }}
                               >
@@ -4978,11 +4915,7 @@ export function ChatPane({
                             // 挡住时这颗按钮点下去连设置面板都不会开。
                             disabled={recoveryActionsDisabled}
                             onClick={() => {
-                              trackRunFailedToastGoAmrClick(analytics.track, {
-                                page_name: 'chat_panel',
-                                area: 'chat_panel',
-                                element: 'go_amr',
-                              });
+                              
                               recordAmrEntry(
                                 analytics.track,
                                 'chat_error_switch_retry_card',
@@ -4990,10 +4923,7 @@ export function ChatPane({
                                 { metricsConsent: config?.telemetry?.metrics === true },
                               );
                               if (retryAssistant && onSwitchToAmrAndRetry) {
-                                trackRecoveryClick(retryAssistant, 'switch_runtime_retry', {
-                                  agentProviderId: 'amr',
-                                  modelId: config?.agentModels?.amr?.model?.trim() || 'default',
-                                });
+                                
                                 onSwitchToAmrAndRetry(retryAssistant);
                               } else {
                                 onOpenAmrSettings?.();
@@ -5117,24 +5047,12 @@ export function ChatPane({
               items={queuedItems}
               editingId={editingQueuedSendId}
               onEdit={(item) => {
-                trackMessageQueueClick(analytics.track, {
-                  page_name: 'chat_panel',
-                  area: 'message_queue',
-                  element: 'edit',
-                  project_id: projectId ?? '',
-                  queue_length: queuedItems.length,
-                });
+                
                 restoreQueuedSendToComposer(item);
               }}
               onRemove={onRemoveQueuedSend
                 ? (id) => {
-                    trackMessageQueueClick(analytics.track, {
-                      page_name: 'chat_panel',
-                      area: 'message_queue',
-                      element: 'delete',
-                      project_id: projectId ?? '',
-                      queue_length: queuedItems.length,
-                    });
+                    
                     onRemoveQueuedSend(id);
                   }
                 : undefined}
@@ -5146,13 +5064,7 @@ export function ChatPane({
                  surface no longer emits `send_now` at all. */
               onSendNow={onSendQueuedNow
                 ? (id) => {
-                    trackMessageQueueClick(analytics.track, {
-                      page_name: 'chat_panel',
-                      area: 'message_queue',
-                      element: 'steer',
-                      project_id: projectId ?? '',
-                      queue_length: queuedItems.length,
-                    });
+                    
                     onSendQueuedNow(id);
                   }
                 : undefined}

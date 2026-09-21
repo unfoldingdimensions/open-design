@@ -88,19 +88,6 @@ import type {
   AccountMenuClickProps,
   TrackingWorkspacePage,
 } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackAccountMenuClick,
-  trackEntryNavigationClick,
-  trackWorkspaceSurfaceView,
-  trackWorkspaceSwitcherClick,
-  trackWorkspaceSwitchResult,
-} from '../analytics/events';
-import {
-  entryViewToTracking,
-  stableAnalyticsErrorCode,
-  workspaceAnalyticsDimensions,
-} from '../analytics/workspace';
 import { WorkbenchCampaignBadge } from './WorkbenchCampaignBadge';
 import { workspaceChromeAccountActionsHost } from './workspaceChromeActions';
 
@@ -626,7 +613,6 @@ export function EntryTopRightCluster({
   priorityAnnouncementMetricsConsent,
 }: EntryTopRightClusterProps) {
   const { t } = useI18n();
-  const analytics = useAnalytics();
   const workspaceDimensions = workspaceAnalyticsDimensions(context);
   const [chromeActionsHost, setChromeActionsHost] = useState<HTMLElement | null>(
     workspaceChromeAccountActionsHost,
@@ -715,12 +701,8 @@ export function EntryTopRightCluster({
   const closeAccountMenu = () => setAccountMenuMode('closed');
   useEffect(() => {
     if (!accountOpen) return;
-    trackWorkspaceSurfaceView(analytics.track, {
-      page_name: page,
-      area: 'account_menu',
-      ...workspaceDimensions,
-    });
-  }, [accountOpen, analytics.track, page, workspaceDimensions.workspace_key]);
+    
+  }, [accountOpen, page, workspaceDimensions.workspace_key]);
   // Message-center panel (opened from the account menu's 消息中心 row) and its
   // unread count, which drives the red dot on the account avatar.
   const [messageCenterOpen, setMessageCenterOpen] = useState(false);
@@ -837,19 +819,7 @@ export function EntryTopRightCluster({
   }
 
   function trackAccountAction(element: AccountMenuClickProps['element']) {
-    trackAccountMenuClick(analytics.track, {
-      page_name: page,
-      area: 'account_menu',
-      element,
-      ...(element === 'upgrade'
-        ? {
-            is_free_active:
-              workspaceDimensions.plan_bucket === 'free'
-              && context?.lifecycleState === 'active',
-          }
-        : {}),
-      ...workspaceDimensions,
-    });
+    
   }
 
   if (typeof document === 'undefined' || !chromeActionsHost) return null;
@@ -896,7 +866,7 @@ export function EntryTopRightCluster({
               data-testid="entry-top-right-credits"
               aria-label={t('entry.credits')}
               onClick={() => {
-                trackAccountAction('credits');
+                
                 if (billingConsoleUrl) {
                   window.open(billingConsoleUrl, '_blank', 'noopener,noreferrer');
                 }
@@ -916,14 +886,7 @@ export function EntryTopRightCluster({
                 type="button"
                 className="entry-nav-rail__account-trigger"
                 onClick={() => {
-                  trackEntryNavigationClick(analytics.track, {
-                    page_name: page,
-                    area: 'entry_nav',
-                    element: 'account_menu_trigger',
-                    target: 'account_menu',
-                    entry_from: 'sidebar',
-                    ...workspaceDimensions,
-                  });
+                  
                   cancelAccountClose();
                   setAccountMenuMode((mode) => (mode === 'pinned' ? 'closed' : 'pinned'));
                 }}
@@ -969,7 +932,7 @@ export function EntryTopRightCluster({
                               type="button"
                               className="entry-nav-rail__menu-credits-upgrade"
                               onClick={() => {
-                                trackAccountAction('upgrade');
+                                
                                 closeAccountMenu();
                                 openBillingUpgrade();
                               }}
@@ -986,7 +949,7 @@ export function EntryTopRightCluster({
                           className="entry-nav-rail__menu-credits-row"
                           data-testid="entry-nav-credits-row"
                           onClick={() => {
-                            trackAccountAction('credits');
+                            
                             closeAccountMenu();
                             if (billingConsoleUrl) {
                               window.open(billingConsoleUrl, '_blank', 'noopener,noreferrer');
@@ -1008,7 +971,7 @@ export function EntryTopRightCluster({
                       className="entry-nav-rail__menu-item"
                       role="menuitem"
                       onClick={() => {
-                        trackAccountAction('settings');
+                        
                         closeAccountMenu();
                         onOpenSettings?.();
                       }}
@@ -1023,7 +986,7 @@ export function EntryTopRightCluster({
                       aria-expanded={messageCenterOpen}
                       data-testid="account-menu-message-center"
                       onClick={() => {
-                        trackAccountAction('message_center');
+                        
                         closeAccountMenu();
                         setMessageCenterOpen(true);
                       }}
@@ -1044,7 +1007,7 @@ export function EntryTopRightCluster({
                       href={GITHUB_HELP_URL}
                       {...externalLinkProps}
                       onClick={() => {
-                        trackAccountAction('github_help');
+                        
                         closeAccountMenu();
                       }}
                     >
@@ -1056,7 +1019,7 @@ export function EntryTopRightCluster({
                       href={GITHUB_FEATURE_URL}
                       {...externalLinkProps}
                       onClick={() => {
-                        trackAccountAction('feature_request');
+                        
                         closeAccountMenu();
                       }}
                     >
@@ -1072,7 +1035,7 @@ export function EntryTopRightCluster({
                       className="entry-nav-rail__menu-item"
                       role="menuitem"
                       onClick={() => {
-                        trackAccountAction('logout');
+                        
                         closeAccountMenu();
                         // recvqgMWpJZqhL: never sign out on this click alone —
                         // arm the confirmation dialog and let it run the logout.
@@ -1251,7 +1214,6 @@ function RailSocialRow({
   dimensions: ReturnType<typeof workspaceAnalyticsDimensions>;
 }) {
   const { t, locale } = useI18n();
-  const analytics = useAnalytics();
   // The rail sits on the leading edge, so tooltips open away from it —
   // right in LTR, left once RTL moves the whole rail to the right edge.
   // Without the flip the bubble would be clamped against the viewport
@@ -1266,12 +1228,7 @@ function RailSocialRow({
   const mailLabel = t('entry.mailAria');
 
   function track(element: AccountMenuClickProps['element']) {
-    trackAccountMenuClick(analytics.track, {
-      page_name: page,
-      area: 'account_menu',
-      element,
-      ...dimensions,
-    });
+    
   }
 
   return (
@@ -1334,7 +1291,6 @@ export function EntryNavRail({
   priorityAnnouncementMetricsConsent,
 }: Props) {
   const { t } = useI18n();
-  const analytics = useAnalytics();
   const analyticsPage = entryViewToTracking(view);
   const workspaceDimensions = workspaceAnalyticsDimensions(context);
   const communityLabel = t('pluginsHome.title');
@@ -1362,12 +1318,8 @@ export function EntryNavRail({
   const [teamOpen, setTeamOpen] = useState(false);
   useEffect(() => {
     if (!teamOpen) return;
-    trackWorkspaceSurfaceView(analytics.track, {
-      page_name: analyticsPage,
-      area: 'workspace_switcher',
-      ...workspaceDimensions,
-    });
-  }, [teamOpen, analytics.track, analyticsPage, workspaceDimensions.workspace_key]);
+    
+  }, [teamOpen, analyticsPage, workspaceDimensions.workspace_key]);
   // The LATEST context, for async work to compare against. `loadWorkspaceDirectory`
   // closes over the render's `context` prop, which is the identity its read was
   // issued for — so only a ref can answer "has the identity moved since?".
@@ -1470,15 +1422,8 @@ export function EntryNavRail({
     const selected = visibleWorkspaceItems.find((item) => item.workspaceId === workspaceId);
     if (!selected) return;
     const startedAt = performance.now();
-    const requestId = analytics.newRequestId();
-    trackWorkspaceSwitcherClick(analytics.track, {
-      page_name: analyticsPage,
-      area: 'workspace_switcher',
-      element: 'workspace_option',
-      target_workspace_type: selected.workspaceType,
-      is_current_workspace: false,
-      ...workspaceDimensions,
-    });
+    const requestId = crypto.randomUUID();
+    
     setWorkspaceSwitchingId(workspaceId);
     try {
       const response = await fetch('/api/workspace/active', {
@@ -1490,26 +1435,11 @@ export function EntryNavRail({
         }),
       });
       if (!response.ok) {
-        trackWorkspaceSwitchResult(analytics.track, {
-          page_name: analyticsPage,
-          area: 'workspace_switcher',
-          result: 'failed',
-          target_workspace_type: selected.workspaceType,
-          duration_ms: Math.round(performance.now() - startedAt),
-          error_code: stableAnalyticsErrorCode(response.status),
-          ...workspaceDimensions,
-        }, { requestId });
+        
         return;
       }
       const body = (await response.json()) as WorkspaceActiveResponse;
-      trackWorkspaceSwitchResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'workspace_switcher',
-        result: 'success',
-        target_workspace_type: selected.workspaceType,
-        duration_ms: Math.round(performance.now() - startedAt),
-        ...workspaceAnalyticsDimensions(body.context),
-      }, { requestId });
+      
       setTeamOpen(false);
       // Seed this tab from the authoritatively verified switch response. The
       // selected identity is kept in sessionStorage by the context provider, so
@@ -1521,15 +1451,7 @@ export function EntryNavRail({
       notifyTeamProjectsChanged();
       selectView('home');
     } catch {
-      trackWorkspaceSwitchResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'workspace_switcher',
-        result: 'failed',
-        target_workspace_type: selected.workspaceType,
-        duration_ms: Math.round(performance.now() - startedAt),
-        error_code: 'network_error',
-        ...workspaceDimensions,
-      }, { requestId });
+      
       // Keep the menu open; the next open/focus refresh can retry the directory.
     } finally {
       setWorkspaceSwitchingId(null);
@@ -1537,14 +1459,7 @@ export function EntryNavRail({
   }
 
   const selectView = (next: EntryView) => {
-    trackEntryNavigationClick(analytics.track, {
-      page_name: analyticsPage,
-      area: 'entry_nav',
-      element: 'nav_item',
-      target: entryViewToTracking(next),
-      entry_from: 'sidebar',
-      ...workspaceDimensions,
-    });
+    
     onViewChange(next);
   };
 
@@ -1622,14 +1537,7 @@ export function EntryNavRail({
               type="button"
               className="entry-nav-rail__team"
               onClick={() => {
-                trackEntryNavigationClick(analytics.track, {
-                  page_name: analyticsPage,
-                  area: 'entry_nav',
-                  element: 'workspace_switcher_trigger',
-                  target: 'workspace_switcher',
-                  entry_from: 'sidebar',
-                  ...workspaceDimensions,
-                });
+                
                 setTeamOpen((v) => !v);
               }}
               aria-expanded={teamOpen}
@@ -1700,12 +1608,7 @@ export function EntryNavRail({
                         className="entry-nav-rail__menu-item"
                         role="menuitem"
                         onClick={() => {
-                          trackWorkspaceSwitcherClick(analytics.track, {
-                            page_name: analyticsPage,
-                            area: 'workspace_switcher',
-                            element: 'invite_teammates',
-                            ...workspaceDimensions,
-                          });
+                          
                           setTeamOpen(false);
                           if (inviteTarget.kind === 'vela') {
                             window.open(inviteTarget.url, '_blank', 'noopener,noreferrer');
@@ -1730,12 +1633,7 @@ export function EntryNavRail({
                         {...externalLinkProps}
                         data-testid="entry-nav-create-team"
                         onClick={() => {
-                          trackWorkspaceSwitcherClick(analytics.track, {
-                            page_name: analyticsPage,
-                            area: 'workspace_switcher',
-                            element: 'create_team',
-                            ...workspaceDimensions,
-                          });
+                          
                           setTeamOpen(false);
                         }}
                       >
@@ -1758,14 +1656,7 @@ export function EntryNavRail({
             type="button"
             className="entry-nav-rail__search"
             onClick={() => {
-              trackEntryNavigationClick(analytics.track, {
-                page_name: analyticsPage,
-                area: 'entry_nav',
-                element: 'search',
-                target: 'search',
-                entry_from: 'sidebar',
-                ...workspaceDimensions,
-              });
+              
               onOpenSearch?.();
             }}
             aria-label={t('common.search')}
@@ -1870,14 +1761,7 @@ export function EntryNavRail({
                 aria-label={t('entry.navWorkspaceSettings')}
                 data-testid="entry-nav-workspace-settings"
                 onClick={() => {
-                  trackEntryNavigationClick(analytics.track, {
-                    page_name: analyticsPage,
-                    area: 'entry_nav',
-                    element: 'workspace_settings',
-                    target: 'workspace_settings',
-                    entry_from: 'sidebar',
-                    ...workspaceDimensions,
-                  });
+                  
                 }}
               >
                 <span className="entry-nav-rail__btn-icon" aria-hidden>
@@ -1919,11 +1803,7 @@ export function EntryNavRail({
               ariaLabel={t('entry.accountSettings')}
               label={t('entry.accountSettings')}
               onClick={() => {
-                trackAccountMenuClick(analytics.track, {
-                  page_name: analyticsPage,
-                  area: 'account_menu',
-                  element: 'settings',
-                });
+                
                 onOpenSettings?.();
               }}
               testId="entry-settings-button"

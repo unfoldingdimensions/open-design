@@ -3,17 +3,8 @@ import { flushSync } from 'react-dom';
 import { AnimatePresence, motion, MotionConfig } from 'motion/react';
 import { Button } from '@capydesign/components';
 import { reportAgentDetectDiagnostics } from './analytics/agent-detect';
-import { useAnalytics } from './analytics/provider';
-import {
-  trackExperienceSurveyDismissed,
-  trackExperienceSurveySent,
-  trackExperienceSurveyShown,
-  trackFileUploadResult,
-  trackProjectCreateResult,
-} from './analytics/events';
 import { deriveUploadCohort } from './analytics/upload-tracking';
 import { setPendingDesignSystemCreateEntry } from './analytics/ds-create-entry';
-import { detectClientType } from './analytics/identity';
 import {
   stashOnboardingEntryForProject,
   type OnboardingEntry,
@@ -1432,7 +1423,6 @@ function AppInner() {
     }
   }
   const projectScopeRefreshMountedRef = useRef(false);
-  const analytics = useAnalytics();
 
   // Single-flight guard for `/api/agents?stream=1`: beginning a new request
   // physically aborts the previous stream, not just invalidates its
@@ -2093,7 +2083,6 @@ function AppInner() {
       })
         .then((list) => {
           if (cancelled || !isCurrentAgentStreamRequest(agentRequestId)) return;
-          reportAgentDetectDiagnostics(analytics.track, list);
           setAgents(
             mergeAmrModelsIntoAgents(
               orderAgentsByRegistry(list),
@@ -2897,7 +2886,6 @@ function AppInner() {
           },
         });
         const ordered = orderAgentsByRegistry(next);
-        reportAgentDetectDiagnostics(analytics.track, ordered);
         if (isCurrentAgentStreamRequest(agentRequestId)) {
           setAgents(mergeAmrModelsIntoAgents(ordered, amrModelsRef.current));
           setAgentsLoading(false);
@@ -3084,20 +3072,7 @@ function AppInner() {
           err instanceof Error && err.message.trim()
             ? err.message
             : 'CREATE_REQUEST_FAILED';
-        trackProjectCreateResult(
-          analytics.track,
-          {
-            page_name: 'home',
-            area: 'new_project',
-            project_source: 'create_button',
-            project_id: null,
-            project_kind: projectKindFromMetadataToTracking(metadata),
-            fidelity,
-            result: 'failed',
-            error_code: errorCode,
-          },
-          { requestId: input.requestId },
-        );
+        
         if (optimisticProjectId) {
           clearLocalProject(optimisticProjectId);
           removeWorkspaceProjectTabs(optimisticProjectId);
@@ -3116,22 +3091,7 @@ function AppInner() {
         throw err;
       }
       if (!result) {
-        trackProjectCreateResult(
-          analytics.track,
-          {
-            page_name: 'home',
-            area: 'new_project',
-            project_source: 'create_button',
-            project_id: null,
-            project_kind: projectKindFromMetadataToTracking(metadata),
-            fidelity,
-            ...(input.pluginId ? { plugin_id: input.pluginId } : {}),
-            ...(input.pluginType ? { plugin_type: input.pluginType } : {}),
-            result: 'failed',
-            error_code: 'CREATE_REQUEST_FAILED',
-          },
-          { requestId: input.requestId },
-        );
+        
         return false;
       }
       const project = result.appliedPluginSnapshotId
@@ -3242,32 +3202,9 @@ function AppInner() {
           if (partial) {
             console.warn('Some Home attachments failed to upload', failedUploads);
           }
-          trackFileUploadResult(analytics.track, {
-            page_name: 'home',
-            area: 'chat_composer',
-            project_id: result.project.id,
-            ...cohort,
-            result: partial ? 'failed' : 'success',
-            ...(partial && firstUploadError
-              ? { error_code: firstUploadError }
-              : {}),
-          });
+          
         }
-        trackProjectCreateResult(
-          analytics.track,
-          {
-            page_name: 'home',
-            area: 'new_project',
-            project_source: 'create_button',
-            project_id: result.project.id,
-            project_kind: projectKindFromMetadataToTracking(metadata),
-            fidelity,
-            ...(input.pluginId ? { plugin_id: input.pluginId } : {}),
-            ...(input.pluginType ? { plugin_type: input.pluginType } : {}),
-            result: 'success',
-          },
-          { requestId: input.requestId },
-        );
+        
         // PluginLoopHome flow: the user already typed (or accepted) the
         // first message on Home. Mark this project so ProjectView fires
         // sendMessage(pendingPrompt) once on mount instead of just
@@ -3388,7 +3325,7 @@ function AppInner() {
       }
       return true;
     },
-    [analytics.track, clearLocalProject, rememberLocalProject],
+    [ clearLocalProject, rememberLocalProject],
   );
 
   const handleCreateProjectFromDesignSystem = useCallback(
@@ -5600,9 +5537,9 @@ function AppInner() {
           back to home. */}
       <ExperienceSurvey
         metricsConsent={config.telemetry?.metrics === true}
-        onExposure={() => trackExperienceSurveyShown(analytics.track)}
-        onDismiss={() => trackExperienceSurveyDismissed(analytics.track)}
-        onSubmit={(answers) => trackExperienceSurveySent(analytics.track, answers)}
+        onExposure={() => {}}
+        onDismiss={() => {}}
+        onSubmit={() => {}}
       />
       <AmrArtifactUpgradeGate
         cloudModelSelected={config.mode === 'daemon' && config.agentId === 'amr'}
