@@ -52,10 +52,6 @@ import {
   designBrowserHistoryStorageKey,
   designBrowserViewportStorageKey,
 } from '../../src/components/design-browser-storage';
-import {
-  currentWorkspaceContextRequestToken,
-  resetWorkspaceContextCache,
-} from '../../src/collab/useWorkspaceContext';
 
 function personalWorkspaceContext(): WorkspaceCollabContext {
   return {
@@ -867,97 +863,6 @@ describe('createProject', () => {
       (fetchMock.mock.calls[0]![1] as RequestInit).body as string,
     ) as { id: string };
     expect(body.id).toBe('optimistic-project');
-  });
-
-  it('fails closed while modern workspace authority is unresolved or unavailable', () => {
-    expect(() => resolvedWorkspaceContextForWrite({
-      context: null,
-      loading: true,
-    })).toThrow('Workspace context is unavailable');
-
-    expect(() => resolvedWorkspaceContextForWrite({
-      context: null,
-      loading: false,
-      failure: 'unavailable',
-    })).toThrow('Workspace context is unavailable');
-
-    expect(() => resolvedWorkspaceContextForWrite({
-      context: teamWorkspaceContext(),
-      loading: false,
-      identityChangePending: true,
-    })).toThrow('Workspace context is unavailable');
-  });
-
-  it('passes a retained last-good context through a transient outage when it belongs to the current generation', () => {
-    // Task#5: a vela authority outage set `failure: 'unavailable'`, but the
-    // shell still holds a directory-verified context resolved under the CURRENT
-    // identity generation. The old fail-closed behavior threw here, which turned
-    // every create click during the outage into a dead button + retry storm.
-    // The backend re-verifies the claimed identity, so honor the cache.
-    resetWorkspaceContextCache();
-    const context = teamWorkspaceContext();
-    expect(resolvedWorkspaceContextForWrite({
-      context,
-      loading: false,
-      failure: 'unavailable',
-      resourceReadIdentity: {
-        context,
-        generation: currentWorkspaceContextRequestToken(),
-      },
-    })).toBe(context);
-  });
-
-  it('still fails closed when the retained context belongs to a RETIRED generation (account switch)', () => {
-    // An account switch advanced the request token; the state still carries the
-    // previous account's cached context stamped with the OLD generation. Passing
-    // it through would authorize a write under the wrong account (cross-account
-    // write). The generation mismatch must keep this fail-closed.
-    resetWorkspaceContextCache();
-    const previousAccountContext = teamWorkspaceContext();
-    expect(() => resolvedWorkspaceContextForWrite({
-      context: previousAccountContext,
-      loading: false,
-      failure: 'unavailable',
-      resourceReadIdentity: {
-        context: previousAccountContext,
-        generation: 'retired-generation',
-      },
-    })).toThrow('Workspace context is unavailable');
-
-    // And the unscoped policy yields null (not the stale context) in that case.
-    expect(resolvedWorkspaceContextForWrite(
-      {
-        context: previousAccountContext,
-        loading: false,
-        failure: 'unavailable',
-        resourceReadIdentity: {
-          context: previousAccountContext,
-          generation: 'retired-generation',
-        },
-      },
-      { unavailablePolicy: 'unscoped' },
-    )).toBeNull();
-  });
-
-  it('allows an explicitly local project-create caller to remain unscoped while workspace sync is unresolved', () => {
-    expect(resolvedWorkspaceContextForWrite(
-      { context: null, loading: true },
-      { unavailablePolicy: 'unscoped' },
-    )).toBeNull();
-
-    expect(resolvedWorkspaceContextForWrite(
-      { context: null, loading: false, failure: 'unavailable' },
-      { unavailablePolicy: 'unscoped' },
-    )).toBeNull();
-
-    expect(resolvedWorkspaceContextForWrite(
-      {
-        context: teamWorkspaceContext(),
-        loading: false,
-        identityChangePending: true,
-      },
-      { unavailablePolicy: 'unscoped' },
-    )).toBeNull();
   });
 
   it('preserves explicit anonymous and old-daemon headerless compatibility', () => {

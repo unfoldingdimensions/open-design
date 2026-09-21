@@ -11,9 +11,9 @@ import {
 } from '../../src/components/ProjectView';
 import { ProjectConversationsHttpError } from '../../src/state/projects';
 import type { SettingsSection } from '../../src/components/SettingsDialog';
-import type { ProjectWorkspaceScopeState } from '../../src/collab/useProjectWorkspaceScope';
+import type { ProjectWorkspaceScopeState } from '../../src/runtime/legacy-scope-types';
 import type { WorkspaceCollabContext } from '@capydesign/contracts';
-import type { AmrAuthRetryContinuation } from '../../src/runtime/amr-auth-retry-continuation';
+import type { AmrAuthRetryContinuation } from '../../src/runtime/legacy-scope-types';
 import type {
   AgentInfo,
   AppConfig,
@@ -167,29 +167,6 @@ vi.mock('../../src/providers/anthropic', () => ({
   streamMessage: (...args: unknown[]) => streamMessage(...args),
 }));
 
-vi.mock('../../src/collab/useWorkspaceContext', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useWorkspaceContext')>()),
-  useWorkspaceContext: () => ({
-    context: workspaceScopeMocks.ambientContext,
-    loading: workspaceScopeMocks.ambientLoading,
-    ...(workspaceScopeMocks.ambientFailure
-      ? { failure: workspaceScopeMocks.ambientFailure }
-      : {}),
-  }),
-  // This suite exercises run/conversation isolation, not remote collaboration.
-  // An authoritative empty catalog proves the fixture project is unshared so
-  // the collab status request's initial unknown window does not disable Chat.
-  lastResolvedTeamProjects: () => [],
-  lastResolvedWorkspaceContext: () => workspaceScopeMocks.ambientContext,
-  // Mirrors the real predicate: only a settled, authoritative "no workspace"
-  // read means AMR has no wallet.
-  workspaceIdentityCanBillAmr: (state: {
-    context: unknown;
-    loading: boolean;
-    failure?: string;
-  }) => state.context !== null || state.loading || Boolean(state.failure),
-  useWorkspaceBilling: () => null,
-}));
 
 // Only the HOOK is stubbed; every pure helper comes from the real module.
 //
@@ -199,30 +176,7 @@ vi.mock('../../src/collab/useWorkspaceContext', async (importOriginal) => ({
 // copies were free to drift from the semantics under test. `importOriginal`
 // removes the whole failure mode — a new export is picked up automatically and
 // is always the real implementation.
-vi.mock('../../src/collab/useProjectWorkspaceScope', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useProjectWorkspaceScope')>()),
-  useProjectWorkspaceScope: () => workspaceScopeMocks.projectScope,
-}));
 
-vi.mock('../../src/collab/useProjectCollab', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useProjectCollab')>()),
-  useProjectCollab: () => ({
-    enabled: projectCollabMocks.enabled,
-    member: null,
-    present: [],
-    publishedVersion: null,
-    syncState: projectCollabMocks.syncState,
-    viewerOnly: projectCollabMocks.viewerOnly,
-    isOwner: projectCollabMocks.isOwner,
-    writerAuthority: projectCollabMocks.writerAuthority,
-    downloadPending: false,
-    reportChange: vi.fn(),
-    requestPublish: vi.fn(),
-    refreshPresence: vi.fn(),
-    checkStatusNow: vi.fn(),
-    applyContentTransferState: vi.fn(),
-  }),
-}));
 
 vi.mock('../../src/providers/daemon', () => ({
   GENERIC_DAEMON_DISCONNECT_CODE: 'GENERIC_DAEMON_DISCONNECT',

@@ -105,40 +105,8 @@ vi.mock('../../src/router', () => ({ navigate: vi.fn() }));
 
 vi.mock('../../src/providers/anthropic', () => ({ streamMessage: vi.fn() }));
 
-vi.mock('../../src/collab/useWorkspaceContext', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useWorkspaceContext')>()),
-  useWorkspaceContext: () => ({
-    context: workspaceScopeMocks.ambientContext,
-    loading: false,
-  }),
-  useWorkspaceBillingResponse: () => workspaceScopeMocks.billingResponse,
-}));
 
-vi.mock('../../src/collab/useProjectWorkspaceScope', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useProjectWorkspaceScope')>()),
-  useProjectWorkspaceScope: () => workspaceScopeMocks.projectScope,
-}));
 
-vi.mock('../../src/collab/useProjectCollab', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useProjectCollab')>()),
-  useProjectCollab: () => ({
-    enabled: true,
-    member: null,
-    present: [],
-    publishedVersion: null,
-    syncState: null,
-    viewerOnly: projectCollabMocks.viewerOnly,
-    writerAuthority: projectCollabMocks.writerAuthority,
-    isOwner: projectCollabMocks.writerAuthority === 'allowed',
-    ownerDisplayName: null,
-    ownerRole: null,
-    downloadPending: false,
-    reportChange: () => undefined,
-    requestPublish: () => undefined,
-    refreshPresence: () => undefined,
-    checkStatusNow: () => undefined,
-  }),
-}));
 
 vi.mock('../../src/providers/daemon', () => ({
   fetchChatRunStatus: vi.fn(),
@@ -155,23 +123,11 @@ vi.mock('../../src/providers/daemon', () => ({
   canUpgradeVelaPlan: vi.fn().mockReturnValue(false),
 }));
 
-vi.mock('../../src/runtime/amr-balance-gate', async () => {
-  const actual = await vi.importActual<typeof import('../../src/runtime/amr-balance-gate')>(
-    '../../src/runtime/amr-balance-gate',
-  );
-  return { ...actual, checkAmrBalanceGate: vi.fn().mockResolvedValue({ kind: 'allow' }) };
-});
 
 vi.mock('../../src/providers/project-events', () => ({
   useProjectFileEvents: vi.fn(),
 }));
 
-vi.mock('../../src/runtime/amr-low-balance-plan', async () => {
-  const actual = await vi.importActual<
-    typeof import('../../src/runtime/amr-low-balance-plan')
-  >('../../src/runtime/amr-low-balance-plan');
-  return { ...actual, resolveAmrPlan: vi.fn().mockResolvedValue('pro') };
-});
 
 vi.mock('../../src/runtime/brands', async () => {
   const actual = await vi.importActual<typeof import('../../src/runtime/brands')>(
