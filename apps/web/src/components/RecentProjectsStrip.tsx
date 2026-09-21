@@ -29,6 +29,7 @@ import type { DesignSystemSummary, Project, ProjectDisplayStatus, ProjectFile } 
 import { Icon } from './Icon';
 import { STATUS_LABEL_KEYS } from './DesignsTab';
 import { isDesignSystemProject, isPublishedDesignSystemProject } from './design-system-project';
+import type { SharedProjectPredicate } from '../runtime/legacy-scope-types';
 import {
   canAccessWorkspaceInviteFlow,
   resolveWorkspaceInviteTarget,
@@ -126,12 +127,6 @@ interface Props {
 
 const EMPTY_DESIGN_SYSTEMS: DesignSystemSummary[] = [];
 /** Fallback for a caller with no sharing surface (no workspace, no grids). */
-/**
- * Whether a project is currently shared into the team. CapyDesign has no
- * workspace identity layer, so nothing is ever shared.
- */
-type SharedProjectPredicate = (projectId: string) => boolean;
-
 const NOTHING_SHARED: SharedProjectPredicate = () => false;
 /** The chip a design-system project wears. Product name, not a translated
  *  string — shared by the card tag and the type filter so both read alike. */

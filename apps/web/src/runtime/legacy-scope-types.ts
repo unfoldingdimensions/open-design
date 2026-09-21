@@ -9,6 +9,12 @@
 import type { ProjectWorkspaceScope, WorkspaceCollabContext } from '@capydesign/contracts';
 
 /**
+ * Whether a project is currently shared into the team. CapyDesign has no
+ * workspace identity layer, so nothing is ever shared.
+ */
+export type SharedProjectPredicate = (projectId: string) => boolean;
+
+/**
  * Workspace-context resolution state for a surface. Local-only builds are
  * context-less, so `context` is always null and nothing is ever loading.
  */

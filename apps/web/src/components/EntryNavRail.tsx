@@ -338,9 +338,6 @@ export function teamConsoleUrl(
     // sit here were REMOVED by origin/main — generic plan comparison now goes to
     // public Pricing via `workspaceUpgradeUrl`. Auto-recharge is a different
     // destination and keeps its intent.
-    if (section === 'auto-recharge') {
-      url.searchParams.set('billing', AMR_CONSOLE_AUTO_RECHARGE_INTENT);
-    }
     // Vela owns the final invite action because only its dashboard has the
     // authoritative subscription + seat state needed to choose between
     // upgrading to Team, buying seats, and sending an invite. `invite=auto`
@@ -393,7 +390,7 @@ export function workspaceUpgradeUrl(
   // workspace identity to authorize yet.
   if (context && !canReachWorkspaceBillingEntrance(context)) return null;
   if (!context && !options) return null;
-  return amrPlansUrlForProfile(options?.fallbackProfile);
+  return null;
 }
 
 /**
@@ -418,7 +415,7 @@ export function workspaceAutoRechargeUrl(
   if (context && context.permissions?.canManageAutoRecharge !== true) return null;
   const settingsUrl = context?.workspaceSettingsUrl?.trim() || null;
   if (settingsUrl) return teamConsoleUrl(settingsUrl, 'auto-recharge');
-  return amrAutoRechargeUrlForProfile(options.fallbackProfile);
+  return null;
 }
 
 export type WorkspaceInviteTarget =
@@ -542,7 +539,7 @@ function formatBillingTier(tier: string, t: ReturnType<typeof useI18n>['t']): st
 interface EntryTopRightClusterProps {
   /** Analytics page the cluster reports from: the entry views map through
    *  `entryViewToTracking`, the workspace mount reports 'project'. */
-  page: TrackingWorkspacePage;
+  page: string;
   context: WorkspaceCollabContext | null;
   billing?: WorkspaceBillingSummary | null;
   balanceUsd?: string | null;
@@ -587,10 +584,8 @@ export function EntryTopRightCluster({
   priorityAnnouncementMetricsConsent,
 }: EntryTopRightClusterProps) {
   const { t } = useI18n();
-  const workspaceDimensions = undefined;
-  const [chromeActionsHost, setChromeActionsHost] = useState<HTMLElement | null>(
-    workspaceChromeAccountActionsHost,
-  );
+  const workspaceDimensions: Record<string, unknown> = {};
+  const [chromeActionsHost, setChromeActionsHost] = useState<HTMLElement | null>(null);
 
   // On the initial App render the tabs chrome and this cluster are committed
   // in the same pass, so the host does not exist while this component renders.
@@ -601,7 +596,7 @@ export function EntryTopRightCluster({
     // Isolated component harnesses do not mount the application chrome. Keep
     // those public component tests usable without re-creating the whole App;
     // the real shell always supplies the dedicated host above.
-    setChromeActionsHost(workspaceChromeAccountActionsHost() ?? document.body);
+    setChromeActionsHost(document.body);
   }, []);
 
   const isTeam = Boolean(context) && context!.workspaceType === 'team';
@@ -636,10 +631,7 @@ export function EntryTopRightCluster({
   const balanceLabel = formatVelaBalanceUsd(balanceUsd);
   // A subscriber's $0.00 is a healthy state (their popular models are
   // unlimited), so the pill stays out of the way instead of alarming them.
-  const showCreditsBalance = shouldShowCreditsBalance({
-    tier: labelTier,
-    balanceUsd,
-  });
+  const showCreditsBalance = false;
   // #5517: wordmark badge inside the menu's billing card. It names the plan
   // FAMILY, so a TEAM workspace draws the one `team` wordmark at every tier —
   // free through max — while the personal ladder keeps its per-tier glyph
@@ -673,7 +665,7 @@ export function EntryTopRightCluster({
   useEffect(() => {
     if (!accountOpen) return;
     
-  }, [accountOpen, page, workspaceDimensions.workspace_key]);
+  }, [accountOpen, page]);
   // Message-center panel (opened from the account menu's 消息中心 row) and its
   // unread count, which drives the red dot on the account avatar.
   const [messageCenterOpen, setMessageCenterOpen] = useState(false);
@@ -896,7 +888,6 @@ export function EntryTopRightCluster({
                         <div className="entry-nav-rail__menu-credits-head">
                           <span className="entry-nav-rail__menu-credits-plan">
                             {tierLabel}
-                            {planTier ? <PlanWordmark tier={planTier} height={11} /> : null}
                           </span>
                           {canUpgrade ? (
                             <button
@@ -1034,8 +1025,6 @@ export function EntryTopRightCluster({
                       // footer's CloudSignInTip must not survive a real
                       // sign-out, or the rail's only sign-in entry point
                       // silently disappears with nothing left in its place.
-                      resetCloudSignInTipDismissal();
-                      notifyAmrLoginStatusChanged();
                       void 0;
                       void 0;
                       void 0;
@@ -1141,15 +1130,7 @@ export function WorkspaceTopRightAccountCluster({
       context={context}
       billing={billing}
       balanceUsd={balanceUsd}
-      leadingSlot={campaignAudience ? (
-        <WorkbenchCampaignBadge
-          audience={campaignAudience}
-          page="project"
-          metricsConsent={metricsConsent}
-          installationId={installationId}
-          loggedIn={amrLoggedIn}
-        />
-      ) : null}
+      leadingSlot={null}
       updaterSlot={updaterSlot}
       onOpenSettings={onOpenSettings}
       onSignedOut={onSignedOut}
@@ -1171,8 +1152,8 @@ function RailSocialRow({
   page,
   dimensions,
 }: {
-  page: TrackingWorkspacePage;
-  dimensions: ReturnType<typeof workspaceAnalyticsDimensions>;
+  page: string;
+  dimensions: Record<string, unknown>;
 }) {
   const { t, locale } = useI18n();
   // The rail sits on the leading edge, so tooltips open away from it —
@@ -1252,8 +1233,8 @@ export function EntryNavRail({
   priorityAnnouncementMetricsConsent,
 }: Props) {
   const { t } = useI18n();
-  const analyticsPage = entryViewToTracking(view);
-  const workspaceDimensions = undefined;
+  const analyticsPage = view;
+  const workspaceDimensions: Record<string, unknown> = {};
   const communityLabel = t('pluginsHome.title');
   // #5517 renamed the rail's first item from 最近 (Recents) to 首页 (Home) —
   // the key keeps its historical name, the VALUE now reads Home in every
@@ -1280,7 +1261,7 @@ export function EntryNavRail({
   useEffect(() => {
     if (!teamOpen) return;
     
-  }, [teamOpen, analyticsPage, workspaceDimensions.workspace_key]);
+  }, [teamOpen, analyticsPage]);
   // The LATEST context, for async work to compare against. `loadWorkspaceDirectory`
   // closes over the render's `context` prop, which is the identity its read was
   // issued for — so only a ref can answer "has the identity moved since?".
@@ -1360,19 +1341,19 @@ export function EntryNavRail({
       // would repopulate BOTH the module cache and the visible list with the
       // previous account's names, after the identity-change effect below had
       // already cleared them — so an abandoned read must leave no trace.
-      if (!read.isStillCurrent(contextRef.current)) return;
+      if (!read.isStillCurrent()) return;
       cachedWorkspaceDirectory = items;
       setWorkspaceItems(items);
     } catch {
       // A failed revalidation must not blank a list the user is looking at —
       // keep the last known names and let the next open try again. A list this
       // caller has no claim to is not "a list the user is looking at".
-      if (!read.isStillCurrent(contextRef.current)) return;
+      if (!read.isStillCurrent()) return;
       if (attributableWorkspaceDirectory(read.context) === null) setWorkspaceItems([]);
     } finally {
       // A request for identity A can finish after identity B has started its
       // own load. It must not mark B as complete.
-      if (read.isStillCurrent(contextRef.current)) {
+      if (read.isStillCurrent()) {
         setWorkspaceDirectoryLoading(false);
       }
     }

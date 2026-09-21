@@ -8,6 +8,16 @@
 // textarea can live centered in the hero.
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import type { SharedProjectPredicate } from '../runtime/legacy-scope-types';
+
+/**
+ * Workspace-context chips used to carry the directories they linked into the
+ * shared workspace. There is no workspace identity layer any more, so a chip
+ * never links a directory.
+ */
+function workspaceContextLinkedDirs(_items: readonly { id: string }[]): string[] {
+  return [];
+}
 import { Dialog, DialogFooter, DialogTitle } from '@capydesign/components';
 import type {
   ApplyResult,
@@ -534,13 +544,8 @@ export function HomeView({
   // teammate's shared project (a project absent here is the member's own local
   // project → "我创建").
   const homeProjectOwnerMemberIds = useMemo(
-    () => projectOwnerMemberIds ?? new Map(
-      homeTeamProjects.projects.map((teamProject) => [
-        teamProject.projectId,
-        teamProject.ownerMemberId,
-      ]),
-    ),
-    [homeTeamProjects.projects, projectOwnerMemberIds],
+    () => projectOwnerMemberIds ?? new Map<string, string>(),
+    [projectOwnerMemberIds],
   );
   // P0 page_view page_name=home — fire once on mount. ref-keyed to survive
   // re-renders that flip parent state without remounting HomeView.
@@ -900,7 +905,7 @@ export function HomeView({
       return promise;
     };
     pluginCatalogReloadRef.current = load;
-    if (homeActiveRef.current && pluginCatalogWorkspaceContext?.workspaceType !== 'team') load();
+    if (homeActiveRef.current) load();
     else pluginCatalogStaleRef.current = true;
     const onChanged = () => {
       // A mutation event is newer than any pending snapshot and must supersede
@@ -926,14 +931,13 @@ export function HomeView({
       }
       window.removeEventListener('open-design:plugins-changed', onChanged);
     };
-  }, [desiredPluginCatalogKey, pluginCatalogWorkspaceContext?.workspaceType]);
+  }, [desiredPluginCatalogKey]);
 
   useEffect(() => {
     if (!isActive || !desiredPluginCatalogKey || !pluginCatalogStaleRef.current) return;
-    if (pluginCatalogWorkspaceContext?.workspaceType === 'team') return;
     pluginCatalogStaleRef.current = false;
     pluginCatalogReloadRef.current(true);
-  }, [desiredPluginCatalogKey, isActive, pluginCatalogWorkspaceContext?.workspaceType]);
+  }, [desiredPluginCatalogKey, isActive]);
 
   const handlePluginStreamActive = (() => {});
 
@@ -1292,7 +1296,7 @@ export function HomeView({
   // writes Vela/daemon account-level active-workspace state. That model cannot
   // represent two clients of one account open in different Workspaces.
   useEffect(() => {
-    const nextWorkspaceName = workspaceContext?.workspaceName?.trim() || null;
+    const nextWorkspaceName = null;
     const previousWorkspaceName = previousWorkspaceNameRef.current;
     previousWorkspaceNameRef.current = nextWorkspaceName;
 
@@ -1328,7 +1332,7 @@ export function HomeView({
         result: null,
       };
     });
-  }, [workspaceContext?.workspaceName]);
+  }, []);
 
   function focusPromptAtEnd() {
     requestAnimationFrame(() => {
@@ -1391,7 +1395,7 @@ export function HomeView({
         options?.inputs,
         inputFields,
         selectedDesignSystemTitle,
-        workspaceContext?.workspaceName,
+        undefined,
       ),
     );
     const inputsValid = pluginInputsAreValid(inputFields, optimisticInputs);
@@ -1564,10 +1568,7 @@ export function HomeView({
     // During an identity transition, omit attribution instead of blocking Send.
     const writeWorkspaceContext = workspaceContextState.identityChangePending
       ? null
-      : resolvedWorkspaceContextForWrite(
-          workspaceContextState,
-          { unavailablePolicy: 'unscoped' },
-        );
+      : resolvedWorkspaceContextForWrite(workspaceContextState);
     const result = await applyPlugin(record.id, {
       locale,
       inputs,
@@ -1608,7 +1609,7 @@ export function HomeView({
         options?.inputs,
         inputFields,
         selectedDesignSystemTitle,
-        workspaceContext?.workspaceName,
+        undefined,
       ),
       inputFields: options?.inputFields,
       queryTemplate: options?.queryTemplate,
@@ -1984,10 +1985,7 @@ export function HomeView({
         // omit stale attribution instead of blocking on Workspace discovery.
         workspaceContext: workspaceContextState.identityChangePending
           ? null
-          : resolvedWorkspaceContextForWrite(
-              workspaceContextState,
-              { unavailablePolicy: 'unscoped' },
-            ),
+          : resolvedWorkspaceContextForWrite(workspaceContextState),
       });
       onOpenProject(project.id);
     } catch {
@@ -2955,21 +2953,9 @@ export function HomeView({
         // callers, and read literally it sounds like a charged failure rather
         // than a wait. Everything else keeps the verbatim path, where the
         // daemon's message IS the specific thing to say.
-        const windowLimit = modelWindowLimitCopy(
-          err instanceof Error ? err.message : null,
-        );
-        if (windowLimit) {
-          setError(t(
-            windowLimit.messageKey,
-            windowLimit.retryAt
-              ? { retryAt: formatModelWindowRetryAt(windowLimit.retryAt, locale) }
-              : undefined,
-          ));
-        } else {
-          setError(err instanceof Error && err.message.trim()
-            ? err.message
-            : t('home.createFailed'));
-        }
+        setError(err instanceof Error && err.message.trim()
+          ? err.message
+          : t('home.createFailed'));
       }
     } finally {
       setSending(false);
