@@ -43,10 +43,9 @@ export function BrandPreviewCard({
   onOpenProject,
 }: BrandPreviewCardProps) {
   const t = useT();
-  const workspaceState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
-  const mutationWorkspaceContext = workspaceState.context;
-  const resourceReadIdentity = null;
-  const workspaceContext = resourceReadIdentity?.context ?? null;
+  // CapyDesign has no workspace identity layer; brand surfaces are local-only.
+  const workspaceContext = null;
+  const mutationWorkspaceContext = null;
   const workspaceReadGeneration = 'none';
   const compact = variant === 'compact';
   const { meta, brand } = summary;

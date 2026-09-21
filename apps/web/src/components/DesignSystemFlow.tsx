@@ -4265,7 +4265,7 @@ async function prepareCreatedDesignSystemProject({
   workspaceContext,
   onProjectPrepared,
   onSystemsRefresh,
-  analyticsTrack,
+  analyticsTrack = () => {},
   ingestEntryFrom,
   designSystemId,
 }: {
@@ -4276,7 +4276,8 @@ async function prepareCreatedDesignSystemProject({
   workspaceContext?: WorkspaceCollabContext | null;
   onProjectPrepared?: (project: Project) => void;
   onSystemsRefresh?: () => Promise<void> | void;
-  analyticsTrack: (
+  /** Analytics transport. Optional now that the Cloud telemetry layer is gone. */
+  analyticsTrack?: (
     event: string,
     props: Record<string, unknown>,
     options?: { requestId?: string; insertId?: string },

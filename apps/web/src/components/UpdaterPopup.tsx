@@ -17,6 +17,7 @@ import {
   type UpdaterRestartSafety,
 } from '../lib/updater';
 import { useT } from '../i18n';
+import { useAppVersion } from '../runtime/app-version';
 import type { Dict } from '../i18n/types';
 import styles from './UpdaterPopup.module.css';
 

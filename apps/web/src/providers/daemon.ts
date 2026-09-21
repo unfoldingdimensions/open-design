@@ -1469,7 +1469,7 @@ export interface StartVelaLoginResult {
 }
 
 export async function startVelaLogin(
-  attribution?: AmrEntryAttribution | null,
+  attribution?: Record<string, unknown> | null,
   odDeviceId?: string | null,
   authAttemptId?: string,
 ): Promise<StartVelaLoginResult> {

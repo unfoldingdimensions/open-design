@@ -19,7 +19,6 @@ import { VisuallyHidden } from '@capydesign/components';
 import { useT } from '../i18n';
 import type { Dict } from '../i18n/types';
 import { projectFileUrl } from '../providers/registry';
-import { useProjectCollabContext } from '../collab/collab-context';
 import { artifactKind, type ArtifactKind } from '../runtime/chat/format';
 import {
   countArtifactFileOps,

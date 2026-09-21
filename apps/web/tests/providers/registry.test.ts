@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { installMockCapyDesignHost } from '@capydesign/host/testing';
-import { advanceWorkspaceAccountGeneration } from '../../src/collab/workspace-identity';
 import {
   buildWorkspacePermissions,
   buildWorkspaceSeatSummary,
@@ -680,8 +679,7 @@ describe('design-system Workspace scope', () => {
     const beforeBoundary = fetchDesignSystemsResult(context);
     await vi.waitFor(() => expect(catalogReads).toBe(1));
 
-    advanceWorkspaceAccountGeneration('account-boundary');
-
+  
     const afterBoundary = fetchDesignSystemsResult(context);
     await vi.waitFor(() => expect(catalogReads).toBe(2));
 
@@ -717,8 +715,7 @@ describe('design-system Workspace scope', () => {
     const beforeBoundary = fetchDesignSystemsResult(context);
     await vi.waitFor(() => expect(teamReads).toBe(1));
 
-    advanceWorkspaceAccountGeneration('team-witness-boundary');
-
+  
     const afterBoundary = fetchDesignSystemsResult(context);
     await vi.waitFor(() => expect(teamReads).toBe(2));
 

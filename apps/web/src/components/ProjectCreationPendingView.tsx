@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react';
 
 import { AgentIcon } from './AgentIcon';
 import { Icon } from './Icon';
-import { useWorkspaceTabsDockRef } from './workspaceTabsDock';
 import { useI18n } from '../i18n';
 import { formatAttachmentSize, splitFileName } from '../runtime/chat/attachment';
 import { looksLikeImageName } from '../runtime/chat/staged-attachment';

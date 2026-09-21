@@ -118,6 +118,27 @@ import {
  * Use this ttl, not a positive one, unless the endpoint has an explicit reason
  * a settled body stays true for a while.
  */
+/**
+ * Failure surfaced by the public-file publish flow.
+ *
+ * `code` is the daemon's stable error code; `recovery` carries the
+ * manual-revoke data when the daemon asked for one. The collab publish layer
+ * that used to own this class went with the Cloud surface, so it lives here.
+ */
+export class PublicFilePublishError extends Error {
+  readonly status: number;
+  readonly code: string | undefined;
+  readonly recovery: unknown;
+
+  constructor(message: string, status: number, code?: string, recovery?: unknown) {
+    super(message);
+    this.name = 'PublicFilePublishError';
+    this.status = status;
+    this.code = code;
+    this.recovery = recovery;
+  }
+}
+
 const IN_FLIGHT_SHARE_ONLY_MS = 0;
 
 export const DEFAULT_DEPLOY_PROVIDER_ID = 'vercel-self';

@@ -19,7 +19,6 @@ import {
 } from '../i18n';
 import { createSocialSharePayload } from '../providers/registry';
 import type { AppConfig } from '../types';
-import { formatDiscordPresenceCount, useDiscordPresence } from './useDiscordPresence';
 import { Icon } from './Icon';
 import { SocialShareGrid } from './SocialShareGrid';
 import { enterpriseUrl } from './enterpriseUrl';
@@ -74,18 +73,12 @@ export function EntrySettingsMenu({
   const pageName = trackingPageName ?? 'home';
   const t = useT();
   const { locale, setLocale } = useI18n();
-  const discordPresence = useDiscordPresence();
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [openDesignShare, setCapyDesignShare] = useState<SocialShareResponse | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const langListRef = useRef<HTMLDivElement | null>(null);
-  const discordOnlineLabel = discordPresence
-    ? t('entry.discordOnlineLabel', {
-        count: formatDiscordPresenceCount(discordPresence.onlineCount),
-      })
-    : null;
   const openDesignShareRequest = useMemo<SocialShareRequest>(() => {
     const text = t('socialShare.openDesignText');
     return {
@@ -309,11 +302,6 @@ export function EntrySettingsMenu({
               <Icon name="discord" size={14} />
             </span>
             <span>{t('entry.discordLabel')}</span>
-            {discordOnlineLabel ? (
-              <span className="entry-settings-menu__item-meta">
-                {discordOnlineLabel}
-              </span>
-            ) : null}
             <Icon name="external-link" size={14} className="entry-settings-menu__item-end" />
           </a>
           <a

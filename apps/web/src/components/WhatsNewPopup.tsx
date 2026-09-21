@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Dialog } from '@capydesign/components';
 import { useI18n } from '../i18n';
 import { fetchWhatsNew, openExternalUrl } from '../providers/registry';
+import { useAppVersion } from '../runtime/app-version';
 import {
   localizedWhatsNewContent,
   markWhatsNewSeen,

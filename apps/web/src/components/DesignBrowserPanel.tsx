@@ -73,7 +73,6 @@ import { Icon } from './Icon';
 import { BoardComposerPopover } from './BoardComposerPopover';
 import { PreviewDrawOverlay } from './PreviewDrawOverlay';
 import { RemixIcon } from './RemixIcon';
-import { useProjectCollabContext } from '../collab/collab-context';
 
 export {
   removeDesignBrowserProjectCache,

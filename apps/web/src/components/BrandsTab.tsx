@@ -29,10 +29,9 @@ export interface BrandsTabProps {
 
 export function BrandsTab({ onApplyDesignSystem, onOpenProject, onDesignSystemsRefresh }: BrandsTabProps = {}) {
   const t = useT();
-  const workspaceState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
-  const mutationWorkspaceContext = workspaceState.context;
-  const resourceReadIdentity = null;
-  const workspaceContext = resourceReadIdentity?.context ?? null;
+  // CapyDesign has no workspace identity layer; brand surfaces are local-only.
+  const workspaceContext = null;
+  const mutationWorkspaceContext = null;
   const workspaceReadGeneration = 'none';
   const route = useRoute();
   // A `/brands/:id` deep-link (from the rail, a chat link, or a shared URL)

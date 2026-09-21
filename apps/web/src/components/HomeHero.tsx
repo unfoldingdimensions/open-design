@@ -85,7 +85,6 @@ import { pluginSubfacetLabel } from './plugins-home/subfacetLabel';
 import { useDeckPreviewScale } from '../lib/use-deck-preview-scale';
 import { ComposerPlusMenu, PLUS_SUBMENU_RESOURCE_KIND } from './ComposerPlusMenu';
 import { ContextChipHoverCard } from './ContextChipHoverCard';
-import { workspaceContextDetailLine, workspaceContextKindLabel } from './workspace-context';
 import { FigmaHelpModal } from './FigmaHelpModal';
 import { TemplatePicker } from './home-hero/TemplatePicker';
 import { TypePillRow } from './home-hero/TypePillRow';
@@ -1529,8 +1528,8 @@ export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
                 key={`ctx-workspace-${item.id}`}
                 className="home-hero__active-chip home-hero__active-chip--context"
                 data-testid={`home-hero-context-workspace-${item.id}`}
-                typeLabel={workspaceContextKindLabel(item.kind)}
-                detail={workspaceContextDetailLine(item)}
+                typeLabel={item.kind}
+                detail=""
               >
                 <span className="home-hero__active-icon" aria-hidden>
                   <Icon name={item.kind === 'local-code' ? 'terminal' : 'folder'} size={12} />
