@@ -188,6 +188,25 @@ import type {
   SkillSummary,
 } from './types';
 
+/*
+ * Local stand-ins for helpers/components that lived in the removed Cloud / AMR
+ * modules. They keep App's call shapes intact; each collapses to a neutral value.
+ */
+type AmrBalanceGateScope = 'none' | 'project' | 'run';
+type AmrArtifactUpgradeHomeOffer = any;
+
+const detectClientType = (..._args: unknown[]): any => '';
+const analytics: any = {};
+const resolveCurrentWorkspaceContextReadWitness = (..._args: unknown[]): any => null;
+const WorkspaceMemberDirectoryPreloader = (_props: Record<string, unknown>) => null;
+const AmrArtifactUpgradeHomeOffer = (_props: Record<string, unknown>) => null;
+const AmrArtifactUpgradeHomeCard = (_props: Record<string, unknown>) => null;
+const AmrArtifactUpgradeGate = (props: any): any => props?.children ?? null;
+const CollabDemoView = (_props: Record<string, unknown>) => null;
+const WorkspaceTabsBar = (_props: Record<string, unknown>) => null;
+const ProjectWorkspaceRecoveryTip = (_props: Record<string, unknown>) => null;
+import type { AmrAuthRetryContinuation } from './runtime/legacy-scope-types';
+
 type AppCreateProjectInput = Omit<CreateInput, 'metadata'> & {
   metadata?: CreateInput['metadata'];
   pendingPrompt?: string;
@@ -859,7 +878,7 @@ function AppInner() {
   const clientType = useMemo(() => 'web', []);
   const hostPlatform = useMemo(() => getCapyDesignHost()?.client.platform, []);
   useModalWindowDragGuard();
-  const workspaceContextState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
+  const workspaceContextState: any = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const {
     context: workspaceContext,
     loading: workspaceContextLoading,
@@ -1087,13 +1106,13 @@ function AppInner() {
     if (!issuedContext) return;
     const issuedAccountGeneration = 0;
     const issuedIdentity = 'none';
-    const metadataRefresh = void 0;
+    const metadataRefresh: any = { isLatest: () => true };
     const metadataRequestIsCurrent = () =>
       0 === issuedAccountGeneration
       && 'none' === issuedIdentity
       && metadataRefresh.isLatest();
     try {
-      const catalogProject = await ({ ok: true, project: null });
+      const catalogProject: any = await (null);
       if (
         !catalogProject
         || !metadataRequestIsCurrent()
@@ -1703,7 +1722,7 @@ function AppInner() {
     scopeKey: identityScopeKey,
     nextWorkspaceBucket: nextTabScopeWorkspaceId,
     nextAccountBucket: nextTabScopeAccountId,
-  } = 'local';
+  } = { scopeKey: 'local', nextWorkspaceBucket: 'none', nextAccountBucket: 'unset' };
   tabScopeWorkspaceIdRef.current = nextTabScopeWorkspaceId;
   tabScopeAccountIdRef.current = nextTabScopeAccountId;
 
@@ -1868,9 +1887,6 @@ function AppInner() {
     };
     void sync();
     const onStatusEvent = (event: Event) => {
-      if ('' === 'login-canceled') {
-        clearAmrAuthRetryContinuation();
-      }
       void sync({}, true);
     };
     const onReturnToApp = () => {
@@ -2457,7 +2473,7 @@ function AppInner() {
       workspaceContextStateRef.current.identityChangePending
       || skillsRequestGenerationRef.current.get(issuedCatalogIdentity) !== requestGeneration
       || 0 !== issuedAccountGeneration
-      || !read.isStillCurrent(workspaceContextRef.current)
+      || !read.isStillCurrent()
     ) return;
     setWorkspaceSkills({
       identity: issuedCatalogIdentity,
@@ -2863,7 +2879,7 @@ function AppInner() {
       const fidelity = fidelityToTracking(metadata?.fidelity ?? null);
       const creationSource: 'blank' | 'template' | 'zip' | 'folder' =
         kind === 'template' ? 'template' : 'blank';
-      let createWorkspaceContext: WorkspaceCollabContext | null = null;
+      let createWorkspaceContext: any = null;
       let optimisticProjectId: string | null = null;
       let result;
       const stagedFiles = Array.isArray(input.pendingFiles)
@@ -4277,7 +4293,7 @@ function AppInner() {
   // context has resolved. Derive the exact caller from the persisted project
   // binding + signed-in account directory instead; this is independent of
   // whichever Workspace another tab or the navigation rail currently selects.
-  const projectRouteWorkspaceContext = null;
+  const projectRouteWorkspaceContext: any = null;
   // Never mount ProjectView around the synthetic "Untitled" placeholder. Its
   // effects immediately fan out project-owned reads, but before the project
   // list lands there is no persisted Workspace id with which to scope them.
@@ -5304,7 +5320,7 @@ function AppInner() {
               }}
               onDismiss={() => {
                 if (amrArtifactUpgradeHomeMock) return;
-                setAmrArtifactUpgradeHomeOffer((current) =>
+                setAmrArtifactUpgradeHomeOffer((current: any) =>
                   current?.sessionKey === amrArtifactUpgradeHomeOffer.sessionKey
                     ? null
                     : current,
