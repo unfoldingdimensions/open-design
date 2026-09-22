@@ -47,6 +47,12 @@ export interface ProjectWorkspaceScopeState {
  * provider. Captured at the moment the run was armed so a retry can restore the
  * exact conversation, message and mount context.
  */
+/**
+ * Witness that a retry continuation was adopted by the personal scope. Local
+ * builds never adopt one, so the shape stays open.
+ */
+export type AmrAuthRetryPersonalAdoptionWitness = Record<string, unknown>;
+
 export interface AmrAuthRetryContinuation {
   projectId: string;
   conversationId: string;

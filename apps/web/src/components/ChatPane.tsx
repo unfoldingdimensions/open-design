@@ -49,7 +49,8 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { hasOdCard, OD_NEXT_STRATEGY_ID, type ProjectMediaTask } from '@capydesign/contracts';
+import { hasOdCard, OD_NEXT_STRATEGY_ID, type ProjectMediaTask, type WorkspaceCollabContext } from '@capydesign/contracts';
+import type { AmrAuthRetryContinuation, AmrAuthRetryPersonalAdoptionWitness } from '../runtime/legacy-scope-types';
 import {
   buildRecoveryTaskAnalytics,
   runAgentProviderId,
@@ -160,6 +161,69 @@ import { repoConnectCopy } from './design-system-github-evidence';
 import { isRenderableSketchJson, SketchPreview } from './SketchPreview';
 import type { SettingsSection } from './SettingsDialog';
 
+/*
+ * Local stand-ins for helpers that lived in the removed Cloud / AMR modules.
+ *
+ * They keep the run-failure card's call shape intact while the Cloud ladder it
+ * drove is gone: there is no AMR plan/upgrade hand-off, no analytics transport,
+ * no team-member truth and no AMR sign-in pill. Each collapses to a neutral
+ * value, so the card renders its generic copy.
+ */
+const resolveRunFailureUi = (..._args: unknown[]): {
+  primaryAction:
+    | 'retry'
+    | 'recharge'
+    | 'upgrade'
+    | 'authorize'
+    | 'contact-support'
+    | 'switch-model'
+    | 'launch-terminal-auth'
+    | 'launch-terminal-switch-model'
+    | 'open-settings'
+    | null;
+  messageKey: keyof Dict | null;
+  messageVars: Record<string, string | number> | undefined;
+  messageCauseKey: keyof Dict | null;
+  suppressCard: boolean;
+  titleKey: keyof Dict | null;
+  secondaryRetry: boolean;
+  cloudSwitchCta: boolean;
+} => ({
+  primaryAction: 'retry',
+  messageKey: null,
+  messageVars: undefined,
+  messageCauseKey: null,
+  suppressCard: false,
+  titleKey: null,
+  secondaryRetry: false,
+  cloudSwitchCta: false,
+});
+
+type RunErrorCardDescription =
+  | { render: 'none' }
+  | { render: 'mapped'; messageKey: keyof Dict }
+  | { render: 'fallback' }
+  | { render: 'text'; text: string };
+
+const resolveRunErrorCardDescription = (..._args: unknown[]): RunErrorCardDescription => ({ render: 'fallback' });
+const daemonFailureVerdictFrom = (..._args: unknown[]): undefined => undefined;
+const isReconnectOwnedFailure = (..._args: unknown[]): boolean => false;
+const failureCardHandedToAmrBalanceCard = (..._args: unknown[]): boolean => false;
+const hasSelfContainedRecovery = (..._args: unknown[]): boolean => false;
+const canConsumeAmrAuthRetryContinuation = (..._args: unknown[]): boolean => false;
+const formatModelWindowRetryAt = (value: string | number, _locale?: string): string => String(value);
+const recordAmrEntry = (..._args: unknown[]): undefined => undefined;
+const amrHandoffDeviceId = (..._args: unknown[]): undefined => undefined;
+const getResolvedDeviceId = (): undefined => undefined;
+const attributedAmrUrl = (url: string, ..._rest: unknown[]): string => url;
+const amrPlansUrlForProfile = (..._args: unknown[]): string => '';
+const amrRechargeUrlForProfile = (..._args: unknown[]): string => '';
+const planPillState = (..._args: unknown[]): { todos: unknown[]; running: boolean } | null => null;
+const useProjectCollabContext = (): { workspaceContext: WorkspaceCollabContext | null } => ({ workspaceContext: null });
+const AmrLoginPill = (_props: Record<string, unknown>) => null;
+const PlanPill = (_props: Record<string, unknown>) => null;
+const analytics = { track: (..._args: unknown[]) => {} };
+const RUN_FAILURE_FALLBACK_MESSAGE_KEY: keyof Dict = 'chat.runError.title.runtimeConfig';
 type TranslateFn = (key: keyof Dict, vars?: Record<string, string | number>) => string;
 
 // Featured starter prompts shown on the empty chat. Clicking one fills
@@ -1634,8 +1698,6 @@ export function ChatPane({
   useEffect(() => {
     void refreshInlineAmrLoginStatus();
     const onAmrLoginStatusChange = (event: Event) => {
-      const reason = '';
-      if (reason === 'login-canceled') return;
       void refreshInlineAmrLoginStatus();
     };
     window.addEventListener('open-design:amr-login-status', onAmrLoginStatusChange);
@@ -4564,7 +4626,7 @@ export function ChatPane({
                       /* 标题走和正文同一份取值 —— 见 `runFailureCopyVars`。
                          S01「未检测到 {agent}」/ S02「{agent} 尚未登录」把主语
                          放进了标题,裸 `t(key)` 会渲染出字面的大括号。 */
-                      runFailureUi
+                      runFailureUi?.titleKey
                         ? t(runFailureUi.titleKey, runFailureCopyVars)
                         : t('chat.runError.title.generic')
                     }
@@ -4652,8 +4714,8 @@ export function ChatPane({
                                     });
                                   }
                                 }}
-                                onStatusChange={(loginStatus) => {
-                                  consumeAmrAuthRetryIfAuthorized(loginStatus);
+                                onStatusChange={() => {
+                                  consumeAmrAuthRetryIfAuthorized(null);
                                 }}
                               />
                             ) : runFailureUi.primaryAction === 'launch-terminal-auth' ? (
