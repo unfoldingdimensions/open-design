@@ -7,7 +7,6 @@ const { reportSafetyEvent } = vi.hoisted(() => ({
   reportSafetyEvent: vi.fn(),
 }));
 
-vi.mock('../../src/analytics/error-tracking', () => ({ reportSafetyEvent }));
 
 import {
   installPreviewIframeMessageObserver,

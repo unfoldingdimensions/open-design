@@ -16,10 +16,6 @@ const mocks = vi.hoisted(() => ({
   seen: { value: false },
 }));
 
-vi.mock('../../src/analytics/events', () => ({
-  trackStudioOnboardingHintSurfaceView: mocks.surfaceView,
-  trackStudioOnboardingHintClick: mocks.clickFn,
-}));
 
 vi.mock('../../src/onboarding/first-artifact-hint', () => ({
   hasSeenFirstArtifactHint: () => mocks.seen.value,

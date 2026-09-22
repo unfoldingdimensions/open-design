@@ -11,12 +11,6 @@ const analytics = vi.hoisted(() => ({
   newRequestId: vi.fn(() => 'request-nav-1'),
 }));
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({
-    track: analytics.track,
-    newRequestId: analytics.newRequestId,
-  }),
-}));
 
 afterEach(cleanup);
 

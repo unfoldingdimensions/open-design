@@ -12,9 +12,6 @@ import { CommunityView } from '../src/components/CommunityView';
 
 const analytics = vi.hoisted(() => ({ track: vi.fn() }));
 
-vi.mock('../src/analytics/provider', () => ({
-  useAnalytics: () => ({ track: analytics.track }),
-}));
 
 type PluginFixture = {
   id: string;

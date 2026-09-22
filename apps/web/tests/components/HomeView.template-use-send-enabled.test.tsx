@@ -33,18 +33,6 @@ import { writeHomeGuideStage } from '../../src/components/home-hero/firstRunGuid
 let workspaceContextForTest: WorkspaceCollabContext | null = null;
 const reloadTeamProjects = vi.fn();
 
-vi.mock('../../src/collab/useWorkspaceContext', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useWorkspaceContext')>()),
-  useWorkspaceContext: () => ({
-    context: workspaceContextForTest,
-    loading: false,
-  }),
-  useTeamProjects: () => ({
-    projects: [],
-    loading: false,
-    reload: reloadTeamProjects,
-  }),
-}));
 
 const BASE = {
   version: '0.1.0',

@@ -16,15 +16,6 @@ const analyticsMocks = vi.hoisted(() => ({
   newRequestId: vi.fn(() => 'request-1'),
 }));
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({
-    track: analyticsMocks.track,
-    newRequestId: analyticsMocks.newRequestId,
-    setConfigureGlobals: vi.fn(),
-    setConsent: vi.fn(),
-    setIdentity: vi.fn(),
-  }),
-}));
 
 const originalFetch = globalThis.fetch;
 const originalConfirm = window.confirm;

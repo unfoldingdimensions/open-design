@@ -42,17 +42,6 @@ vi.mock('../../src/providers/registry', async () => {
   };
 });
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({
-    track: vi.fn(),
-    setConsent: () => undefined,
-    setIdentity: () => undefined,
-    setConfigureGlobals: () => undefined,
-    anonymousId: 'test-anonymous',
-    sessionId: 'test-session',
-    newRequestId: () => 'test-request',
-  }),
-}));
 
 const originalFetch = globalThis.fetch;
 

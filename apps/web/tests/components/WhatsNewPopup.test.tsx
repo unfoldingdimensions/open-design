@@ -40,13 +40,6 @@ vi.mock('../../src/providers/registry', () => ({
 const appVersion = vi.hoisted(() => ({ current: '0.16.1' }));
 const track = vi.hoisted(() => vi.fn());
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({ track }),
-  // The running version the daemon reports. Deliberately different from the
-  // highlight payload's `version` field so the suite can tell which one the
-  // dialog renders.
-  useAppVersion: () => appVersion.current,
-}));
 
 const RUNNING_APP_VERSION = '0.16.1';
 

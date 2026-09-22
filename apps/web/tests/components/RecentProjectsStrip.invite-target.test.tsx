@@ -8,19 +8,8 @@ const workspaceState = vi.hoisted(() => ({
   context: null as WorkspaceCollabContext | null,
 }));
 
-vi.mock('../../src/collab/useTeamMembers', () => ({
-  useTeamMembers: () => ({ resolve: () => null }),
-}));
 
-vi.mock('../../src/collab/useWorkspaceContext', () => ({
-  notifyTeamProjectsChanged: vi.fn(),
-  useWorkspaceBilling: () => null,
-  useWorkspaceContext: () => ({ context: workspaceState.context }),
-}));
 
-vi.mock('../../src/collab/workspace-events', () => ({
-  useWorkspaceInvalidation: vi.fn(),
-}));
 
 vi.mock('../../src/providers/registry', () => ({
   fetchProjectFiles: vi.fn(async () => []),

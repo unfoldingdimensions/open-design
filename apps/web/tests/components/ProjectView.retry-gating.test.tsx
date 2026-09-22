@@ -102,9 +102,6 @@ const projectCollabMocks = vi.hoisted(() => ({
   writerAuthority: 'allowed' as 'allowed' | 'denied' | 'pending',
 }));
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({ track: vi.fn() }),
-}));
 
 vi.mock('../../src/i18n', () => ({
   useI18n: () => ({ locale: 'zh-CN', setLocale: () => undefined, t: (key: string) => key }),

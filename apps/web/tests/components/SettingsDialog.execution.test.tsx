@@ -92,17 +92,6 @@ vi.mock('../../src/providers/provider-models', () => ({
   fetchProviderModels: fetchProviderModelsMock,
 }));
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({
-    track: analyticsTrackMock,
-    setConsent: () => undefined,
-    setIdentity: () => undefined,
-    setConfigureGlobals: () => undefined,
-    anonymousId: 'test-anonymous',
-    sessionId: 'test-session',
-    newRequestId: () => 'test-request',
-  }),
-}));
 
 import { SettingsDialog } from '../../src/components/SettingsDialog';
 import { IntegrationsView } from '../../src/components/IntegrationsView';

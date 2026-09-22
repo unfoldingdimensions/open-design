@@ -10,15 +10,6 @@ const analyticsMocks = vi.hoisted(() => ({
   track: vi.fn(),
 }));
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({
-    newRequestId: analyticsMocks.newRequestId,
-    setConfigureGlobals: vi.fn(),
-    setConsent: vi.fn(),
-    setIdentity: vi.fn(),
-    track: analyticsMocks.track,
-  }),
-}));
 
 beforeAll(() => {
   Object.defineProperty(Element.prototype, 'scrollIntoView', {

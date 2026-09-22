@@ -23,13 +23,6 @@ const workspaceContextState = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('../../src/collab/useWorkspaceContext', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/collab/useWorkspaceContext')>();
-  return {
-    ...actual,
-    useWorkspaceContext: () => workspaceContextState.current,
-  };
-});
 
 import { InlinePluginsRail } from '../../src/components/InlinePluginsRail';
 

@@ -29,28 +29,7 @@ const { safetyEventMock } = vi.hoisted(() => ({
   safetyEventMock: vi.fn(),
 }));
 
-vi.mock('../../src/analytics/provider', async () => {
-  const actual = await vi.importActual<typeof import('../../src/analytics/provider')>(
-    '../../src/analytics/provider',
-  );
-  return {
-    ...actual,
-    useAnalytics: () => ({
-      track: analyticsTrackMock,
-      setConsent: () => undefined,
-      setIdentity: () => undefined,
-      setConfigureGlobals: () => undefined,
-      setUserId: () => undefined,
-      anonymousId: 'test-anon',
-      sessionId: 'test-session',
-      newRequestId: () => 'test-request',
-    }),
-  };
-});
 
-vi.mock('../../src/analytics/error-tracking', () => ({
-  reportSafetyEvent: safetyEventMock,
-}));
 
 vi.mock('../../src/state/projects', async () => {
   const actual = await vi.importActual<typeof import('../../src/state/projects')>(

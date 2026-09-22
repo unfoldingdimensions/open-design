@@ -54,11 +54,6 @@ vi.mock('../../src/providers/registry', () => ({
   projectRawUrl: projectRawUrlMock,
 }));
 
-vi.mock('../../src/collab/useWorkspaceContext', () => ({
-  useWorkspaceContext: () => workspaceContextState,
-  workspaceResourceReadContext: (state: typeof workspaceContextState) =>
-    state.resourceReadIdentity?.context ?? state.context,
-}));
 
 const SYSTEM = {
   id: 'claymorphism',

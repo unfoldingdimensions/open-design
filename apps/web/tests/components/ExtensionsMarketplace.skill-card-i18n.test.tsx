@@ -16,17 +16,8 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { ExtensionsMarketplace } from '../../src/components/PluginsView';
 import { I18nProvider } from '../../src/i18n';
 
-vi.mock('../../src/analytics/provider', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/analytics/provider')>();
-  return { ...actual, useAnalytics: () => ({ track: vi.fn() }) };
-});
 
 // Spread the real module — see the note in ExtensionsMarketplace.team-scope.test.tsx.
-vi.mock('../../src/collab/useWorkspaceContext', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useWorkspaceContext')>()),
-  useWorkspaceContext: () => ({ context: null, loading: false, refresh: vi.fn() }),
-  useWorkspaceBilling: () => null,
-}));
 
 // Mirrors `skills/article-magazine/SKILL.md`, the card in the OPEND-2250
 // screenshot: it carries `zh_name` / `zh_description` frontmatter, which the

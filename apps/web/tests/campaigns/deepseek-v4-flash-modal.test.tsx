@@ -23,22 +23,8 @@ import { I18nProvider } from '../../src/i18n';
 
 const trackSpy = vi.fn();
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({ track: trackSpy }),
-}));
 
-vi.mock('../../src/collab/useWorkspaceContext', () => ({
-  useWorkspaceContext: () => ({
-    context: null,
-    resourceReadIdentity: null,
-    loading: false,
-    identityChangePending: false,
-  }),
-}));
 
-vi.mock('../../src/analytics/client', () => ({
-  getResolvedDeviceId: () => null,
-}));
 
 const DIALOG = 'deepseek-v4-flash-campaign-dialog';
 

@@ -30,11 +30,6 @@ vi.mock('../../src/runtime/brands', () => ({
 vi.mock('../../src/runtime/useBrandExtract', () => ({
   useBrandExtract: () => ({ state: { phase: 'idle' }, run: runExtractMock }),
 }));
-vi.mock('../../src/collab/useWorkspaceContext', () => ({
-  useWorkspaceContext: () => workspaceContextState,
-  workspaceResourceReadContext: (state: typeof workspaceContextState) =>
-    state.resourceReadIdentity?.context ?? state.context,
-}));
 vi.mock('../../src/runtime/brand-intent', () => ({
   NEW_BRAND_KIT_INTENT_EVENT: 'od:new-brand-kit-intent',
   consumePendingNewBrandKit: () => false,

@@ -12,9 +12,6 @@ import { LabsSection } from '../../src/components/LabsSection';
 import { I18nProvider } from '../../src/i18n';
 
 const track = vi.fn();
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({ track }),
-}));
 
 function status(overrides: {
   requestedMode?: OdNextRolloutMode;

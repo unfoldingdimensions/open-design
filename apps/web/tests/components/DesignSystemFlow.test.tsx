@@ -59,12 +59,6 @@ const workspaceContextState = vi.hoisted(() => ({
   context: null as WorkspaceCollabContext | null,
 }));
 
-vi.mock('../../src/collab/useWorkspaceContext', () => ({
-  useWorkspaceContext: () => ({
-    context: workspaceContextState.context,
-    loading: false,
-  }),
-}));
 
 vi.mock('../../src/components/ChatPane', () => ({
   ChatPane: ({

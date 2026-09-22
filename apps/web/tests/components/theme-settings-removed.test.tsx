@@ -20,20 +20,6 @@ const analyticsMocks = vi.hoisted(() => ({
   track: vi.fn(),
 }));
 
-vi.mock('../../src/analytics/provider', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/analytics/provider')>();
-  return {
-    ...actual,
-    useAnalytics: () => ({
-      newRequestId: vi.fn(() => 'request-1'),
-      setConfigureGlobals: vi.fn(),
-      setConsent: vi.fn(),
-      setIdentity: vi.fn(),
-      track: analyticsMocks.track,
-    }),
-    useAppVersion: () => null,
-  };
-});
 
 const AGENTS: AgentInfo[] = [
   { id: 'codex', name: 'Codex', bin: 'codex', available: true },

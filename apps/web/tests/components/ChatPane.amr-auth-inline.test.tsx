@@ -52,24 +52,6 @@ let lastPillProps: {
   onSignInStarted?: () => void;
   onStatusChange?: (s: VelaLoginStatus | null) => void;
 } | null = null;
-vi.mock('../../src/components/AmrLoginPill', () => ({
-  AmrLoginPill: (props: {
-    signInLabel?: string;
-    amrEntrySourceDetail?: string;
-    initialStatus?: VelaLoginStatus | null;
-    metricsConsent?: boolean;
-    installationId?: string | null;
-    showActivationDetails?: boolean;
-    onSignInStarted?: () => void;
-    onStatusChange?: (s: VelaLoginStatus | null) => void;
-  }) => {
-    lastPillProps = props;
-    useEffect(() => {
-      props.onStatusChange?.(props.initialStatus ?? null);
-    }, [props.initialStatus, props.onStatusChange]);
-    return <div data-testid="amr-login-pill">{props.signInLabel}</div>;
-  },
-}));
 
 afterEach(() => {
   cleanup();
