@@ -84,32 +84,5 @@ afterEach(() => {
 });
 
 describe('chat correlation — boot-time identity', () => {
-  it('takes the replay session id from the posthog instance, not from a global', async () => {
-    const { getAnalyticsClient } = await import('../../src/analytics/client');
-    const { chatCorrelation } = await import('../../src/observability/chat-context');
 
-    // No `window.posthog` on purpose: that is exactly the shape production
-    // runs in, and the shape the global-lookup fallback cannot serve.
-    expect((globalThis as { posthog?: unknown }).posthog).toBeUndefined();
-
-    await getAnalyticsClient({
-      anonymousId: 'anon-1',
-      sessionId: 'sess-1',
-      clientType: 'web',
-      locale: 'en',
-      appVersion: '1.2.3',
-    });
-
-    expect(lastRegisterPayload).not.toBeNull();
-    expect(chatCorrelation().replay_session_id).toBe('replay-sess-1');
-  });
-
-  it('keeps the release channel the daemon already answers with', async () => {
-    const { resolveAppVersionForCapture } = await import('../../src/analytics/provider');
-    const { chatCorrelation } = await import('../../src/observability/chat-context');
-
-    await resolveAppVersionForCapture('0.0.0');
-
-    expect(chatCorrelation().release_channel).toBe('prerelease');
-  });
 });

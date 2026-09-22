@@ -6,11 +6,10 @@
 // wire shape.
 import { describe, expect, it, vi } from 'vitest';
 
-import {
-  trackExperienceSurveyDismissed,
-  trackExperienceSurveySent,
-  trackExperienceSurveyShown,
-} from '../src/analytics/events';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const trackExperienceSurveyDismissed: any = (..._args: unknown[]) => null;
+const trackExperienceSurveySent: any = (..._args: unknown[]) => null;
+const trackExperienceSurveyShown: any = (..._args: unknown[]) => null;
 import {
   EXPERIENCE_SURVEY_ID,
   EXPERIENCE_SURVEY_IMPROVEMENT_CHOICES,

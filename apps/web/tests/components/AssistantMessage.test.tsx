@@ -10,7 +10,8 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AssistantMessage } from '../../src/components/AssistantMessage';
-import { CollabProvider } from '../../src/collab/collab-context';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (..._args: unknown[]) => null;
 import * as registry from '../../src/providers/registry';
 import type { ChatMessage, ProjectFile } from '../../src/types';
 import { workspaceContextFixture } from '../helpers/workspace-context';

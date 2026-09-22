@@ -19,7 +19,7 @@ import { useRoute } from '../../src/router';
 // Spread the real module — see the note in ExtensionsMarketplace.team-scope.test.tsx.
 
 vi.mock('../../src/state/projects', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/state/projects')>();
+  const actual = await importOriginal<any>();
   return { ...actual, applyPlugin: vi.fn() };
 });
 

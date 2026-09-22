@@ -24,7 +24,7 @@ const translate = (key: string, vars?: Record<string, string | number>) =>
   vars && Object.keys(vars).length > 0 ? `${key} ${Object.values(vars).join(' ')}` : key;
 
 vi.mock('../../src/i18n', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/i18n')>();
+  const actual = await importOriginal<any>();
   return {
     ...actual,
     useI18n: () => ({ locale: 'en', setLocale: () => undefined, t: translate }),

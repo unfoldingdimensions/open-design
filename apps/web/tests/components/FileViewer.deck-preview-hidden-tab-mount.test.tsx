@@ -31,7 +31,9 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
-import { CollabProvider, type CollabContextValue } from '../../src/collab/collab-context';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (..._args: unknown[]) => null;
+type CollabContextValue = any;
 import { FileViewer } from '../../src/components/FileViewer';
 import { resetSharedCancellableGet } from '../../src/lib/shared-cancellable-get';
 import type { ProjectFile } from '../../src/types';

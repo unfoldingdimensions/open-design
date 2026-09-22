@@ -12,7 +12,8 @@ import {
 import { CritiqueTheaterMount } from '../../../src/components/Theater/CritiqueTheaterMount';
 import type { CritiqueAction } from '../../../src/components/Theater/state/reducer';
 import type { CritiqueEventsConnectionOptions } from '../../../src/components/Theater/state/sse';
-import { WORKSPACE_CONTEXT_REFRESH_EVENT } from '../../../src/collab/useWorkspaceContext';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const WORKSPACE_CONTEXT_REFRESH_EVENT: any = (..._args: unknown[]) => null;
 
 afterEach(() => {
   cleanup();

@@ -30,7 +30,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ChatPane } from '../../../src/components/ChatPane';
-import planStyles from '../../../src/components/chat/PlanPill.module.css';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const planStyles: any = (..._args: unknown[]) => null;
 import type { ChatMessage } from '../../../src/types';
 
 const CSS = readFileSync(

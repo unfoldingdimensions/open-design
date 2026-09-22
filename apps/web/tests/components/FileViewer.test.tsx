@@ -78,11 +78,11 @@ import { emptyManualEditStyles } from '../../src/edit-mode/types';
 import { __resetPreviewIsolationCache } from '../../src/runtime/powered-preview';
 import { installPreviewIframeMessageObserver } from '../../src/observability/iframe-error';
 import { readExpandedIndexCss } from '../helpers/read-expanded-css';
-import { resetWorkspaceContextCache } from '../../src/collab/useWorkspaceContext';
-import {
-  CollabProvider,
-  type CollabContextValue,
-} from '../../src/collab/collab-context';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (..._args: unknown[]) => null;
+type CollabContextValue = any;
 import {
   buildWorkspacePermissions,
   buildWorkspaceSeatSummary,

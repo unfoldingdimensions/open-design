@@ -30,7 +30,8 @@ import type { ComponentProps, ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ProjectView } from '../../src/components/ProjectView';
-import type { ProjectWorkspaceScopeState } from '../../src/collab/useProjectWorkspaceScope';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+type ProjectWorkspaceScopeState = any;
 import { steerChatRun, streamViaDaemon } from '../../src/providers/daemon';
 import {
   createConversation,
@@ -89,7 +90,7 @@ vi.mock('../../src/providers/daemon', () => ({
 }));
 
 vi.mock('../../src/collab/useProjectWorkspaceScope', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useProjectWorkspaceScope')>()),
+  ...(await importOriginal<any>()),
   useProjectWorkspaceScope: () => workspaceScopeMocks.projectScope,
 }));
 

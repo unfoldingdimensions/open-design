@@ -5,10 +5,9 @@ import { forwardRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ChatPane } from '../../src/components/ChatPane';
-import {
-  trackRunRecoveryActionClick,
-  trackRunRecoveryActionSurfaceView,
-} from '../../src/analytics/events';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const trackRunRecoveryActionClick: any = (..._args: unknown[]) => null;
+const trackRunRecoveryActionSurfaceView: any = (..._args: unknown[]) => null;
 import type { AppConfig, ChatMessage } from '../../src/types';
 
 // Red spec for the resume-on-failure affordance: a failed assistant message
@@ -41,7 +40,7 @@ vi.mock('../../src/components/ChatComposer', () => ({
 }));
 
 vi.mock('../../src/analytics/events', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/analytics/events')>();
+  const actual = await importOriginal<any>();
   return {
     ...actual,
     trackChatPanelClick: vi.fn(),

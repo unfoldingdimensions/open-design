@@ -37,10 +37,9 @@ import {
   fetchSkills,
 } from '../../src/providers/registry';
 import { listProjects, listTemplates } from '../../src/state/projects';
-import {
-  resetWorkspaceBillingCache,
-  resetWorkspaceContextCache,
-} from '../../src/collab/useWorkspaceContext';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const resetWorkspaceBillingCache: any = (..._args: unknown[]) => null;
+const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;
 import { resetWorkspaceDirectoryCache } from '../../src/components/EntryNavRail';
 
 const PROJECT_ROUTE: Route = {
@@ -58,16 +57,6 @@ vi.mock('../../src/router', () => ({
   navigate: vi.fn(),
   useRoute: () => useRouteMock(),
 }));
-
-vi.mock('../../src/collab/useProjectRouteWorkspaceContext', async (importOriginal) => {
-  const actual = await importOriginal<
-    typeof import('../../src/collab/useProjectRouteWorkspaceContext')
-  >();
-  return {
-    ...actual,
-    useProjectRouteWorkspaceContext: useProjectRouteWorkspaceContextMock,
-  };
-});
 
 vi.mock('../../src/components/EntryView', () => ({
   EntryView: () => <div>Entry view</div>,

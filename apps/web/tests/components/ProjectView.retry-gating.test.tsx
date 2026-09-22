@@ -140,12 +140,12 @@ vi.mock('../../src/providers/project-events', () => ({
 
 
 vi.mock('../../src/runtime/brands', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/runtime/brands')>()),
+  ...(await importOriginal<any>()),
   fetchBrands: (...args: unknown[]) => fetchBrands(...args),
 }));
 
 vi.mock('../../src/providers/registry', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/providers/registry')>()),
+  ...(await importOriginal<any>()),
   deletePreviewComment: vi.fn(),
   fetchDesignSystem: vi.fn(),
   fetchLiveArtifacts: (...args: unknown[]) => fetchLiveArtifacts(...args),
@@ -159,7 +159,7 @@ vi.mock('../../src/providers/registry', async (importOriginal) => ({
 }));
 
 vi.mock('../../src/state/projects', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/state/projects')>()),
+  ...(await importOriginal<any>()),
   createConversation: (...args: unknown[]) => createConversation(...args),
   deleteConversation: vi.fn(),
   listConversations: (...args: unknown[]) => listConversations(...args),

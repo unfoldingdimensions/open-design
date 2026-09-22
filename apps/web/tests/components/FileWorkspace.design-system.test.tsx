@@ -12,10 +12,9 @@ import {
 } from '@capydesign/contracts';
 
 import { FileWorkspace } from '../../src/components/FileWorkspace';
-import {
-  CollabProvider,
-  type CollabContextValue,
-} from '../../src/collab/collab-context';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (..._args: unknown[]) => null;
+type CollabContextValue = any;
 import type { AgentEvent, DesignSystemSummary, ProjectFile } from '../../src/types';
 
 const registryMocks = vi.hoisted(() => ({

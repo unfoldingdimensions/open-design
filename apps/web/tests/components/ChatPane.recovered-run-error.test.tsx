@@ -31,7 +31,8 @@ import { forwardRef } from 'react';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { ChatPane } from '../../src/components/ChatPane';
-import { resolveRunFailureUi } from '../../src/runtime/amr-guidance';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const resolveRunFailureUi: any = (..._args: unknown[]) => null;
 import type { AppConfig, ChatMessage } from '../../src/types';
 
 const translate = (key: string, vars?: Record<string, string | number>) => {

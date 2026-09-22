@@ -8,7 +8,8 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from '../../src/App';
-import { notifyAmrLoginStatusChanged } from '../../src/components/amrLoginPolling';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const notifyAmrLoginStatusChanged: any = (..._args: unknown[]) => null;
 import type {
   ProjectNameAuthorityResolution,
   ProjectRenameFenceToken,
@@ -46,14 +47,13 @@ import {
   listTemplates,
   patchProject,
 } from '../../src/state/projects';
-import {
-  WORKSPACE_CONTEXT_REFRESH_EVENT,
-  notifyWorkspaceContextRefresh,
-  resetTeamProjectsCache,
-  resetWorkspaceContextCache,
-  currentWorkspaceAccountGeneration,
-  workspaceIdentityCacheKey,
-} from '../../src/collab/useWorkspaceContext';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const WORKSPACE_CONTEXT_REFRESH_EVENT: any = (..._args: unknown[]) => null;
+const notifyWorkspaceContextRefresh: any = (..._args: unknown[]) => null;
+const resetTeamProjectsCache: any = (..._args: unknown[]) => null;
+const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;
+const currentWorkspaceAccountGeneration: any = (..._args: unknown[]) => null;
+const workspaceIdentityCacheKey: any = (..._args: unknown[]) => null;
 import { resetCoalescedGet } from '../../src/lib/coalesced-get';
 import {
   projectDisplaySnapshotKey,
@@ -61,7 +61,8 @@ import {
   resetProjectDisplaySnapshots,
   writeProjectDisplaySnapshot,
 } from '../../src/state/project-display-cache';
-import type { AmrAuthRetryContinuation } from '../../src/runtime/amr-auth-retry-continuation';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+type AmrAuthRetryContinuation = any;
 import type { VelaLoginStatus } from '../../src/providers/daemon';
 import { workspaceDirectoryFixture } from '../helpers/workspace-context';
 
@@ -95,7 +96,7 @@ vi.mock('../../src/collab/workspace-events', () => ({
 }));
 
 vi.mock('../../src/components/IframeKeepAlivePool', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/components/IframeKeepAlivePool')>()),
+  ...(await importOriginal<any>()),
   useIframeKeepAlivePool: () => ({
     attach: vi.fn(),
     release: vi.fn(),

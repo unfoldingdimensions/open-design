@@ -24,7 +24,7 @@ import { I18nProvider } from '../../src/i18n';
 const analyticsTrack = vi.hoisted(() => vi.fn());
 
 vi.mock('../../src/analytics/provider', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/analytics/provider')>();
+  const actual = await importOriginal<any>();
   return { ...actual, useAnalytics: () => ({ track: analyticsTrack }) };
 });
 
@@ -56,7 +56,7 @@ let workspaceContext: unknown = null;
 
 // Spread the real module — see the note in ExtensionsMarketplace.team-scope.test.tsx.
 vi.mock('../../src/collab/useWorkspaceContext', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useWorkspaceContext')>()),
+  ...(await importOriginal<any>()),
   useWorkspaceContext: () => ({ context: workspaceContext, loading: false, refresh: vi.fn() }),
   useWorkspaceBilling: () => null,
 }));

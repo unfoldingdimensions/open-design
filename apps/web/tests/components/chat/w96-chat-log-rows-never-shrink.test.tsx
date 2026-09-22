@@ -69,7 +69,7 @@ const SRC = resolve(HERE, '../../../src');
 const translate = (key: string) => key;
 
 vi.mock('../../../src/i18n', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../../src/i18n')>();
+  const actual = await importOriginal<any>();
   return { ...actual, useI18n: () => ({ locale: 'en', setLocale: () => undefined, t: translate }), useT: () => translate };
 });
 vi.mock('../../../src/components/AssistantMessage', () => ({

@@ -21,11 +21,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EntryShell } from '../../src/components/EntryShell';
 import { I18nProvider } from '../../src/i18n';
 import type { AgentInfo, AppConfig } from '../../src/types';
-import {
-  notifyWorkspaceContextRefresh,
-  resetTeamProjectsCache,
-  resetWorkspaceContextCache,
-} from '../../src/collab/useWorkspaceContext';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const notifyWorkspaceContextRefresh: any = (..._args: unknown[]) => null;
+const resetTeamProjectsCache: any = (..._args: unknown[]) => null;
+const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;
 import { workspaceDirectoryFixture } from '../helpers/workspace-context';
 import {
   fetchProjectFiles,

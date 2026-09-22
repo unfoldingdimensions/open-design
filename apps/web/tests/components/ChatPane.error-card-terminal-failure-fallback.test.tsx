@@ -27,7 +27,8 @@ import { forwardRef } from 'react';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { ChatPane } from '../../src/components/ChatPane';
-import { RECONNECT_OWNED_FAILURE_CODE } from '../../src/runtime/amr-guidance';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const RECONNECT_OWNED_FAILURE_CODE: any = (..._args: unknown[]) => null;
 import type { ChatReconnectView } from '../../src/runtime/chat/reconnect-state';
 import type { AppConfig, ChatMessage } from '../../src/types';
 

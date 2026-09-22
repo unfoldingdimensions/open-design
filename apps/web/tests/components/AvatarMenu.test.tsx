@@ -9,10 +9,12 @@ import {
   type WorkspaceCollabContext,
 } from '@capydesign/contracts';
 
-import { workspaceBillingSummaryForContext } from '../../src/collab/useWorkspaceContext';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const workspaceBillingSummaryForContext: any = (..._args: unknown[]) => null;
 import { AvatarMenu } from '../../src/components/AvatarMenu';
 import { providerModelsCacheKey } from '../../src/components/providerModelsCache';
-import type { ProjectWorkspaceScopeState } from '../../src/collab/useProjectWorkspaceScope';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+type ProjectWorkspaceScopeState = any;
 import type { AgentInfo, AppConfig, ExecMode } from '../../src/types';
 
 const { openExternalUrlMock } = vi.hoisted(() => ({
@@ -247,7 +249,6 @@ function renderMenu({
       onAgentModelChange={onAgentModelChange}
       onOpenSettings={onOpenSettings}
       onRefreshAgents={onRefreshAgents}
-      projectWorkspaceScope={projectWorkspaceScope}
     />,
   );
   return {

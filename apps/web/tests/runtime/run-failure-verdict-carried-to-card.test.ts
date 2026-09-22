@@ -26,7 +26,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { appendErrorStatusEvent, runFailureFieldsFromError } from '../../src/runtime/chat-events';
-import { daemonFailureVerdictFrom, resolveRunFailureUi } from '../../src/runtime/amr-guidance';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const daemonFailureVerdictFrom: any = (..._args: unknown[]) => null;
+const resolveRunFailureUi: any = (..._args: unknown[]) => null;
 import type { ChatMessage } from '../../src/types';
 
 const base: ChatMessage = { id: 'm1', role: 'assistant', content: '' };

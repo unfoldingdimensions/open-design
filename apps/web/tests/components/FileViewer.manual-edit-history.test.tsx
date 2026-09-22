@@ -11,7 +11,7 @@ const panelState = vi.hoisted(() => ({
 }));
 
 vi.mock('../../src/components/ManualEditPanel', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/components/ManualEditPanel')>();
+  const actual = await importOriginal<any>();
   return {
     ...actual,
     ManualEditPanel: (props: ComponentProps<typeof actual.ManualEditPanel>) => {

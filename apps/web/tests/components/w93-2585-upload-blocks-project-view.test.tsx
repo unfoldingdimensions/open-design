@@ -46,10 +46,9 @@ import {
   listTemplates,
   patchProject,
 } from '../../src/state/projects';
-import {
-  resetTeamProjectsCache,
-  resetWorkspaceContextCache,
-} from '../../src/collab/useWorkspaceContext';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const resetTeamProjectsCache: any = (..._args: unknown[]) => null;
+const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;
 import { resetCoalescedGet } from '../../src/lib/coalesced-get';
 import { resetProjectDisplaySnapshots } from '../../src/state/project-display-cache';
 
@@ -61,7 +60,7 @@ vi.mock('../../src/collab/workspace-events', () => ({
 }));
 
 vi.mock('../../src/components/IframeKeepAlivePool', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/components/IframeKeepAlivePool')>()),
+  ...(await importOriginal<any>()),
   useIframeKeepAlivePool: () => ({
     attach: vi.fn(),
     release: vi.fn(),

@@ -24,11 +24,10 @@ import {
 } from '../../src/state/config';
 import { listProjects, listTemplates } from '../../src/state/projects';
 import type { AppConfig } from '../../src/types';
-import {
-  notifyWorkspaceContextRefresh,
-  resetTeamProjectsCache,
-  resetWorkspaceContextCache,
-} from '../../src/collab/useWorkspaceContext';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const notifyWorkspaceContextRefresh: any = (..._args: unknown[]) => null;
+const resetTeamProjectsCache: any = (..._args: unknown[]) => null;
+const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;
 import { resetCoalescedGet } from '../../src/lib/coalesced-get';
 import { workspaceDirectoryFixture } from '../helpers/workspace-context';
 

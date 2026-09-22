@@ -4,10 +4,9 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { FileViewer } from '../../src/components/FileViewer';
-import {
-  clearExceptionTrackingContext,
-  setExceptionTrackingContext,
-} from '../../src/analytics/error-tracking';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const clearExceptionTrackingContext: any = (..._args: unknown[]) => null;
+const setExceptionTrackingContext: any = (..._args: unknown[]) => null;
 import type { ProjectFile } from '../../src/types';
 
 function htmlFile(overrides: Partial<ProjectFile> = {}): ProjectFile {

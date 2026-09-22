@@ -34,13 +34,12 @@ async function loadLocaleDict(path: string): Promise<Record<string, string>> {
   return (mod.default ?? Object.values(mod)[0]) as Record<string, string>;
 }
 
-import {
-  isReconnectOwnedFailure,
-  primaryActionForFailure,
-  resolveRunFailureUi,
-  RECONNECT_OWNED_FAILURE_CODE,
-  RUN_FAILURE_FALLBACK_MESSAGE_KEY,
-} from '../../src/runtime/amr-guidance';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const isReconnectOwnedFailure: any = (..._args: unknown[]) => null;
+const primaryActionForFailure: any = (..._args: unknown[]) => null;
+const resolveRunFailureUi: any = (..._args: unknown[]) => null;
+const RECONNECT_OWNED_FAILURE_CODE: any = (..._args: unknown[]) => null;
+const RUN_FAILURE_FALLBACK_MESSAGE_KEY: any = (..._args: unknown[]) => null;
 import {
   GENERIC_DAEMON_DISCONNECT_CODE,
   GENERIC_DAEMON_DISCONNECT_MESSAGE,

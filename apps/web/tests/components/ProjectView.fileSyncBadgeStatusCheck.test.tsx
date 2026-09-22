@@ -6,7 +6,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ProjectView } from '../../src/components/ProjectView';
 import { useIframeKeepAlivePool } from '../../src/components/IframeKeepAlivePool';
-import { useProjectCollab, type ProjectCollab } from '../../src/collab/useProjectCollab';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const useProjectCollab: any = (..._args: unknown[]) => null;
+type ProjectCollab = any;
 import { useProjectFileEvents, type ProjectEvent } from '../../src/providers/project-events';
 import type {
   AgentInfo,
@@ -62,16 +64,6 @@ vi.mock('../../src/providers/daemon', () => ({
 vi.mock('../../src/providers/project-events', () => ({
   useProjectFileEvents: vi.fn(),
 }));
-
-vi.mock('../../src/collab/useProjectCollab', async () => {
-  const actual = await vi.importActual<typeof import('../../src/collab/useProjectCollab')>(
-    '../../src/collab/useProjectCollab',
-  );
-  return {
-    ...actual,
-    useProjectCollab: vi.fn(),
-  };
-});
 
 vi.mock('../../src/providers/registry', async () => {
   const actual = await vi.importActual<typeof import('../../src/providers/registry')>(

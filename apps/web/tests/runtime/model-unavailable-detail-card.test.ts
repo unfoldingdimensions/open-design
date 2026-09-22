@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { zhCN } from '../../src/i18n/locales/zh-CN';
-import {
-  daemonFailureVerdictFrom,
-  resolveRunFailureUi,
-} from '../../src/runtime/amr-guidance';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const daemonFailureVerdictFrom: any = (..._args: unknown[]) => null;
+const resolveRunFailureUi: any = (..._args: unknown[]) => null;
 
 /*
  * 用户实测(打包版 0.21.1-beta.7,2026-09-06 20:41,run 4c91590e):

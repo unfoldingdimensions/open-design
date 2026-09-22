@@ -37,7 +37,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { ArtifactCards, FileOpsSummary } from '../../src/components/FileOpsSummary';
-import { CollabProvider } from '../../src/collab/collab-context';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (..._args: unknown[]) => null;
 import type { FileOpEntry } from '../../src/runtime/file-ops';
 import { workspaceContextFixture } from '../helpers/workspace-context';
 

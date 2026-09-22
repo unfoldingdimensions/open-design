@@ -11,7 +11,7 @@ import { applyPlugin } from '../../src/state/projects';
 import { takeHomePromptHandoff } from '../../src/components/home-hero/plugin-authoring';
 
 vi.mock('../../src/analytics/provider', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/analytics/provider')>();
+  const actual = await importOriginal<any>();
   return { ...actual, useAnalytics: () => ({ track: vi.fn() }) };
 });
 
@@ -21,7 +21,7 @@ vi.mock('../../src/router', () => ({
 }));
 
 vi.mock('../../src/state/projects', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/state/projects')>();
+  const actual = await importOriginal<any>();
   return { ...actual, applyPlugin: vi.fn() };
 });
 

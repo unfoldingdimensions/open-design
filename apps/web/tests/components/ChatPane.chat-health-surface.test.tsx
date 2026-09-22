@@ -17,10 +17,9 @@ import { forwardRef } from 'react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ChatPane } from '../../src/components/ChatPane';
-import {
-  clearExceptionTrackingContext,
-  setExceptionTrackingContext,
-} from '../../src/analytics/error-tracking';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const clearExceptionTrackingContext: any = (..._args: unknown[]) => null;
+const setExceptionTrackingContext: any = (..._args: unknown[]) => null;
 import {
   __resetChatHealthForTest,
   chatSurfaceSample,

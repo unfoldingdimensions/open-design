@@ -6,8 +6,10 @@
 import { beforeEach } from 'vitest';
 
 import { resetCoalescedGet } from '../../src/lib/coalesced-get';
-import { resetWorkspaceContextCache } from '../../src/collab/useWorkspaceContext';
-import { resetTeamMembersStores } from '../../src/collab/team-members-store';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const resetTeamMembersStores: any = (..._args: unknown[]) => null;
 import { resetHtmlSourceSnapshotCache } from '../../src/components/html-source-snapshot-cache';
 import { resetHtmlThumbnailSourceCache } from '../../src/components/html-thumbnail-source-cache';
 import { resetProjectCoverSnapshots } from '../../src/lib/project-cover-cache';

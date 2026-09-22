@@ -52,7 +52,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import chatRootStyles from '../../../src/components/chat/ChatRoot.module.css';
-import planStyles from '../../../src/components/chat/PlanPill.module.css';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const planStyles: any = (..._args: unknown[]) => null;
 import {
   createResolver,
   hashed,
@@ -64,7 +65,8 @@ import {
 } from '../../helpers/chat-mirror-cascade';
 import { I18nProvider } from '../../../src/i18n';
 import { ChatRoot } from '../../../src/components/chat/ChatRoot';
-import { PlanPill } from '../../../src/components/chat/PlanPill';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const PlanPill: any = (..._args: unknown[]) => null;
 import { LexicalComposerInput } from '../../../src/components/composer/LexicalComposerInput';
 
 afterEach(cleanup);

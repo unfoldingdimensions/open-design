@@ -20,10 +20,9 @@ import { forwardRef } from 'react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SideChatTab } from '../../../src/components/workspace/SideChatTab';
-import {
-  clearExceptionTrackingContext,
-  setExceptionTrackingContext,
-} from '../../../src/analytics/error-tracking';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const clearExceptionTrackingContext: any = (..._args: unknown[]) => null;
+const setExceptionTrackingContext: any = (..._args: unknown[]) => null;
 import { __resetChatContextForTest } from '../../../src/observability/chat-context';
 import { __resetChatHealthForTest } from '../../../src/observability/chat-health';
 import type { AppConfig, ChatMessage, Conversation } from '../../../src/types';

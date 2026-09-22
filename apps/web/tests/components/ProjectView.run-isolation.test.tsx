@@ -193,7 +193,7 @@ vi.mock('../../src/providers/project-events', () => ({
 }));
 
 vi.mock('../../src/utils/notifications', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/utils/notifications')>()),
+  ...(await importOriginal<any>()),
   playSound: (...args: unknown[]) => playSound(...args),
   showCompletionNotification: (...args: unknown[]) => showCompletionNotification(...args),
 }));
@@ -215,7 +215,7 @@ vi.mock('../../src/router', () => ({
 }));
 
 vi.mock('../../src/state/projects', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/state/projects')>()),
+  ...(await importOriginal<any>()),
   createConversation: (...args: unknown[]) => createConversation(...args),
   deleteConversation: vi.fn(),
   getTemplate: (...args: unknown[]) => getTemplate(...args),

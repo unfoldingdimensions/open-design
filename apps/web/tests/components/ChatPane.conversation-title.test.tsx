@@ -5,7 +5,8 @@ import { forwardRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ChatPane } from '../../src/components/ChatPane';
-import { trackRunFailedToastSurfaceView } from '../../src/analytics/events';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const trackRunFailedToastSurfaceView: any = (..._args: unknown[]) => null;
 import type { RunFailureDetail } from '@capydesign/contracts';
 import type { AppConfig, ChatMessage, Conversation } from '../../src/types';
 
@@ -36,7 +37,7 @@ vi.mock('../../src/components/ChatComposer', () => ({
 }));
 
 vi.mock('../../src/analytics/events', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/analytics/events')>();
+  const actual = await importOriginal<any>();
   return {
     ...actual,
     trackChatPanelClick: vi.fn(),

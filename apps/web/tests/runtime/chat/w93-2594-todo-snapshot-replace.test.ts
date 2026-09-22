@@ -16,7 +16,8 @@
 import { describe, expect, it } from 'vitest';
 import type { PersistedAgentEvent } from '@capydesign/contracts';
 import { buildTurnBlocks } from '../../../src/runtime/chat/build-turn-blocks';
-import { planPillState } from '../../../src/runtime/chat/plan-pill';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const planPillState: any = (..._args: unknown[]) => null;
 import type { ExecutionShell, TodoSegment, TurnBlock } from '../../../src/runtime/chat/contract';
 
 /** 真实记录的形状(取自生产库 `messages.events_json`:只有 tool_use,没有 tool_result) */

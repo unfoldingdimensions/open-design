@@ -49,7 +49,8 @@ import { QueuedSendStrip, UserMessageImpl } from '../../../src/components/ChatPa
 import { AssistantFeedback, AssistantFeedbackReasons, AssistantFooter, AssistantMessage, feedbackReasonOptions } from '../../../src/components/AssistantMessage';
 import { FileOpsSummary } from '../../../src/components/FileOpsSummary';
 import { UpgradeCard } from '../../../src/components/chat/UpgradeCard';
-import { PlanPill } from '../../../src/components/chat/PlanPill';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const PlanPill: any = (..._args: unknown[]) => null;
 import { UserStatusCard } from '../../../src/components/chat/UserStatusCard';
 import { parseTodoWriteInput } from '../../../src/runtime/todos';
 import { QuoteBarView } from '../../../src/components/chat/QuoteBar';

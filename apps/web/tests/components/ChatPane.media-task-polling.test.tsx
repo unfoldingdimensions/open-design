@@ -12,7 +12,7 @@ const registryMocks = vi.hoisted(() => ({
 }));
 
 vi.mock('../../src/providers/registry', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/providers/registry')>();
+  const actual = await importOriginal<any>();
   return {
     ...actual,
     fetchProjectMediaTasks: registryMocks.fetchProjectMediaTasks,

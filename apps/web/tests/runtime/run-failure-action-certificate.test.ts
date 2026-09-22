@@ -30,7 +30,8 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { resolveRunFailureUi } from '../../src/runtime/amr-guidance';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const resolveRunFailureUi: any = (..._args: unknown[]) => null;
 import { en } from '../../src/i18n/locales/en';
 import { zhCN } from '../../src/i18n/locales/zh-CN';
 

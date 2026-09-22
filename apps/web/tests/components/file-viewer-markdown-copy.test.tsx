@@ -10,10 +10,9 @@ import {
 } from '../../src/components/FileViewer';
 import type { ProjectFile } from '../../src/types';
 import { fetchProjectFileText, writeProjectTextFile } from '../../src/providers/registry';
-import {
-  CollabProvider,
-  type CollabContextValue,
-} from '../../src/collab/collab-context';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (..._args: unknown[]) => null;
+type CollabContextValue = any;
 import type { WorkspaceCollabContext } from '@capydesign/contracts';
 
 vi.mock('../../src/providers/registry', async () => {

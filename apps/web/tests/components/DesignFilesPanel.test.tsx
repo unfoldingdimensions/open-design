@@ -10,7 +10,8 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ComponentProps } from "react";
 
-import { CollabProvider } from "../../src/collab/collab-context";
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (..._args: unknown[]) => null;
 import {
   DesignFilesPanel,
   type DesignFilesNavState,

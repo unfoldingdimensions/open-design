@@ -4,10 +4,9 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { ContextChipHoverCard } from '../../src/components/ContextChipHoverCard';
-import {
-  workspaceContextDetailLine,
-  workspaceContextKindLabel,
-} from '../../src/components/workspace-context';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const workspaceContextDetailLine: any = (..._args: unknown[]) => null;
+const workspaceContextKindLabel: any = (..._args: unknown[]) => null;
 import type { WorkspaceContextItem } from '@capydesign/contracts';
 
 afterEach(cleanup);
