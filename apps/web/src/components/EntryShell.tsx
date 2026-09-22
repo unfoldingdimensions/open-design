@@ -196,7 +196,7 @@ const closeAmrActivationWindowBestEffort = (..._args: unknown[]): void => {};
 const notifyAmrLoginStatusChanged = (..._args: unknown[]): void => {};
 const AMR_LOGIN_POLL_INTERVAL_MS = 2000;
 const amrLoginPollOutcome = (..._args: unknown[]): any => null;
-const analytics: any = {};
+const analytics: any = new Proxy({}, { get: () => () => {} });
 
 const RailAccountSyncTip = (_props: Record<string, unknown>) => null;
 const RailAccountRecoveryTip = (_props: Record<string, unknown>) => null;

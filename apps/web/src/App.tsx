@@ -196,7 +196,7 @@ type AmrBalanceGateScope = 'none' | 'project' | 'run';
 type AmrArtifactUpgradeHomeOffer = any;
 
 const detectClientType = (..._args: unknown[]): any => '';
-const analytics: any = {};
+const analytics: any = new Proxy({}, { get: () => () => {} });
 const resolveCurrentWorkspaceContextReadWitness = (..._args: unknown[]): any => null;
 const WorkspaceMemberDirectoryPreloader = (_props: Record<string, unknown>) => null;
 const AmrArtifactUpgradeHomeOffer = (_props: Record<string, unknown>) => null;
@@ -4293,7 +4293,12 @@ function AppInner() {
   // context has resolved. Derive the exact caller from the persisted project
   // binding + signed-in account directory instead; this is independent of
   // whichever Workspace another tab or the navigation rail currently selects.
-  const projectRouteWorkspaceContext: any = null;
+  const projectRouteWorkspaceContext: any = {
+    context: null,
+    loading: false,
+    failure: undefined,
+    identityChangePending: false,
+  };
   // Never mount ProjectView around the synthetic "Untitled" placeholder. Its
   // effects immediately fan out project-owned reads, but before the project
   // list lands there is no persisted Workspace id with which to scope them.
