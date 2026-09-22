@@ -38,8 +38,8 @@ async function loadLocaleDict(path: string): Promise<Record<string, string>> {
 const isReconnectOwnedFailure: any = (..._args: unknown[]) => null;
 const primaryActionForFailure: any = (..._args: unknown[]) => null;
 const resolveRunFailureUi: any = (..._args: unknown[]) => null;
-const RECONNECT_OWNED_FAILURE_CODE: any = (..._args: unknown[]) => null;
-const RUN_FAILURE_FALLBACK_MESSAGE_KEY: any = (..._args: unknown[]) => null;
+const RECONNECT_OWNED_FAILURE_CODE: any = (props: any) => props?.children ?? null;
+const RUN_FAILURE_FALLBACK_MESSAGE_KEY: any = (props: any) => props?.children ?? null;
 import {
   GENERIC_DAEMON_DISCONNECT_CODE,
   GENERIC_DAEMON_DISCONNECT_MESSAGE,

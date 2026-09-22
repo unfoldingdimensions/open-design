@@ -48,7 +48,7 @@ import {
   patchProject,
 } from '../../src/state/projects';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const WORKSPACE_CONTEXT_REFRESH_EVENT: any = (..._args: unknown[]) => null;
+const WORKSPACE_CONTEXT_REFRESH_EVENT: any = (props: any) => props?.children ?? null;
 const notifyWorkspaceContextRefresh: any = (..._args: unknown[]) => null;
 const resetTeamProjectsCache: any = (..._args: unknown[]) => null;
 const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;

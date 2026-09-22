@@ -30,7 +30,7 @@ import { FileOpsSummary } from '../../src/components/FileOpsSummary';
 import { RemixIcon } from '../../src/components/RemixIcon';
 import { REMIX_ICON_PATHS } from '../../src/components/remix-icon-paths';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const CollabProvider: any = (..._args: unknown[]) => null;
+const CollabProvider: any = (props: any) => props?.children ?? null;
 import type { ChatMessage, ProjectFile } from '../../src/types';
 import type { FileOpEntry } from '../../src/runtime/file-ops';
 import { workspaceContextFixture } from '../helpers/workspace-context';

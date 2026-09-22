@@ -29,7 +29,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { AssistantMessage } from '../../src/components/AssistantMessage';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const CollabProvider: any = (..._args: unknown[]) => null;
+const CollabProvider: any = (props: any) => props?.children ?? null;
 import type { ChatMessage, ProjectFile } from '../../src/types';
 import { workspaceContextFixture } from '../helpers/workspace-context';
 

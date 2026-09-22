@@ -11,7 +11,7 @@ import {
 import type { ProjectFile } from '../../src/types';
 import { fetchProjectFileText, writeProjectTextFile } from '../../src/providers/registry';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const CollabProvider: any = (..._args: unknown[]) => null;
+const CollabProvider: any = (props: any) => props?.children ?? null;
 type CollabContextValue = any;
 import type { WorkspaceCollabContext } from '@capydesign/contracts';
 

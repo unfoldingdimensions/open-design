@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ComponentProps } from "react";
 
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const CollabProvider: any = (..._args: unknown[]) => null;
+const CollabProvider: any = (props: any) => props?.children ?? null;
 import {
   DesignFilesPanel,
   type DesignFilesNavState,

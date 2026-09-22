@@ -13,7 +13,7 @@ import { CritiqueTheaterMount } from '../../../src/components/Theater/CritiqueTh
 import type { CritiqueAction } from '../../../src/components/Theater/state/reducer';
 import type { CritiqueEventsConnectionOptions } from '../../../src/components/Theater/state/sse';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const WORKSPACE_CONTEXT_REFRESH_EVENT: any = (..._args: unknown[]) => null;
+const WORKSPACE_CONTEXT_REFRESH_EVENT: any = (props: any) => props?.children ?? null;
 
 afterEach(() => {
   cleanup();

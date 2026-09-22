@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EntryNavRail, resetWorkspaceDirectoryCache } from '../../src/components/EntryNavRail';
 import { I18nProvider } from '../../src/i18n';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const WORKSPACE_CHROME_ACCOUNT_ACTIONS_ID: any = (..._args: unknown[]) => null;
+const WORKSPACE_CHROME_ACCOUNT_ACTIONS_ID: any = (props: any) => props?.children ?? null;
 
 function teamContext(): WorkspaceCollabContext {
   return {

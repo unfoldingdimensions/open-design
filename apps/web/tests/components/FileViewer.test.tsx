@@ -81,7 +81,7 @@ import { readExpandedIndexCss } from '../helpers/read-expanded-css';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
 const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const CollabProvider: any = (..._args: unknown[]) => null;
+const CollabProvider: any = (props: any) => props?.children ?? null;
 type CollabContextValue = any;
 import {
   buildWorkspacePermissions,

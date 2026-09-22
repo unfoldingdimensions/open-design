@@ -37,7 +37,7 @@ import {
 } from '../../src/providers/registry';
 import type { ChatMessage, OpenTabsState, ProjectFile, ProjectFolder } from '../../src/types';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const CollabProvider: any = (..._args: unknown[]) => null;
+const CollabProvider: any = (props: any) => props?.children ?? null;
 type CollabContextValue = any;
 import { IframeKeepAliveProvider } from '../../src/components/IframeKeepAlivePool';
 import { navigate } from '../../src/router';

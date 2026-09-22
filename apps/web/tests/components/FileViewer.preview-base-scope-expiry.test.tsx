@@ -29,7 +29,7 @@ import {
   type WorkspaceCollabContext,
 } from '@capydesign/contracts';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const CollabProvider: any = (..._args: unknown[]) => null;
+const CollabProvider: any = (props: any) => props?.children ?? null;
 type CollabContextValue = any;
 import { FileViewer } from '../../src/components/FileViewer';
 import type { ProjectFile } from '../../src/types';

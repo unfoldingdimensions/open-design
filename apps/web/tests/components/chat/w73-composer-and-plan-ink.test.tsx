@@ -66,7 +66,7 @@ import {
 import { I18nProvider } from '../../../src/i18n';
 import { ChatRoot } from '../../../src/components/chat/ChatRoot';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const PlanPill: any = (..._args: unknown[]) => null;
+const PlanPill: any = (props: any) => props?.children ?? null;
 import { LexicalComposerInput } from '../../../src/components/composer/LexicalComposerInput';
 
 afterEach(cleanup);

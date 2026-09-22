@@ -50,7 +50,7 @@ import { AssistantFeedback, AssistantFeedbackReasons, AssistantFooter, Assistant
 import { FileOpsSummary } from '../../../src/components/FileOpsSummary';
 import { UpgradeCard } from '../../../src/components/chat/UpgradeCard';
 // Stand-ins: the module that provided these was removed with the Cloud surface.
-const PlanPill: any = (..._args: unknown[]) => null;
+const PlanPill: any = (props: any) => props?.children ?? null;
 import { UserStatusCard } from '../../../src/components/chat/UserStatusCard';
 import { parseTodoWriteInput } from '../../../src/runtime/todos';
 import { QuoteBarView } from '../../../src/components/chat/QuoteBar';
