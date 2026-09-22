@@ -231,7 +231,6 @@ describe('先证明这把尺子能照出缺陷', () => {
     expect(new Set(SCRIMS.map((r) => r.file))).toEqual(
       new Set([
         'components/chat/SupportDialog.module.css',
-        'components/chat/AmrOwnerTopUpDialog.module.css',
       ]),
     );
   });
@@ -327,11 +326,6 @@ describe('排除项是有意的', () => {
       file: 'components/chat/SupportDialog.module.css',
       selector: '.overlayInline',
       why: '就地形态:position: static,躺在文档流里给陈列页看的。抬它会盖住陈列页别的格子',
-    },
-    {
-      file: 'components/chat/AmrOwnerTopUpDialog.module.css',
-      selector: '.overlayInline',
-      why: '同上',
     },
   ];
 

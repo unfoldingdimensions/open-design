@@ -2964,7 +2964,6 @@ function buildPage(): string {
    * 而这一页上 `.pop`(正文取词的全文浮层)、`.steps` 都另有主人。
    * 里面那几枚状态记号走的是 `record.module.css`(没关笼子,全页共用),不受影响。
    */
-  const planCss = scope(read('src/components/chat/PlanPill.module.css'), CAGE_PLAN);
   const statusCardCss = scope(read('src/components/chat/UserStatusCard.module.css'), CAGE_STATUS);
   /*
    * ── 端到端那一族要用、而陈列格用不上的几张表 ──────────────────────────
@@ -3083,7 +3082,7 @@ function buildPage(): string {
   const inlinedSelectors = tally(topLevelSelectors([
     tokens, seam, record, qform, odcard, primitives, buttonSizes, userMsg, forkCss,
     bareButtonCss, queueCss, amrCss, proseCss, artifactCss, footerBase, footerSkin, legacySkin,
-    nextStepCss, actionCardCss, upgradeCss, quoteCss, errCss, audioCss, supportCss, edge, planCss,
+    nextStepCss, actionCardCss, upgradeCss, quoteCss, errCss, audioCss, supportCss, edge,
     statusCardCss, liveLogCss, liveFlowCss, liveProducedCss, liveCompletionCss, liveModuleCss, PAGE_CSS,
   ].join('\n')));
   const sourceSelectors = tally(topLevelSelectors(GLOBAL_SHEETS.map((p) => read(p)).join('\n')));
@@ -3213,7 +3212,6 @@ ${tokens}</style>
 <style>/* 稿子的 .sel:选中那截的高亮底(这段在模板串里,不能带反引号) */
 .quote-sel{background:var(--selected-soft);border-radius:var(--radius-xs)}</style>
 <style>${edge}</style>
-<style>${planCss}</style>
 <style>${statusCardCss}</style>
 <!-- 端到端那一族专用,追加在最后;选择器陈列格一条都没用到 -->
 <style>${liveLogCss}</style>
