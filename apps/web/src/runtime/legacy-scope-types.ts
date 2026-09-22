@@ -15,6 +15,13 @@ import type { ProjectWorkspaceScope, WorkspaceCollabContext } from '@capydesign/
 export type SharedProjectPredicate = (projectId: string) => boolean;
 
 /**
+ * Authority a resource read resolved to. CapyDesign is single-scope, so reads are
+ * either local or still pending; `workspace`/`denied` are retained because
+ * surviving call sites still branch on them.
+ */
+export type ProjectResourceAuthority = 'local' | 'workspace' | 'pending' | 'denied';
+
+/**
  * Workspace-context resolution state for a surface. Local-only builds are
  * context-less, so `context` is always null and nothing is ever loading.
  */

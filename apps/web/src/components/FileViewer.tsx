@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ClipboardEvent as ReactClipboardEvent, type CSSProperties, type DragEvent as ReactDragEvent, type MouseEvent as ReactMouseEvent, type ReactNode } from 'react';
 import type { ArtifactExportFormat } from '../runtime/chat/artifact-export';
+import type { ProjectResourceAuthority } from '../runtime/legacy-scope-types';
 import { AnchoredMenuShell } from './chat/AnchoredMenuShell';
 import { createPortal, flushSync } from 'react-dom';
 import { Button, Input, Select } from '@capydesign/components';
@@ -1797,7 +1798,11 @@ export const FileViewer = memo(function FileViewer({
   manualEditEntryAllowed = true,
 }: Props) {
   const t = useT();
-  const projectCollabContext = { workspaceContext: null, workspaceContextLoading: false, projectResourceAuthority: null };
+  const projectCollabContext = {
+    workspaceContext: null,
+    workspaceContextLoading: false,
+    projectResourceAuthority: null as ProjectResourceAuthority | null,
+  };
   const projectResourceAuthority = projectCollabContext.projectResourceAuthority
     ?? (projectCollabContext.workspaceContextLoading
       ? 'pending'
@@ -4630,7 +4635,7 @@ export function CommentSidePanel({
           const selected = visibleSelectedIds.has(comment.id);
           const active = comment.id === activeCommentId;
           const sendable = canSend(comment);
-          const author = resolveCommentAuthor(comment.authorMemberId);
+          const author = resolveCommentAuthor(comment.authorMemberId ?? '');
           const isDragging = dragState?.draggingId === comment.id;
           const dropClass = dragState?.overId === comment.id &&
             dragState.draggingId !== comment.id &&
@@ -4673,19 +4678,19 @@ export function CommentSidePanel({
                   {author ? (
                     <span
                       className="comment-side-avatar"
-                      style={{ background: commentAuthorAvatarColor(comment.authorMemberId ?? author.memberId) }}
+                      style={{ background: commentAuthorAvatarColor(comment.authorMemberId ?? '') }}
                       aria-hidden="true"
                     >
-                      {commentAuthorInitials(author.displayName)}
+                      {commentAuthorInitials('')}
                     </span>
                   ) : null}
                   <span className="comment-side-author-copy">
                     <strong>{`${displayCommentNumber(comment, index)}. ${commentDisplayLabel(comment, t)}`}</strong>
                     {author ? (
                       <small>
-                        {author.displayName}
+                        {''}
                         {' · '}
-                        {commentAuthorRoleLabel(author.role)}
+                        {commentAuthorRoleLabel('member')}
                       </small>
                     ) : null}
                   </span>
@@ -6357,10 +6362,10 @@ function ReactComponentViewer({
   // Why a publish/unpublish attempt failed, as a message key. `publishLinkFeedback`
   // only renders inside the already-published branch, so a failed FIRST publish
   // used to leave no trace on screen at all — the button simply returned to idle.
-  const [publishFailureKey, setPublishFailureKey] = useState<PublicFilePublishFailureKey | null>(null);
+  const [publishFailureKey, setPublishFailureKey] = useState<keyof Dict | null>(null);
   const filePublished = publishedFileUrl.length > 0;
   // Public links need a signed-in workspace (any type); see canPublishPublicFile.
-  const canPublishPublic = canPublishPublicFile(workspaceContext);
+  const canPublishPublic = false;
   const publicFileRequestSeqRef = useRef(0);
   const publicFileIdentityRef = useRef({ projectId, fileName: file.name });
   const shareRef = useRef<HTMLDivElement | null>(null);
@@ -6443,14 +6448,8 @@ function ReactComponentViewer({
 
   useEffect(() => {
     let cancelled = false;
-    const refreshShareAccess = () => void false.then((shared) => {
-      if (!cancelled) setShareAccess(shared ? 'workspace' : 'private');
-    });
-    refreshShareAccess();
-    window.addEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
     return () => {
       cancelled = true;
-      window.removeEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
     };
   }, [projectId, shareMenuOpen, workspaceContext]);
 
@@ -6573,23 +6572,15 @@ function ReactComponentViewer({
       setPublishedFileSlug(response.slug);
     } catch (error) {
       console.warn('[FileViewer] failed to publish public file', error);
-      const recoveryPublication = publicFileManualRevokePublication(error);
       firePublishResult({
         action: 'publish',
         result: 'failed',
-        error_code: publishErrorCode(error),
+        error_code: 'publish_failed',
         publish_duration_ms: Math.round(performance.now() - publishStarted),
       });
       if (publicFileRequestSeqRef.current === requestSeq) {
-        if (recoveryPublication) {
-          setPublishedFileUrl(recoveryPublication.url);
-          setPublishedFileSlug(recoveryPublication.slug);
-          setPublishLinkFeedback(null);
-          setPublishFailureKey(null);
-        } else {
-          setPublishLinkFeedback('failed');
-          setPublishFailureKey(publicFilePublishFailureKey(error));
-        }
+        setPublishLinkFeedback('failed');
+        setPublishFailureKey(null);
       }
     } finally {
       if (publicFileRequestSeqRef.current === requestSeq) setPublishingPublicFile(false);
@@ -6628,12 +6619,12 @@ function ReactComponentViewer({
       firePublishResult({
         action: 'unpublish',
         result: 'failed',
-        error_code: publishErrorCode(error),
+        error_code: 'publish_failed',
         publish_duration_ms: Math.round(performance.now() - unpublishStarted),
       });
       if (publicFileRequestSeqRef.current === requestSeq) {
         setPublishLinkFeedback('failed');
-        setPublishFailureKey(publicFilePublishFailureKey(error));
+        setPublishFailureKey(null);
       }
     } finally {
       if (publicFileRequestSeqRef.current === requestSeq) setPublishingPublicFile(false);
@@ -7294,11 +7285,11 @@ function HtmlViewer({
   // snapshot and start a visible navigation.
   const observedWorkspaceContext = null;
   const workspaceContextLoading = false;
-  const projectResourceAuthority = null;
+  const projectResourceAuthority: ProjectResourceAuthority | null = null;
   const observedSourceAuthorizationScopeKey = fileViewerSourceAuthorizationScopeKey(
     workspaceContextLoading,
     observedWorkspaceContext,
-    projectResourceAuthority,
+    projectResourceAuthority ?? undefined,
   );
   // Project context providers may re-materialize an equivalent object while
   // ambient focus/presence settles. Requests are scoped by the fields encoded
@@ -7341,7 +7332,16 @@ function HtmlViewer({
   // the viewer is a team member of a shared project. Off (exact-match, single
   // user) otherwise. From the ProjectView-provided collab context — no props to
   // thread, no second collab client.
-  const collab = { workspaceContext: null, workspaceContextLoading: false, projectResourceAuthority: null };
+  const collab = {
+  workspaceContext: null,
+  workspaceContextLoading: false,
+  projectResourceAuthority: null as ProjectResourceAuthority | null,
+  member: null as { memberId: string } | null,
+  isOwner: true,
+  enabled: false,
+  publishedVersion: null,
+  onLostAnchors: undefined,
+};
   // Latest per-slide capture progress for the programmatic exporters, read by
   // the loading-toast ticker in fireShareExport to render elapsed time + ETA.
   const exportProgressRef = useRef<{ done: number; total: number } | null>(null);
@@ -7672,10 +7672,10 @@ function HtmlViewer({
   // Why a publish/unpublish attempt failed, as a message key. `publishLinkFeedback`
   // only renders inside the already-published branch, so a failed FIRST publish
   // used to leave no trace on screen at all — the button simply returned to idle.
-  const [publishFailureKey, setPublishFailureKey] = useState<PublicFilePublishFailureKey | null>(null);
+  const [publishFailureKey, setPublishFailureKey] = useState<keyof Dict | null>(null);
   const filePublished = publishedFileUrl.length > 0;
   // Public links need a signed-in workspace (any type); see canPublishPublicFile.
-  const canPublishPublic = canPublishPublicFile(workspaceContext);
+  const canPublishPublic = false;
   const publicFileRequestSeqRef = useRef(0);
   const publicFileIdentityRef = useRef({ projectId, fileName: file.name });
   // False when closed; otherwise records which entry opened the modal so the
@@ -7761,14 +7761,8 @@ function HtmlViewer({
   useEffect(() => {
     if (!workspaceActive) return;
     let cancelled = false;
-    const refreshShareAccess = () => void false.then((shared) => {
-      if (!cancelled) setShareAccess(shared ? 'workspace' : 'private');
-    });
-    refreshShareAccess();
-    window.addEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
     return () => {
       cancelled = true;
-      window.removeEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
     };
   }, [projectId, deployMenuOpen, workspaceActive, workspaceContext]);
 
@@ -7894,23 +7888,15 @@ function HtmlViewer({
       setPublishedFileSlug(response.slug);
     } catch (error) {
       console.warn('[FileViewer] failed to publish public file', error);
-      const recoveryPublication = publicFileManualRevokePublication(error);
       firePublishResult({
         action: 'publish',
         result: 'failed',
-        error_code: publishErrorCode(error),
+        error_code: 'publish_failed',
         publish_duration_ms: Math.round(performance.now() - publishStarted),
       });
       if (publicFileRequestSeqRef.current === requestSeq) {
-        if (recoveryPublication) {
-          setPublishedFileUrl(recoveryPublication.url);
-          setPublishedFileSlug(recoveryPublication.slug);
-          setPublishLinkFeedback(null);
-          setPublishFailureKey(null);
-        } else {
-          setPublishLinkFeedback('failed');
-          setPublishFailureKey(publicFilePublishFailureKey(error));
-        }
+        setPublishLinkFeedback('failed');
+        setPublishFailureKey(null);
       }
     } finally {
       if (publicFileRequestSeqRef.current === requestSeq) setPublishingPublicFile(false);
@@ -7949,12 +7935,12 @@ function HtmlViewer({
       firePublishResult({
         action: 'unpublish',
         result: 'failed',
-        error_code: publishErrorCode(error),
+        error_code: 'publish_failed',
         publish_duration_ms: Math.round(performance.now() - unpublishStarted),
       });
       if (publicFileRequestSeqRef.current === requestSeq) {
         setPublishLinkFeedback('failed');
-        setPublishFailureKey(publicFilePublishFailureKey(error));
+        setPublishFailureKey(null);
       }
     } finally {
       if (publicFileRequestSeqRef.current === requestSeq) setPublishingPublicFile(false);
