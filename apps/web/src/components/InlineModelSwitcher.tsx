@@ -64,6 +64,29 @@ import {
 import { isDeepSeekV4FlashCampaignModel } from '../campaigns/deepseek-v4-flash';
 import { useDeepSeekV4FlashCampaignVisibility } from '../campaigns/use-deepseek-v4-flash-campaign';
 
+/*
+ * Local stand-ins for the removed Cloud / AMR auth-tracking, hand-off and plan
+ * helpers. They keep the switcher's call shapes intact while the Cloud
+ * behaviour behind them is gone, so each collapses to a neutral value.
+ */
+type AmrEntryAttribution = Record<string, unknown>;
+
+const AMR_LOGIN_STARTUP_SETTLE_MS = 250;
+const AMR_LOGIN_POLL_INTERVAL_MS = 2000;
+const amrLoginPollOutcome = (..._args: unknown[]): any => null;
+const beginAmrAuthTracking = (..._args: unknown[]): any => null;
+const observeAmrAuthTracking = (..._args: unknown[]): any => null;
+const resolveAmrAuthTracking = (..._args: unknown[]): any => null;
+const confirmAmrAuthTracking = (..._args: unknown[]): any => null;
+const reconcileAmrAuthAttemptId = (..._args: unknown[]): any => null;
+const notifyAmrLoginStatusChanged = (..._args: unknown[]): void => {};
+const recordAmrEntry = (..._args: unknown[]): any => null;
+const amrHandoffDeviceId = (..._args: unknown[]): any => null;
+const getResolvedDeviceId = (): any => null;
+const attributedAmrUrl = (url: string, ..._rest: unknown[]): string => url;
+const amrPlansUrlForProfile = (..._args: unknown[]): string => '';
+const analytics = { track: (..._args: unknown[]) => {} };
+const PlanBadge = (_props: Record<string, unknown>) => null;
 interface Props {
   config: AppConfig;
   agents: AgentInfo[];
@@ -161,7 +184,7 @@ export function InlineModelSwitcher({
   // recvqfYKutwWlQ: gate the AMR upgrade entry on billing permission below,
   // not just plan tier — a team member without `canManageBilling` (owner-only)
   // can't act on an upgrade even when the tier itself is upgradeable.
-  const workspaceContext = null;
+  const workspaceContext: any = null;
   const workspaceContextLoading = false;
   const workspaceBillingResponse = null;
   const [open, setOpen] = useState(false);
@@ -593,7 +616,7 @@ export function InlineModelSwitcher({
 
   useEffect(() => {
     const onStatusChange = (event: Event) => {
-      const reason = '';
+      const reason: string = '';
       if (reason === 'login-started') {
         const startedAt = Date.now();
         amrLoginStartedAtRef.current = startedAt;
