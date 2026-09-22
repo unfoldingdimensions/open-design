@@ -45,6 +45,11 @@ import {
 import { forkBoundaryMessageIndex } from '../runtime/chat/fork-boundary';
 import { resolveRecoveryActionBlockReason } from '../runtime/chat/recovery-gating';
 import { normalizeCustomReason } from '@capydesign/contracts/analytics';
+import type {
+  AmrAuthRetryContinuation,
+  AmrAuthRetryPersonalAdoptionWitness,
+  ProjectResourceAuthority,
+} from '../runtime/legacy-scope-types';
 import {
   deletePreviewComment,
   fetchConnectorStatuses,
@@ -327,6 +332,59 @@ import {
 import type { CommentSendResult } from './comment-send-result';
 import { projectReadOnlyClaim } from './project-readonly-claim';
 
+/*
+ * Local stand-ins for helpers that lived in the removed Cloud / AMR modules
+ * (AMR balance gate, workspace-scope identity, collaboration presence, comment
+ * anchors, turn-index claiming, AMR artifact upgrade). They preserve the call
+ * shapes the project surface still uses while the Cloud behaviour behind them
+ * is gone, so each collapses to a neutral value.
+ */
+type AmrBalanceGateScope = 'none' | 'project' | 'run';
+type AmrBalanceBlockedDialogKind = 'balance' | 'upgrade' | 'signin' | 'ask_owner';
+type CollabContextValue = { workspaceContext: WorkspaceCollabContext | null };
+
+const isAmrBalanceGateScope = (_scope: unknown): _scope is AmrBalanceGateScope => false;
+const amrWalletBalanceUsd = (..._args: unknown[]): number | null => null;
+const amrBalanceUpgradeIntent = (..._args: unknown[]): any => '';
+const amrBalanceDialogUpgradeIntent = (..._args: unknown[]): any => '';
+const amrBalanceBlockedDialog = (..._args: unknown[]): any => null;
+const checkAmrBalanceGate = (..._args: unknown[]): Promise<any> => Promise.resolve({ kind: 'allow' });
+const resolveAmrBalanceBranch = (..._args: unknown[]): any => null;
+const fetchAmrBalanceCardWalletSnapshot = (..._args: unknown[]): Promise<any> => Promise.resolve(null);
+const requestAmrArtifactUpgrade = (..._args: unknown[]): Promise<null> => Promise.resolve(null);
+const recordAmrEntry = (..._args: unknown[]): undefined => undefined;
+const amrHandoffDeviceId = (..._args: unknown[]): undefined => undefined;
+const getResolvedDeviceId = (): undefined => undefined;
+const attributedAmrUrl = (url: string, ..._rest: unknown[]): string => url;
+const analytics = { track: (..._args: unknown[]) => {} };
+
+const useProjectWorkspaceScope = (..._args: unknown[]): any => ({ scope: null, ready: true, loading: false });
+const projectWorkspaceScopeReady = (..._args: unknown[]): boolean => true;
+const projectWorkspaceContext = (..._args: unknown[]): any => null;
+const projectWorkspaceScopeAuthorizesAmr = (..._args: unknown[]): boolean => true;
+const projectWorkspaceVisibility = (..._args: unknown[]): any => 'personal';
+const runWorkspaceIdentity = (..._args: unknown[]): any => '';
+const runWorkspacePersonalAdoptionWitness = (
+  ..._args: unknown[]
+): AmrAuthRetryPersonalAdoptionWitness | null => null;
+const useProjectCollab = (..._args: unknown[]): any => ({
+  workspaceContext: null,
+  workspaceContextLoading: false,
+  projectResourceAuthority: null as ProjectResourceAuthority | null,
+  enabled: false,
+  publishedVersion: null,
+  onLostAnchors: undefined,
+  member: null,
+  isOwner: true,
+});
+const persistCommentAnchors = async (..._args: unknown[]): Promise<void> => {};
+const claimRunTurnIndex = (..._args: unknown[]): any => 0;
+const claimProjectTurnIndex = (..._args: unknown[]): any => 0;
+
+const CollabProvider = (props: any): any => props?.children ?? null;
+const PresenceBar = (_props: Record<string, unknown>) => null;
+const AmrOwnerTopUpDialog = (_props: Record<string, unknown>) => null;
+const AmrBalanceDialog = (_props: Record<string, unknown>) => null;
 type BrandBrowserSnapshot =
   | { status: 'ready'; html: string; css: string; baseUrl: string }
   | { status: 'unavailable'; message: string }
@@ -2889,7 +2947,7 @@ export function ProjectView({
    * 判据字符串化之后当 effect 的依赖:scope 落定得比这条失败晚时,effect 会
    * 自己重跑一次把数字换过来,不需要额外的等待态。
    */
-  const amrBalanceCardScope = useMemo(
+  const amrBalanceCardScope = useMemo<any>(
     () => null,
     [projectRunPreflightContext],
   );
@@ -12992,7 +13050,6 @@ export function ProjectView({
         onRefreshAgents={onRefreshAgents}
         openSignal={modelPickerOpenSignal}
         placement="up"
-        projectWorkspaceScope={projectWorkspaceScopeState}
       />
       <ImageAgentPicker
         value={currentProject.metadata?.imageAgentId ?? null}
