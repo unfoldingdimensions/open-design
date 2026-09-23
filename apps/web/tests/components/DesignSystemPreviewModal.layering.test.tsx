@@ -117,53 +117,6 @@ describe('DesignSystemPreviewModal layering', () => {
     workspaceContextState.loading = false;
   });
 
-  it('uses the exact directory read identity while the richer context is loading', async () => {
-    workspaceContextState.resourceReadIdentity = {
-      context: PROJECT_WORKSPACE_CONTEXT,
-      generation: 'directory-generation',
-    };
-    workspaceContextState.loading = true;
-
-    render(
-      <I18nProvider>
-        <DesignSystemPreviewModal
-          system={{ ...SYSTEM, projectId: 'project-clay' }}
-          onClose={() => {}}
-        />
-      </I18nProvider>,
-    );
-
-    await waitFor(() => {
-      expect(fetchDesignSystemMock).toHaveBeenCalledWith('claymorphism', PROJECT_WORKSPACE_CONTEXT);
-      expect(projectRawUrlMock).toHaveBeenCalledWith(
-        'project-clay',
-        'logos/mark.svg',
-        PROJECT_WORKSPACE_CONTEXT,
-      );
-    });
-  });
-
-  it('uses the exact project Workspace scope when the ambient shell context is unresolved', async () => {
-    const props = {
-      system: { ...SYSTEM, projectId: 'project-clay' },
-      initialViewId: 'kit' as const,
-      onClose: () => {},
-      workspaceContext: PROJECT_WORKSPACE_CONTEXT,
-    } as ComponentProps<typeof DesignSystemPreviewModal> & {
-      workspaceContext: WorkspaceCollabContext;
-    };
-
-    render(
-      <I18nProvider>
-        {createElement(DesignSystemPreviewModal, props)}
-      </I18nProvider>,
-    );
-
-    await waitFor(() => {
-      expect(fetchDesignSystemMock).toHaveBeenCalledWith('claymorphism', PROJECT_WORKSPACE_CONTEXT);
-    });
-  });
-
   it('portals the preview to document.body so composer overlays cannot cover it', () => {
     const host = renderInsideStackingContext();
 

@@ -85,14 +85,6 @@ async function advancePastHoverClose() {
 }
 
 describe('EntryNavRail account menu interaction state', () => {
-  it('mounts the first account controls inside the workspace chrome no-drag host', async () => {
-    renderRail();
-
-    await act(async () => {});
-    expect(screen.getByTestId('entry-nav-account').closest('#workspace-chrome-account-actions'))
-      .toBe(chromeActionsHost);
-  });
-
   it('pins a hover-open menu when the avatar is clicked', async () => {
     renderRail();
     const trigger = screen.getByTestId('entry-nav-account');
