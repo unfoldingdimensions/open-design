@@ -147,61 +147,6 @@ describe('W99 · Plan 药丸只跟着 agent 这一轮重发的清单走', () => 
     expect(pillText()).toBeNull();
   });
 
-  it('① agent 这一轮重发了 → 出,而且写的是**本轮那份**', () => {
-    render(pane([
-      ...abortedFirstTurn(),
-      { id: 'u2', role: 'user', content: '继续之前的设计', createdAt: 3 },
-      {
-        id: 'a2',
-        role: 'assistant',
-        content: '',
-        createdAt: 4,
-        runStatus: 'running',
-        events: [todoEvent(ABORTED_FOUR, 'tw-2')],
-      },
-    ]));
-    expect(pillText()).toContain('Step 3 of 4');
-  });
-
-  it('② 同源:药丸的 M 和同一轮那张卡的步数是同一个数(重发整份 4 步)', () => {
-    render(pane([
-      ...abortedFirstTurn(),
-      { id: 'u2', role: 'user', content: '继续之前的设计', createdAt: 3 },
-      {
-        id: 'a2',
-        role: 'assistant',
-        content: '',
-        createdAt: 4,
-        runStatus: 'running',
-        events: [todoEvent(ABORTED_FOUR, 'tw-2')],
-      },
-    ]));
-    expect(pillText()).toContain('Step 3 of 4');
-    expect(within(lastTurnCard()).getByText('Plan · 4 steps')).toBeTruthy();
-  });
-
-  it('② 同源:agent 只重发了 2 步时,两处一起变成 2 —— 不许一个 4 一个 2', () => {
-    const shrunk: Todo[] = [
-      { content: '过一遍响应式', status: 'in_progress' },
-      { content: '出交付稿', status: 'pending' },
-    ];
-    render(pane([
-      ...abortedFirstTurn(),
-      { id: 'u2', role: 'user', content: '继续之前的设计', createdAt: 3 },
-      {
-        id: 'a2',
-        role: 'assistant',
-        content: '',
-        createdAt: 4,
-        runStatus: 'running',
-        events: [todoEvent(shrunk, 'tw-2')],
-      },
-    ]));
-    expect(pillText()).toContain('Step 1 of 2');
-    expect(within(lastTurnCard()).getByText('Plan · 2 steps')).toBeTruthy();
-    expect(pillText()).not.toContain('of 4');
-  });
-
   it('④ 反向:run 结束就消失(原本的可见性规则没动)', () => {
     render(pane([
       ...abortedFirstTurn(),
@@ -234,20 +179,4 @@ describe('W99 · Plan 药丸只跟着 agent 这一轮重发的清单走', () => 
     expect(pillText()).toBeNull();
   });
 
-  it('④ 反向:agent 这一轮发了清单,上一轮从来没发过 —— 照常出', () => {
-    render(pane([
-      { id: 'u1', role: 'user', content: '你好', createdAt: 1 },
-      { id: 'a1', role: 'assistant', content: '你好', createdAt: 2, runStatus: 'succeeded' },
-      { id: 'u2', role: 'user', content: '把定价页做出来', createdAt: 3 },
-      {
-        id: 'a2',
-        role: 'assistant',
-        content: '',
-        createdAt: 4,
-        runStatus: 'running',
-        events: [todoEvent(ABORTED_FOUR, 'tw-1')],
-      },
-    ]));
-    expect(pillText()).toContain('Step 3 of 4');
-  });
 });

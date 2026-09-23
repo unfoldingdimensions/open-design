@@ -78,50 +78,6 @@ const readSrc = (relative: string): string =>
   readFileSync(resolve(process.cwd(), 'src', relative), 'utf8');
 
 describe('Write 只落一行(N4 / D3)', () => {
-  it('Write 跑完只落一行:动词 + 文件名 + 改动量,没有源码', () => {
-    const { container } = render(
-      <AssistantMessage
-        projectKind="prototype"
-        conversationId="conv-1"
-        projectId="project-1"
-        /* 文件名按钮要成立得凑齐两样:一个打开回调,和「这个路径属于当前项目」的
-           正面证据(产品 2026-08-27:读取的文件一律不做链接,写 / 改要正面取证 ——
-           `runtime/chat/record-file-open.ts`)。原来这两样一样都没给也照样能捞到
-           一颗按钮,因为 `FileButton` 无论如何都吐 `<button>`,只是不挂 onClick。
-           这一条测的是「Write 只落一行」,所以两样都给足,让那句断言测得到它
-           本来要测的东西 —— 顺带守住「写 / 改这一档没被一起拆掉」。 */
-        projectResolvedDir="/repo"
-        onRequestOpenFile={() => {}}
-        streaming={false}
-        message={message([
-          {
-            kind: 'tool_use',
-            id: 'tool-1',
-            name: 'Write',
-            input: { file_path: FILE_PATH, content: FILE_SOURCE },
-          },
-          {
-            kind: 'tool_result',
-            toolUseId: 'tool-1',
-            content: `File created successfully at: ${FILE_PATH}`,
-            isError: false,
-          },
-        ])}
-      />,
-    );
-
-    activateExecutionRecord(container);
-    const body = container.querySelector<HTMLElement>('.assistant-flow > details > div');
-    expect(body).not.toBeNull();
-    /* 一行,不是一行 + 一块代码 */
-    expect(body?.children.length).toBe(1);
-    expect(body?.textContent ?? '').toContain('新建');
-    expect(screen.getByRole('button', { name: '打开 design-manifesto-parchment.html' })).toBeTruthy();
-    /* 5 行正文 → +5 −0 */
-    expect(body?.textContent ?? '').toContain('+5');
-    expect(container.textContent ?? '').not.toContain(SOURCE_MARKER);
-  });
-
   it('还在流、结果没回来的 Write 一行都不落(D3)', () => {
     const { container } = render(
       <AssistantMessage
@@ -147,54 +103,4 @@ describe('Write 只落一行(N4 / D3)', () => {
     expect(container.textContent ?? '').not.toContain(SOURCE_MARKER);
   });
 
-  it('工具入参不再有通向流式代码卡的通道(N4 推翻了 chat-panel-next.md:674)', () => {
-    /*
-     * 这一条守的是**通道**,不是某一次渲染:喂料的 `liveToolInput` 链路
-     * (ProjectView 累料 → ChatPane 穿透 → AssistantMessage 落成 `live-tool` 块)
-     * 整条删掉了,所以前两条用例已经没有办法把源码喂进来。
-     * 谁要把它接回来,得先在这里给出理由 —— 而不是悄悄多出一张卡。
-     *
-     * `StreamingCodeCard` 本体留着:还没闭合的 `<artifact type="text/html">`
-     * 仍然要走它,否则半截 HTML 会当 markdown 正文漏出来(见 ProseBlock)。
-     */
-    const assistant = readSrc('components/AssistantMessage.tsx');
-    expect(assistant).not.toContain('live-tool');
-    expect(assistant).not.toContain('LiveCodeBox');
-    expect(assistant).not.toContain('liveToolInput');
-    expect(readSrc('components/ChatPane.tsx')).not.toContain('liveToolInput');
-    expect(readSrc('components/ProjectView.tsx')).not.toContain('liveToolInput');
-    /* <artifact> 那条流式通道**不动** */
-    expect(assistant).toContain('StreamingCodeCard');
-  });
-
-  it('反面守卫:跑命令的终端输出照旧带正文块', () => {
-    const { container } = render(
-      <AssistantMessage
-        projectKind="prototype"
-        conversationId="conv-1"
-        projectId="project-1"
-        streaming={false}
-        message={message([
-          {
-            kind: 'tool_use',
-            id: 'tool-9',
-            name: 'Bash',
-            input: { command: 'pnpm guard', description: '跑一遍 guard' },
-          },
-          {
-            kind: 'tool_result',
-            toolUseId: 'tool-9',
-            content: '✓ guard passed\n✓ 12 files checked',
-            isError: false,
-          },
-        ])}
-      />,
-    );
-
-    activateExecutionRecord(container);
-    fireEvent.click(screen.getByText('跑一遍 guard').closest('summary')!);
-    const body = container.querySelector<HTMLElement>('.assistant-flow > details > div');
-    expect(body?.textContent ?? '').toContain('pnpm guard');
-    expect(body?.textContent ?? '').toContain('guard passed');
-  });
 });

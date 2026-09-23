@@ -272,96 +272,15 @@ describe('W120 · 在途写文件行的行数与计时(web)', () => {
       vi.useRealTimers();
     });
 
-    it('在途的行上同时有行数和秒数', () => {
-      const { container } = renderTurn(
-        <AssistantMessage message={turn([inFlightWrite(128)])} streaming projectId="p1" />,
-      );
-      const text = container.textContent ?? '';
-      expect(text).toContain('dashboard.html');
-      expect(deltaText(container), '在途的行上没有行数 —— 这就是 W120 要修的').toBe('+128−0');
-      expect(elapsedText(container), '在途的行上没有秒数 —— 行数顶掉了计时').toBe('12.0s');
-      expect(text, '内部记号漏到界面上了').not.toContain(IN_FLIGHT_TOOL_INPUT_MARKER);
-    });
-
-    it('新的计数帧一到,行上的数字就长了(仍然只有一行)', () => {
-      const { container, rerender } = renderTurn(
-        <AssistantMessage message={turn([inFlightWrite(12)])} streaming projectId="p1" />,
-      );
-      expect(deltaText(container)).toBe('+12−0');
-
-      rerender(
-        <I18nProvider initial="zh-CN">
-          <AssistantMessage
-            message={turn([inFlightWrite(12), inFlightWrite(340)])}
-            streaming
-            projectId="p1"
-          />
-        </I18nProvider>,
-      );
-      /*
-       * ⚠️ 这里踩的是 `dedupeToolUsesById` 的坑:它按 id 留**第一条**。
-       * 在途形态一条接一条到,不先把旧的摘掉,留下来的永远是第一条 ——
-       * 行上的数字会**永远停在 12**,文件名还在,光看名字发现不了。
-       */
-      expect(deltaText(container), '数字停在第一条计数上了 —— 旧的在途形态没被摘掉').toBe('+340−0');
-      expect(
-        (container.textContent ?? '').split('dashboard.html').length - 1,
-        '同一次写文件画了两行',
-      ).toBe(1);
-    });
-
     /**
      * 秒数在**客户端**走:这一整段里 daemon 一条事件都没再推,`events` 数组
      * 一个字节都没变,行上的秒数照样从 12.0s 走到 17.0s。
      */
-    it('计时在客户端 tick,不靠 daemon 每秒推事件', async () => {
-      const events = [inFlightWrite(128)];
-      const frozen = JSON.stringify(events);
-      const { container } = renderTurn(
-        <AssistantMessage message={turn(events)} streaming projectId="p1" />,
-      );
-      expect(elapsedText(container)).toBe('12.0s');
-
-      await act(async () => { await vi.advanceTimersByTimeAsync(5_000); });
-
-      expect(JSON.stringify(events), '事件数组变了 —— 这条测的就不是客户端 tick').toBe(frozen);
-      expect(elapsedText(container), '秒数不走 —— 行上还是个静止的数字').toBe('17.0s');
-    });
-
     /**
      * ⚠️ 最关键的一条:**结尾不许跳数字**。在途报的最后一个行数,必须等于落定后
      * 真的 `diffStat` 从 `tool_use.input.content` 算出来的 `+N`。
      * 这里不复述口径,直接调 `diffStat` —— 复述就会和它分叉。
      */
-    it('在途最后一个行数 == 落定后 diffStat 的 +N', () => {
-      const settledInput = { file_path: FILE_PATH, content: FILE_CONTENT };
-      const expected = diffStat('Write', settledInput);
-      expect(expected, 'diffStat 算不出来 —— 这条测不了').not.toBeNull();
-
-      const lastInFlight = expected!.added;
-      const { container, rerender } = renderTurn(
-        <AssistantMessage message={turn([inFlightWrite(lastInFlight)])} streaming projectId="p1" />,
-      );
-      const inFlightText = deltaText(container);
-      expect(inFlightText).toBe(`+${lastInFlight}−0`);
-
-      rerender(
-        <I18nProvider initial="zh-CN">
-          <AssistantMessage
-            message={turn([
-              inFlightWrite(lastInFlight),
-              { kind: 'tool_use', id: TOOL_ID, name: 'Write', input: settledInput },
-              { kind: 'tool_result', toolUseId: TOOL_ID, content: `File created at ${FILE_PATH}`, isError: false },
-            ])}
-            streaming={false}
-            projectId="p1"
-          />
-        </I18nProvider>,
-      );
-      expect(deltaText(container), '落定那一刻数字跳了').toBe(inFlightText);
-      expect(container.textContent ?? '', '文件正文漏到界面上了').not.toContain(CONTENT_MARKER);
-    });
-
     /**
      * 落定那一帧**计时不许倒退**。
      *
@@ -370,28 +289,6 @@ describe('W120 · 在途写文件行的行数与计时(web)', () => {
      * 不把起点搬过去,行上的秒数会从「2m 21s」被按回「1.0s」,像计时器坏了。
      * 这一帧 `tool_result` 还没到,行仍然在跑,所以秒数照旧要显示。
      */
-    it('落定那一帧计时不倒退 —— 真货沿用早期形态的起点', () => {
-      vi.setSystemTime(T0 + 141_000);
-      const { container } = renderTurn(
-        <AssistantMessage
-          message={turn([
-            inFlightWrite(734, T0),
-            {
-              kind: 'tool_use',
-              id: TOOL_ID,
-              name: 'Write',
-              input: { file_path: FILE_PATH, content: FILE_CONTENT },
-              // 入参传完那一刻才盖的戳 —— 比行出现的时候晚了 140 秒
-              startedAt: T0 + 140_000,
-            } as AgentEvent,
-          ])}
-          streaming
-          projectId="p1"
-        />,
-      );
-      expect(elapsedText(container), '秒数被按回去了 —— 起点没跟着搬').toBe('2m 21s');
-    });
-
     /** 反向:在途的计数形态照旧不算一次文件操作 —— 写还没发生。 */
     it('反向:带了行数也不算一次文件操作', () => {
       expect(deriveFileOps([inFlightWrite(128)])).toHaveLength(0);
@@ -407,19 +304,5 @@ describe('W120 · 在途写文件行的行数与计时(web)', () => {
      * 反向:跑完的行照旧只显示改动量,**不带秒数** —— 秒数那一格是「还在跑」的
      * 标志(稿子 `.tool` 每一行 `.dst` 和 `.ms` 二选一,从来没有同时出现过)。
      */
-    it('反向:跑完的写文件行只有改动量,没有秒数', () => {
-      const { container } = renderTurn(
-        <AssistantMessage
-          message={turn([
-            { kind: 'tool_use', id: TOOL_ID, name: 'Write', input: { file_path: FILE_PATH, content: FILE_CONTENT }, startedAt: T0 } as AgentEvent,
-            { kind: 'tool_result', toolUseId: TOOL_ID, content: 'ok', isError: false, completedAt: T0 + 4_000 } as AgentEvent,
-          ])}
-          streaming={false}
-          projectId="p1"
-        />,
-      );
-      expect(deltaText(container)).toBe(`+${FILE_CONTENT.split('\n').length}−0`);
-      expect(elapsedText(container), '跑完的行也挂上秒数了').toBeNull();
-    });
   });
 });

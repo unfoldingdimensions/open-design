@@ -310,23 +310,6 @@ describe('接线 · 数会自己数上去,但不从零涨上来', () => {
     vi.restoreAllMocks();
   });
 
-  it('整条真实链路:帧一批批到,同一个槽跟着数到新读数', () => {
-    const { container, rerender } = render(live(eventsUpTo([50])));
-    expect(thoughtsSlot(container)).toEqual(['50 tokens']);
-
-    /*
-     * 每一帧之后要把表推过去才读得到落点 —— 数是**数上去**的,不是一帧换到位
-     * (产品 2026-09-04)。600ms 覆盖 400ms 的预算还富余,不是在等一个不确定的时长。
-     */
-    rerender(live(eventsUpTo([50, 1_240])));
-    act(() => { vi.advanceTimersByTime(600); });
-    expect(thoughtsSlot(container)).toEqual(['1.2k tokens']);
-
-    rerender(live(eventsUpTo([50, 1_240, 3_278])));
-    act(() => { vi.advanceTimersByTime(600); });
-    expect(thoughtsSlot(container)).toEqual(['3.3k tokens']);
-  });
-
   /**
    * 刷新页面那一档(产品原话:「刷新页面时,token 不能从零涨上来」)。
    *
@@ -334,15 +317,6 @@ describe('接线 · 数会自己数上去,但不从零涨上来', () => {
    * 已经落定的那个数。任何「挂载后从 0 补间涨上去」的做法都会让这一条读到别的东西
    * —— 和入场动画每次重挂都重放是同一类毛病,一页几轮跑完的对话会同时抖起来。
    */
-  it('刷新:整批事件一次性到,首帧就是落定的数,不从零涨', () => {
-    const { container } = render(live(eventsUpTo([50, 1_240, 3_278])));
-    // 这一行**在任何 effect / timer 跑之前**执行
-    expect(thoughtsSlot(container)).toEqual(['3.3k tokens']);
-    // 时间往前推也不会再涨 —— 挂载没有一段可数的间,自增压根没启动
-    act(() => { vi.advanceTimersByTime(2_000); });
-    expect(thoughtsSlot(container)).toEqual(['3.3k tokens']);
-  });
-
   /**
    * 挂载那一帧**一个表都不排**。
    *

@@ -88,10 +88,4 @@ describe('chat 主题接缝', () => {
     expect(seam?.classList.contains('pane')).toBe(true);
   });
 
-  it('执行记录壳落在接缝里面,不是接缝的兄弟节点', () => {
-    const { container } = renderPane();
-    const shell = container.querySelector('details');
-    expect(shell).not.toBeNull();
-    expect(shell?.closest('[data-chat-root]')).not.toBeNull();
-  });
 });

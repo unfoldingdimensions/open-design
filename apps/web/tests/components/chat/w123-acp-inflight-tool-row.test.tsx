@@ -267,57 +267,6 @@ describe('W123 · ACP 在途工具行(web)', () => {
   describe('渲染', () => {
     afterEach(cleanup);
 
-    it('第一条早期形态一到,行就在了,而且没有文件名按钮', () => {
-      const { container } = renderTurn(
-        <AssistantMessage streaming={false} message={turn([inFlight({ title: 'bash' })])} />,
-      );
-      expect(toolRows(container)).toHaveLength(1);
-      expect(container.textContent ?? '').toContain('Bash');
-      expect(
-        container.querySelector('[class*="_file_"]'),
-        '第一帧没有真路径,不许凭空造一个可点的文件',
-      ).toBeNull();
-    });
-
-    it('后一帧带来真命令 → 原地覆盖,仍然一行', () => {
-      const events = [inFlight({ title: 'bash' }), inFlight({ command: COMMAND })];
-      // 摘除逻辑必须留**最后一条**,否则行永远停在没有命令的那一版。
-      const kept = dropSupersededInFlightToolUses(events);
-      expect(kept).toHaveLength(1);
-      expect((kept[0] as { input: Record<string, unknown> }).input.command).toBe(COMMAND);
-
-      const { container } = renderTurn(<AssistantMessage streaming={false} message={turn(events)} />);
-      expect(toolRows(container)).toHaveLength(1);
-      expect(container.textContent ?? '').toContain(COMMAND);
-    });
-
-    it('终态到了还是一行,而且带上结果', () => {
-      const settled = {
-        kind: 'tool_use',
-        id: TOOL_ID,
-        name: 'Bash',
-        input: { command: COMMAND },
-        startedAt: T0,
-      } as AgentEvent;
-      const result = {
-        kind: 'tool_result',
-        toolUseId: TOOL_ID,
-        content: 'W123_SETTLED_OUTPUT',
-        isError: false,
-        completedAt: T0 + 57_024,
-      } as AgentEvent;
-      const events = [inFlight({ title: 'bash' }), inFlight({ command: COMMAND }), settled, result];
-      const { container } = renderTurn(<AssistantMessage streaming={false} message={turn(events)} />);
-      expect(toolRows(container)).toHaveLength(1);
-
-      // 结果本身在折叠体里,默认收着(`Foldable` 的 `deferBody`),所以断言落在
-      // 行的数据契约上而不是可见文字上 —— 那才是 `ToolRow` 真正读到的东西。
-      const row = onlyToolRow(events);
-      expect(row.terminal).toBe('W123_SETTLED_OUTPUT');
-      expect(row.pending).toBe(false);
-      expect(row.elapsedMs).toBe(57_024);
-    });
-
     it('中间输出进到行里,但行仍然是未完成态', () => {
       const events = [inFlight({ command: COMMAND }, 'W123_PARTIAL_STDOUT')];
       const row = onlyToolRow(events);

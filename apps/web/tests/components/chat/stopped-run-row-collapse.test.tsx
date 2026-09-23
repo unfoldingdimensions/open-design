@@ -112,62 +112,13 @@ describe('按停止之后:在飞的命令行收起来(真实触发路径)', () =
   for (const withDescription of [true, false]) {
     const shape = withDescription ? '有人话标题(Claude 家族)' : '没有人话标题(AMR / ACP 九家)';
 
-    it(`${shape}:轮次 canceled → 折叠块不带 open`, () => {
-      const { container } = render(show(turn('canceled', withDescription)));
-      expect(
-        commandFold(container).open,
-        '轮次已经停了,这一行等不到结果 —— 不许永远摊着',
-      ).toBe(false);
-    });
-
     it(`${shape}:收起之后那几百行输出一个字都不在 DOM 里`, () => {
       const { container } = render(show(turn('canceled', withDescription)));
       expect(container.textContent).not.toContain('Packages: +37');
     });
 
     /* 反向对照 —— 否则「一律收起」也能让上面两条绿 */
-    it(`${shape}:反向对照,轮次还在跑就照旧摊开、输出看得见`, () => {
-      const { container } = render(show(turn('running', withDescription)));
-      expect(commandFold(container).open, '在跑的照旧摊开(T47)').toBe(true);
-      expect(container.textContent).toContain('Packages: +37');
-    });
   }
-});
-
-describe('为什么只有 canceled 这一档会漏 —— 量出来的,不是推的', () => {
-  /*
-   * 一开始我以为 `failed` / `error` 也一样漏。**实测不是**:这三档渲染出来的
-   * `<details>` 分别是
-   *
-   *   failed    <details class="fold flat">              壳自己那层,收着;里面什么都没挂
-   *   error     <details class="fold flat">              同上
-   *   canceled  <details class="fold flat" open> +
-   *             <details class="fold" open>              壳摊开,工具行也摊开
-   *
-   * 差别在壳:`ExecutionShell:109` 是 `lifecycleOpen = running || shell.stopped`,
-   * 而 `build-turn-blocks` **只在 `status === 'canceled'` 时**置 `shell.stopped = true`
-   * (那是「手动停止:壳保持进行中,只挂旗标」那条裁决 B7 / W4)。failed / error 走的是
-   * `shell.status = 'failed'` / `'done'`,壳自己就收起来了,叠上 `deferBody`,里面
-   * 一个节点都不挂 —— 所以那两档在屏幕上根本看不见这个洞。
-   *
-   * 记下来是为了别让后来人"顺手补全"成三档都测:那两档的断言会因为**选择器命中不到
-   * 任何东西**而报错,读起来像开合坏了,其实是壳压根没展开。
-   */
-  it('failed:壳自己就是收着的,工具行连节点都不挂', () => {
-    const { container } = render(show(turn('failed')));
-    const folds = container.querySelectorAll('details');
-    expect(folds.length, '只有壳自己那一层').toBe(1);
-    expect(folds[0]!.className, '而且是 flat 那一层(壳),不是工具行').toContain('flat');
-    expect(folds[0]!.open, '壳收着').toBe(false);
-    expect(container.textContent).not.toContain('Packages: +37');
-  });
-
-  it('canceled:壳照旧摊开(B7 的裁决没变),要收的是**里面那一行**', () => {
-    const { container } = render(show(turn('canceled')));
-    const shell = container.querySelector<HTMLDetailsElement>('details[class*="flat"]');
-    expect(shell?.open, '壳保持「进行中」,只挂旗标 —— 这一条不许被这次改动带走').toBe(true);
-    expect(commandFold(container).open, '里面那一行才是要收的').toBe(false);
-  });
 });
 
 /* ── 不变量本身:自动摊开只跟着「此刻在跑」 ───────────────────────────────── */

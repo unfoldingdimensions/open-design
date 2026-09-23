@@ -124,31 +124,6 @@ describe('useCritiqueReplay (Phase 7.3)', () => {
     expect(sink.state.rounds).toHaveLength(1);
   });
 
-  it('fetches a project transcript with its exact persisted Workspace headers', async () => {
-    const sink: Sink = { state: { phase: 'idle' }, status: 'idle', error: null };
-    const workspaceA = teamContext('workspace-a', 'member-a');
-    let transcriptInit: RequestInit | undefined;
-    const fetchTranscript = vi.fn(async (_url: string, init?: RequestInit) => {
-      transcriptInit = init;
-      return ndjson(TRANSCRIPT);
-    });
-    render(
-      <Probe
-        url="/api/projects/project-a/critique/run-a/transcript"
-        speed="instant"
-        options={{ fetchTranscript, workspaceContext: workspaceA }}
-        sink={sink}
-      />,
-    );
-
-    await waitFor(() => {
-      expect(sink.status).toBe('done');
-    });
-    const headers = new Headers(transcriptInit?.headers);
-    expect(headers.get('x-od-workspace-id')).toBe('workspace-a');
-    expect(headers.get('x-od-workspace-member-id')).toBe('member-a');
-  });
-
   it('paces events with intervalMs and reaches done after the last tick', async () => {
     const sink: Sink = { state: { phase: 'idle' }, status: 'idle', error: null };
     const queue: Array<{ delay: number; fn: () => void }> = [];

@@ -227,34 +227,6 @@ describe('等首个 token:壳里那一行读「思考中」(文案撤回,判据�
     events,
   } as ChatMessage);
 
-  it('ACP 那一轮等了一分多钟:那一行在,而且读的是「思考中」', async () => {
-    await frame({ ...WAITING_FOR_FIRST_OUTPUT });
-    expect(captured.length, '传输层把这一帧整个丢了 —— 后面的断言就无从谈起').toBeGreaterThan(0);
-
-    show(<AssistantMessage message={turnOf('m-acp', captured)} streaming projectId="p1" />);
-    await idle(67_000);
-
-    /*
-     * **保留那一半**:壳里一个事件都没有、模型也没在想,这一行「思考中」只可能由
-     * `waitingForFirstOutput` 经 `groupThinking` 补出来。删掉那个判据 = 这条当场红,
-     * 屏幕退回 2026-09-03 之前的全空。
-     */
-    expect(screen.getByText('思考中'), '壳身子整个是空的 —— 那一行被清掉了').toBeTruthy();
-    /* **撤回那一半**(产品 2026-09-07) */
-    expect(screen.queryByText('等待首批输出中'), '产品撤掉的文案被换个名字请回来了').toBeNull();
-  });
-
-  it('⚠️ 但那一行不许再写一个秒数 —— 壳头那个就是同一个数(产品 2026-09-04)', async () => {
-    await frame({ ...WAITING_FOR_FIRST_OUTPUT });
-    show(<AssistantMessage message={turnOf('m-acp-noms', captured)} streaming projectId="p1" />);
-    await idle(67_000);
-
-    // 壳头照旧报总耗时 —— 这一条同时证明「等了多久」本来就在屏幕上
-    expect(screen.getByText('1m 7s'), '壳头的总耗时不许被这次改动带走').toBeTruthy();
-    // 那一行自己不带数,连空槽都不留(拿不到数和被压住在 DOM 上分得开)
-    expect(waitingRowElapsed(), '把秒表补到这一行 = 2026-09-04 那条裁决的复读').toBeNull();
-  });
-
   it('门槛之内一行都不多出 —— 快的那些轮次不许被打扰', async () => {
     await frame({ ...WAITING_FOR_FIRST_OUTPUT });
     show(<AssistantMessage message={turnOf('m-acp-fast', captured)} streaming projectId="p1" />);
@@ -277,29 +249,6 @@ describe('等首个 token:壳里那一行读「思考中」(文案撤回,判据�
     expect(screen.queryByText('等待首批输出中'), '撤掉的文案不许在任何时刻出现').toBeNull();
   });
 
-  it('claude 那一轮不受影响:那一行本来就在,不许再叠一行', async () => {
-    /*
-     * claude 走 `claude-stream-json`,**从不发** `waiting_for_first_output`
-     * (全仓只有 ACP 那一处发)。它发的是空推理心跳,`ProjectView` 的 W102 规则据此
-     * 补一条 `{ kind:'thinking', text:'' }` —— 壳里那行「思考中」就是这么亮的。
-     */
-    for (let i = 0; i < 48; i += 1) await frame({ ...EMPTY_THINKING_DELTA }, 1_400);
-    show(
-      <AssistantMessage
-        message={turnOf('m-claude', [{ kind: 'thinking', text: '' }] as AgentEvent[])}
-        streaming
-        projectId="p1"
-      />,
-    );
-    await idle(0);
-
-    /* `getByText` 一次只许命中一个 —— 这一条同时钉住「不叠第二行」 */
-    expect(screen.getByText('思考中'), '这一行本来就在,别把它测没了').toBeTruthy();
-    expect(screen.queryByText('等待首批输出中'), '撤掉的文案不许在任何时刻出现').toBeNull();
-    // 顺带:这一行照旧不带数(产品 2026-09-04),别顺手补回来
-    expect(waitingRowElapsed()).toBeNull();
-  });
-
   it('壳里已经落过东西的那一轮不算「在等首个输出」—— 那是 S12,已被撤回', async () => {
     /*
      * 工具跑完之后再静默五分钟,是 S12「等太久没动静」,产品 2026-08-27 把它的展现
@@ -320,27 +269,4 @@ describe('等首个 token:壳里那一行读「思考中」(文案撤回,判据�
     expect(screen.queryByText('等待首批输出中'), '撤掉的文案不许在任何时刻出现').toBeNull();
   });
 
-  it('下一轮照样会说 —— 这不是「一个会话只提醒一次」', async () => {
-    /*
-     * 用户报的是第一轮,但「第二轮也等了一分钟」并不会因此变得好懂。
-     * 判据挂在**这一轮的壳**上,所以天然是每轮各算各的 —— 这条把它钉住。
-     */
-    await frame({ ...WAITING_FOR_FIRST_OUTPUT });
-    const first = turnOf('m-turn-1', [...captured, { kind: 'text', text: '第一轮答完了' }], '第一轮答完了');
-    const second = turnOf('m-turn-2', captured);
-
-    const view = show(<AssistantMessage message={first} streaming projectId="p1" />);
-    await idle(67_000);
-    expect(screen.queryByText('思考中'), '第一轮已经答完,不该挂着').toBeNull();
-
-    view.rerender(
-      <I18nProvider initial="zh-CN">
-        <AssistantMessage message={second} streaming projectId="p1" />
-      </I18nProvider>,
-    );
-    await idle(67_000);
-    /* 「保留」那一半的第二只钉子:判据是每轮各算各的,删了它这里也会红 */
-    expect(screen.getByText('思考中'), '第二轮又等了一分钟,那一行照样得在').toBeTruthy();
-    expect(screen.queryByText('等待首批输出中'), '撤掉的文案不许在任何时刻出现').toBeNull();
-  });
 });

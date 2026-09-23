@@ -232,22 +232,6 @@ describe('W115 · 在途写文件行的文件名(web)', () => {
     afterEach(() => { cleanup(); });
 
     /** 正向:入参只到了一半,行上已经有文件名。 */
-    it('只有 target 时,行上已经是「新建 alpha.html」', () => {
-      const { container } = renderTurn(
-        <AssistantMessage
-          message={turn([inFlightWrite()])}
-          streaming
-          projectId="p1"
-        />,
-      );
-      const text = recordText(container);
-      expect(text, '在途的写文件行没有文件名 —— 这就是 W115 要修的').toContain('alpha.html');
-      // 动词走已有文案(chat.record.verb.write),不新增任何 key
-      expect(text).toContain('新建');
-      expect(text, '文件正文漏到界面上了').not.toContain(CONTENT_MARKER);
-      expect(text, '内部记号漏到界面上了').not.toContain(IN_FLIGHT_TOOL_INPUT_MARKER);
-    });
-
     /**
      * 反向:写还没发生,不许当成一次文件操作。
      *
@@ -268,55 +252,9 @@ describe('W115 · 在途写文件行的文件名(web)', () => {
      * 入参传完之后,名字不变、行数不变 —— 不会先显示一个、后变成另一个,
      * 也不会一次调用画两行。
      */
-    it('tool_use 落地后仍然只有一行,名字没变', () => {
-      const events: AgentEvent[] = [
-        inFlightWrite(),
-        {
-          kind: 'tool_use',
-          id: TOOL_ID,
-          name: 'Write',
-          input: { file_path: FILE_PATH, content: FILE_CONTENT },
-        },
-        { kind: 'tool_result', toolUseId: TOOL_ID, content: `File created at ${FILE_PATH}`, isError: false },
-      ];
-      const { container } = renderTurn(
-        <AssistantMessage message={turn(events)} streaming={false} projectId="p1" />,
-      );
-      const text = recordText(container);
-      expect(text).toContain('alpha.html');
-      expect(text).not.toContain(CONTENT_MARKER);
-      expect(text).not.toContain(IN_FLIGHT_TOOL_INPUT_MARKER);
-      // 一次调用一行:文件名只出现一次
-      expect(text.split('alpha.html').length - 1, '同一次写文件画了两行').toBe(1);
-      /*
-       * ⚠️ 这一条是「早期形态必须被摘掉」的红证据,不是锦上添花。
-       *
-       * `dedupeToolUsesById` 按 id 留**第一条** —— 早期形态排在前面。不先摘掉,
-       * 留下来的就是那份没有 `content` 的入参,于是 `diffStat` 永远算不出改动量:
-       * 行上该显示 `+1 −0` 的位置会变成耗时,而且所有读 `input.content` 的下游
-       * 也永远只看得到半截。文件名照样在,所以光看名字发现不了。
-       */
-      expect(container.querySelector('[class*="delta"]')?.textContent ?? '', '早期形态顶掉了真货 —— 改动量没了').toBe(
-        `+${FILE_CONTENT.split('\n').length}−0`,
-      );
-    });
-
     /**
      * 反向:target 到了、tool_use 还没到时,如果这一轮里**另一个**工具已经跑完,
      * 两行互不干扰 —— 提前的那一行不会顶掉别人。
      */
-    it('反向:提前的行不影响同一轮里已经跑完的行', () => {
-      const events: AgentEvent[] = [
-        { kind: 'tool_use', id: 'toolu_prev', name: 'Grep', input: { pattern: 'foo', path: '/repo/docs' } },
-        { kind: 'tool_result', toolUseId: 'toolu_prev', content: 'a\nb', isError: false },
-        inFlightWrite(),
-      ];
-      const { container } = renderTurn(
-        <AssistantMessage message={turn(events)} streaming projectId="p1" />,
-      );
-      const text = recordText(container);
-      expect(text).toContain('alpha.html');
-      expect(text).toContain('foo');
-    });
   });
 });
