@@ -1,115 +1,115 @@
 import type { Dict } from '../types';
 
 export const ko: Dict = {
-  'invite.header.eyebrow': "Team invitation",
-  'invite.loading': "Loading invitation…",
-  'invite.landing.title': "Join the team",
-  'invite.landing.subtitle': "You’ve been invited to collaborate in CapyDesign.",
-  'invite.landing.roleLabel': "Role",
-  'invite.landing.invitedEmail': "Invited email",
-  'invite.landing.expires': "Expires",
-  'invite.role.admin': "Admin",
-  'invite.role.member': "Member",
-  'invite.role.admin.desc': "Can manage members, seats, and all project settings.",
-  'invite.role.member.desc': "Can create your own projects, and view and comment on shared team projects.",
-  'invite.accept.cta': "Accept invitation",
-  'invite.accountMismatch.title': "You’re signed in as a different account",
-  'invite.accountMismatch.body': "This invitation was sent to a different email address. You can continue with your current account, or switch accounts.",
-  'invite.accountMismatch.continue': "Continue with current account",
-  'invite.accountMismatch.switch': "Switch account",
-  'invite.accepting.title': "Joining the team…",
-  'invite.accepting.body': "Setting up your membership.",
-  'invite.success.title': "You’re in",
-  'invite.success.body': "Opening CapyDesign so you can start collaborating.",
-  'invite.success.roleReceipt': "Joined as",
-  'invite.success.enter': "Enter workspace",
-  'invite.open.cta': "Open CapyDesign",
-  'invite.open.opening': "Opening CapyDesign…",
-  'invite.open.retry': "Already installed? Try opening again",
-  'invite.notInstalled.title': "Didn’t open automatically?",
-  'invite.notInstalled.body': "You may not have CapyDesign installed yet. Install it, then reopen this link to finish joining.",
-  'invite.notInstalled.download': "Download CapyDesign",
-  'invite.error.title': "Can’t accept this invitation",
-  'invite.error.invite_expired': "This invitation has expired. Ask an admin to send a new one.",
-  'invite.error.invite_consumed': "This invitation has already been used.",
-  'invite.error.workspace_seat_limit_reached': "The team has no seats left. Ask an admin to free up a seat or add more.",
-  'invite.error.workspace_subscription_locked': "The team’s subscription is inactive, so new members can’t join right now.",
-  'invite.error.workspace_not_found': "This workspace no longer exists.",
-  'invite.error.workspace_forbidden': "Your account isn’t allowed to accept this invitation.",
-  'invite.error.invite_unavailable': "This invitation is no longer available.",
-  'invite.error.generic': "Something went wrong. Please try again.",
-  'invite.error.retry': "Try again",
-  "workspaceInvite.dialogAria": "Invite members",
-  "workspaceInvite.title": "Invite members to your team",
-  "workspaceInvite.freePlanBody": "The free plan includes 1 seat. Inviting teammates will guide you to upgrade to Teams.",
-  "workspaceInvite.teamPlanBody": "Invite teammates to share projects, design systems, and plugins together.",
-  "workspaceInvite.seatsExhaustedBody": "이 워크스페이스에 남은 좌석이 없습니다. 좌석을 추가하면 초대할 수 있습니다.",
-  "workspaceInvite.seatsExhaustedAction": "좌석 및 플랜 보기",
-  "workspaceInvite.emailLabel": "Invite members by email",
-  "workspaceInvite.roleLabel": "Assign role",
-  "workspaceInvite.defaultRoleLabel": "Default role",
-  "workspaceInvite.emailPlaceholder": "Enter email address…",
-  "workspaceInvite.removeRow": "Remove",
-  "workspaceInvite.addMember": "Add member",
-  "workspaceInvite.visibilityQuestion": "Will team members see my designs?",
-  "workspaceInvite.visibilityAnswer": "Team members can see designs you share to the team space. Private designs kept in Personal projects are not visible to others.",
-  "workspaceInvite.sent": "Invitation sent",
-  "workspaceInvite.sending": "Inviting…",
-  "workspaceInvite.confirm": "Confirm and invite",
-  "workspaceInvite.submitFailed": "Failed to send invitation. Try again later.",
-  "workspaceInvite.errorAlreadyMember": "이 이메일은 이미 팀 멤버입니다.",
-  "workspaceInvite.errorPendingInvite": "이 이메일에는 이미 대기 중인 초대가 있습니다.",
-  "workspaceInvite.errorNoSession": "멤버를 초대하기 전에 Vela 계정에 로그인하세요.",
-  "workspaceInvite.errorNoWorkspace": "아직 멤버를 초대할 팀 워크스페이스가 없습니다.",
-  "workspaceInvite.errorUnreachable": "초대를 보내지 못했습니다. 잠시 후 다시 시도하세요.",
-  'chat.amrCard.switchTitle': '모델 호출 실패 — 이 작업이 일시중지되었습니다',
-  'chat.amrCard.switchBody': 'CapyDesign Cloud 공식 모델 서비스로 전환하세요 — API 키 설정이 필요 없습니다. 로그인・인증・충전이 완료되면 이 작업이 자동으로 재시도됩니다.',
-  'chat.amrCard.chipOfficial': '공식 호스팅',
-  'chat.amrCard.chipNoKey': 'API 키 불필요',
-  'chat.amrCard.chipAutoRetry': '로그인 후 자동 재시도',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrCard.switchCta': 'Cloud로 전환',
-  'chat.amrError.authMessage': 'CapyDesign Cloud 계정이 아직 인증되지 않았습니다. 인증하면 이 작업이 자동으로 재시도됩니다.',
-  'chat.amrError.balanceMessage': 'CapyDesign Cloud 잔액이 부족합니다. 충전하여 이 작업을 계속 진행하세요.',
+  
+  
   'chat.amrError.authorizeCta': '인증하고 재시도',
   'chat.amrError.rechargeCta': '충전',
-  'chat.amrBalanceGate.title': '업그레이드하고 계속 만들기',
-  'chat.amrBalanceGate.message': '크레딧이 부족합니다(현재 {balance}). 요금제 업그레이드 또는 충전 후 바로 시작할 수 있습니다.',
-  'chat.amrBalanceGate.benefitsTitle': 'CapyDesign Cloud이 제공하는 것',
-  'chat.amrBalanceGate.benefit1': 'API 키 없이 다양한 모델 사용',
-  'chat.amrBalanceGate.benefit2': 'SOTA 디자인 에이전트 내장, 설정 불필요',
-  'chat.amrBalanceGate.benefit3': '신뢰할 수 있는 공식 서비스',
-  'chat.amrBalanceGate.benefit4': '계속 진화: 원클릭 배포·멀티모달·팀 버전 등',
-  'chat.amrBalanceGate.laterCta': '나중에',
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrBalanceGate.plansCta': '요금제 업그레이드',
-  'chat.amrBalanceGate.signedOutTitle': '로그인하고 창작 시작하기',
-  'chat.amrBalanceGate.signedOutMessage': 'CapyDesign Cloud 에이전트를 사용 중입니다. 로그인하면 이 작업을 바로 시작할 수 있습니다.',
-  'chat.amrBalanceGate.signInCta': '로그인',
-  'chat.amrBalanceGate.watchingWallet': '잔액이 반영되면 자동으로 계속됩니다.',
-  'chat.amrArtifactUpgrade.title': '더 강력한 모델로 계속 다듬어 보세요',
-  'chat.amrArtifactUpgrade.message': '고급 모델, 더 많은 병렬 작업, 더 많은 월간 크레딧을 이용하세요.',
-  'chat.amrArtifactUpgrade.benefit1': 'Fable 5, GPT-5.6 등 더 많은 고급 모델',
-  'chat.amrArtifactUpgrade.benefit2': '동시 작업 처리량 최대 10배',
-  'chat.amrArtifactUpgrade.benefit3': '월간 크레딧 최대 300배',
-  'chat.amrArtifactUpgrade.benefit4': '피크 시간대 우선 처리로 더 빠르게 생성',
-  'chat.amrArtifactUpgrade.promoBanner': '기간 한정: 구독 요금제 최대 67% 할인',
-  'chat.amrArtifactUpgrade.countdownLabel': '종료까지',
-  'chat.amrArtifactUpgrade.plansCta': '지금 업그레이드하고 최대 67% 할인',
-  'chat.amrArtifactUpgrade.homePlansCta': '67% 할인받기',
-  'chat.amrArtifactUpgrade.laterCta': 'Free로 계속하고 보내기',
-  'chat.amrArtifactUpgrade.homeTitle': '작품이 준비되었습니다. 다음 아이디어를 더 멀리 발전시키세요.',
-  'chat.amrArtifactUpgrade.homeMessage': '더 강력한 모델, 더 많은 병렬 작업, 더 많은 월간 크레딧을 이용하세요.',
-  'chat.amrArtifactUpgrade.homeArtifactCta': '작품 보기',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.antigravityError.launchTerminalCta': '터미널에서 로그인',
   'chat.antigravityError.launchSwitchModelCta': '터미널에서 모델 전환',
   'chat.connectionDropped': '네트워크 연결이 정상인지 확인한 후 다시 시도하세요.',
   'chat.runError.title.authRequired': '권한 부여 필요',
-  'chat.runError.title.balance': '잔액 부족',
+  
   'chat.runError.title.connectionDropped': '네트워크 연결이 끊겼습니다',
-  'chat.runError.title.signInRequired.other': '{agent}에 로그인되지 않음',
-  'chat.runError.title.signInRequired.amr': 'CapyDesign에 로그인되지 않음',
+  
+  
   'chat.runError.title.rateLimited': '모델 서비스 요청이 많습니다',
   'chat.runError.title.modelWindowLimit': '사용량이 많습니다',
-  'chat.runError.title.membershipConcurrencyLimit': '동시 작업 한도 도달',
+  
   'chat.runError.title.strategyTaskHalted': "품질 게이트가 작업을 중단함",
   'chat.runError.title.agentReplyIncomplete': "답변은 왔지만 기록되지 않음",
   'chat.runError.title.clarificationRepeated': "에이전트가 질문을 한 번 더 했습니다",
@@ -117,8 +117,8 @@ export const ko: Dict = {
   'chat.runError.title.generic': '작업 실패',
   'chat.runError.title.artifactMissing': "미리 볼 파일이 없음",
   'chat.runError.artifactMissingMessage': "이번 작업에서는 미리 볼 파일이 생성되지 않았습니다. 생성할 내용을 보완한 후 다시 시도하세요.",
-  'chat.runError.signInMessage.amr': '프로젝트를 확인하고 대화를 이어가려면 먼저 로그인하세요.',
-  'chat.runError.signInMessage.other': '먼저 {agent}에 로그인한 후 다시 시도하세요.',
+  
+  
   'chat.runError.agentFallback': '에이전트',
   'chat.runError.sourceLabel': '오류 세부 정보',
   'chat.runError.sourceExpandAria': '오류 소스 펼치기',
@@ -139,8 +139,8 @@ export const ko: Dict = {
   'chat.runError.rateLimitedMessage': '현재 이 모델 서비스에 요청이 많아 제공업체의 요청 빈도 상한에 도달했습니다. 잠시 후 다시 시도하거나 다른 모델로 전환해 보세요.',
   'chat.runError.modelWindowLimitMessage': '사용량이 많습니다. {retryAt} 이후에 다시 시도해 주세요. 이번 요청은 청구되지 않았습니다.',
   'chat.runError.modelWindowLimitMessageNoTime': '사용량이 많습니다. 잠시 후 다시 시도해 주세요. 이번 요청은 청구되지 않았습니다.',
-  'chat.runError.membershipConcurrencyLimitMessage': '멤버십의 동시 작업 한도가 가득 찼습니다. {retryAt}까지 기다린 뒤 다시 시도하거나 다른 에이전트로 전환하세요. 즉시 재시도해도 해결되지 않습니다.',
-  'chat.runError.membershipConcurrencyLimitMessageNoTime': '멤버십의 동시 작업 한도가 가득 찼습니다. 다른 작업이 끝난 뒤 다시 시도하거나 다른 에이전트로 전환하세요.',
+  
+  
   'chat.runError.upstreamUnavailableMessage': '현재 모델을 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도하거나 모델을 변경하세요.',
   'chat.runError.toolLoopMessage': '{agent}이(가) 같은 작업을 진전 없이 반복하여 중지되었습니다. 대상 파일이나 명령을 확인한 뒤 다시 시도하세요.',
   'chat.runError.outputInvalidMessage': '다시 생성해 보거나 모델을 변경한 후 재시도하세요. 문제가 계속되면 지원팀에 문의하세요.',
@@ -154,7 +154,7 @@ export const ko: Dict = {
   'chat.runError.title.cpuUnsupported': "프로세서 미지원",
   'chat.runError.title.cliSessionRefused': "에이전트 버전 비호환",
   'chat.runError.quotaExhaustedMessage': "사용 중인 모델 서비스의 할당량 또는 청구 한도를 모두 사용해 재시도해도 복구되지 않습니다. 해당 서비스에서 충전하거나 다른 모델/서비스로 전환하세요.",
-  'chat.runError.workspaceCreditsMessage': "워크스페이스 크레딧이 모두 소진되었습니다. 크레딧을 추가(또는 워크스페이스 관리자에게 충전 요청)하거나 다른 모델/서비스로 전환하세요.",
+  
   'chat.runError.timedOutMessage': "AI의 새 응답이 오랫동안 오지 않아 이번 실행을 중단했습니다. 잠시 후 다시 시도해 주세요.",
   'chat.runError.inactivityTimeoutMessage': "AI의 새 응답이 오랫동안 오지 않아 이번 실행을 중단했습니다. 잠시 후 다시 시도해 주세요.",
   'chat.runError.emptyOutputMessage': "에이전트가 아무 출력도 없이 종료되었습니다. 대개 일시적이므로 다시 시도하세요.",
@@ -163,8 +163,8 @@ export const ko: Dict = {
   'chat.runError.cpuUnsupportedMessage': "이 에이전트의 런타임은 이 기기의 CPU가 지원하지 않는 명령어 집합(AVX2)을 필요로 하여 시작할 수 없습니다. 호환 런타임이 포함된 최신 버전의 CapyDesign으로 업데이트하세요.",
   'chat.runError.title.agentCrashed': '작업이 예기치 않게 중단되었습니다',
   'chat.runError.agentCrashedMessage': '다시 생성해 보거나 모델을 변경한 후 재시도하세요. 문제가 계속되면 지원팀에 문의하세요.',
-  'chat.runError.title.accountSuspended': '계정이 정지되었습니다',
-  'chat.runError.accountSuspendedMessage': '사유를 확인하거나 복구를 신청하려면 지원팀에 문의하세요.',
+  
+  
   "chat.runError.fallbackMessage": "이번에는 완료하지 못했습니다. 계속 발생하면 로그를 보내 주세요.",
   'chat.runError.cliSessionRefusedMessage':
     "{agent}이(가) 세션 시작을 거부했습니다. 보통 현재 버전이 CapyDesign과 호환되지 않습니다. 다른 버전으로 바꾼 뒤 다시 시도하세요.",
@@ -340,17 +340,17 @@ export const ko: Dict = {
   'settings.onboardingSystemsBody': '브랜드 시스템을 선택하거나 생성하여 생성된 작업물이 실제 색상, 타이포그래피, 제품 언어를 따르도록 하세요.',
   'settings.onboardingExecutionTitle': '모델 소스 선택',
   'settings.onboardingExecutionBody': 'CapyDesign Hosted를 사용하거나 로컬 에이전트를 연결하거나 자신의 모델 키를 사용하세요.',
-  'settings.onboardingAmrCloudBenefitOfficial': '공식 추천',
-  'settings.onboardingAmrCloudBenefitReady': '배포 없이 사용',
+  
+  
   'settings.onboardingAmrCloudBenefitModels': '한정 할인과 높은 동시 처리량으로 Claude, GPT, Fable 5, 5.6 sol을 이용하세요.',
-  'settings.onboardingAmrCloudBenefitPricing': 'SOTA 하네스',
-  'settings.onboardingAmrCloudUpcomingLabel': '곧 지원',
-  'settings.onboardingAmrCloudUpcomingImageVideo': '이미지/비디오',
-  'settings.onboardingAmrCloudUpcomingSkills': '방대한 Skills',
-  'settings.onboardingAmrCloudUpcomingRouting': '스마트 라우팅',
+  
+  
+  
+  
+  
   'settings.onboardingAmrModelSourceLabel': 'CapyDesign Hosted',
-  'settings.onboardingAmrCloudAuthorizeAction': 'CapyDesign Cloud 인증',
-  'settings.onboardingAmrCloudAuthorizedAction': '인증됨',
+  
+  
   'settings.onboardingStepConnect': 'Connect',
   'settings.onboardingStepDesignSystem': '디자인 시스템 구축',
   'settings.onboardingStepProfile': 'About you',
@@ -363,15 +363,15 @@ export const ko: Dict = {
   'settings.onboardingCloudBody': '로그인하면 클라우드 AI로 바로 디자인을 시작할 수 있습니다. 복잡한 설정이 전혀 필요 없습니다.',
   'settings.onboardingCloudSignIn': 'CapyDesign에 로그인',
   'settings.onboardingCloudContinue': '계속 (로그인됨)',
-  'settings.onboardingCloudAlternative': '로컬 CLI 또는 자체 API 키 사용',
+  
   'settings.onboardingCloudRights': 'All rights reserved.',
   'settings.onboardingCloudOr': '또는',
   'settings.onboardingGateTooltipNoRuntime': '다음 단계는 AI로 실행됩니다 — 계속하려면 실행 방식을 선택하세요.',
-  'settings.onboardingGateTooltipAmr': '다음 단계는 AI로 실행됩니다 — 계속하려면 CapyDesign Cloud에 로그인하세요.',
+  
   'settings.onboardingGateTooltipLocal': '다음 단계는 AI로 실행됩니다 — 계속하려면 사용 가능한 로컬 CLI를 선택하세요.',
   'settings.onboardingGateTooltipByok': '다음 단계는 AI로 실행됩니다 — 계속하려면 모델 키를 추가하고 테스트하세요.',
   'settings.onboardingRecommended': '추천',
-  'settings.onboardingAmrCloudOfficialBadge': '공식',
+  
   'settings.onboardingLocalTitle': '로컬 에이전트',
   'settings.onboardingLocalBody': 'Claude Code, Codex, Cursor, OpenCode, Kimi, Qwen, Hermes, Kiro 등을 사용할 수 있습니다.',
   'settings.onboardingLocalAction': 'Open CLI settings',
@@ -417,7 +417,7 @@ export const ko: Dict = {
   'settings.onboardingSelectPlaceholder': '하나 선택',
   'settings.onboardingSelectMultiplePlaceholder': '하나 이상 선택',
   'settings.onboardingOrgSolo': '개인 (1)',
-  'settings.onboardingOrgTeam': '소규모 팀 (2-10)',
+  
   'settings.onboardingOrgStartup': '스타트업 / 중소기업 (11-50)',
   'settings.onboardingOrgGrowth': '성장 기업 (51-200)',
   'settings.onboardingOrgMidMarket': '중견기업 (201-1000)',
@@ -460,7 +460,7 @@ export const ko: Dict = {
   'settings.modeApi': 'API 제공자',
   'settings.cloudCalloutTitle': 'CapyDesign Cloud 사용',
   'settings.cloudCalloutBody': '클라우드 버전에 로그인하면 팀 스페이스, 공유 프로젝트, 멤버 권한, 감사 대시보드를 사용할 수 있습니다.',
-  'settings.cloudCalloutButton': '로그인 / 가입',
+  
   'settings.modeApiMeta': 'API 제공업체',
   'settings.byokNoFileToolsNotice': 'BYOK는 프로젝트 파일을 읽거나 쓰거나 편집할 수 없습니다. 코드 변경이 필요한 경우 Local CLI를 사용하세요.',
   'settings.byokDraftNotice': '필수 항목을 입력하면 이 제공업체를 저장할 수 있습니다. 현재 설정은 계속 활성 상태로 유지됩니다.',
@@ -507,29 +507,29 @@ export const ko: Dict = {
   'settings.agentInstallGroup': '설치 가능 ({count})',
   'settings.agentAuthRequired': '인증 필요',
   'settings.agentAuthUnknown': '인증 상태를 알 수 없음',
-  'settings.amrCloud': 'CapyDesign Cloud',
-  'settings.amrAuthorize': '승인',
+  
+  
   'settings.amrBenefitOfficial': '공식',
-  'settings.amrBenefitLowerPrice': '더 저렴한 비용',
+  
   'settings.amrBenefitManyModels': '다양한 모델',
-  'settings.amrPromoBonus': '한정 보너스: +100%',
-  'settings.amrSignInToContinue': '계속하려면 로그인하세요',
+  
+  
   'settings.amrSignIn': '로그인',
   'settings.amrSignedIn': '로그인됨',
-  'settings.amrWalletBalance': 'Wallet balance',
+  
   'settings.amrWalletUnavailable': 'Balance temporarily unavailable',
-  'settings.amrWalletUpdatedAt': 'Updated {time}',
-  'settings.amrWalletCached': 'cached',
-  'settings.amrWalletRefresh': 'Refresh',
-  'settings.amrWalletRefreshTitle': 'Refresh CapyDesign Cloud wallet balance',
-  'settings.amrNotSignedIn': '로그인되지 않음',
+  
+  
+  
+  
+  
   'settings.amrSigningIn': '로그인 중…',
   'settings.amrActivationHint': '로그인 페이지가 열리지 않았나요? 아래 버튼을 눌러 다시 엽니다.',
   'settings.amrActivationBrowserFailed': '브라우저를 자동으로 열지 못했습니다. 아래 로그인 페이지를 열어 계속하세요.',
   'settings.amrActivationOpen': '로그인 페이지 열기',
   'settings.amrCancelSignIn': '로그인 취소',
-  'settings.amrAccountStatus': 'CapyDesign Cloud 계정 상태',
-  'settings.amrConsole': '관리',
+  
+  
   'settings.amrBalance': '사용 한도',
   'settings.amrPlan': '플랜',
   'settings.amrUpgrade': '업그레이드',
@@ -537,13 +537,13 @@ export const ko: Dict = {
   'settings.amrLoginErrorCompact': 'CapyDesign Cloud 로그인에 실패했습니다.',
   'settings.advanced': '고급',
   'settings.amrLogin': '로그인',
-  'settings.amrLogout': '로그아웃',
-  'settings.amrLoggingIn': '로그인 중…',
-  'settings.amrLoggingOut': '로그아웃 중…',
-  'settings.amrLoggedInAs': '{email} 계정으로 로그인됨',
-  'settings.amrLoggedInWithPlan': '{email}(으)로 로그인됨 · {plan}',
-  'settings.amrLoggedInPill': '로그인됨',
-  'settings.amrNotLoggedIn': '로그인되지 않음',
+  
+  
+  
+  
+  
+  
+  
   'settings.apiSection': 'Anthropic API',
   'settings.quickFillProvider': '제공자 빠른 입력',
   'settings.providerPreset': '제공업체 프리셋',
@@ -625,7 +625,7 @@ export const ko: Dict = {
   'settings.modelUsesCliDefault': 'CLI 기본값',
   'settings.modelSourceFallback': '내장 목록',
   'settings.reasoningPicker': '추론 (Reasoning)',
-  'settings.serviceTierPicker': '서비스 티어',
+  
   'settings.modelPickerHint': 'CLI가 `models` 명령어를 지원할 때 가져옵니다. "Default"는 CLI 자체 설정을 따르며, "직접 입력…"을 선택하면 CLI가 허용하는 모델 ID를 입력할 수 있습니다.',
   'settings.modelPickerLiveHint': '설치된 CLI에서 모델을 새로 고쳤습니다. 기본값은 계속 CLI 구성을 사용합니다.',
   'settings.modelPickerLiveCatalogOnlyHint': '설치된 CLI에서 모델을 새로 고쳤습니다.',
@@ -766,21 +766,21 @@ export const ko: Dict = {
   'entry.mailAria': '궁금한 점은 이메일로 문의하기',
   'entry.accountSettings': '설정',
   'chat.collapsePane': '대화 패널 접기',
-  'collabPresence.ariaOne': '1 collaborator online',
-  'collabPresence.aria': '{count} collaborators online',
-  'collabPresence.ariaWithSelfOne': '1 collaborator online, including you',
-  'collabPresence.ariaWithSelf': '{count} collaborators online, including you',
-  'collabPresence.moreOnline': '{count} more online',
-  'collabPresence.dialogTitle': 'Online collaborators',
-  'collabPresence.onlineCount': '{count} online',
-  'collabPresence.selfBadge': 'You',
-  'collabPresence.roleOwner': 'Owner',
-  'collabPresence.roleAdmin': 'Admin',
-  'collabPresence.roleMember': 'Member',
-  'collabPresence.viewingFileSelf': 'You are viewing {file}',
-  'collabPresence.viewingFileOther': 'Viewing {file}',
-  'collabPresence.viewingProjectSelf': 'You are viewing this project',
-  'collabPresence.viewingProjectOther': 'Viewing this project',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'entry.followXLabel': 'X에서 @OpenDesignHQ 팔로우하기',
   'entry.followThreadsLabel': 'Follow CapyDesign on Threads',
   'entry.youtubeLabel': 'CapyDesign on YouTube',
@@ -800,7 +800,7 @@ export const ko: Dict = {
   "entry.billingTierTeam": "Teams",
   "entry.billingTierFree": "Free",
   "entry.billingTierPro": "Pro",
-  "entry.billingFamilyCreator": "크리에이터 멤버십",
+  
   "entry.creditsAria": "{tier} · credits remaining",
   "entry.creditsAriaWithBalance": "{tier} · {balance} credits remaining",
   "entry.creditsGrantTip": "Teams credits are granted by subscription allowance. Usage is available in billing.",
@@ -812,12 +812,12 @@ export const ko: Dict = {
   "entry.creditsMemberNoticeTitle": "Need more credits?",
   "entry.creditsMemberNoticeBody": "You are currently a Member and cannot add credits yourself. Ask a team Admin to increase the allowance when you need more.",
   "entry.creditsMemberNoticeAction": "Ask Admin to increase allowance",
-  "entry.accountToggleTheme": "Toggle theme",
-  "entry.accountSwitchLanguage": "Switch language",
-  "entry.accountLanguageMeta": "中文 / English",
+  
+  
+  
   "entry.accountGithubHelp": "Get help on GitHub",
   "entry.accountFeatureRequest": "Submit feature request",
-  "entry.accountAddAccount": "Add account",
+  
   "entry.accountSignOut": "Sign out",
   "signOut.confirmTitle": "로그아웃",
   "signOut.confirmMessage": "정말 로그아웃하시겠어요?",
@@ -829,8 +829,8 @@ export const ko: Dict = {
   "entry.blankAllProjectsTitle": "No team projects yet",
   "entry.blankAllProjectsDescription": "Projects shared to the team will appear here for everyone in the workspace.",
   "entry.blankCreate": "New project",
-  'entry.workspaceTeamsTitle': 'Workspace 팀 버전 — 팀에 필요한 것을 알려주세요',
-  'entry.workspaceTeamsAria': 'Workspace 팀 버전 페이지 열기',
+  
+  
   'entry.navExpand': '사이드바 펼치기',
   'entry.navCollapse': '사이드바 접기',
   'entry.navNewProject': '새 프로젝트',
@@ -848,18 +848,18 @@ export const ko: Dict = {
   'entry.draftsDescription': 'Projects you created, visible only to you',
   'entry.allProjectsDescription': 'Projects owned by everyone on the team',
   'entry.navBoard': 'Board',
-  'entry.navTeamSection': 'Team',
+  
   'entry.teamSlotNote': 'This space is provided by the team service. Integration is in progress.',
-  "entry.cloudCalloutTitle": "CapyDesign Cloud",
-  'entry.cloudRecovering': 'Account connection interrupted. Recovering automatically…',
+  
+  
   'entry.authExpiredBody': 'Your sign-in has expired. Sign in to continue using CapyDesign Cloud.',
   'home.createFailed': 'Failed to start the run. Try again.',
   'home.daemonRecovering': 'Local service connection interrupted. Recovering automatically…',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
-  "entry.cloudCalloutBody": "로그인하여 CapyDesign Cloud를 사용하고 클라우드에서 협업하세요",
-  "entry.cloudCalloutDismissAria": "CapyDesign Cloud 안내 닫기",
-  'entry.workspaceLockedNote': 'This workspace is locked. Restore billing to resume editing shared projects.',
-  'entry.workspaceLockedRecover': 'Restore access',
+  
+  
+  
+  
   'messageCenter.openAria': 'Open message center',
   'messageCenter.unreadCount': '{count} unread',
   'messageCenter.title': 'Message center',
@@ -889,8 +889,8 @@ export const ko: Dict = {
   'goPlanSunset.confirming': 'Confirming…',
   'goPlanSunset.acknowledge': 'Got it',
   'workspaceTabs.project': '프로젝트',
-  'workspaceTabs.pluginDetails': '플러그인 세부 정보',
-  'workspaceTabs.marketplace': '마켓플레이스',
+  
+  
   'homeHero.title': '오늘 당신의 에이전트와 무엇을 디자인하시겠어요?',
   'homeHero.startWithTemplate': '템플릿으로 시작하기…',
   'homeHero.startBlankProject': '빈 프로젝트로 시작',
@@ -1057,7 +1057,7 @@ export const ko: Dict = {
   'handoff.frameworkPrompt.solid': 'SolidJS',
   'handoff.frameworkPrompt.next': 'Next.js / React',
   'handoff.frameworkPrompt.vanilla': '바닐라 JavaScript, HTML, CSS',
-  'handoff.amrWebsite': 'CapyDesign Cloud 웹사이트 열기',
+  
   'handoff.copyPrompt': '프롬프트 복사',
   'handoff.copyPromptForTarget': '{target}용 프롬프트 복사',
   'handoff.copied': '복사됨',
@@ -1111,7 +1111,7 @@ export const ko: Dict = {
   'recentProjects.sortName': 'Name',
   'recentProjects.viewList': 'List view',
   'recentProjects.sharedBadge': 'Shared',
-  'recentProjects.sharedProjectFallbackName': 'Shared project',
+  
   'recentProjects.creatorLine': 'Created by {name}',
   'recentProjects.selfCreator': 'Me',
   'recentProjects.teamMemberCreator': 'Team member',
@@ -1670,7 +1670,7 @@ export const ko: Dict = {
   'connectors.title': '커넥터',
   'connectors.subtitle': '라이브 아티팩트에 연결할 수 있는 로컬 및 향후 데이터 소스입니다.',
   'connectors.account': '계정',
-  'connectors.noAccount': '연결되지 않음',
+  
   'connectors.tools': '도구',
   'connectors.connect': '연결',
   'connectors.disconnect': '연결 해제',
@@ -2016,8 +2016,8 @@ export const ko: Dict = {
   'avatar.useApi': 'API · BYOK 사용',
   'avatar.codeAgent': '코드 에이전트',
   'avatar.rescan': 'PATH 다시 스캔',
-  'avatar.amrConsole': 'CapyDesign Cloud 계정',
-  'avatar.amrConsoleMeta': '잔액 및 충전',
+  
+  
   'avatar.settings': '설정',
   'avatar.backToProjects': '프로젝트 목록으로 돌아가기',
   'avatar.metaActive': '활성',
@@ -2775,7 +2775,7 @@ export const ko: Dict = {
   'misc.primary': '기본색 (Primary)',
   'misc.designSystem': '디자인 시스템',
   'workspace.designFiles': '디자인 파일',
-  'workspace.focusMode': '워크스페이스 집중',
+  
   'workspace.showChat': '채팅 표시',
   'workspace.closeTab': '탭 닫기',
   'workspace.fileSyncDownloading': '팀에서 다운로드 중…',
@@ -2786,13 +2786,13 @@ export const ko: Dict = {
   'workspace.deleteSelectedFilesConfirm': '프로젝트 폴더에서 선택한 {n}개 파일을 삭제하시겠습니까?',
   'workspace.deleteSelectedFilesPartial': '{n}개 파일을 삭제하지 못했습니다.',
   'workspace.openFromDesignFiles': '디자인 파일 열기',
-  'workspace.designFilesLink': '디자인 파일',
+  
   'workspace.loadingSketch': '스케치 불러오는 중…',
   'workspace.newTab': '새 탭',
   'workspace.searchFilesPlaceholder': '파일 검색…',
   'workspace.openTabs': '열린 탭',
-  'workspace.searchTabs': 'Search tabs',
-  'workspace.noTabsFound': 'No tabs found',
+  
+  
   'workspace.openFile': '파일 열기',
   'workspace.noFilesMatch': '일치하는 파일 없음',
   'workspace.allFiles': '전체',
@@ -3203,14 +3203,14 @@ export const ko: Dict = {
   'fileViewer.presenterMode': '발표자 모드',
   'fileViewer.exitPresentation': '프레젠테이션 종료',
   'fileViewer.shareLabel': '공유',
-  'fileViewer.shareMenuShareLink': '공유',
+  
   'fileViewer.shareMenuPublishOnline': '자체 호스팅으로 공유',
-  'fileViewer.shareMenuDownload': '다운로드',
-  'fileViewer.shareMenuPresentation': '프레젠테이션',
-  'fileViewer.shareMenuSourceFiles': '소스 파일',
-  'fileViewer.shareMenuSave': '저장',
+  
+  
+  
+  
   'fileViewer.shareMenuPublishViaOd': '빠른 공유 (CapyDesign 호스팅)',
-  'fileViewer.unifiedShareAria': 'Share and export actions',
+  
   'fileViewer.unifiedShareTab': 'Share',
   'fileViewer.unifiedExportTab': 'Export',
   'fileViewer.unifiedSendTab': 'Send to...',
@@ -3226,13 +3226,13 @@ export const ko: Dict = {
   'fileViewer.publishFile': 'Publish file',
   'fileViewer.publishingFile': '만드는 중…',
   'fileViewer.unpublishFile': '공유 중지',
-  'fileViewer.shareEmptyStateTitle': '아직 공유할 항목이 없습니다',
-  'fileViewer.shareEmptyStateDescription': '팀을 만들거나 참여하면 이 파일을 동료와 공유할 수 있습니다',
-  'fileViewer.shareEmptyStateCreateTeam': '팀 만들기',
-  'fileViewer.shareTeamMissingTitle': '아직 공유할 팀이 없습니다',
+  
+  
+  
+  
 
-  'fileViewer.publishFileRequiresTeam': '공개 링크를 게시하려면 팀 워크스페이스가 필요합니다. 팀 워크스페이스로 전환하거나 배포를 사용해 이 파일을 게시하세요.',
-  'fileViewer.publishFileRequiresWorkspace': '공유 링크를 만들려면 로그인된 워크스페이스가 필요합니다. CapyDesign Cloud에 로그인하거나 배포로 이 파일을 공유하세요.',
+  
+  
   'fileViewer.publishFileFailed': '공유 링크를 만들지 못했습니다. 다시 시도하거나 아래 배포 옵션을 이용하세요.',
   'fileViewer.workspaceShareSuccess': 'Shared with workspace members',
   'fileViewer.workspaceShareFailed': 'Could not share with workspace',
@@ -3242,10 +3242,10 @@ export const ko: Dict = {
   'fileViewer.copyShareLink': '공유 링크 복사',
   'fileViewer.openSharePage': '공유 페이지 열기',
   'fileViewer.shareLinkRequiresDeploy': '링크를 받으려면 먼저 온라인에 게시하세요',
-  'fileViewer.shareLinkPublishGuide': '위에서 온라인에 게시하면 공유할 수 있습니다 ↑',
+  
   'fileViewer.shareAfterGenerationComplete': '생성이 완료되면 공유할 수 있습니다',
   'fileViewer.copyProviderLink': '{provider} 링크 복사',
-  'fileViewer.copyCloudflareLink': 'Cloudflare 링크 복사',
+  
   'fileViewer.screenshotCopying': '스크린샷 복사 중...',
   'fileViewer.screenshotCopied': '스크린샷이 클립보드에 복사되었습니다',
   'fileViewer.screenshotClipboardDenied': '브라우저가 클립보드 접근을 차단했습니다',
@@ -3404,12 +3404,12 @@ export const ko: Dict = {
   'fileViewer.cloudflareDomainPrefixPlaceholder': 'demo',
   'fileViewer.cloudflareDomainPrefixInvalid': '하나의 DNS 레이블만 사용하세요: 소문자, 숫자, 하이픈.',
   'fileViewer.cloudflareHostnamePreview': '사용자 지정 도메인 미리 보기: {hostname}',
-  'fileViewer.cloudflareCustomDomainHint': '선택 사항: 사용자 지정 도메인을 연결합니다. 비워 두어도 pages.dev 링크가 생성됩니다.',
+  
   'fileViewer.cloudflarePagesDevLinkLabel': 'pages.dev URL',
   'fileViewer.cloudflareCustomDomainLinkLabel': '사용자 지정 도메인',
   'fileViewer.optional': '선택 사항',
   'fileViewer.vercelPreviewOnly': '현재 배포는 Preview 모드만 지원합니다.',
-  'fileViewer.cloudflarePagesPreviewHint': 'Cloudflare Pages 배포는 Direct Upload를 사용합니다.',
+  
   'fileViewer.savingConfig': '설정 저장 중…',
   'fileViewer.deployConfigSaveFailed': 'Vercel 설정을 저장하지 못했습니다.',
   'fileViewer.deployFailed': '배포 실패. Vercel 설정을 확인하고 다시 시도해 주세요.',
@@ -3461,8 +3461,8 @@ export const ko: Dict = {
   'assistant.forkConversation': '새 대화 시작',
   'assistant.forkingConversation': '새 대화 시작 중…',
   'assistant.forkNote': '이전 대화에서 이어짐',
-  'assistant.shareToOpenDesign': 'CapyDesign에 공유',
-  'assistant.shareToOpenDesignBusy': '패키지 준비 중…',
+  
+  
   'assistant.feedbackPrompt': '피드백',
   'assistant.feedbackPositive': '도움 됨',
   'assistant.feedbackNegative': '도움 안 됨',
@@ -3502,10 +3502,10 @@ export const ko: Dict = {
   'chat.runError.actionBlocked.busy': "이 대화에 아직 실행 중인 작업이 있습니다. 끝난 뒤에 재시도할 수 있습니다.",
   'chat.support.channel.feishu': "Feishu 커뮤니티",
   'chat.support.channel.discord': "Discord",
-  'chat.amrBalanceOwner.title': "팀 소유자에게 충전을 요청하세요",
-  'chat.amrBalanceOwner.message': "팀 충전은 소유자만 할 수 있습니다. “{name}”님에게 충전을 요청한 뒤 계속 이용해 주세요.",
-  'chat.amrBalanceOwner.messageNoOwnerName': "팀 충전은 소유자만 할 수 있습니다. 팀 소유자에게 충전을 요청한 뒤 계속 이용해 주세요.",
-  'chat.amrBalanceOwner.dismissCta': "확인",
+  
+  
+  
+  
   'assistant.outTokens': '{n} 출력',
   'assistant.producedFiles': '이 턴에서 생성된 파일',
   'assistant.openFile': '열기',
@@ -4717,16 +4717,16 @@ export const ko: Dict = {
   // other-lane workspace destinations (members / billing / team space).
   'settings.workspace': 'Workspace',
   'settings.workspaceHint': 'Members, billing, and team spaces',
-  'settings.workspaceLede': 'Team-level settings for this workspace. These areas are managed by the team service — open one to continue.',
-  'settings.workspaceBack': 'Back to workspace',
-  'settings.workspaceMembers': 'Members & invites',
-  'settings.workspaceMembersHint': 'Manage who can access this workspace and send invitations.',
-  'settings.workspaceBilling': 'Subscription & seats',
-  'settings.workspaceBillingHint': 'Plan, seats, and payment for this workspace.',
-  'settings.workspaceAutoRecharge': 'Auto-recharge',
-  'settings.workspaceAutoRechargeHint': 'Automatically top up credits when the balance runs low.',
-  'settings.workspaceTeamSpace': 'Team space',
-  'settings.workspaceTeamSpaceHint': 'Shared projects and visibility for your team.',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   // Full-page Settings (`/settings`): sidebar nav head above the section list.
   'settings.pageBackToHome': 'Back to home',
   'settings.pageNavGroupPersonal': 'Personal',
@@ -4734,9 +4734,9 @@ export const ko: Dict = {
   'newproj.startBlank': '빈 화면',
   'newproj.startBlankHint': '처음부터 만들기',
   'workspace.pages': '페이지',
-  'workspace.allProjectFiles': '프로젝트 전체 파일',
+  
   'workspace.newBlankPage': '새 빈 페이지',
-  'workspace.noPagesYet': '아직 페이지가 없습니다',
+  
   'workspace.pageCreateFailed': '페이지를 만들지 못했습니다.',
   'workspace.pageCreatorTitle': '페이지 만들기',
   'workspace.pageCreatorSearch': '템플릿 검색',

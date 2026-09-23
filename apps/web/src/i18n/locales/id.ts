@@ -1,115 +1,115 @@
 import type { Dict } from '../types';
 
 export const id: Dict = {
-  'invite.header.eyebrow': "Team invitation",
-  'invite.loading': "Loading invitation…",
-  'invite.landing.title': "Join the team",
-  'invite.landing.subtitle': "You’ve been invited to collaborate in CapyDesign.",
-  'invite.landing.roleLabel': "Role",
-  'invite.landing.invitedEmail': "Invited email",
-  'invite.landing.expires': "Expires",
-  'invite.role.admin': "Admin",
-  'invite.role.member': "Member",
-  'invite.role.admin.desc': "Can manage members, seats, and all project settings.",
-  'invite.role.member.desc': "Can create your own projects, and view and comment on shared team projects.",
-  'invite.accept.cta': "Accept invitation",
-  'invite.accountMismatch.title': "You’re signed in as a different account",
-  'invite.accountMismatch.body': "This invitation was sent to a different email address. You can continue with your current account, or switch accounts.",
-  'invite.accountMismatch.continue': "Continue with current account",
-  'invite.accountMismatch.switch': "Switch account",
-  'invite.accepting.title': "Joining the team…",
-  'invite.accepting.body': "Setting up your membership.",
-  'invite.success.title': "You’re in",
-  'invite.success.body': "Opening CapyDesign so you can start collaborating.",
-  'invite.success.roleReceipt': "Joined as",
-  'invite.success.enter': "Enter workspace",
-  'invite.open.cta': "Open CapyDesign",
-  'invite.open.opening': "Opening CapyDesign…",
-  'invite.open.retry': "Already installed? Try opening again",
-  'invite.notInstalled.title': "Didn’t open automatically?",
-  'invite.notInstalled.body': "You may not have CapyDesign installed yet. Install it, then reopen this link to finish joining.",
-  'invite.notInstalled.download': "Download CapyDesign",
-  'invite.error.title': "Can’t accept this invitation",
-  'invite.error.invite_expired': "This invitation has expired. Ask an admin to send a new one.",
-  'invite.error.invite_consumed': "This invitation has already been used.",
-  'invite.error.workspace_seat_limit_reached': "The team has no seats left. Ask an admin to free up a seat or add more.",
-  'invite.error.workspace_subscription_locked': "The team’s subscription is inactive, so new members can’t join right now.",
-  'invite.error.workspace_not_found': "This workspace no longer exists.",
-  'invite.error.workspace_forbidden': "Your account isn’t allowed to accept this invitation.",
-  'invite.error.invite_unavailable': "This invitation is no longer available.",
-  'invite.error.generic': "Something went wrong. Please try again.",
-  'invite.error.retry': "Try again",
-  "workspaceInvite.dialogAria": "Invite members",
-  "workspaceInvite.title": "Invite members to your team",
-  "workspaceInvite.freePlanBody": "The free plan includes 1 seat. Inviting teammates will guide you to upgrade to Teams.",
-  "workspaceInvite.teamPlanBody": "Invite teammates to share projects, design systems, and plugins together.",
-  "workspaceInvite.seatsExhaustedBody": "Ruang kerja ini tidak memiliki kursi tersisa. Tambahkan kursi untuk mengundang rekan tim.",
-  "workspaceInvite.seatsExhaustedAction": "Lihat kursi dan paket",
-  "workspaceInvite.emailLabel": "Invite members by email",
-  "workspaceInvite.roleLabel": "Assign role",
-  "workspaceInvite.defaultRoleLabel": "Default role",
-  "workspaceInvite.emailPlaceholder": "Enter email address…",
-  "workspaceInvite.removeRow": "Remove",
-  "workspaceInvite.addMember": "Add member",
-  "workspaceInvite.visibilityQuestion": "Will team members see my designs?",
-  "workspaceInvite.visibilityAnswer": "Team members can see designs you share to the team space. Private designs kept in Personal projects are not visible to others.",
-  "workspaceInvite.sent": "Invitation sent",
-  "workspaceInvite.sending": "Inviting…",
-  "workspaceInvite.confirm": "Confirm and invite",
-  "workspaceInvite.submitFailed": "Failed to send invitation. Try again later.",
-  "workspaceInvite.errorAlreadyMember": "Email ini sudah menjadi anggota tim.",
-  "workspaceInvite.errorPendingInvite": "Email ini sudah memiliki undangan yang menunggu.",
-  "workspaceInvite.errorNoSession": "Masuk ke akun Vela Anda sebelum mengundang anggota.",
-  "workspaceInvite.errorNoWorkspace": "Belum ada ruang tim untuk mengundang anggota.",
-  "workspaceInvite.errorUnreachable": "Undangan tidak dapat dikirim. Silakan coba lagi nanti.",
-  'chat.amrCard.switchTitle': 'Panggilan model gagal — proses ini dijeda',
-  'chat.amrCard.switchBody': 'Beralih ke layanan model resmi CapyDesign Cloud — tanpa perlu mengatur API Key. Setelah masuk, otorisasi, dan isi ulang, proses ini akan dicoba ulang otomatis.',
-  'chat.amrCard.chipOfficial': 'Hosting resmi',
-  'chat.amrCard.chipNoKey': 'Tanpa API Key',
-  'chat.amrCard.chipAutoRetry': 'Coba ulang otomatis setelah masuk',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrCard.switchCta': 'Beralih ke Cloud',
-  'chat.amrError.authMessage': 'Akun CapyDesign Cloud Anda belum diotorisasi. Otorisasi sekarang dan proses ini akan dicoba ulang otomatis.',
-  'chat.amrError.balanceMessage': 'Saldo CapyDesign Cloud Anda habis. Isi ulang untuk melanjutkan proses ini.',
+  
+  
   'chat.amrError.authorizeCta': 'Otorisasi & coba lagi',
   'chat.amrError.rechargeCta': 'Isi ulang',
-  'chat.amrBalanceGate.title': 'Tingkatkan paket dan terus berkarya',
-  'chat.amrBalanceGate.message': 'Kredit tidak cukup (tersisa {balance}). Tingkatkan paket atau isi ulang, dan tugas bisa langsung dimulai.',
-  'chat.amrBalanceGate.benefitsTitle': 'Yang Anda dapatkan dengan CapyDesign Cloud',
-  'chat.amrBalanceGate.benefit1': 'Tanpa API key, banyak model tersedia',
-  'chat.amrBalanceGate.benefit2': 'Agen desain SOTA bawaan, tanpa konfigurasi',
-  'chat.amrBalanceGate.benefit3': 'Layanan resmi dan tepercaya',
-  'chat.amrBalanceGate.benefit4': 'Terus berkembang: deploy sekali klik, multimodal, tim, dan lainnya',
-  'chat.amrBalanceGate.laterCta': 'Nanti saja',
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrBalanceGate.plansCta': 'Tingkatkan paket',
-  'chat.amrBalanceGate.signedOutTitle': 'Masuk untuk mulai berkarya',
-  'chat.amrBalanceGate.signedOutMessage': 'Anda menggunakan agen CapyDesign Cloud — masuk dan tugas ini bisa langsung dimulai.',
-  'chat.amrBalanceGate.signInCta': 'Masuk',
-  'chat.amrBalanceGate.watchingWallet': 'Kami akan melanjutkan otomatis begitu saldo Anda diperbarui.',
-  'chat.amrArtifactUpgrade.title': 'Terus sempurnakan dengan model yang lebih kuat',
-  'chat.amrArtifactUpgrade.message': 'Buka model canggih, lebih banyak tugas paralel, dan lebih banyak kredit bulanan.',
-  'chat.amrArtifactUpgrade.benefit1': 'Lebih banyak model canggih, termasuk Fable 5 dan GPT-5.6',
-  'chat.amrArtifactUpgrade.benefit2': 'Jalankan hingga 10× lebih banyak tugas sekaligus',
-  'chat.amrArtifactUpgrade.benefit3': 'Hingga 300× lebih banyak kredit bulanan',
-  'chat.amrArtifactUpgrade.benefit4': 'Antrean prioritas saat jam sibuk untuk generasi lebih cepat',
-  'chat.amrArtifactUpgrade.promoBanner': 'Waktu terbatas: hemat hingga 67% untuk paket langganan',
-  'chat.amrArtifactUpgrade.countdownLabel': 'Berakhir dalam',
-  'chat.amrArtifactUpgrade.plansCta': 'Upgrade sekarang, diskon hingga 67%',
-  'chat.amrArtifactUpgrade.homePlansCta': 'Hemat 67%',
-  'chat.amrArtifactUpgrade.laterCta': 'Lanjutkan dengan Free dan kirim',
-  'chat.amrArtifactUpgrade.homeTitle': 'Karya Anda siap. Bawa ide berikutnya lebih jauh.',
-  'chat.amrArtifactUpgrade.homeMessage': 'Tingkatkan untuk model yang lebih kuat, lebih banyak tugas paralel, dan lebih banyak kredit.',
-  'chat.amrArtifactUpgrade.homeArtifactCta': 'Lihat karya',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.antigravityError.launchTerminalCta': 'Masuk melalui terminal',
   'chat.antigravityError.launchSwitchModelCta': 'Ganti model di terminal',
   'chat.connectionDropped': 'Pastikan koneksi jaringan Anda berfungsi, lalu coba lagi.',
   'chat.runError.title.authRequired': 'Perlu otorisasi',
-  'chat.runError.title.balance': 'Saldo tidak cukup',
+  
   'chat.runError.title.connectionDropped': 'Koneksi jaringan terputus',
-  'chat.runError.title.signInRequired.other': '{agent} belum masuk',
-  'chat.runError.title.signInRequired.amr': 'CapyDesign belum masuk',
+  
+  
   'chat.runError.title.rateLimited': 'Layanan model sedang sibuk',
   'chat.runError.title.modelWindowLimit': 'Sedang ramai',
-  'chat.runError.title.membershipConcurrencyLimit': 'Batas tugas bersamaan tercapai',
+  
   'chat.runError.title.strategyTaskHalted': "Tugas dihentikan oleh gerbang kualitas",
   'chat.runError.title.agentReplyIncomplete': "Balasan diterima, tetapi tidak tercatat",
   'chat.runError.title.clarificationRepeated': "Agen mengajukan pertanyaan lagi",
@@ -117,8 +117,8 @@ export const id: Dict = {
   'chat.runError.title.generic': 'Tugas gagal',
   'chat.runError.title.artifactMissing': "Tidak ada file untuk dipratinjau",
   'chat.runError.artifactMissingMessage': "Tugas ini tidak menghasilkan file untuk dipratinjau. Tambahkan apa yang ingin dibuat lalu coba lagi.",
-  'chat.runError.signInMessage.amr': 'Masuk untuk melihat proyek Anda dan melanjutkan percakapan.',
-  'chat.runError.signInMessage.other': 'Masuk ke {agent} terlebih dahulu, lalu coba lagi.',
+  
+  
   'chat.runError.agentFallback': 'agen',
   'chat.runError.sourceLabel': 'Detail kesalahan',
   'chat.runError.sourceExpandAria': 'Perluas sumber kesalahan',
@@ -139,8 +139,8 @@ export const id: Dict = {
   'chat.runError.rateLimitedMessage': 'Saat ini ada banyak permintaan ke layanan model ini dan batas frekuensi permintaan penyedia telah tercapai. Coba lagi nanti, atau coba beralih ke model lain.',
   'chat.runError.modelWindowLimitMessage': 'Sedang ramai saat ini. Coba lagi setelah {retryAt}. Permintaan ini tidak dikenai biaya.',
   'chat.runError.modelWindowLimitMessageNoTime': 'Sedang ramai saat ini. Coba lagi sebentar lagi. Permintaan ini tidak dikenai biaya.',
-  'chat.runError.membershipConcurrencyLimitMessage': 'Batas tugas bersamaan untuk keanggotaan Anda sudah penuh. Tunggu hingga {retryAt}, lalu coba lagi, atau ganti agen. Mencoba ulang segera tidak akan membantu.',
-  'chat.runError.membershipConcurrencyLimitMessageNoTime': 'Batas tugas bersamaan untuk keanggotaan Anda sudah penuh. Tunggu tugas lain selesai, lalu coba lagi, atau ganti agen.',
+  
+  
   'chat.runError.upstreamUnavailableMessage': 'Model saat ini sementara tidak tersedia. Coba lagi nanti, atau ganti model.',
   'chat.runError.toolLoopMessage': '{agent} terus mengulang tindakan yang sama tanpa kemajuan dan dihentikan. Periksa file atau perintah target, lalu coba lagi.',
   'chat.runError.outputInvalidMessage': 'Coba buat ulang, atau ganti model lalu coba lagi. Jika terus terjadi, hubungi dukungan.',
@@ -154,7 +154,7 @@ export const id: Dict = {
   'chat.runError.title.cpuUnsupported': "Prosesor tidak didukung",
   'chat.runError.title.cliSessionRefused': "Versi agen tidak kompatibel",
   'chat.runError.quotaExhaustedMessage': "Kuota atau batas tagihan layanan model Anda sudah habis, jadi mencoba lagi tidak akan membantu. Isi ulang di penyedia Anda, atau beralih ke model atau layanan lain.",
-  'chat.runError.workspaceCreditsMessage': "Kredit ruang kerja Anda habis. Tambahkan kredit (atau minta pemilik ruang kerja mengisi ulang), atau beralih ke model atau layanan lain.",
+  
   'chat.runError.timedOutMessage': "Sudah lama tidak ada balasan baru dari AI, jadi proses ini dihentikan. Silakan coba lagi nanti.",
   'chat.runError.inactivityTimeoutMessage': "Sudah lama tidak ada balasan baru dari AI, jadi proses ini dihentikan. Silakan coba lagi nanti.",
   'chat.runError.emptyOutputMessage': "Agen selesai tanpa menghasilkan keluaran apa pun. Biasanya ini sementara, coba lagi.",
@@ -163,8 +163,8 @@ export const id: Dict = {
   'chat.runError.cpuUnsupportedMessage': "Runtime agen ini memerlukan set instruksi CPU (AVX2) yang tidak dimiliki perangkat ini, sehingga tidak dapat dijalankan. Perbarui CapyDesign ke versi terbaru yang menyertakan runtime yang kompatibel.",
   'chat.runError.title.agentCrashed': 'Tugas terhenti tak terduga',
   'chat.runError.agentCrashedMessage': 'Coba buat ulang, atau ganti model lalu coba lagi. Jika terus terjadi, hubungi dukungan.',
-  'chat.runError.title.accountSuspended': 'Akun ditangguhkan',
-  'chat.runError.accountSuspendedMessage': 'Untuk mengetahui alasannya atau mengajukan pemulihan, hubungi dukungan.',
+  
+  
   'chat.runError.fallbackMessage': 'Kali ini tidak berhasil. Kalau terus terjadi, kirimkan lognya ke kami.',
   'chat.runError.cliSessionRefusedMessage':
     "{agent} menolak memulai sesi. Versi yang terpasang biasanya tidak kompatibel dengan CapyDesign — ganti ke versi lain, lalu coba lagi.",
@@ -340,17 +340,17 @@ export const id: Dict = {
   'settings.onboardingSystemsBody': 'Pilih atau buat sistem brand agar hasil kerja yang dihasilkan mengikuti warna, tipografi, dan bahasa produk yang sesungguhnya.',
   'settings.onboardingExecutionTitle': 'Pilih sumber model',
   'settings.onboardingExecutionBody': 'Gunakan CapyDesign Hosted, hubungkan agen lokal, atau gunakan kunci model Anda sendiri.',
-  'settings.onboardingAmrCloudBenefitOfficial': 'Direkomendasikan resmi',
-  'settings.onboardingAmrCloudBenefitReady': 'Tanpa deploy',
+  
+  
   'settings.onboardingAmrCloudBenefitModels': 'Akses Claude, GPT, Fable 5, dan 5.6 sol dengan diskon terbatas dan konkurensi tinggi.',
-  'settings.onboardingAmrCloudBenefitPricing': 'Harness SOTA',
-  'settings.onboardingAmrCloudUpcomingLabel': 'Segera hadir',
-  'settings.onboardingAmrCloudUpcomingImageVideo': 'Gambar dan video',
-  'settings.onboardingAmrCloudUpcomingSkills': 'Banyak Skills',
-  'settings.onboardingAmrCloudUpcomingRouting': 'Routing cerdas',
+  
+  
+  
+  
+  
   'settings.onboardingAmrModelSourceLabel': 'CapyDesign Hosted',
-  'settings.onboardingAmrCloudAuthorizeAction': 'Otorisasi CapyDesign Cloud',
-  'settings.onboardingAmrCloudAuthorizedAction': 'Diotorisasi',
+  
+  
   'settings.onboardingStepConnect': 'Connect',
   'settings.onboardingStepDesignSystem': 'Buat design system',
   'settings.onboardingStepProfile': 'About you',
@@ -363,15 +363,15 @@ export const id: Dict = {
   'settings.onboardingCloudBody': 'Masuk dan langsung mulai mendesain dengan AI cloud, tanpa pengaturan rumit.',
   'settings.onboardingCloudSignIn': 'Masuk ke CapyDesign',
   'settings.onboardingCloudContinue': 'Lanjutkan (sudah masuk)',
-  'settings.onboardingCloudAlternative': 'Gunakan CLI lokal atau kunci API Anda sendiri',
+  
   'settings.onboardingCloudRights': 'Semua hak dilindungi.',
   'settings.onboardingCloudOr': 'atau',
   'settings.onboardingGateTooltipNoRuntime': 'Langkah berikutnya berjalan dengan AI — pilih runtime untuk melanjutkan.',
-  'settings.onboardingGateTooltipAmr': 'Langkah berikutnya berjalan dengan AI — masuk ke CapyDesign Cloud untuk melanjutkan.',
+  
   'settings.onboardingGateTooltipLocal': 'Langkah berikutnya berjalan dengan AI — pilih CLI lokal yang tersedia untuk melanjutkan.',
   'settings.onboardingGateTooltipByok': 'Langkah berikutnya berjalan dengan AI — tambahkan dan uji kunci model Anda untuk melanjutkan.',
   'settings.onboardingRecommended': 'Direkomendasikan',
-  'settings.onboardingAmrCloudOfficialBadge': 'Resmi',
+  
   'settings.onboardingLocalTitle': 'Agen lokal',
   'settings.onboardingLocalBody': 'Gunakan Claude Code, Codex, Cursor, OpenCode, Kimi, Qwen, Hermes, Kiro, dan lainnya.',
   'settings.onboardingLocalAction': 'Open CLI settings',
@@ -417,7 +417,7 @@ export const id: Dict = {
   'settings.onboardingSelectPlaceholder': 'Pilih satu',
   'settings.onboardingSelectMultiplePlaceholder': 'Pilih satu atau beberapa',
   'settings.onboardingOrgSolo': 'Perorangan / pribadi (1)',
-  'settings.onboardingOrgTeam': 'Tim kecil (2-10)',
+  
   'settings.onboardingOrgStartup': 'Startup / UKM (11-50)',
   'settings.onboardingOrgGrowth': 'Perusahaan berkembang (51-200)',
   'settings.onboardingOrgMidMarket': 'Pasar menengah (201-1000)',
@@ -460,7 +460,7 @@ export const id: Dict = {
   'settings.modeApi': 'Anthropic API',
   'settings.cloudCalloutTitle': 'Use CapyDesign Cloud',
   'settings.cloudCalloutBody': 'Sign in to the cloud version to enable team spaces, shared projects, member permissions, and the audit dashboard.',
-  'settings.cloudCalloutButton': 'Sign in / Register',
+  
   'settings.modeApiMeta': 'Penyedia API',
   'settings.byokNoFileToolsNotice': 'BYOK tidak dapat membaca, menulis, atau mengedit file proyek. Gunakan Local CLI saat Anda perlu mengubah kode.',
   'settings.byokDraftNotice': 'Lengkapi bidang wajib untuk menyimpan penyedia ini. Konfigurasi saat ini akan tetap aktif.',
@@ -507,29 +507,29 @@ export const id: Dict = {
   'settings.agentInstallGroup': 'Tersedia untuk dipasang ({count})',
   'settings.agentAuthRequired': 'Autentikasi diperlukan',
   'settings.agentAuthUnknown': 'Status autentikasi tidak diketahui',
-  'settings.amrCloud': 'CapyDesign Cloud',
-  'settings.amrAuthorize': 'Otorisasi',
+  
+  
   'settings.amrBenefitOfficial': 'Officially maintained',
-  'settings.amrBenefitLowerPrice': 'Lower price',
+  
   'settings.amrBenefitManyModels': 'Banyak model',
-  'settings.amrPromoBonus': 'Bonus terbatas: +100%',
-  'settings.amrSignInToContinue': 'Masuk untuk melanjutkan',
+  
+  
   'settings.amrSignIn': 'Masuk',
   'settings.amrSignedIn': 'Sudah masuk',
-  'settings.amrWalletBalance': 'Wallet balance',
+  
   'settings.amrWalletUnavailable': 'Balance temporarily unavailable',
-  'settings.amrWalletUpdatedAt': 'Updated {time}',
-  'settings.amrWalletCached': 'cached',
-  'settings.amrWalletRefresh': 'Refresh',
-  'settings.amrWalletRefreshTitle': 'Refresh CapyDesign Cloud wallet balance',
-  'settings.amrNotSignedIn': 'Belum masuk',
+  
+  
+  
+  
+  
   'settings.amrSigningIn': 'Sedang masuk…',
   'settings.amrActivationHint': 'Halaman masuk tidak terbuka? Ketuk tombol di bawah untuk membukanya lagi.',
   'settings.amrActivationBrowserFailed': 'Tidak dapat membuka browser secara otomatis. Buka halaman masuk di bawah untuk melanjutkan.',
   'settings.amrActivationOpen': 'Buka halaman masuk',
   'settings.amrCancelSignIn': 'Batalkan proses masuk',
-  'settings.amrAccountStatus': 'Status akun CapyDesign Cloud',
-  'settings.amrConsole': 'Kelola',
+  
+  
   'settings.amrBalance': 'Kuota',
   'settings.amrPlan': 'Paket',
   'settings.amrUpgrade': 'Tingkatkan',
@@ -537,13 +537,13 @@ export const id: Dict = {
   'settings.amrLoginErrorCompact': 'Proses masuk CapyDesign Cloud gagal.',
   'settings.advanced': 'Lanjutan',
   'settings.amrLogin': 'Masuk',
-  'settings.amrLogout': 'Keluar',
-  'settings.amrLoggingIn': 'Sedang masuk…',
-  'settings.amrLoggingOut': 'Sedang keluar…',
-  'settings.amrLoggedInAs': 'Masuk sebagai {email}',
-  'settings.amrLoggedInWithPlan': 'Masuk sebagai {email} · {plan}',
-  'settings.amrLoggedInPill': 'Sudah masuk',
-  'settings.amrNotLoggedIn': 'Belum masuk',
+  
+  
+  
+  
+  
+  
+  
   'settings.apiSection': 'Anthropic API',
   'settings.quickFillProvider': 'Provider isi cepat',
   'settings.providerPreset': 'Preset penyedia',
@@ -625,7 +625,7 @@ export const id: Dict = {
   'settings.modelUsesCliDefault': 'Default CLI',
   'settings.modelSourceFallback': 'Daftar bawaan',
   'settings.reasoningPicker': 'Kekuatan penalaran',
-  'settings.serviceTierPicker': 'Tingkat layanan',
+  
   'settings.modelPickerHint': 'Diambil dari CLI jika tersedia. "Default" mengikuti konfigurasi CLI; "Custom..." untuk mengetik model id sendiri.',
   'settings.modelPickerLiveHint': 'Model diperbarui dari CLI yang terpasang. Default tetap memakai konfigurasi CLI.',
   'settings.modelPickerLiveCatalogOnlyHint': 'Model diperbarui dari CLI yang terpasang.',
@@ -766,21 +766,21 @@ export const id: Dict = {
   'entry.mailAria': 'Ada pertanyaan? Email kami',
   'entry.accountSettings': 'Pengaturan',
   'chat.collapsePane': 'Ciutkan panel percakapan',
-  'collabPresence.ariaOne': '1 collaborator online',
-  'collabPresence.aria': '{count} collaborators online',
-  'collabPresence.ariaWithSelfOne': '1 collaborator online, including you',
-  'collabPresence.ariaWithSelf': '{count} collaborators online, including you',
-  'collabPresence.moreOnline': '{count} more online',
-  'collabPresence.dialogTitle': 'Online collaborators',
-  'collabPresence.onlineCount': '{count} online',
-  'collabPresence.selfBadge': 'You',
-  'collabPresence.roleOwner': 'Owner',
-  'collabPresence.roleAdmin': 'Admin',
-  'collabPresence.roleMember': 'Member',
-  'collabPresence.viewingFileSelf': 'You are viewing {file}',
-  'collabPresence.viewingFileOther': 'Viewing {file}',
-  'collabPresence.viewingProjectSelf': 'You are viewing this project',
-  'collabPresence.viewingProjectOther': 'Viewing this project',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'entry.followXLabel': 'Ikuti @OpenDesignHQ di X',
   'entry.followThreadsLabel': 'Follow CapyDesign on Threads',
   'entry.youtubeLabel': 'CapyDesign on YouTube',
@@ -800,7 +800,7 @@ export const id: Dict = {
   "entry.billingTierTeam": "Teams",
   "entry.billingTierFree": "Free",
   "entry.billingTierPro": "Pro",
-  "entry.billingFamilyCreator": "Creator",
+  
   "entry.creditsAria": "{tier} · credits remaining",
   "entry.creditsAriaWithBalance": "{tier} · {balance} credits remaining",
   "entry.creditsGrantTip": "Teams credits are granted by subscription allowance. Usage is available in billing.",
@@ -812,12 +812,12 @@ export const id: Dict = {
   "entry.creditsMemberNoticeTitle": "Need more credits?",
   "entry.creditsMemberNoticeBody": "You are currently a Member and cannot add credits yourself. Ask a team Admin to increase the allowance when you need more.",
   "entry.creditsMemberNoticeAction": "Ask Admin to increase allowance",
-  "entry.accountToggleTheme": "Toggle theme",
-  "entry.accountSwitchLanguage": "Switch language",
-  "entry.accountLanguageMeta": "中文 / English",
+  
+  
+  
   "entry.accountGithubHelp": "Get help on GitHub",
   "entry.accountFeatureRequest": "Submit feature request",
-  "entry.accountAddAccount": "Add account",
+  
   "entry.accountSignOut": "Sign out",
   "signOut.confirmTitle": "Keluar",
   "signOut.confirmMessage": "Yakin ingin keluar dari akun?",
@@ -829,8 +829,8 @@ export const id: Dict = {
   "entry.blankAllProjectsTitle": "No team projects yet",
   "entry.blankAllProjectsDescription": "Projects shared to the team will appear here for everyone in the workspace.",
   "entry.blankCreate": "New project",
-  'entry.workspaceTeamsTitle': 'Workspace untuk Tim — beri tahu kami kebutuhan tim Anda',
-  'entry.workspaceTeamsAria': 'Buka halaman Workspace untuk Tim',
+  
+  
   'entry.navExpand': 'Buka bilah sisi',
   'entry.navCollapse': 'Tutup bilah sisi',
   'entry.navNewProject': 'Proyek baru',
@@ -848,18 +848,18 @@ export const id: Dict = {
   'entry.draftsDescription': 'Projects you created, visible only to you',
   'entry.allProjectsDescription': 'Projects owned by everyone on the team',
   'entry.navBoard': 'Board',
-  'entry.navTeamSection': 'Team',
+  
   'entry.teamSlotNote': 'This space is provided by the team service. Integration is in progress.',
-  "entry.cloudCalloutTitle": "CapyDesign Cloud",
-  'entry.cloudRecovering': 'Account connection interrupted. Recovering automatically…',
+  
+  
   'entry.authExpiredBody': 'Your sign-in has expired. Sign in to continue using CapyDesign Cloud.',
   'home.createFailed': 'Failed to start the run. Try again.',
   'home.daemonRecovering': 'Local service connection interrupted. Recovering automatically…',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
-  "entry.cloudCalloutBody": "Masuk untuk menggunakan CapyDesign Cloud dan berkolaborasi di cloud",
-  "entry.cloudCalloutDismissAria": "Tutup catatan CapyDesign Cloud",
-  'entry.workspaceLockedNote': 'This workspace is locked. Restore billing to resume editing shared projects.',
-  'entry.workspaceLockedRecover': 'Restore access',
+  
+  
+  
+  
   'messageCenter.openAria': 'Open message center',
   'messageCenter.unreadCount': '{count} unread',
   'messageCenter.title': 'Message center',
@@ -889,8 +889,8 @@ export const id: Dict = {
   'goPlanSunset.confirming': 'Confirming…',
   'goPlanSunset.acknowledge': 'Got it',
   'workspaceTabs.project': 'Proyek',
-  'workspaceTabs.pluginDetails': 'Detail plugin',
-  'workspaceTabs.marketplace': 'Marketplace',
+  
+  
   'homeHero.title': 'Apa yang akan Anda desain bersama agen Anda hari ini?',
   'homeHero.startWithTemplate': 'Mulai dengan templat…',
   'homeHero.startBlankProject': 'mulai proyek kosong',
@@ -1057,7 +1057,7 @@ export const id: Dict = {
   'handoff.frameworkPrompt.solid': 'SolidJS',
   'handoff.frameworkPrompt.next': 'Next.js / React',
   'handoff.frameworkPrompt.vanilla': 'vanilla JavaScript, HTML, dan CSS',
-  'handoff.amrWebsite': 'Buka situs web CapyDesign Cloud',
+  
   'handoff.copyPrompt': 'Salin prompt',
   'handoff.copyPromptForTarget': 'Salin prompt untuk {target}',
   'handoff.copied': 'Tersalin',
@@ -1111,7 +1111,7 @@ export const id: Dict = {
   'recentProjects.sortName': 'Name',
   'recentProjects.viewList': 'List view',
   'recentProjects.sharedBadge': 'Shared',
-  'recentProjects.sharedProjectFallbackName': 'Shared project',
+  
   'recentProjects.creatorLine': 'Created by {name}',
   'recentProjects.selfCreator': 'Me',
   'recentProjects.teamMemberCreator': 'Team member',
@@ -1670,7 +1670,7 @@ export const id: Dict = {
   'connectors.title': 'Konektor',
   'connectors.subtitle': 'Sumber data lokal dan mendatang yang bisa mendukung live artifact.',
   'connectors.account': 'Akun',
-  'connectors.noAccount': 'Belum terhubung',
+  
   'connectors.tools': 'Alat',
   'connectors.connect': 'Hubungkan',
   'connectors.disconnect': 'Putuskan',
@@ -2016,8 +2016,8 @@ export const id: Dict = {
   'avatar.useApi': 'Gunakan Anthropic API',
   'avatar.codeAgent': 'Code agent',
   'avatar.rescan': 'Pindai ulang PATH',
-  'avatar.amrConsole': 'CapyDesign Cloud account',
-  'avatar.amrConsoleMeta': 'Balance & recharge',
+  
+  
   'avatar.settings': 'Pengaturan',
   'avatar.backToProjects': 'Kembali ke proyek',
   'avatar.metaActive': 'aktif',
@@ -2775,7 +2775,7 @@ export const id: Dict = {
   'misc.primary': 'Utama',
   'misc.designSystem': 'Sistem desain',
   'workspace.designFiles': 'File desain',
-  'workspace.focusMode': 'Fokus workspace',
+  
   'workspace.showChat': 'Tampilkan chat',
   'workspace.closeTab': 'Tutup tab',
   'workspace.fileSyncDownloading': 'Mengunduh dari tim…',
@@ -2786,13 +2786,13 @@ export const id: Dict = {
   'workspace.deleteSelectedFilesConfirm': 'Hapus {n} file terpilih dari folder proyek?',
   'workspace.deleteSelectedFilesPartial': 'Gagal menghapus {n} file.',
   'workspace.openFromDesignFiles': 'Buka file dari',
-  'workspace.designFilesLink': 'File desain',
+  
   'workspace.loadingSketch': 'Memuat sketsa...',
   'workspace.newTab': 'New tab',
   'workspace.searchFilesPlaceholder': 'Search files…',
   'workspace.openTabs': 'Tab terbuka',
-  'workspace.searchTabs': 'Search tabs',
-  'workspace.noTabsFound': 'No tabs found',
+  
+  
   'workspace.openFile': 'Open a file',
   'workspace.noFilesMatch': 'No files match',
   'workspace.allFiles': 'All',
@@ -3203,14 +3203,14 @@ export const id: Dict = {
   'fileViewer.presenterMode': 'Mode penyaji',
   'fileViewer.exitPresentation': 'Keluar presentasi',
   'fileViewer.shareLabel': 'Bagikan',
-  'fileViewer.shareMenuShareLink': 'BAGIKAN',
+  
   'fileViewer.shareMenuPublishOnline': 'BAGIKAN DI HOSTING SENDIRI',
-  'fileViewer.shareMenuDownload': 'UNDUH',
-  'fileViewer.shareMenuPresentation': 'Presentasi',
-  'fileViewer.shareMenuSourceFiles': 'File sumber',
-  'fileViewer.shareMenuSave': 'SIMPAN',
+  
+  
+  
+  
   'fileViewer.shareMenuPublishViaOd': 'BAGIKAN CEPAT · OPENDESIGN',
-  'fileViewer.unifiedShareAria': 'Share and export actions',
+  
   'fileViewer.unifiedShareTab': 'Share',
   'fileViewer.unifiedExportTab': 'Export',
   'fileViewer.unifiedSendTab': 'Send to...',
@@ -3226,13 +3226,13 @@ export const id: Dict = {
   'fileViewer.publishFile': 'Publish file',
   'fileViewer.publishingFile': 'Membuat tautan…',
   'fileViewer.unpublishFile': 'Hentikan berbagi',
-  'fileViewer.shareEmptyStateTitle': 'Belum ada yang bisa dibagikan',
-  'fileViewer.shareEmptyStateDescription': 'Buat atau gabung ke tim untuk membagikan file ini ke rekan tim',
-  'fileViewer.shareEmptyStateCreateTeam': 'Buat tim',
-  'fileViewer.shareTeamMissingTitle': 'Belum ada tim untuk berbagi',
+  
+  
+  
+  
 
-  'fileViewer.publishFileRequiresTeam': 'Menerbitkan tautan publik memerlukan ruang kerja tim. Beralihlah ke ruang kerja tim, atau gunakan Deploy untuk menerbitkan berkas ini.',
-  'fileViewer.publishFileRequiresWorkspace': 'Tautan berbagi memerlukan workspace yang masuk. Masuk ke CapyDesign Cloud atau bagikan file ini lewat deploy.',
+  
+  
   'fileViewer.publishFileFailed': 'Tidak dapat membuat tautan berbagi. Coba lagi atau gunakan opsi deploy di bawah.',
   'fileViewer.workspaceShareSuccess': 'Shared with workspace members',
   'fileViewer.workspaceShareFailed': 'Could not share with workspace',
@@ -3242,10 +3242,10 @@ export const id: Dict = {
   'fileViewer.copyShareLink': 'Salin tautan berbagi',
   'fileViewer.openSharePage': 'Buka halaman berbagi',
   'fileViewer.shareLinkRequiresDeploy': 'Publikasikan online terlebih dahulu untuk mendapatkan tautan',
-  'fileViewer.shareLinkPublishGuide': 'Publikasikan online di atas untuk mengaktifkan berbagi ↑',
+  
   'fileViewer.shareAfterGenerationComplete': 'Berbagi tersedia setelah pembuatan selesai',
   'fileViewer.copyProviderLink': 'Copy {provider} link',
-  'fileViewer.copyCloudflareLink': 'Copy Cloudflare link',
+  
   'fileViewer.screenshotCopying': 'Copying screenshot...',
   'fileViewer.screenshotCopied': 'Screenshot copied to clipboard',
   'fileViewer.screenshotClipboardDenied': 'Browser blocked clipboard access',
@@ -3404,12 +3404,12 @@ export const id: Dict = {
   'fileViewer.cloudflareDomainPrefixPlaceholder': 'demo',
   'fileViewer.cloudflareDomainPrefixInvalid': 'Use one DNS label only: lowercase letters, numbers, and hyphens.',
   'fileViewer.cloudflareHostnamePreview': 'Custom domain preview: {hostname}',
-  'fileViewer.cloudflareCustomDomainHint': 'Opsional: hubungkan domain kustom. Jika dibiarkan kosong, tautan pages.dev tetap dibuat.',
+  
   'fileViewer.cloudflarePagesDevLinkLabel': 'pages.dev URL',
   'fileViewer.cloudflareCustomDomainLinkLabel': 'Custom domain',
   'fileViewer.optional': 'opsional',
   'fileViewer.vercelPreviewOnly': 'Buat preview deployment saja',
-  'fileViewer.cloudflarePagesPreviewHint': 'Deploy Cloudflare Pages menggunakan Direct Upload.',
+  
   'fileViewer.savingConfig': 'Menyimpan konfigurasi...',
   'fileViewer.deployConfigSaveFailed': 'Gagal menyimpan konfigurasi deploy.',
   'fileViewer.deployFailed': 'Deploy gagal.',
@@ -3461,8 +3461,8 @@ export const id: Dict = {
   'assistant.forkConversation': 'Percakapan baru',
   'assistant.forkingConversation': 'Memulai percakapan baru…',
   'assistant.forkNote': 'Lanjutan dari percakapan',
-  'assistant.shareToOpenDesign': 'Bagikan ke CapyDesign',
-  'assistant.shareToOpenDesignBusy': 'Menyiapkan paket…',
+  
+  
   'assistant.feedbackPrompt': 'Masukan',
   'assistant.feedbackPositive': 'Membantu',
   'assistant.feedbackNegative': 'Tidak membantu',
@@ -3502,10 +3502,10 @@ export const id: Dict = {
   'chat.runError.actionBlocked.busy': "Percakapan ini masih menjalankan tugas. Coba lagi setelah selesai.",
   'chat.support.channel.feishu': "Komunitas Feishu",
   'chat.support.channel.discord': "Discord",
-  'chat.amrBalanceOwner.title': "Minta pemilik tim untuk mengisi ulang",
-  'chat.amrBalanceOwner.message': "Hanya pemilik tim yang dapat mengisi ulang saldo tim. Minta “{name}” menyelesaikan pengisian ulang sebelum melanjutkan.",
-  'chat.amrBalanceOwner.messageNoOwnerName': "Hanya pemilik tim yang dapat mengisi ulang saldo tim. Minta pemilik tim menyelesaikan pengisian ulang sebelum melanjutkan.",
-  'chat.amrBalanceOwner.dismissCta': "Mengerti",
+  
+  
+  
+  
   'assistant.outTokens': '{n} keluar',
   'assistant.producedFiles': 'File yang dibuat',
   'assistant.openFile': 'Buka file',
@@ -4717,16 +4717,16 @@ export const id: Dict = {
   // other-lane workspace destinations (members / billing / team space).
   'settings.workspace': 'Workspace',
   'settings.workspaceHint': 'Members, billing, and team spaces',
-  'settings.workspaceLede': 'Team-level settings for this workspace. These areas are managed by the team service — open one to continue.',
-  'settings.workspaceBack': 'Back to workspace',
-  'settings.workspaceMembers': 'Members & invites',
-  'settings.workspaceMembersHint': 'Manage who can access this workspace and send invitations.',
-  'settings.workspaceBilling': 'Subscription & seats',
-  'settings.workspaceBillingHint': 'Plan, seats, and payment for this workspace.',
-  'settings.workspaceAutoRecharge': 'Auto-recharge',
-  'settings.workspaceAutoRechargeHint': 'Automatically top up credits when the balance runs low.',
-  'settings.workspaceTeamSpace': 'Team space',
-  'settings.workspaceTeamSpaceHint': 'Shared projects and visibility for your team.',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   // Full-page Settings (`/settings`): sidebar nav head above the section list.
   'settings.pageBackToHome': 'Back to home',
   'settings.pageNavGroupPersonal': 'Personal',
@@ -4734,9 +4734,9 @@ export const id: Dict = {
   'newproj.startBlank': 'Kosong',
   'newproj.startBlankHint': 'Mulai dari awal',
   'workspace.pages': 'Halaman',
-  'workspace.allProjectFiles': 'Semua file proyek',
+  
   'workspace.newBlankPage': 'Halaman kosong baru',
-  'workspace.noPagesYet': 'Belum ada halaman',
+  
   'workspace.pageCreateFailed': 'Tidak dapat membuat halaman.',
   'workspace.pageCreatorTitle': 'Buat halaman',
   'workspace.pageCreatorSearch': 'Cari templat',

@@ -1,115 +1,115 @@
 import type { Dict } from '../types';
 
 export const uk: Dict = {
-  'invite.header.eyebrow': "Team invitation",
-  'invite.loading': "Loading invitation…",
-  'invite.landing.title': "Join the team",
-  'invite.landing.subtitle': "You’ve been invited to collaborate in CapyDesign.",
-  'invite.landing.roleLabel': "Role",
-  'invite.landing.invitedEmail': "Invited email",
-  'invite.landing.expires': "Expires",
-  'invite.role.admin': "Admin",
-  'invite.role.member': "Member",
-  'invite.role.admin.desc': "Can manage members, seats, and all project settings.",
-  'invite.role.member.desc': "Can create your own projects, and view and comment on shared team projects.",
-  'invite.accept.cta': "Accept invitation",
-  'invite.accountMismatch.title': "You’re signed in as a different account",
-  'invite.accountMismatch.body': "This invitation was sent to a different email address. You can continue with your current account, or switch accounts.",
-  'invite.accountMismatch.continue': "Continue with current account",
-  'invite.accountMismatch.switch': "Switch account",
-  'invite.accepting.title': "Joining the team…",
-  'invite.accepting.body': "Setting up your membership.",
-  'invite.success.title': "You’re in",
-  'invite.success.body': "Opening CapyDesign so you can start collaborating.",
-  'invite.success.roleReceipt': "Joined as",
-  'invite.success.enter': "Enter workspace",
-  'invite.open.cta': "Open CapyDesign",
-  'invite.open.opening': "Opening CapyDesign…",
-  'invite.open.retry': "Already installed? Try opening again",
-  'invite.notInstalled.title': "Didn’t open automatically?",
-  'invite.notInstalled.body': "You may not have CapyDesign installed yet. Install it, then reopen this link to finish joining.",
-  'invite.notInstalled.download': "Download CapyDesign",
-  'invite.error.title': "Can’t accept this invitation",
-  'invite.error.invite_expired': "This invitation has expired. Ask an admin to send a new one.",
-  'invite.error.invite_consumed': "This invitation has already been used.",
-  'invite.error.workspace_seat_limit_reached': "The team has no seats left. Ask an admin to free up a seat or add more.",
-  'invite.error.workspace_subscription_locked': "The team’s subscription is inactive, so new members can’t join right now.",
-  'invite.error.workspace_not_found': "This workspace no longer exists.",
-  'invite.error.workspace_forbidden': "Your account isn’t allowed to accept this invitation.",
-  'invite.error.invite_unavailable': "This invitation is no longer available.",
-  'invite.error.generic': "Something went wrong. Please try again.",
-  'invite.error.retry': "Try again",
-  "workspaceInvite.dialogAria": "Invite members",
-  "workspaceInvite.title": "Invite members to your team",
-  "workspaceInvite.freePlanBody": "The free plan includes 1 seat. Inviting teammates will guide you to upgrade to Teams.",
-  "workspaceInvite.teamPlanBody": "Invite teammates to share projects, design systems, and plugins together.",
-  "workspaceInvite.seatsExhaustedBody": "У цьому робочому просторі не залишилося місць. Додайте місця, щоб запрошувати колег.",
-  "workspaceInvite.seatsExhaustedAction": "Місця й тариф",
-  "workspaceInvite.emailLabel": "Invite members by email",
-  "workspaceInvite.roleLabel": "Assign role",
-  "workspaceInvite.defaultRoleLabel": "Default role",
-  "workspaceInvite.emailPlaceholder": "Enter email address…",
-  "workspaceInvite.removeRow": "Remove",
-  "workspaceInvite.addMember": "Add member",
-  "workspaceInvite.visibilityQuestion": "Will team members see my designs?",
-  "workspaceInvite.visibilityAnswer": "Team members can see designs you share to the team space. Private designs kept in Personal projects are not visible to others.",
-  "workspaceInvite.sent": "Invitation sent",
-  "workspaceInvite.sending": "Inviting…",
-  "workspaceInvite.confirm": "Confirm and invite",
-  "workspaceInvite.submitFailed": "Failed to send invitation. Try again later.",
-  "workspaceInvite.errorAlreadyMember": "Ця електронна адреса вже є учасником команди.",
-  "workspaceInvite.errorPendingInvite": "Ця електронна адреса вже має запрошення, що очікує.",
-  "workspaceInvite.errorNoSession": "Увійдіть у свій обліковий запис Vela, перш ніж запрошувати учасників.",
-  "workspaceInvite.errorNoWorkspace": "Ще немає командного простору, куди можна запросити учасників.",
-  "workspaceInvite.errorUnreachable": "Не вдалося надіслати запрошення. Повторіть спробу пізніше.",
-  'chat.amrCard.switchTitle': 'Не вдалося викликати модель — це виконання призупинено',
-  'chat.amrCard.switchBody': 'Перейдіть на офіційний сервіс моделей CapyDesign Cloud — без налаштування API-ключа. Після входу, авторизації та поповнення це виконання буде повторено автоматично.',
-  'chat.amrCard.chipOfficial': 'Офіційний хостинг',
-  'chat.amrCard.chipNoKey': 'Без API-ключа',
-  'chat.amrCard.chipAutoRetry': 'Авто-повтор після входу',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrCard.switchCta': 'Перейти на Cloud',
-  'chat.amrError.authMessage': 'Ваш обліковий запис CapyDesign Cloud ще не авторизовано. Авторизуйте, і це виконання буде повторено автоматично.',
-  'chat.amrError.balanceMessage': 'Баланс CapyDesign Cloud вичерпано. Поповніть, щоб продовжити це виконання.',
+  
+  
   'chat.amrError.authorizeCta': 'Авторизувати та повторити',
   'chat.amrError.rechargeCta': 'Поповнити',
-  'chat.amrBalanceGate.title': 'Покращте тариф і продовжуйте творити',
-  'chat.amrBalanceGate.message': 'Недостатньо кредитів (залишилось {balance}). Покращте тариф або поповніть баланс — і завдання одразу запуститься.',
-  'chat.amrBalanceGate.benefitsTitle': 'Що дає CapyDesign Cloud',
-  'chat.amrBalanceGate.benefit1': 'Без API-ключів — великий вибір моделей',
-  'chat.amrBalanceGate.benefit2': 'Вбудований SOTA-агент для дизайну, без налаштувань',
-  'chat.amrBalanceGate.benefit3': 'Офіційний сервіс — надійно',
-  'chat.amrBalanceGate.benefit4': 'Постійно розвивається: деплой в 1 клік, мультимодальність, команди тощо',
-  'chat.amrBalanceGate.laterCta': 'Не зараз',
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrBalanceGate.plansCta': 'Покращити тариф',
-  'chat.amrBalanceGate.signedOutTitle': 'Увійдіть, щоб почати творити',
-  'chat.amrBalanceGate.signedOutMessage': 'Ви використовуєте агент CapyDesign Cloud — увійдіть, і це завдання одразу запуститься.',
-  'chat.amrBalanceGate.signInCta': 'Увійти',
-  'chat.amrBalanceGate.watchingWallet': 'Продовжимо автоматично, щойно баланс оновиться.',
-  'chat.amrArtifactUpgrade.title': 'Продовжуйте вдосконалювати роботу з потужнішими моделями',
-  'chat.amrArtifactUpgrade.message': 'Відкрийте передові моделі, більше паралельних завдань і більше кредитів щомісяця.',
-  'chat.amrArtifactUpgrade.benefit1': 'Більше передових моделей, зокрема Fable 5 і GPT-5.6',
-  'chat.amrArtifactUpgrade.benefit2': 'До 10 разів більше паралельних завдань',
-  'chat.amrArtifactUpgrade.benefit3': 'До 300 разів більше щомісячних кредитів',
-  'chat.amrArtifactUpgrade.benefit4': 'Пріоритетна черга в години пік для швидшої генерації',
-  'chat.amrArtifactUpgrade.promoBanner': 'Обмежена пропозиція: знижка до 67% на підписку',
-  'chat.amrArtifactUpgrade.countdownLabel': 'До завершення акції',
-  'chat.amrArtifactUpgrade.plansCta': 'Оновити план зараз, знижка до 67%',
-  'chat.amrArtifactUpgrade.homePlansCta': 'Заощадьте 67%',
-  'chat.amrArtifactUpgrade.laterCta': 'Продовжити з Free і надіслати',
-  'chat.amrArtifactUpgrade.homeTitle': 'Робота готова. Розвиньте наступну ідею ще далі.',
-  'chat.amrArtifactUpgrade.homeMessage': 'Оновіть тариф заради потужніших моделей, паралельних завдань і додаткових кредитів.',
-  'chat.amrArtifactUpgrade.homeArtifactCta': 'Переглянути роботу',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.antigravityError.launchTerminalCta': 'Увійти через термінал',
   'chat.antigravityError.launchSwitchModelCta': 'Змінити модель у терміналі',
   'chat.connectionDropped': 'Переконайтеся, що мережеве з’єднання працює, і спробуйте ще раз.',
   'chat.runError.title.authRequired': 'Потрібна авторизація',
-  'chat.runError.title.balance': 'Недостатньо коштів',
+  
   'chat.runError.title.connectionDropped': 'Мережеве з’єднання перервано',
-  'chat.runError.title.signInRequired.other': 'Вхід у {agent} не виконано',
-  'chat.runError.title.signInRequired.amr': 'Вхід у CapyDesign не виконано',
+  
+  
   'chat.runError.title.rateLimited': 'Сервіс моделі перевантажений',
   'chat.runError.title.modelWindowLimit': 'Високе навантаження',
-  'chat.runError.title.membershipConcurrencyLimit': 'Досягнуто ліміту паралельних завдань',
+  
   'chat.runError.title.strategyTaskHalted': "Завдання зупинено контролем якості",
   'chat.runError.title.agentReplyIncomplete': "Відповідь надійшла, але не записана",
   'chat.runError.title.clarificationRepeated': "Агент поставив ще одне запитання",
@@ -117,8 +117,8 @@ export const uk: Dict = {
   'chat.runError.title.generic': 'Завдання не виконано',
   'chat.runError.title.artifactMissing': "Немає файлів для попереднього перегляду",
   'chat.runError.artifactMissingMessage': "Це завдання не створило файлів для перегляду. Додайте, що потрібно згенерувати, і повторіть спробу.",
-  'chat.runError.signInMessage.amr': 'Увійдіть, щоб побачити свої проєкти та продовжити розмову.',
-  'chat.runError.signInMessage.other': 'Спершу увійдіть у {agent}, потім спробуйте ще раз.',
+  
+  
   'chat.runError.agentFallback': 'агент',
   'chat.runError.sourceLabel': 'Деталі помилки',
   'chat.runError.sourceExpandAria': 'Розгорнути джерело помилки',
@@ -139,8 +139,8 @@ export const uk: Dict = {
   'chat.runError.rateLimitedMessage': 'Наразі до цього сервісу моделі надходить багато запитів, і досягнуто ліміт частоти запитів постачальника. Спробуйте пізніше або спробуйте перемкнутися на іншу модель.',
   'chat.runError.modelWindowLimitMessage': 'Зараз високе навантаження. Спробуйте ще раз після {retryAt}. Цей запит не було оплачено.',
   'chat.runError.modelWindowLimitMessageNoTime': 'Зараз високе навантаження. Спробуйте ще раз трохи згодом. Цей запит не було оплачено.',
-  'chat.runError.membershipConcurrencyLimitMessage': 'Для вашої підписки досягнуто ліміту паралельних завдань. Зачекайте до {retryAt} і повторіть спробу або виберіть іншого агента. Негайний повтор не допоможе.',
-  'chat.runError.membershipConcurrencyLimitMessageNoTime': 'Для вашої підписки досягнуто ліміту паралельних завдань. Дочекайтеся завершення іншого завдання і повторіть спробу або виберіть іншого агента.',
+  
+  
   'chat.runError.upstreamUnavailableMessage': 'Поточна модель тимчасово недоступна. Спробуйте пізніше або змініть модель.',
   'chat.runError.toolLoopMessage': '{agent} повторював ту саму дію без прогресу й був зупинений. Перевірте цільовий файл або команду та повторіть.',
   'chat.runError.outputInvalidMessage': 'Спробуйте згенерувати ще раз або змініть модель і повторіть. Якщо це повторюється, зверніться до підтримки.',
@@ -154,7 +154,7 @@ export const uk: Dict = {
   'chat.runError.title.cpuUnsupported': "Процесор не підтримується",
   'chat.runError.title.cliSessionRefused': "Несумісна версія агента",
   'chat.runError.quotaExhaustedMessage': "Квоту або платіжний ліміт вашого модельного сервісу вичерпано, тож повторна спроба не допоможе. Поповніть баланс у постачальника або перемкніться на іншу модель чи сервіс.",
-  'chat.runError.workspaceCreditsMessage': "У вашому робочому просторі закінчилися кредити. Додайте кредити (або попросіть власника простору поповнити) чи перемкніться на іншу модель або сервіс.",
+  
   'chat.runError.timedOutMessage': "Від ШІ давно не надходило нової відповіді, тому цей запуск зупинено. Повторіть спробу пізніше.",
   'chat.runError.inactivityTimeoutMessage': "Від ШІ давно не надходило нової відповіді, тому цей запуск зупинено. Повторіть спробу пізніше.",
   'chat.runError.emptyOutputMessage': "Агент завершився, не видавши жодного виводу. Зазвичай це тимчасово, спробуйте ще раз.",
@@ -163,8 +163,8 @@ export const uk: Dict = {
   'chat.runError.cpuUnsupportedMessage': "Середовищу виконання цього агента потрібен набір інструкцій процесора (AVX2), якого немає на цьому пристрої, тому воно не може запуститися. Оновіть CapyDesign до останньої версії, яка містить сумісне середовище виконання.",
   'chat.runError.title.agentCrashed': 'Завдання несподівано перервано',
   'chat.runError.agentCrashedMessage': 'Спробуйте згенерувати ще раз або змініть модель і повторіть. Якщо це повторюється, зверніться до підтримки.',
-  'chat.runError.title.accountSuspended': 'Обліковий запис заблоковано',
-  'chat.runError.accountSuspendedMessage': 'Щоб дізнатися причину або подати запит на відновлення, зверніться до підтримки.',
+  
+  
   'chat.runError.fallbackMessage': 'Цього разу не вийшло. Якщо це повторюється, надішліть нам журнали.',
   'chat.runError.cliSessionRefusedMessage':
     "{agent} відмовився почати сеанс. Зазвичай встановлена версія несумісна з CapyDesign — перейдіть на іншу версію та повторіть спробу.",
@@ -340,17 +340,17 @@ export const uk: Dict = {
   'settings.onboardingSystemsBody': 'Виберіть або створіть бренд-систему, щоб згенерована робота відповідала справжнім кольорам, типографіці та мові продукту.',
   'settings.onboardingExecutionTitle': 'Виберіть джерело моделі',
   'settings.onboardingExecutionBody': 'Використовуйте CapyDesign Hosted, підключіть локального агента або вкажіть власний ключ моделі.',
-  'settings.onboardingAmrCloudBenefitOfficial': 'Офіційно рекомендовано',
-  'settings.onboardingAmrCloudBenefitReady': 'Без розгортання',
+  
+  
   'settings.onboardingAmrCloudBenefitModels': 'Отримайте Claude, GPT, Fable 5 і 5.6 sol із тимчасовою знижкою та високою паралельністю.',
-  'settings.onboardingAmrCloudBenefitPricing': 'SOTA Harness',
-  'settings.onboardingAmrCloudUpcomingLabel': 'Незабаром',
-  'settings.onboardingAmrCloudUpcomingImageVideo': 'Зображення й відео',
-  'settings.onboardingAmrCloudUpcomingSkills': 'Багато Skills',
-  'settings.onboardingAmrCloudUpcomingRouting': 'Розумна маршрутизація',
+  
+  
+  
+  
+  
   'settings.onboardingAmrModelSourceLabel': 'CapyDesign Hosted',
-  'settings.onboardingAmrCloudAuthorizeAction': 'Авторизувати CapyDesign Cloud',
-  'settings.onboardingAmrCloudAuthorizedAction': 'Авторизовано',
+  
+  
   'settings.onboardingStepConnect': 'Connect',
   'settings.onboardingStepDesignSystem': 'Створити дизайн-систему',
   'settings.onboardingStepProfile': 'About you',
@@ -363,15 +363,15 @@ export const uk: Dict = {
   'settings.onboardingCloudBody': 'Увійдіть і одразу почніть створювати з хмарним ШІ — без складних налаштувань.',
   'settings.onboardingCloudSignIn': 'Увійти в CapyDesign',
   'settings.onboardingCloudContinue': 'Продовжити (ви увійшли)',
-  'settings.onboardingCloudAlternative': 'Використати локальний CLI або власний ключ API',
+  
   'settings.onboardingCloudRights': 'Усі права захищено.',
   'settings.onboardingCloudOr': 'або',
   'settings.onboardingGateTooltipNoRuntime': 'Наступні кроки виконуються на ШІ — виберіть спосіб запуску, щоб продовжити.',
-  'settings.onboardingGateTooltipAmr': 'Наступні кроки виконуються на ШІ — увійдіть в CapyDesign Cloud, щоб продовжити.',
+  
   'settings.onboardingGateTooltipLocal': 'Наступні кроки виконуються на ШІ — виберіть доступний локальний CLI, щоб продовжити.',
   'settings.onboardingGateTooltipByok': 'Наступні кроки виконуються на ШІ — додайте та протестуйте ключ моделі, щоб продовжити.',
   'settings.onboardingRecommended': 'Рекомендовано',
-  'settings.onboardingAmrCloudOfficialBadge': 'Офіційний',
+  
   'settings.onboardingLocalTitle': 'Локальний агент',
   'settings.onboardingLocalBody': 'Використовуйте Claude Code, Codex, Cursor, OpenCode, Kimi, Qwen, Hermes, Kiro та інші.',
   'settings.onboardingLocalAction': 'Open CLI settings',
@@ -417,7 +417,7 @@ export const uk: Dict = {
   'settings.onboardingSelectPlaceholder': 'Виберіть один варіант',
   'settings.onboardingSelectMultiplePlaceholder': 'Виберіть один або кілька',
   'settings.onboardingOrgSolo': 'Соло / особисте (1)',
-  'settings.onboardingOrgTeam': 'Невелика команда (2-10)',
+  
   'settings.onboardingOrgStartup': 'Стартап / МСБ (11-50)',
   'settings.onboardingOrgGrowth': 'Компанія, що зростає (51-200)',
   'settings.onboardingOrgMidMarket': 'Середній бізнес (201-1000)',
@@ -460,7 +460,7 @@ export const uk: Dict = {
   'settings.modeApi': 'API-провайдер',
   'settings.cloudCalloutTitle': 'Use CapyDesign Cloud',
   'settings.cloudCalloutBody': 'Sign in to the cloud version to enable team spaces, shared projects, member permissions, and the audit dashboard.',
-  'settings.cloudCalloutButton': 'Sign in / Register',
+  
   'settings.modeApiMeta': 'Постачальники API',
   'settings.byokNoFileToolsNotice': 'BYOK не може читати, записувати чи редагувати файли проєкту. Використовуйте Local CLI, коли потрібні зміни в коді.',
   'settings.byokDraftNotice': 'Заповніть обов’язкові поля, щоб зберегти цього постачальника. Поточна конфігурація залишатиметься активною.',
@@ -507,29 +507,29 @@ export const uk: Dict = {
   'settings.agentInstallGroup': 'Доступні для встановлення ({count})',
   'settings.agentAuthRequired': 'Потрібна автентифікація',
   'settings.agentAuthUnknown': 'Стан автентифікації невідомий',
-  'settings.amrCloud': 'CapyDesign Cloud',
-  'settings.amrAuthorize': 'Авторизувати',
+  
+  
   'settings.amrBenefitOfficial': 'Офіційний',
-  'settings.amrBenefitLowerPrice': 'Нижча вартість',
+  
   'settings.amrBenefitManyModels': 'Багато моделей',
-  'settings.amrPromoBonus': 'Обмежений бонус: +100%',
-  'settings.amrSignInToContinue': 'Увійдіть, щоб продовжити',
+  
+  
   'settings.amrSignIn': 'Увійти',
   'settings.amrSignedIn': 'Виконано вхід',
-  'settings.amrWalletBalance': 'Wallet balance',
+  
   'settings.amrWalletUnavailable': 'Balance temporarily unavailable',
-  'settings.amrWalletUpdatedAt': 'Updated {time}',
-  'settings.amrWalletCached': 'cached',
-  'settings.amrWalletRefresh': 'Refresh',
-  'settings.amrWalletRefreshTitle': 'Refresh CapyDesign Cloud wallet balance',
-  'settings.amrNotSignedIn': 'Вхід не виконано',
+  
+  
+  
+  
+  
   'settings.amrSigningIn': 'Вхід…',
   'settings.amrActivationHint': 'Сторінка входу не відкрилася? Натисніть кнопку нижче, щоб відкрити її знову.',
   'settings.amrActivationBrowserFailed': 'Не вдалося відкрити браузер автоматично. Відкрийте сторінку входу нижче, щоб продовжити.',
   'settings.amrActivationOpen': 'Відкрити сторінку входу',
   'settings.amrCancelSignIn': 'Скасувати вхід',
-  'settings.amrAccountStatus': 'Статус облікового запису CapyDesign Cloud',
-  'settings.amrConsole': 'Керувати',
+  
+  
   'settings.amrBalance': 'Ліміт',
   'settings.amrPlan': 'Тариф',
   'settings.amrUpgrade': 'Покращити',
@@ -537,13 +537,13 @@ export const uk: Dict = {
   'settings.amrLoginErrorCompact': 'Не вдалося ввійти в CapyDesign Cloud.',
   'settings.advanced': 'Розширені',
   'settings.amrLogin': 'Увійти',
-  'settings.amrLogout': 'Вийти',
-  'settings.amrLoggingIn': 'Вхід…',
-  'settings.amrLoggingOut': 'Вихід…',
-  'settings.amrLoggedInAs': 'Виконано вхід як {email}',
-  'settings.amrLoggedInWithPlan': 'Ви увійшли як {email} · {plan}',
-  'settings.amrLoggedInPill': 'Виконано вхід',
-  'settings.amrNotLoggedIn': 'Вхід не виконано',
+  
+  
+  
+  
+  
+  
+  
   'settings.apiSection': 'Anthropic API',
   'settings.quickFillProvider': 'Швидко заповнити провайдера',
   'settings.providerPreset': 'Пресет постачальника',
@@ -625,7 +625,7 @@ export const uk: Dict = {
   'settings.modelUsesCliDefault': 'Типове значення CLI',
   'settings.modelSourceFallback': 'Вбудований список',
   'settings.reasoningPicker': 'Інтенсивність міркувань',
-  'settings.serviceTierPicker': 'Рівень сервісу',
+  
   'settings.modelPickerHint': 'Отримується з CLI, коли він виявляє команду `models`. «За замовчуванням» залишає вибір конфігурації CLI; «Власна…» дозволяє ввести будь-яке ID моделі, яке приймає CLI.',
   'settings.modelPickerLiveHint': 'Моделі оновлено з установленого CLI. Типовий варіант і далі використовує конфігурацію CLI.',
   'settings.modelPickerLiveCatalogOnlyHint': 'Моделі оновлено з установленого CLI.',
@@ -766,21 +766,21 @@ export const uk: Dict = {
   'entry.mailAria': 'Є питання? Напишіть нам',
   'entry.accountSettings': 'Налаштування',
   'chat.collapsePane': 'Згорнути панель розмови',
-  'collabPresence.ariaOne': '1 collaborator online',
-  'collabPresence.aria': '{count} collaborators online',
-  'collabPresence.ariaWithSelfOne': '1 collaborator online, including you',
-  'collabPresence.ariaWithSelf': '{count} collaborators online, including you',
-  'collabPresence.moreOnline': '{count} more online',
-  'collabPresence.dialogTitle': 'Online collaborators',
-  'collabPresence.onlineCount': '{count} online',
-  'collabPresence.selfBadge': 'You',
-  'collabPresence.roleOwner': 'Owner',
-  'collabPresence.roleAdmin': 'Admin',
-  'collabPresence.roleMember': 'Member',
-  'collabPresence.viewingFileSelf': 'You are viewing {file}',
-  'collabPresence.viewingFileOther': 'Viewing {file}',
-  'collabPresence.viewingProjectSelf': 'You are viewing this project',
-  'collabPresence.viewingProjectOther': 'Viewing this project',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'entry.followXLabel': 'Стежити за @OpenDesignHQ в X',
   'entry.followThreadsLabel': 'Follow CapyDesign on Threads',
   'entry.youtubeLabel': 'CapyDesign on YouTube',
@@ -800,7 +800,7 @@ export const uk: Dict = {
   "entry.billingTierTeam": "Teams",
   "entry.billingTierFree": "Free",
   "entry.billingTierPro": "Pro",
-  "entry.billingFamilyCreator": "Creator",
+  
   "entry.creditsAria": "{tier} · credits remaining",
   "entry.creditsAriaWithBalance": "{tier} · {balance} credits remaining",
   "entry.creditsGrantTip": "Teams credits are granted by subscription allowance. Usage is available in billing.",
@@ -812,12 +812,12 @@ export const uk: Dict = {
   "entry.creditsMemberNoticeTitle": "Need more credits?",
   "entry.creditsMemberNoticeBody": "You are currently a Member and cannot add credits yourself. Ask a team Admin to increase the allowance when you need more.",
   "entry.creditsMemberNoticeAction": "Ask Admin to increase allowance",
-  "entry.accountToggleTheme": "Toggle theme",
-  "entry.accountSwitchLanguage": "Switch language",
-  "entry.accountLanguageMeta": "中文 / English",
+  
+  
+  
   "entry.accountGithubHelp": "Get help on GitHub",
   "entry.accountFeatureRequest": "Submit feature request",
-  "entry.accountAddAccount": "Add account",
+  
   "entry.accountSignOut": "Sign out",
   "signOut.confirmTitle": "Вийти",
   "signOut.confirmMessage": "Ви впевнені, що хочете вийти?",
@@ -829,8 +829,8 @@ export const uk: Dict = {
   "entry.blankAllProjectsTitle": "No team projects yet",
   "entry.blankAllProjectsDescription": "Projects shared to the team will appear here for everyone in the workspace.",
   "entry.blankCreate": "New project",
-  'entry.workspaceTeamsTitle': 'Workspace для команд — розкажіть, що потрібно вашій команді',
-  'entry.workspaceTeamsAria': 'Відкрити сторінку Workspace для команд',
+  
+  
   'entry.navExpand': 'Розгорнути бічну панель',
   'entry.navCollapse': 'Згорнути бічну панель',
   'entry.navNewProject': 'Новий проєкт',
@@ -848,18 +848,18 @@ export const uk: Dict = {
   'entry.draftsDescription': 'Projects you created, visible only to you',
   'entry.allProjectsDescription': 'Projects owned by everyone on the team',
   'entry.navBoard': 'Board',
-  'entry.navTeamSection': 'Team',
+  
   'entry.teamSlotNote': 'This space is provided by the team service. Integration is in progress.',
-  "entry.cloudCalloutTitle": "CapyDesign Cloud",
-  'entry.cloudRecovering': 'Account connection interrupted. Recovering automatically…',
+  
+  
   'entry.authExpiredBody': 'Your sign-in has expired. Sign in to continue using CapyDesign Cloud.',
   'home.createFailed': 'Failed to start the run. Try again.',
   'home.daemonRecovering': 'Local service connection interrupted. Recovering automatically…',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
-  "entry.cloudCalloutBody": "Увійдіть, щоб використовувати CapyDesign Cloud і співпрацювати в хмарі",
-  "entry.cloudCalloutDismissAria": "Закрити повідомлення CapyDesign Cloud",
-  'entry.workspaceLockedNote': 'This workspace is locked. Restore billing to resume editing shared projects.',
-  'entry.workspaceLockedRecover': 'Restore access',
+  
+  
+  
+  
   'messageCenter.openAria': 'Open message center',
   'messageCenter.unreadCount': '{count} unread',
   'messageCenter.title': 'Message center',
@@ -889,8 +889,8 @@ export const uk: Dict = {
   'goPlanSunset.confirming': 'Confirming…',
   'goPlanSunset.acknowledge': 'Got it',
   'workspaceTabs.project': 'Проєкт',
-  'workspaceTabs.pluginDetails': 'Деталі плагіна',
-  'workspaceTabs.marketplace': 'Маркетплейс',
+  
+  
   'homeHero.title': 'Що ви спроєктуєте сьогодні разом зі своїм агентом?',
   'homeHero.startWithTemplate': 'Почати з шаблону…',
   'homeHero.startBlankProject': 'створити порожній проєкт',
@@ -1057,7 +1057,7 @@ export const uk: Dict = {
   'handoff.frameworkPrompt.solid': 'SolidJS',
   'handoff.frameworkPrompt.next': 'Next.js / React',
   'handoff.frameworkPrompt.vanilla': 'чистий JavaScript, HTML і CSS',
-  'handoff.amrWebsite': 'Відкрити вебсайт CapyDesign Cloud',
+  
   'handoff.copyPrompt': 'Скопіювати запит',
   'handoff.copyPromptForTarget': 'Скопіювати запит для {target}',
   'handoff.copied': 'Скопійовано',
@@ -1111,7 +1111,7 @@ export const uk: Dict = {
   'recentProjects.sortName': 'Name',
   'recentProjects.viewList': 'List view',
   'recentProjects.sharedBadge': 'Shared',
-  'recentProjects.sharedProjectFallbackName': 'Shared project',
+  
   'recentProjects.creatorLine': 'Created by {name}',
   'recentProjects.selfCreator': 'Me',
   'recentProjects.teamMemberCreator': 'Team member',
@@ -1670,7 +1670,7 @@ export const uk: Dict = {
   'connectors.title': 'Конектори',
   'connectors.subtitle': 'Локальні та майбутні джерела даних, які можуть живити live-артефакти.',
   'connectors.account': 'Обліковий запис',
-  'connectors.noAccount': 'Не підключено',
+  
   'connectors.tools': 'Інструменти',
   'connectors.connect': 'Підключити',
   'connectors.disconnect': 'Відключити',
@@ -2016,8 +2016,8 @@ export const uk: Dict = {
   'avatar.useApi': 'Використовувати API · BYOK',
   'avatar.codeAgent': 'Кодовий агент',
   'avatar.rescan': 'Переканувати PATH',
-  'avatar.amrConsole': 'Обліковий запис CapyDesign Cloud',
-  'avatar.amrConsoleMeta': 'Баланс і поповнення',
+  
+  
   'avatar.settings': 'Налаштування',
   'avatar.backToProjects': 'Назад до проектів',
   'avatar.metaActive': 'активно',
@@ -2775,7 +2775,7 @@ export const uk: Dict = {
   'misc.primary': 'Основна',
   'misc.designSystem': 'Система дизайну',
   'workspace.designFiles': 'Файли дизайну',
-  'workspace.focusMode': 'Сфокусувати робочий простір',
+  
   'workspace.showChat': 'Показати чат',
   'workspace.closeTab': 'Закрити вкладку',
   'workspace.fileSyncDownloading': 'Завантаження від команди…',
@@ -2786,13 +2786,13 @@ export const uk: Dict = {
   'workspace.deleteSelectedFilesConfirm': 'Видалити {n} вибраних файлів з папки проекту?',
   'workspace.deleteSelectedFilesPartial': 'Не вдалося видалити {n} файл(ів).',
   'workspace.openFromDesignFiles': 'Відкрити файл з',
-  'workspace.designFilesLink': 'Файли дизайну',
+  
   'workspace.loadingSketch': 'Завантаження ескізу…',
   'workspace.newTab': 'Нова вкладка',
   'workspace.searchFilesPlaceholder': 'Search files…',
   'workspace.openTabs': 'Відкриті вкладки',
-  'workspace.searchTabs': 'Search tabs',
-  'workspace.noTabsFound': 'No tabs found',
+  
+  
   'workspace.openFile': 'Open a file',
   'workspace.noFilesMatch': 'No files match',
   'workspace.allFiles': 'All',
@@ -3203,14 +3203,14 @@ export const uk: Dict = {
   'fileViewer.presenterMode': 'Режим доповідача',
   'fileViewer.exitPresentation': 'Вийти з режиму презентації',
   'fileViewer.shareLabel': 'Поділитися',
-  'fileViewer.shareMenuShareLink': 'ПОДІЛИТИСЯ',
+  
   'fileViewer.shareMenuPublishOnline': 'ПОДІЛИТИСЯ НА СВОЄМУ ХОСТИНГУ',
-  'fileViewer.shareMenuDownload': 'ЗАВАНТАЖИТИ',
-  'fileViewer.shareMenuPresentation': 'Презентація',
-  'fileViewer.shareMenuSourceFiles': 'Вихідні файли',
-  'fileViewer.shareMenuSave': 'ЗБЕРЕГТИ',
+  
+  
+  
+  
   'fileViewer.shareMenuPublishViaOd': 'ШВИДКИЙ ДОСТУП · OPENDESIGN',
-  'fileViewer.unifiedShareAria': 'Share and export actions',
+  
   'fileViewer.unifiedShareTab': 'Share',
   'fileViewer.unifiedExportTab': 'Export',
   'fileViewer.unifiedSendTab': 'Send to...',
@@ -3226,13 +3226,13 @@ export const uk: Dict = {
   'fileViewer.publishFile': 'Publish file',
   'fileViewer.publishingFile': 'Створення посилання…',
   'fileViewer.unpublishFile': 'Припинити доступ',
-  'fileViewer.shareEmptyStateTitle': 'Поки нічим ділитися',
-  'fileViewer.shareEmptyStateDescription': 'Створіть команду або приєднайтеся до неї, щоб поділитися цим файлом з колегами',
-  'fileViewer.shareEmptyStateCreateTeam': 'Створити команду',
-  'fileViewer.shareTeamMissingTitle': 'Поки немає команди, щоб поділитися',
+  
+  
+  
+  
 
-  'fileViewer.publishFileRequiresTeam': 'Щоб опублікувати загальнодоступне посилання, потрібен командний робочий простір. Перейдіть до командного простору або скористайтеся «Розгорнути».',
-  'fileViewer.publishFileRequiresWorkspace': 'Для посилання потрібен вхід у робочий простір. Увійдіть в CapyDesign Cloud або поділіться файлом через деплой.',
+  
+  
   'fileViewer.publishFileFailed': 'Не вдалося створити посилання. Повторіть спробу або скористайтеся варіантом деплою нижче.',
   'fileViewer.workspaceShareSuccess': 'Shared with workspace members',
   'fileViewer.workspaceShareFailed': 'Could not share with workspace',
@@ -3242,10 +3242,10 @@ export const uk: Dict = {
   'fileViewer.copyShareLink': 'Скопіювати посилання для доступу',
   'fileViewer.openSharePage': 'Відкрити сторінку доступу',
   'fileViewer.shareLinkRequiresDeploy': 'Спочатку опублікуйте онлайн, щоб отримати посилання',
-  'fileViewer.shareLinkPublishGuide': 'Опублікуйте онлайн вище, щоб увімкнути доступ ↑',
+  
   'fileViewer.shareAfterGenerationComplete': 'Доступ буде можливий після завершення генерації',
   'fileViewer.copyProviderLink': 'Скопіювати посилання {provider}',
-  'fileViewer.copyCloudflareLink': 'Скопіювати посилання Cloudflare',
+  
   'fileViewer.screenshotCopying': 'Копіювання знімка екрана...',
   'fileViewer.screenshotCopied': 'Знімок екрана скопійовано до буфера обміну',
   'fileViewer.screenshotClipboardDenied': 'Браузер заблокував доступ до буфера обміну',
@@ -3404,12 +3404,12 @@ export const uk: Dict = {
   'fileViewer.cloudflareDomainPrefixPlaceholder': 'demo',
   'fileViewer.cloudflareDomainPrefixInvalid': 'Використовуйте лише одну DNS-мітку: малі літери, цифри та дефіси.',
   'fileViewer.cloudflareHostnamePreview': 'Попередній перегляд власного домену: {hostname}',
-  'fileViewer.cloudflareCustomDomainHint': 'Необов’язково: прив’яжіть власний домен. Якщо залишити поле порожнім, посилання pages.dev усе одно буде створено.',
+  
   'fileViewer.cloudflarePagesDevLinkLabel': 'URL pages.dev',
   'fileViewer.cloudflareCustomDomainLinkLabel': 'Власний домен',
   'fileViewer.optional': 'Необов’язково',
   'fileViewer.vercelPreviewOnly': 'Розгортання наразі лише для попереднього перегляду.',
-  'fileViewer.cloudflarePagesPreviewHint': 'Cloudflare Pages використовує Direct Upload.',
+  
   'fileViewer.savingConfig': 'Збереження…',
   'fileViewer.deployConfigSaveFailed': 'Не вдалося зберегти налаштування Vercel.',
   'fileViewer.deployFailed': 'Розгортання не вдалося. Перевірте налаштування Vercel та спробуйте ще раз.',
@@ -3461,8 +3461,8 @@ export const uk: Dict = {
   'assistant.forkConversation': 'Нова розмова',
   'assistant.forkingConversation': 'Починається нова розмова…',
   'assistant.forkNote': 'Продовження розмови',
-  'assistant.shareToOpenDesign': 'Поділитися з CapyDesign',
-  'assistant.shareToOpenDesignBusy': 'Готуємо пакет…',
+  
+  
   'assistant.feedbackPrompt': 'Відгук',
   'assistant.feedbackPositive': 'Корисно',
   'assistant.feedbackNegative': 'Не корисно',
@@ -3502,10 +3502,10 @@ export const uk: Dict = {
   'chat.runError.actionBlocked.busy': "У цій розмові ще виконується завдання. Повтор стане доступним після його завершення.",
   'chat.support.channel.feishu': "Спільнота Feishu",
   'chat.support.channel.discord': "Discord",
-  'chat.amrBalanceOwner.title': "Попросіть власника команди поповнити баланс",
-  'chat.amrBalanceOwner.message': "Поповнити баланс команди може лише її власник. Попросіть «{name}» поповнити баланс, перш ніж продовжувати.",
-  'chat.amrBalanceOwner.messageNoOwnerName': "Поповнити баланс команди може лише її власник. Попросіть власника команди поповнити баланс, перш ніж продовжувати.",
-  'chat.amrBalanceOwner.dismissCta': "Зрозуміло",
+  
+  
+  
+  
   'assistant.outTokens': '{n} вихід',
   'assistant.producedFiles': 'Файли з цієї черги',
   'assistant.openFile': 'Відкрити',
@@ -4717,16 +4717,16 @@ export const uk: Dict = {
   // other-lane workspace destinations (members / billing / team space).
   'settings.workspace': 'Workspace',
   'settings.workspaceHint': 'Members, billing, and team spaces',
-  'settings.workspaceLede': 'Team-level settings for this workspace. These areas are managed by the team service — open one to continue.',
-  'settings.workspaceBack': 'Back to workspace',
-  'settings.workspaceMembers': 'Members & invites',
-  'settings.workspaceMembersHint': 'Manage who can access this workspace and send invitations.',
-  'settings.workspaceBilling': 'Subscription & seats',
-  'settings.workspaceBillingHint': 'Plan, seats, and payment for this workspace.',
-  'settings.workspaceAutoRecharge': 'Auto-recharge',
-  'settings.workspaceAutoRechargeHint': 'Automatically top up credits when the balance runs low.',
-  'settings.workspaceTeamSpace': 'Team space',
-  'settings.workspaceTeamSpaceHint': 'Shared projects and visibility for your team.',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   // Full-page Settings (`/settings`): sidebar nav head above the section list.
   'settings.pageBackToHome': 'Back to home',
   'settings.pageNavGroupPersonal': 'Personal',
@@ -4734,9 +4734,9 @@ export const uk: Dict = {
   'newproj.startBlank': 'Порожній',
   'newproj.startBlankHint': 'Почати з нуля',
   'workspace.pages': 'Сторінки',
-  'workspace.allProjectFiles': 'Усі файли проєкту',
+  
   'workspace.newBlankPage': 'Нова порожня сторінка',
-  'workspace.noPagesYet': 'Поки немає сторінок',
+  
   'workspace.pageCreateFailed': 'Не вдалося створити сторінку.',
   'workspace.pageCreatorTitle': 'Створити сторінку',
   'workspace.pageCreatorSearch': 'Пошук шаблонів',

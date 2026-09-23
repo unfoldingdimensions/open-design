@@ -1,115 +1,115 @@
 import type { Dict } from '../types';
 
 export const tr: Dict = {
-  'invite.header.eyebrow': "Team invitation",
-  'invite.loading': "Loading invitation…",
-  'invite.landing.title': "Join the team",
-  'invite.landing.subtitle': "You’ve been invited to collaborate in CapyDesign.",
-  'invite.landing.roleLabel': "Role",
-  'invite.landing.invitedEmail': "Invited email",
-  'invite.landing.expires': "Expires",
-  'invite.role.admin': "Admin",
-  'invite.role.member': "Member",
-  'invite.role.admin.desc': "Can manage members, seats, and all project settings.",
-  'invite.role.member.desc': "Can create your own projects, and view and comment on shared team projects.",
-  'invite.accept.cta': "Accept invitation",
-  'invite.accountMismatch.title': "You’re signed in as a different account",
-  'invite.accountMismatch.body': "This invitation was sent to a different email address. You can continue with your current account, or switch accounts.",
-  'invite.accountMismatch.continue': "Continue with current account",
-  'invite.accountMismatch.switch': "Switch account",
-  'invite.accepting.title': "Joining the team…",
-  'invite.accepting.body': "Setting up your membership.",
-  'invite.success.title': "You’re in",
-  'invite.success.body': "Opening CapyDesign so you can start collaborating.",
-  'invite.success.roleReceipt': "Joined as",
-  'invite.success.enter': "Enter workspace",
-  'invite.open.cta': "Open CapyDesign",
-  'invite.open.opening': "Opening CapyDesign…",
-  'invite.open.retry': "Already installed? Try opening again",
-  'invite.notInstalled.title': "Didn’t open automatically?",
-  'invite.notInstalled.body': "You may not have CapyDesign installed yet. Install it, then reopen this link to finish joining.",
-  'invite.notInstalled.download': "Download CapyDesign",
-  'invite.error.title': "Can’t accept this invitation",
-  'invite.error.invite_expired': "This invitation has expired. Ask an admin to send a new one.",
-  'invite.error.invite_consumed': "This invitation has already been used.",
-  'invite.error.workspace_seat_limit_reached': "The team has no seats left. Ask an admin to free up a seat or add more.",
-  'invite.error.workspace_subscription_locked': "The team’s subscription is inactive, so new members can’t join right now.",
-  'invite.error.workspace_not_found': "This workspace no longer exists.",
-  'invite.error.workspace_forbidden': "Your account isn’t allowed to accept this invitation.",
-  'invite.error.invite_unavailable': "This invitation is no longer available.",
-  'invite.error.generic': "Something went wrong. Please try again.",
-  'invite.error.retry': "Try again",
-  "workspaceInvite.dialogAria": "Invite members",
-  "workspaceInvite.title": "Invite members to your team",
-  "workspaceInvite.freePlanBody": "The free plan includes 1 seat. Inviting teammates will guide you to upgrade to Teams.",
-  "workspaceInvite.teamPlanBody": "Invite teammates to share projects, design systems, and plugins together.",
-  "workspaceInvite.seatsExhaustedBody": "Bu çalışma alanında boş koltuk kalmadı. Ekip arkadaşlarınızı davet etmek için koltuk ekleyin.",
-  "workspaceInvite.seatsExhaustedAction": "Koltukları ve planı görüntüle",
-  "workspaceInvite.emailLabel": "Invite members by email",
-  "workspaceInvite.roleLabel": "Assign role",
-  "workspaceInvite.defaultRoleLabel": "Default role",
-  "workspaceInvite.emailPlaceholder": "Enter email address…",
-  "workspaceInvite.removeRow": "Remove",
-  "workspaceInvite.addMember": "Add member",
-  "workspaceInvite.visibilityQuestion": "Will team members see my designs?",
-  "workspaceInvite.visibilityAnswer": "Team members can see designs you share to the team space. Private designs kept in Personal projects are not visible to others.",
-  "workspaceInvite.sent": "Invitation sent",
-  "workspaceInvite.sending": "Inviting…",
-  "workspaceInvite.confirm": "Confirm and invite",
-  "workspaceInvite.submitFailed": "Failed to send invitation. Try again later.",
-  "workspaceInvite.errorAlreadyMember": "Bu e-posta zaten bir ekip üyesi.",
-  "workspaceInvite.errorPendingInvite": "Bu e-posta için zaten bekleyen bir davet var.",
-  "workspaceInvite.errorNoSession": "Üye davet etmeden önce Vela hesabınıza giriş yapın.",
-  "workspaceInvite.errorNoWorkspace": "Henüz üye davet edebileceğiniz bir ekip alanı yok.",
-  "workspaceInvite.errorUnreachable": "Davet gönderilemedi. Lütfen daha sonra tekrar deneyin.",
-  'chat.amrCard.switchTitle': 'Model çağrısı başarısız oldu — bu çalıştırma duraklatıldı',
-  'chat.amrCard.switchBody': 'CapyDesign Cloud\'ın resmi model hizmetine geçin — API anahtarı yapılandırması gerekmez. Oturum açma, yetkilendirme ve bakiye yükleme sonrası bu çalıştırma otomatik olarak yeniden denenir.',
-  'chat.amrCard.chipOfficial': 'Resmi hizmet',
-  'chat.amrCard.chipNoKey': 'API anahtarı gerekmez',
-  'chat.amrCard.chipAutoRetry': 'Giriş sonrası otomatik yeniden deneme',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrCard.switchCta': 'Cloud\'ye geç',
-  'chat.amrError.authMessage': 'CapyDesign Cloud hesabınız henüz yetkilendirilmedi. Yetkilendirin ve bu çalıştırma otomatik olarak yeniden denensin.',
-  'chat.amrError.balanceMessage': 'CapyDesign Cloud bakiyeniz bitti. Çalıştırmaya devam etmek için bakiye yükleyin.',
+  
+  
   'chat.amrError.authorizeCta': 'Yetkilendir ve yeniden dene',
   'chat.amrError.rechargeCta': 'Bakiye yükle',
-  'chat.amrBalanceGate.title': 'Yükseltin, üretmeye devam edin',
-  'chat.amrBalanceGate.message': 'Kredi yetersiz (kalan {balance}). Planınızı yükseltin veya bakiye yükleyin, görev hemen başlayabilir.',
-  'chat.amrBalanceGate.benefitsTitle': 'CapyDesign Cloud size neler sunar',
-  'chat.amrBalanceGate.benefit1': 'API anahtarı gerekmez, çok sayıda model',
-  'chat.amrBalanceGate.benefit2': 'SOTA tasarım ajanı dahili, kurulum gerekmez',
-  'chat.amrBalanceGate.benefit3': 'Resmî ve güvenilir hizmet',
-  'chat.amrBalanceGate.benefit4': 'Sürekli gelişiyor: tek tıkla yayınlama, çok modlu, ekipler ve dahası',
-  'chat.amrBalanceGate.laterCta': 'Şimdi değil',
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrBalanceGate.plansCta': 'Planı yükselt',
-  'chat.amrBalanceGate.signedOutTitle': 'Oturum açın, üretmeye başlayın',
-  'chat.amrBalanceGate.signedOutMessage': 'CapyDesign Cloud ajanını kullanıyorsunuz — oturum açın, bu görev hemen başlayabilir.',
-  'chat.amrBalanceGate.signInCta': 'Oturum aç',
-  'chat.amrBalanceGate.watchingWallet': 'Bakiyeniz güncellenince otomatik olarak devam edeceğiz.',
-  'chat.amrArtifactUpgrade.title': 'Daha güçlü modellerle geliştirmeye devam edin',
-  'chat.amrArtifactUpgrade.message': 'Gelişmiş modellerin, daha fazla paralel görevin ve daha çok aylık kredinin kilidini açın.',
-  'chat.amrArtifactUpgrade.benefit1': 'Fable 5 ve GPT-5.6 gibi daha fazla gelişmiş model',
-  'chat.amrArtifactUpgrade.benefit2': 'Aynı anda 10 kata kadar daha fazla görev',
-  'chat.amrArtifactUpgrade.benefit3': 'Aylık 300 kata kadar daha fazla kredi',
-  'chat.amrArtifactUpgrade.benefit4': 'Yoğun saatlerde daha hızlı üretim için öncelikli kuyruk',
-  'chat.amrArtifactUpgrade.promoBanner': 'Sınırlı süre: abonelik planlarında %67\'ye varan indirim',
-  'chat.amrArtifactUpgrade.countdownLabel': 'Teklifin bitmesine',
-  'chat.amrArtifactUpgrade.plansCta': 'Şimdi yükseltin, %67\'ye varan indirim',
-  'chat.amrArtifactUpgrade.homePlansCta': '%67 indirim',
-  'chat.amrArtifactUpgrade.laterCta': 'Free ile devam et ve gönder',
-  'chat.amrArtifactUpgrade.homeTitle': 'Çalışmanız hazır. Sonraki fikri daha ileri taşıyın.',
-  'chat.amrArtifactUpgrade.homeMessage': 'Daha güçlü modeller, daha fazla paralel görev ve daha çok aylık kredi için yükseltin.',
-  'chat.amrArtifactUpgrade.homeArtifactCta': 'Çalışmayı gör',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.antigravityError.launchTerminalCta': 'Terminal üzerinden giriş yap',
   'chat.antigravityError.launchSwitchModelCta': 'Terminalde modeli değiştir',
   'chat.connectionDropped': 'Ağ bağlantınızın çalıştığını doğrulayın ve yeniden deneyin.',
   'chat.runError.title.authRequired': 'Yetkilendirme gerekli',
-  'chat.runError.title.balance': 'Yetersiz bakiye',
+  
   'chat.runError.title.connectionDropped': 'Ağ bağlantısı kesildi',
-  'chat.runError.title.signInRequired.other': '{agent} oturumu açılmamış',
-  'chat.runError.title.signInRequired.amr': 'CapyDesign oturumu açılmamış',
+  
+  
   'chat.runError.title.rateLimited': 'Model hizmeti yoğun',
   'chat.runError.title.modelWindowLimit': 'Yoğunluk var',
-  'chat.runError.title.membershipConcurrencyLimit': 'Eşzamanlı görev sınırına ulaşıldı',
+  
   'chat.runError.title.strategyTaskHalted': "Görev kalite kapısı tarafından durduruldu",
   'chat.runError.title.agentReplyIncomplete': "Yanıt geldi ama kaydedilemedi",
   'chat.runError.title.clarificationRepeated': "Aracı bir soru daha sordu",
@@ -117,8 +117,8 @@ export const tr: Dict = {
   'chat.runError.title.generic': 'Görev başarısız',
   'chat.runError.title.artifactMissing': "Önizlenecek dosya yok",
   'chat.runError.artifactMissingMessage': "Bu görev önizlenecek dosya üretmedi. Oluşturulmasını istediğiniz içeriği ekleyip tekrar deneyin.",
-  'chat.runError.signInMessage.amr': 'Projelerinizi görmek ve sohbete devam etmek için giriş yapın.',
-  'chat.runError.signInMessage.other': 'Önce {agent} hesabınıza giriş yapın, sonra yeniden deneyin.',
+  
+  
   'chat.runError.agentFallback': 'aracı',
   'chat.runError.sourceLabel': 'Hata ayrıntıları',
   'chat.runError.sourceExpandAria': 'Hata kaynağını genişlet',
@@ -139,8 +139,8 @@ export const tr: Dict = {
   'chat.runError.rateLimitedMessage': 'Şu anda bu model hizmetine çok sayıda istek geliyor ve sağlayıcının istek sıklığı sınırına ulaşıldı. Daha sonra tekrar deneyin veya başka bir modele geçmeyi deneyin.',
   'chat.runError.modelWindowLimitMessage': 'Şu anda yoğunluk var. {retryAt} sonrasında tekrar deneyin. Bu istek için ücret alınmadı.',
   'chat.runError.modelWindowLimitMessageNoTime': 'Şu anda yoğunluk var. Kısa süre sonra tekrar deneyin. Bu istek için ücret alınmadı.',
-  'chat.runError.membershipConcurrencyLimitMessage': 'Üyeliğinizin eşzamanlı görev sınırı dolu. {retryAt} saatine kadar bekleyip yeniden deneyin veya başka bir aracıya geçin. Hemen yeniden denemek yardımcı olmaz.',
-  'chat.runError.membershipConcurrencyLimitMessageNoTime': 'Üyeliğinizin eşzamanlı görev sınırı dolu. Başka bir görev bitince yeniden deneyin veya başka bir aracıya geçin.',
+  
+  
   'chat.runError.upstreamUnavailableMessage': 'Geçerli model geçici olarak kullanılamıyor. Daha sonra tekrar deneyin veya model değiştirin.',
   'chat.runError.toolLoopMessage': '{agent} aynı işlemi ilerleme olmadan tekrarladı ve durduruldu. Hedef dosyayı veya komutu kontrol edip yeniden deneyin.',
   'chat.runError.outputInvalidMessage': 'Yeniden oluşturmayı deneyin ya da model değiştirip tekrar deneyin. Sorun devam ederse destek ekibiyle iletişime geçin.',
@@ -154,7 +154,7 @@ export const tr: Dict = {
   'chat.runError.title.cpuUnsupported': "İşlemci desteklenmiyor",
   'chat.runError.title.cliSessionRefused': "Aracı sürümü uyumsuz",
   'chat.runError.quotaExhaustedMessage': "Model hizmetinizin kotası veya faturalandırma limiti doldu, bu yüzden yeniden denemek işe yaramaz. Sağlayıcınızda bakiye yükleyin ya da başka bir modele veya hizmete geçin.",
-  'chat.runError.workspaceCreditsMessage': "Çalışma alanınızın kredisi bitti. Kredi ekleyin (veya çalışma alanı sahibinden yükleme yapmasını isteyin) ya da başka bir modele veya hizmete geçin.",
+  
   'chat.runError.timedOutMessage': "Uzun süredir yapay zekâdan yeni bir yanıt gelmedi, bu yüzden çalışma durduruldu. Lütfen daha sonra tekrar deneyin.",
   'chat.runError.inactivityTimeoutMessage': "Uzun süredir yapay zekâdan yeni bir yanıt gelmedi, bu yüzden çalışma durduruldu. Lütfen daha sonra tekrar deneyin.",
   'chat.runError.emptyOutputMessage': "Aracı herhangi bir çıktı üretmeden sona erdi. Bu genellikle geçicidir, yeniden deneyin.",
@@ -163,8 +163,8 @@ export const tr: Dict = {
   'chat.runError.cpuUnsupportedMessage': "Bu aracının çalışma zamanı, bu cihazın CPU'sunda bulunmayan bir komut seti (AVX2) gerektirdiğinden başlatılamıyor. Uyumlu çalışma zamanı içeren en son CapyDesign sürümüne güncelleyin.",
   'chat.runError.title.agentCrashed': 'Görev beklenmedik şekilde kesildi',
   'chat.runError.agentCrashedMessage': 'Yeniden oluşturmayı deneyin ya da model değiştirip tekrar deneyin. Sorun devam ederse destek ekibiyle iletişime geçin.',
-  'chat.runError.title.accountSuspended': 'Hesap askıya alındı',
-  'chat.runError.accountSuspendedMessage': 'Nedenini öğrenmek veya hesabın açılmasını talep etmek için destek ekibiyle iletişime geçin.',
+  
+  
   'chat.runError.fallbackMessage': 'Bu sefer tamamlanamadı. Sürekli oluyorsa günlükleri bize gönderin.',
   'chat.runError.cliSessionRefusedMessage':
     "{agent} bir oturum başlatmayı reddetti. Yüklü sürüm genellikle CapyDesign ile uyumlu değildir; farklı bir sürüme geçip yeniden deneyin.",
@@ -340,17 +340,17 @@ export const tr: Dict = {
   'settings.onboardingSystemsBody': 'Üretilen çalışmaların gerçek renkleri, tipografiyi ve ürün dilini izlemesi için bir marka sistemi seçin veya oluşturun.',
   'settings.onboardingExecutionTitle': 'Model kaynağını seçin',
   'settings.onboardingExecutionBody': 'CapyDesign Hosted kullanın, yerel bir ajan bağlayın veya kendi model anahtarınızı kullanın.',
-  'settings.onboardingAmrCloudBenefitOfficial': 'Resmi olarak önerilir',
-  'settings.onboardingAmrCloudBenefitReady': 'Dağıtım gerekmez',
+  
+  
   'settings.onboardingAmrCloudBenefitModels': 'Claude, GPT, Fable 5 ve 5.6 sol modellerine sınırlı süreli indirim ve yüksek eşzamanlılıkla erişin.',
-  'settings.onboardingAmrCloudBenefitPricing': 'SOTA Harness',
-  'settings.onboardingAmrCloudUpcomingLabel': 'Yakında',
-  'settings.onboardingAmrCloudUpcomingImageVideo': 'Görsel ve video',
-  'settings.onboardingAmrCloudUpcomingSkills': 'Çok sayıda Skills',
-  'settings.onboardingAmrCloudUpcomingRouting': 'Akıllı yönlendirme',
+  
+  
+  
+  
+  
   'settings.onboardingAmrModelSourceLabel': 'CapyDesign Hosted',
-  'settings.onboardingAmrCloudAuthorizeAction': 'CapyDesign Cloud yetkilendir',
-  'settings.onboardingAmrCloudAuthorizedAction': 'Yetkilendirildi',
+  
+  
   'settings.onboardingStepConnect': 'Connect',
   'settings.onboardingStepDesignSystem': 'Tasarım sistemi oluştur',
   'settings.onboardingStepProfile': 'About you',
@@ -363,15 +363,15 @@ export const tr: Dict = {
   'settings.onboardingCloudBody': 'Giriş yap ve bulut yapay zekâsıyla hemen tasarlamaya başla — karmaşık kurulum gerekmez.',
   'settings.onboardingCloudSignIn': 'CapyDesign’a giriş yap',
   'settings.onboardingCloudContinue': 'Devam et (giriş yapıldı)',
-  'settings.onboardingCloudAlternative': 'Yerel bir CLI ya da kendi API anahtarını kullan',
+  
   'settings.onboardingCloudRights': 'Tüm hakları saklıdır.',
   'settings.onboardingCloudOr': 'veya',
   'settings.onboardingGateTooltipNoRuntime': 'Sonraki adımlar yapay zekâ ile çalışır — devam etmek için bir çalışma yöntemi seçin.',
-  'settings.onboardingGateTooltipAmr': 'Sonraki adımlar yapay zekâ ile çalışır — devam etmek için CapyDesign Cloud’ye giriş yapın.',
+  
   'settings.onboardingGateTooltipLocal': 'Sonraki adımlar yapay zekâ ile çalışır — devam etmek için kullanılabilir bir yerel CLI seçin.',
   'settings.onboardingGateTooltipByok': 'Sonraki adımlar yapay zekâ ile çalışır — devam etmek için model anahtarınızı ekleyip test edin.',
   'settings.onboardingRecommended': 'Önerilen',
-  'settings.onboardingAmrCloudOfficialBadge': 'Resmi',
+  
   'settings.onboardingLocalTitle': 'Yerel ajan',
   'settings.onboardingLocalBody': 'Claude Code, Codex, Cursor, OpenCode, Kimi, Qwen, Hermes, Kiro ve daha fazlasını kullanın.',
   'settings.onboardingLocalAction': 'Open CLI settings',
@@ -417,7 +417,7 @@ export const tr: Dict = {
   'settings.onboardingSelectPlaceholder': 'Birini seçin',
   'settings.onboardingSelectMultiplePlaceholder': 'Bir veya daha fazlasını seçin',
   'settings.onboardingOrgSolo': 'Bireysel / kişisel (1)',
-  'settings.onboardingOrgTeam': 'Küçük ekip (2-10)',
+  
   'settings.onboardingOrgStartup': 'Girişim / KOBİ (11-50)',
   'settings.onboardingOrgGrowth': 'Büyüyen şirket (51-200)',
   'settings.onboardingOrgMidMarket': 'Orta ölçekli (201-1000)',
@@ -460,7 +460,7 @@ export const tr: Dict = {
   'settings.modeApi': 'API sağlayıcısı',
   'settings.cloudCalloutTitle': 'Use CapyDesign Cloud',
   'settings.cloudCalloutBody': 'Sign in to the cloud version to enable team spaces, shared projects, member permissions, and the audit dashboard.',
-  'settings.cloudCalloutButton': 'Sign in / Register',
+  
   'settings.modeApiMeta': 'API sağlayıcıları',
   'settings.byokNoFileToolsNotice': 'BYOK proje dosyalarını okuyamaz, yazamaz veya düzenleyemez. Kod değişiklikleri gerektiğinde Local CLI kullanın.',
   'settings.byokDraftNotice': 'Bu sağlayıcıyı kaydetmek için gerekli alanları doldurun. Mevcut yapılandırmanız etkin kalır.',
@@ -507,29 +507,29 @@ export const tr: Dict = {
   'settings.agentInstallGroup': 'Kurulabilir ({count})',
   'settings.agentAuthRequired': 'Kimlik doğrulama gerekli',
   'settings.agentAuthUnknown': 'Kimlik doğrulama durumu bilinmiyor',
-  'settings.amrCloud': 'CapyDesign Cloud',
-  'settings.amrAuthorize': 'Yetkilendir',
+  
+  
   'settings.amrBenefitOfficial': 'Officially maintained',
-  'settings.amrBenefitLowerPrice': 'Lower price',
+  
   'settings.amrBenefitManyModels': 'Birçok model',
-  'settings.amrPromoBonus': 'Sınırlı bonus: +%100',
-  'settings.amrSignInToContinue': 'Devam etmek için oturum açın',
+  
+  
   'settings.amrSignIn': 'Oturum aç',
   'settings.amrSignedIn': 'Oturum açıldı',
-  'settings.amrWalletBalance': 'Wallet balance',
+  
   'settings.amrWalletUnavailable': 'Balance temporarily unavailable',
-  'settings.amrWalletUpdatedAt': 'Updated {time}',
-  'settings.amrWalletCached': 'cached',
-  'settings.amrWalletRefresh': 'Refresh',
-  'settings.amrWalletRefreshTitle': 'Refresh CapyDesign Cloud wallet balance',
-  'settings.amrNotSignedIn': 'Oturum açılmadı',
+  
+  
+  
+  
+  
   'settings.amrSigningIn': 'Giriş yapılıyor…',
   'settings.amrActivationHint': 'Oturum açma sayfası açılmadı mı? Yeniden açmak için aşağıdaki düğmeye dokunun.',
   'settings.amrActivationBrowserFailed': 'Tarayıcı otomatik olarak açılamadı. Devam etmek için aşağıdaki oturum açma sayfasını açın.',
   'settings.amrActivationOpen': 'Oturum açma sayfasını aç',
   'settings.amrCancelSignIn': 'Oturum açmayı iptal et',
-  'settings.amrAccountStatus': 'CapyDesign Cloud hesap durumu',
-  'settings.amrConsole': 'Yönet',
+  
+  
   'settings.amrBalance': 'Kota',
   'settings.amrPlan': 'Plan',
   'settings.amrUpgrade': 'Yükselt',
@@ -537,13 +537,13 @@ export const tr: Dict = {
   'settings.amrLoginErrorCompact': 'CapyDesign Cloud oturum açma başarısız oldu.',
   'settings.advanced': 'Gelişmiş',
   'settings.amrLogin': 'Oturum aç',
-  'settings.amrLogout': 'Oturumu kapat',
-  'settings.amrLoggingIn': 'Giriş yapılıyor…',
-  'settings.amrLoggingOut': 'Çıkış yapılıyor…',
-  'settings.amrLoggedInAs': '{email} olarak oturum açıldı',
-  'settings.amrLoggedInWithPlan': '{email} olarak giriş yapıldı · {plan}',
-  'settings.amrLoggedInPill': 'Oturum açıldı',
-  'settings.amrNotLoggedIn': 'Oturum açılmadı',
+  
+  
+  
+  
+  
+  
+  
   'settings.apiSection': 'Anthropic API',
   'settings.quickFillProvider': 'Sağlayıcıyı hızlı doldur',
   'settings.providerPreset': 'Sağlayıcı ön ayarı',
@@ -625,7 +625,7 @@ export const tr: Dict = {
   'settings.modelUsesCliDefault': 'CLI varsayılanı',
   'settings.modelSourceFallback': 'Yerleşik liste',
   'settings.reasoningPicker': 'Akıl yürütme eforu',
-  'settings.serviceTierPicker': 'Hizmet katmanı',
+  
   'settings.modelPickerHint': 'Bir `models` komutu açığa çıkaran CLI’lardan getirilir. "Varsayılan" seçimi CLI’ın kendi ayarına bırakır; "Özel…" CLI’ın kabul edeceği herhangi bir model kimliği seçmenize izin verir.',
   'settings.modelPickerLiveHint': 'Modeller kurulu CLI\'dan yenilendi. Varsayılan seçenek hâlâ CLI yapılandırmasını kullanır.',
   'settings.modelPickerLiveCatalogOnlyHint': 'Modeller kurulu CLI\'dan yenilendi.',
@@ -766,21 +766,21 @@ export const tr: Dict = {
   'entry.mailAria': 'Sorunuz mu var? Bize e-posta gönderin',
   'entry.accountSettings': 'Ayarlar',
   'chat.collapsePane': 'Konuşma panelini daralt',
-  'collabPresence.ariaOne': '1 collaborator online',
-  'collabPresence.aria': '{count} collaborators online',
-  'collabPresence.ariaWithSelfOne': '1 collaborator online, including you',
-  'collabPresence.ariaWithSelf': '{count} collaborators online, including you',
-  'collabPresence.moreOnline': '{count} more online',
-  'collabPresence.dialogTitle': 'Online collaborators',
-  'collabPresence.onlineCount': '{count} online',
-  'collabPresence.selfBadge': 'You',
-  'collabPresence.roleOwner': 'Owner',
-  'collabPresence.roleAdmin': 'Admin',
-  'collabPresence.roleMember': 'Member',
-  'collabPresence.viewingFileSelf': 'You are viewing {file}',
-  'collabPresence.viewingFileOther': 'Viewing {file}',
-  'collabPresence.viewingProjectSelf': 'You are viewing this project',
-  'collabPresence.viewingProjectOther': 'Viewing this project',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'entry.followXLabel': 'X\'te @OpenDesignHQ hesabını takip et',
   'entry.followThreadsLabel': 'Follow CapyDesign on Threads',
   'entry.youtubeLabel': 'CapyDesign on YouTube',
@@ -800,7 +800,7 @@ export const tr: Dict = {
   "entry.billingTierTeam": "Teams",
   "entry.billingTierFree": "Free",
   "entry.billingTierPro": "Pro",
-  "entry.billingFamilyCreator": "Creator",
+  
   "entry.creditsAria": "{tier} · credits remaining",
   "entry.creditsAriaWithBalance": "{tier} · {balance} credits remaining",
   "entry.creditsGrantTip": "Teams credits are granted by subscription allowance. Usage is available in billing.",
@@ -812,12 +812,12 @@ export const tr: Dict = {
   "entry.creditsMemberNoticeTitle": "Need more credits?",
   "entry.creditsMemberNoticeBody": "You are currently a Member and cannot add credits yourself. Ask a team Admin to increase the allowance when you need more.",
   "entry.creditsMemberNoticeAction": "Ask Admin to increase allowance",
-  "entry.accountToggleTheme": "Toggle theme",
-  "entry.accountSwitchLanguage": "Switch language",
-  "entry.accountLanguageMeta": "中文 / English",
+  
+  
+  
   "entry.accountGithubHelp": "Get help on GitHub",
   "entry.accountFeatureRequest": "Submit feature request",
-  "entry.accountAddAccount": "Add account",
+  
   "entry.accountSignOut": "Sign out",
   "signOut.confirmTitle": "Çıkış yap",
   "signOut.confirmMessage": "Çıkış yapmak istediğinizden emin misiniz?",
@@ -829,8 +829,8 @@ export const tr: Dict = {
   "entry.blankAllProjectsTitle": "No team projects yet",
   "entry.blankAllProjectsDescription": "Projects shared to the team will appear here for everyone in the workspace.",
   "entry.blankCreate": "New project",
-  'entry.workspaceTeamsTitle': 'Ekipler için Workspace — ekibinizin neye ihtiyacı olduğunu bize söyleyin',
-  'entry.workspaceTeamsAria': 'Ekipler için Workspace sayfasını aç',
+  
+  
   'entry.navExpand': 'Kenar çubuğunu genişlet',
   'entry.navCollapse': 'Kenar çubuğunu daralt',
   'entry.navNewProject': 'Yeni proje',
@@ -848,18 +848,18 @@ export const tr: Dict = {
   'entry.draftsDescription': 'Projects you created, visible only to you',
   'entry.allProjectsDescription': 'Projects owned by everyone on the team',
   'entry.navBoard': 'Board',
-  'entry.navTeamSection': 'Team',
+  
   'entry.teamSlotNote': 'This space is provided by the team service. Integration is in progress.',
-  "entry.cloudCalloutTitle": "CapyDesign Cloud",
-  'entry.cloudRecovering': 'Account connection interrupted. Recovering automatically…',
+  
+  
   'entry.authExpiredBody': 'Your sign-in has expired. Sign in to continue using CapyDesign Cloud.',
   'home.createFailed': 'Failed to start the run. Try again.',
   'home.daemonRecovering': 'Local service connection interrupted. Recovering automatically…',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
-  "entry.cloudCalloutBody": "CapyDesign Cloud'u kullanmak ve bulutta iş birliği yapmak için oturum açın",
-  "entry.cloudCalloutDismissAria": "CapyDesign Cloud notunu kapat",
-  'entry.workspaceLockedNote': 'This workspace is locked. Restore billing to resume editing shared projects.',
-  'entry.workspaceLockedRecover': 'Restore access',
+  
+  
+  
+  
   'messageCenter.openAria': 'Open message center',
   'messageCenter.unreadCount': '{count} unread',
   'messageCenter.title': 'Message center',
@@ -889,8 +889,8 @@ export const tr: Dict = {
   'goPlanSunset.confirming': 'Confirming…',
   'goPlanSunset.acknowledge': 'Got it',
   'workspaceTabs.project': 'Proje',
-  'workspaceTabs.pluginDetails': 'Plugin ayrıntıları',
-  'workspaceTabs.marketplace': 'Pazar Yeri',
+  
+  
   'homeHero.title': 'Bugün agentınla ne tasarlayacaksın?',
   'homeHero.startWithTemplate': 'Bir şablonla başla…',
   'homeHero.startBlankProject': 'boş bir proje başlat',
@@ -1057,7 +1057,7 @@ export const tr: Dict = {
   'handoff.frameworkPrompt.solid': 'SolidJS',
   'handoff.frameworkPrompt.next': 'Next.js / React',
   'handoff.frameworkPrompt.vanilla': 'saf JavaScript, HTML ve CSS',
-  'handoff.amrWebsite': 'CapyDesign Cloud web sitesini aç',
+  
   'handoff.copyPrompt': 'İstemi kopyala',
   'handoff.copyPromptForTarget': '{target} için istemi kopyala',
   'handoff.copied': 'Kopyalandı',
@@ -1111,7 +1111,7 @@ export const tr: Dict = {
   'recentProjects.sortName': 'Name',
   'recentProjects.viewList': 'List view',
   'recentProjects.sharedBadge': 'Shared',
-  'recentProjects.sharedProjectFallbackName': 'Shared project',
+  
   'recentProjects.creatorLine': 'Created by {name}',
   'recentProjects.selfCreator': 'Me',
   'recentProjects.teamMemberCreator': 'Team member',
@@ -1670,7 +1670,7 @@ export const tr: Dict = {
   'connectors.title': 'Bağlayıcılar',
   'connectors.subtitle': 'Canlı artefaktları besleyebilecek yerel ve gelecekteki veri kaynakları.',
   'connectors.account': 'Hesap',
-  'connectors.noAccount': 'Bağlı değil',
+  
   'connectors.tools': 'Araçlar',
   'connectors.connect': 'Bağlan',
   'connectors.disconnect': 'Bağlantıyı kes',
@@ -2016,8 +2016,8 @@ export const tr: Dict = {
   'avatar.useApi': 'API · BYOK kullan',
   'avatar.codeAgent': 'Kod ajanı',
   'avatar.rescan': 'PATH’ı yeniden tara',
-  'avatar.amrConsole': 'CapyDesign Cloud hesabı',
-  'avatar.amrConsoleMeta': 'Bakiye ve yükleme',
+  
+  
   'avatar.settings': 'Ayarlar',
   'avatar.backToProjects': 'Projelere dön',
   'avatar.metaActive': 'aktif',
@@ -2775,7 +2775,7 @@ export const tr: Dict = {
   'misc.primary': 'Birincil',
   'misc.designSystem': 'Tasarım sistemi',
   'workspace.designFiles': 'Tasarım Dosyaları',
-  'workspace.focusMode': 'Çalışma alanına odaklan',
+  
   'workspace.showChat': 'Sohbeti göster',
   'workspace.closeTab': 'Sekmeyi kapat',
   'workspace.fileSyncDownloading': 'Ekipten indiriliyor…',
@@ -2786,13 +2786,13 @@ export const tr: Dict = {
   'workspace.deleteSelectedFilesConfirm': 'Seçili {n} dosya proje klasöründen silinsin mi?',
   'workspace.deleteSelectedFilesPartial': '{n} dosya silinemedi.',
   'workspace.openFromDesignFiles': 'bir dosya aç',
-  'workspace.designFilesLink': 'Tasarım Dosyaları',
+  
   'workspace.loadingSketch': 'Taslak yükleniyor…',
   'workspace.newTab': 'Yeni sekme',
   'workspace.searchFilesPlaceholder': 'Search files…',
   'workspace.openTabs': 'Sekmeleri aç',
-  'workspace.searchTabs': 'Search tabs',
-  'workspace.noTabsFound': 'No tabs found',
+  
+  
   'workspace.openFile': 'Open a file',
   'workspace.noFilesMatch': 'No files match',
   'workspace.allFiles': 'All',
@@ -3203,14 +3203,14 @@ export const tr: Dict = {
   'fileViewer.presenterMode': 'Sunucu modu',
   'fileViewer.exitPresentation': 'Sunumdan ayrıl',
   'fileViewer.shareLabel': 'Paylaş',
-  'fileViewer.shareMenuShareLink': 'PAYLAŞ',
+  
   'fileViewer.shareMenuPublishOnline': 'KENDİ SUNUCUNDA PAYLAŞ',
-  'fileViewer.shareMenuDownload': 'İNDİR',
-  'fileViewer.shareMenuPresentation': 'Sunum',
-  'fileViewer.shareMenuSourceFiles': 'Kaynak dosyalar',
-  'fileViewer.shareMenuSave': 'KAYDET',
+  
+  
+  
+  
   'fileViewer.shareMenuPublishViaOd': 'HIZLI PAYLAŞIM · OPENDESIGN',
-  'fileViewer.unifiedShareAria': 'Share and export actions',
+  
   'fileViewer.unifiedShareTab': 'Share',
   'fileViewer.unifiedExportTab': 'Export',
   'fileViewer.unifiedSendTab': 'Send to...',
@@ -3226,13 +3226,13 @@ export const tr: Dict = {
   'fileViewer.publishFile': 'Publish file',
   'fileViewer.publishingFile': 'Bağlantı oluşturuluyor…',
   'fileViewer.unpublishFile': 'Paylaşımı durdur',
-  'fileViewer.shareEmptyStateTitle': 'Henüz paylaşılacak bir şey yok',
-  'fileViewer.shareEmptyStateDescription': 'Bu dosyayı takım arkadaşlarınızla paylaşmak için bir takım oluşturun veya katılın',
-  'fileViewer.shareEmptyStateCreateTeam': 'Takım oluştur',
-  'fileViewer.shareTeamMissingTitle': 'Henüz paylaşılacak bir takım yok',
+  
+  
+  
+  
 
-  'fileViewer.publishFileRequiresTeam': 'Herkese açık bağlantı yayınlamak için ekip çalışma alanı gerekir. Bir ekip çalışma alanına geçin veya bu dosyayı Dağıt ile yayınlayın.',
-  'fileViewer.publishFileRequiresWorkspace': 'Paylaşım bağlantısı için oturum açılmış bir çalışma alanı gerekir. CapyDesign Cloud\'da oturum açın veya bu dosyayı bir dağıtımla paylaşın.',
+  
+  
   'fileViewer.publishFileFailed': 'Paylaşım bağlantısı oluşturulamadı. Tekrar deneyin veya aşağıdaki dağıtım seçeneklerini kullanın.',
   'fileViewer.workspaceShareSuccess': 'Shared with workspace members',
   'fileViewer.workspaceShareFailed': 'Could not share with workspace',
@@ -3242,10 +3242,10 @@ export const tr: Dict = {
   'fileViewer.copyShareLink': 'Paylaşım bağlantısını kopyala',
   'fileViewer.openSharePage': 'Paylaşım sayfasını aç',
   'fileViewer.shareLinkRequiresDeploy': 'Bağlantı almak için önce çevrimiçi yayınla',
-  'fileViewer.shareLinkPublishGuide': 'Paylaşımı etkinleştirmek için yukarıda çevrimiçi yayınla ↑',
+  
   'fileViewer.shareAfterGenerationComplete': 'Oluşturma tamamlandıktan sonra paylaşılabilir',
   'fileViewer.copyProviderLink': '{provider} bağlantısını kopyala',
-  'fileViewer.copyCloudflareLink': 'Cloudflare bağlantısını kopyala',
+  
   'fileViewer.screenshotCopying': 'Ekran görüntüsü kopyalanıyor...',
   'fileViewer.screenshotCopied': 'Ekran görüntüsü panoya kopyalandı',
   'fileViewer.screenshotClipboardDenied': 'Tarayıcı pano erişimini engelledi',
@@ -3404,12 +3404,12 @@ export const tr: Dict = {
   'fileViewer.cloudflareDomainPrefixPlaceholder': 'demo',
   'fileViewer.cloudflareDomainPrefixInvalid': 'Yalnızca tek bir DNS etiketi kullanın: küçük harfler, rakamlar ve tireler.',
   'fileViewer.cloudflareHostnamePreview': 'Özel alan adı önizlemesi: {hostname}',
-  'fileViewer.cloudflareCustomDomainHint': 'İsteğe bağlı: özel alan adı bağlayın. Boş bırakırsanız yine de bir pages.dev bağlantısı oluşturulur.',
+  
   'fileViewer.cloudflarePagesDevLinkLabel': 'pages.dev URL',
   'fileViewer.cloudflareCustomDomainLinkLabel': 'Özel alan adı',
   'fileViewer.optional': 'Opsiyonel',
   'fileViewer.vercelPreviewOnly': 'Yayınlanmış içerikler şimdilik yalnızca önizlenebilir.',
-  'fileViewer.cloudflarePagesPreviewHint': 'Cloudflare Pages yayınları Direct Upload kullanır.',
+  
   'fileViewer.savingConfig': 'Kaydediliyor…',
   'fileViewer.deployConfigSaveFailed': 'Vercel ayarları kaydedilemedi.',
   'fileViewer.deployFailed': 'Yayınlama başarısız oldu. Vercel ayarlarınızı kontrol edin ve yeniden deneyin.',
@@ -3461,8 +3461,8 @@ export const tr: Dict = {
   'assistant.forkConversation': 'Yeni konuşma',
   'assistant.forkingConversation': 'Yeni konuşma başlatılıyor…',
   'assistant.forkNote': 'Önceki konuşmanın devamı',
-  'assistant.shareToOpenDesign': 'CapyDesign\'a paylaş',
-  'assistant.shareToOpenDesignBusy': 'Paket hazırlanıyor…',
+  
+  
   'assistant.feedbackPrompt': 'Geri bildirim',
   'assistant.feedbackPositive': 'Yararlı',
   'assistant.feedbackNegative': 'Yararlı değil',
@@ -3502,10 +3502,10 @@ export const tr: Dict = {
   'chat.runError.actionBlocked.busy': "Bu sohbette hâlâ süren bir görev var. Bittiğinde yeniden deneyebilirsiniz.",
   'chat.support.channel.feishu': "Feishu topluluğu",
   'chat.support.channel.discord': "Discord",
-  'chat.amrBalanceOwner.title': "Takım sahibinden bakiye yüklemesini iste",
-  'chat.amrBalanceOwner.message': "Takımın bakiyesini yalnızca takım sahibi yükleyebilir. Devam etmeden önce “{name}” kişisinden yüklemeyi tamamlamasını iste.",
-  'chat.amrBalanceOwner.messageNoOwnerName': "Takımın bakiyesini yalnızca takım sahibi yükleyebilir. Devam etmeden önce takım sahibinden yüklemeyi tamamlamasını iste.",
-  'chat.amrBalanceOwner.dismissCta': "Anladım",
+  
+  
+  
+  
   'assistant.outTokens': '{n} çıktı',
   'assistant.producedFiles': 'Bu çalışmadan dosyalar',
   'assistant.openFile': 'Aç',
@@ -4717,16 +4717,16 @@ export const tr: Dict = {
   // other-lane workspace destinations (members / billing / team space).
   'settings.workspace': 'Workspace',
   'settings.workspaceHint': 'Members, billing, and team spaces',
-  'settings.workspaceLede': 'Team-level settings for this workspace. These areas are managed by the team service — open one to continue.',
-  'settings.workspaceBack': 'Back to workspace',
-  'settings.workspaceMembers': 'Members & invites',
-  'settings.workspaceMembersHint': 'Manage who can access this workspace and send invitations.',
-  'settings.workspaceBilling': 'Subscription & seats',
-  'settings.workspaceBillingHint': 'Plan, seats, and payment for this workspace.',
-  'settings.workspaceAutoRecharge': 'Auto-recharge',
-  'settings.workspaceAutoRechargeHint': 'Automatically top up credits when the balance runs low.',
-  'settings.workspaceTeamSpace': 'Team space',
-  'settings.workspaceTeamSpaceHint': 'Shared projects and visibility for your team.',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   // Full-page Settings (`/settings`): sidebar nav head above the section list.
   'settings.pageBackToHome': 'Back to home',
   'settings.pageNavGroupPersonal': 'Personal',
@@ -4734,9 +4734,9 @@ export const tr: Dict = {
   'newproj.startBlank': 'Boş',
   'newproj.startBlankHint': 'Sıfırdan başla',
   'workspace.pages': 'Sayfalar',
-  'workspace.allProjectFiles': 'Tüm proje dosyaları',
+  
   'workspace.newBlankPage': 'Yeni boş sayfa',
-  'workspace.noPagesYet': 'Henüz sayfa yok',
+  
   'workspace.pageCreateFailed': 'Sayfa oluşturulamadı.',
   'workspace.pageCreatorTitle': 'Sayfa oluştur',
   'workspace.pageCreatorSearch': 'Şablon ara',
