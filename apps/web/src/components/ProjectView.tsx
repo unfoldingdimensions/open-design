@@ -376,6 +376,19 @@ const useProjectCollab = (..._args: unknown[]): any => ({
   onLostAnchors: undefined,
   member: null,
   isOwner: true,
+  // Cloud collaboration is gone, but the component still invokes these on
+  // watcher/event paths, so they must exist as callable no-ops rather than
+  // `undefined` (an undefined callback throws out of a coalesced flush).
+  checkStatusNow: () => {},
+  refreshPresence: () => {},
+  viewerOnly: false,
+  materializationPending: false,
+  writerAuthority: 'allowed',
+  isSharedNonOwner: false,
+  ownerDisplayName: null,
+  downloadPending: false,
+  present: false,
+  syncState: 'synced',
 });
 const persistCommentAnchors = async (..._args: unknown[]): Promise<void> => {};
 const claimRunTurnIndex = (..._args: unknown[]): any => 0;
