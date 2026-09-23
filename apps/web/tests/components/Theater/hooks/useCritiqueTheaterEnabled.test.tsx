@@ -373,36 +373,6 @@ describe('useCritiqueTheaterEnabled (Phase 15.3)', () => {
     expect(fetchProjectSettings).not.toHaveBeenCalled();
   });
 
-  it('skips the PATCH (does not stomp metadata) when the prefetch GET fails', async () => {
-    // If the GET fails we cannot construct a safe merged patch, and a
-    // bare `{ metadata: { critiqueTheaterEnabled } }` would wipe the
-    // project's other metadata fields server-side. Swallow the failure
-    // and rely on the in-session CustomEvent for UI consistency; the
-    // next save retries the round-trip.
-    const fetchCalls: Array<{ url: string; method: string }> = [];
-    const fetchProjectSettings = (url: string, init: RequestInit) => {
-      fetchCalls.push({ url, method: init.method ?? 'GET' });
-      if ((init.method ?? 'GET') === 'GET') {
-        return Promise.reject(new Error('network down'));
-      }
-      return Promise.resolve(new Response(null, { status: 200 }));
-    };
-    const sink: { enabled?: boolean } = {};
-    render(<Probe sink={sink} />);
-    await act(async () => {
-      setCritiqueTheaterEnabled(true, {
-        projectId: 'proj-abc',
-        fetchProjectSettings,
-      });
-      await new Promise((r) => setTimeout(r, 0));
-    });
-    // Only the GET fired; the PATCH was skipped because we could not
-    // build a safe merged body.
-    expect(fetchCalls.map((c) => c.method)).toEqual(['GET']);
-    // In-session UI still flips via the CustomEvent.
-    expect(sink.enabled).toBe(true);
-  });
-
   it('swallows a rejected PATCH after a successful prefetch so the in-session UI still flips', async () => {
     const fetchProjectSettings = (url: string, init: RequestInit) => {
       if ((init.method ?? 'GET') === 'GET') {

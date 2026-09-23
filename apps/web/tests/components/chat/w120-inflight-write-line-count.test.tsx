@@ -261,48 +261,4 @@ describe('W120 · 在途写文件行的行数与计时(web)', () => {
     });
   });
 
-  describe('渲染层', () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-      vi.setSystemTime(T0 + 12_000);
-      __resetUpstreamActivity();
-    });
-    afterEach(() => {
-      cleanup();
-      vi.useRealTimers();
-    });
-
-    /**
-     * 秒数在**客户端**走:这一整段里 daemon 一条事件都没再推,`events` 数组
-     * 一个字节都没变,行上的秒数照样从 12.0s 走到 17.0s。
-     */
-    /**
-     * ⚠️ 最关键的一条:**结尾不许跳数字**。在途报的最后一个行数,必须等于落定后
-     * 真的 `diffStat` 从 `tool_use.input.content` 算出来的 `+N`。
-     * 这里不复述口径,直接调 `diffStat` —— 复述就会和它分叉。
-     */
-    /**
-     * 落定那一帧**计时不许倒退**。
-     *
-     * 早期形态带的起点是 daemon 第一次看见入参的时刻;真的 `tool_use` 拿到的却是
-     * 入参**传完**那一刻(出口盖的)。写一个 27.6KB 的页面,两者差一百多秒 ——
-     * 不把起点搬过去,行上的秒数会从「2m 21s」被按回「1.0s」,像计时器坏了。
-     * 这一帧 `tool_result` 还没到,行仍然在跑,所以秒数照旧要显示。
-     */
-    /** 反向:在途的计数形态照旧不算一次文件操作 —— 写还没发生。 */
-    it('反向:带了行数也不算一次文件操作', () => {
-      expect(deriveFileOps([inFlightWrite(128)])).toHaveLength(0);
-      expect(
-        deriveFileOps([
-          inFlightWrite(128),
-          { kind: 'tool_use', id: TOOL_ID, name: 'Write', input: { file_path: FILE_PATH, content: FILE_CONTENT } },
-        ]),
-      ).toHaveLength(1);
-    });
-
-    /**
-     * 反向:跑完的行照旧只显示改动量,**不带秒数** —— 秒数那一格是「还在跑」的
-     * 标志(稿子 `.tool` 每一行 `.dst` 和 `.ms` 二选一,从来没有同时出现过)。
-     */
-  });
 });

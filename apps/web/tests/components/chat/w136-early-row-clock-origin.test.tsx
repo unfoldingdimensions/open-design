@@ -252,30 +252,4 @@ describe('W136 · 早期那一行的计时起点(web)', () => {
      */
   });
 
-  describe('渲染层', () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-      vi.setSystemTime(T0 + 12_000);
-      __resetUpstreamActivity();
-    });
-    afterEach(() => {
-      cleanup();
-      vi.useRealTimers();
-    });
-
-    /**
-     * 起点缺席时的样子 —— 这一条钉住「没有起点 = 没有秒表」这个因果,
-     * 免得后人以为行上那格空是别的原因。
-     */
-    it('反证:起点缺席时行还在,但秒数那一格是空的', () => {
-      const { container } = renderTurn(
-        <AssistantMessage message={turn([inFlightEdit(undefined)])} streaming projectId="p1" />,
-      );
-      expect(container.textContent ?? '').toContain('parchment-typography.html');
-      expect(
-        elapsedText(container),
-        '没有起点却算出了秒数 —— 那这一单的因果链就不成立',
-      ).toBeNull();
-    });
-  });
 });

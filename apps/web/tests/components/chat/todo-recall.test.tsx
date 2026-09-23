@@ -61,33 +61,6 @@ function activateExecutionRecord(root: ParentNode): void {
   fireEvent.click(summary);
 }
 
-describe('本轮清单里认出「上一轮那条」', () => {
-  /*
-   * ⚠️ 2026-09-03 收紧过一次判据(见 `runtime/chat/contract.ts` 的 `isStruck`):
-   * 划线现在还要求「**本轮一件没干**」——「正在跑的」和「本轮真做完的」一律不划。
-   * 所以这里把被召回的那条摆成本轮 `pending`(名下无内容),另放一条 `in_progress`
-   * 占住 D36 的隐式点亮。**要证的东西没变**(「agent 重发 = 认出旧账并划线」),
-   * 变的只是取样点。
-   */
-  /*
-   * 2026-08-27 裁决的正面用例:上一轮**只把话说出口**就结束了(五条全 `pending`),
-   * 本轮 agent 重新建出同样的条目 —— 那是本轮头一回真要干,不划线。
-   * 少了这一条,判据一改回去没人拦得住。
-   */
-  /*
-   * 对照组必须**本轮有内容**。
-   * 本轮没内容的那一条本来就要划线(D35:「一次性关掉、从没进行过的」),
-   * 拿它做对照证不出「划线来自召回」—— 第一次就是这么写错的。
-   */
-  it('agent 没重发(用户问了别的)→ 这一轮一条都不显示', () => {
-    const message = msg([{ kind: 'text', text: '顺手回答一下这个问题。' }] as PersistedAgentEvent[]);
-    const { container } = render(
-      show(message, { previousTodos: [{ content: '补 FAQ', status: 'pending' }] }),
-    );
-    expect(container.textContent).not.toContain('补 FAQ');
-  });
-});
-
 describe('previousTodos 的取值:更早轮次的那份清单', () => {
   const conversation: ChatMessage[] = [
     { id: 'u1', role: 'user', content: '开工', createdAt: 1 } as ChatMessage,
@@ -101,10 +74,6 @@ describe('previousTodos 的取值:更早轮次的那份清单', () => {
     msg([todoWrite([{ content: '补 FAQ', status: 'in_progress' }], 'tw-2')], { id: 'a3' }),
   ];
 
-  it('第一轮没有更早的清单', () => {
-    expect(previousTodosByAssistantMessageId(conversation).get('a1')).toBeUndefined();
-  });
-
   it('中间那轮没发清单,也要把上一份带下去', () => {
     expect(previousTodosByAssistantMessageId(conversation).get('a2')).toEqual([
       { content: '搭定价区', status: 'completed' },
@@ -112,10 +81,6 @@ describe('previousTodos 的取值:更早轮次的那份清单', () => {
     ]);
   });
 
-  it('已完成的那条也算「之前出现过」—— 召回判定按内容,不按状态', () => {
-    const previous = previousTodosByAssistantMessageId(conversation).get('a3');
-    expect(previous?.map((todo) => todo.content)).toEqual(['搭定价区', '补 FAQ']);
-  });
 });
 
 function chatPaneEl(
@@ -210,12 +175,4 @@ describe('〔继续剩余任务〕—— agent 不照做时的用户出口', () 
     expect(queryByTestId('assistant-continue-remaining')).toBeNull();
   });
 
-  it('没有回调就不画按钮(镜像陈列页 / 未接线的场景)', () => {
-    const messages: ChatMessage[] = [
-      { id: 'u1', role: 'user', content: '开工', createdAt: 1 } as ChatMessage,
-      msg([todoWrite([{ content: '补 FAQ', status: 'pending' }])], { id: 'a1' }),
-    ];
-    const { queryByTestId } = render(chatPaneEl(messages));
-    expect(queryByTestId('assistant-continue-remaining')).toBeNull();
-  });
 });

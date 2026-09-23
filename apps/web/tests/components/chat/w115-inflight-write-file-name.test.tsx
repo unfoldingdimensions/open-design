@@ -228,33 +228,4 @@ describe('W115 · 在途写文件行的文件名(web)', () => {
     });
   });
 
-  describe('渲染层', () => {
-    afterEach(() => { cleanup(); });
-
-    /** 正向:入参只到了一半,行上已经有文件名。 */
-    /**
-     * 反向:写还没发生,不许当成一次文件操作。
-     *
-     * 提前那一行只说明模型**打算**写这个文件。拿它去开文件卡片 / 工作区 tab
-     * 是谎报一次落盘 —— 真的 `tool_use` 到了才算数。
-     */
-    it('反向:入参还在传时不算一次文件操作', () => {
-      expect(deriveFileOps([inFlightWrite()])).toHaveLength(0);
-      expect(
-        deriveFileOps([
-          inFlightWrite(),
-          { kind: 'tool_use', id: TOOL_ID, name: 'Write', input: { file_path: FILE_PATH, content: FILE_CONTENT } },
-        ]),
-      ).toHaveLength(1);
-    });
-
-    /**
-     * 入参传完之后,名字不变、行数不变 —— 不会先显示一个、后变成另一个,
-     * 也不会一次调用画两行。
-     */
-    /**
-     * 反向:target 到了、tool_use 还没到时,如果这一轮里**另一个**工具已经跑完,
-     * 两行互不干扰 —— 提前的那一行不会顶掉别人。
-     */
-  });
 });

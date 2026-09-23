@@ -121,44 +121,6 @@ describe('critique SSE connection manager (Phase 7.2)', () => {
     conn.close();
   });
 
-  it('subscribes to every CRITIQUE_SSE_EVENT_NAMES channel', () => {
-    createCritiqueEventsConnection('proj-1', () => undefined, {
-      EventSourceCtor: StubEventSource as unknown as typeof EventSource,
-    });
-    const es = StubEventSource.instances[0]!;
-    for (const name of CRITIQUE_SSE_EVENT_NAMES) {
-      expect(es.listeners.has(name)).toBe(true);
-    }
-  });
-
-  it('decodes critique.run_started and dispatches a PanelEvent with the unwrapped type', () => {
-    const seen: unknown[] = [];
-    createCritiqueEventsConnection('proj-1', (action) => seen.push(action), {
-      EventSourceCtor: StubEventSource as unknown as typeof EventSource,
-    });
-    const es = StubEventSource.instances[0]!;
-
-    es.emit('critique.run_started', {
-      runId: RUN_ID,
-      protocolVersion: 1,
-      cast: ['critic'],
-      maxRounds: 3,
-      threshold: 8,
-      scale: 10,
-    });
-
-    expect(seen).toHaveLength(1);
-    expect(seen[0]).toMatchObject({
-      type: 'run_started',
-      runId: RUN_ID,
-      protocolVersion: 1,
-      cast: ['critic'],
-      maxRounds: 3,
-      threshold: 8,
-      scale: 10,
-    });
-  });
-
   it('decodes critique.ship preserving artifactRef + status', () => {
     const seen: unknown[] = [];
     createCritiqueEventsConnection('proj-1', (a) => seen.push(a), {

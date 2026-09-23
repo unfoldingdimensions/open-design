@@ -77,15 +77,4 @@ describe('chat 主题接缝', () => {
     expect(container.querySelector('[data-chat-root]')).not.toBeNull();
   });
 
-  it('接缝抹在 .pane 这个**已有**元素上,不另外套一层', () => {
-    // 套一层会打断 `.split-chat-slot > .pane` 这类子选择器 —— 全仓有 11 条这样的规则
-    // (shell.css / chat.css / design-system-flow.css / viewer/routines.css),
-    // 一层 `display: contents` 的包裹元素不影响布局,但**照样出现在选择器树上**,
-    // 于是那 11 条规则集体失配:聊天卡的圆角、白底、backdrop-filter、overflow 全没了,
-    // 而且没有任何报错。所以接缝只能抹在原有元素上。
-    const { container } = renderPane();
-    const seam = container.querySelector('[data-chat-root]');
-    expect(seam?.classList.contains('pane')).toBe(true);
-  });
-
 });

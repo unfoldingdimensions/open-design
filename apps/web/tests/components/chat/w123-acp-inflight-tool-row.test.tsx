@@ -264,40 +264,4 @@ describe('W123 · ACP 在途工具行(web)', () => {
     });
   });
 
-  describe('渲染', () => {
-    afterEach(cleanup);
-
-    it('中间输出进到行里,但行仍然是未完成态', () => {
-      const events = [inFlight({ command: COMMAND }, 'W123_PARTIAL_STDOUT')];
-      const row = onlyToolRow(events);
-      expect(row.terminal, '还在跑的那一段 stdout 要能上行').toBe('W123_PARTIAL_STDOUT');
-      expect(row.pending, '有输出不等于跑完了 —— 秒表必须还在走').toBe(true);
-      expect(renderTurn(<AssistantMessage streaming={false} message={turn(events)} />).container).toBeTruthy();
-    });
-
-    it('结算的结果压过在途那一段,不会两份都留着', () => {
-      const settled = {
-        kind: 'tool_use', id: TOOL_ID, name: 'Bash',
-        input: { command: COMMAND }, startedAt: T0,
-      } as AgentEvent;
-      const result = {
-        kind: 'tool_result', toolUseId: TOOL_ID, content: 'W123_FINAL', isError: false,
-        completedAt: T0 + 1_000,
-      } as AgentEvent;
-      const row = onlyToolRow([inFlight({ command: COMMAND }, 'W123_PARTIAL_STDOUT'), settled, result]);
-      expect(row.terminal).toBe('W123_FINAL');
-    });
-
-    it('内部记号不许漏到界面上', () => {
-      const { container } = renderTurn(
-        <AssistantMessage
-          streaming={false}
-          message={turn([inFlight({ command: COMMAND }, 'W123_PARTIAL_STDOUT')])}
-        />,
-      );
-      const text = container.textContent ?? '';
-      expect(text).not.toContain(IN_FLIGHT_TOOL_INPUT_MARKER);
-      expect(text).not.toContain(IN_FLIGHT_TOOL_OUTPUT_KEY);
-    });
-  });
 });

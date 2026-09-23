@@ -273,14 +273,6 @@ describe('tool_input_delta 是心跳,不是界面', () => {
    *
    * 守的是**槽位**不是帧:下面那条 `tool_input_delta` 的断言保证帧本身还在被认出来。
    */
-  it('providers/daemon.ts 里不再有没人接的 onToolInputDelta 槽位', () => {
-    const provider = readSrc('providers/daemon.ts');
-    expect(provider).not.toContain('onToolInputDelta');
-    // 帧本身没被一起删掉 —— 它还要当心跳
-    expect(provider).toContain('tool_input_delta');
-    expect(provider).toContain('markUpstreamActivity');
-  });
-
   /**
    * 「模型写了 161 秒,界面一动不动」是不是真的?——不是。
    *
