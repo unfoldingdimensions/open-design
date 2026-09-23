@@ -989,6 +989,13 @@ function classifyRunFailureBase(
   // signal guard below (a watchdog kill IS a signal, and the reason it was
   // killed outranks the bare signal) and the timeout branch itself.
   const daemonTimeoutVerdict = hasDaemonTimeoutVerdict(events);
+  // Text-based account classification. The same failures arrive without a
+  // structured code when they only appear in the run's stderr corpus, so the
+  // classification has to read the text as well. A structured rate-limit code
+  // is authoritative and outranks that prose reading: the corpus collector
+  // folds every stderr line in, so an exhausted-quota sentence that merely
+  // mentions billing must not be re-read as an exhausted balance.
+  const accountFailure = errorCode === 'RATE_LIMITED' ? null : classifyAccountFailure(text);
   const byokOpenCodeProviderNotFound = isByokOpenCodeProviderNotFoundText(
     input.agentId,
     text,
@@ -1023,7 +1030,10 @@ function classifyRunFailureBase(
     );
   }
 
-  if (errorCode === 'AMR_INSUFFICIENT_BALANCE') {
+  if (
+    errorCode === 'AMR_INSUFFICIENT_BALANCE'
+    || accountFailure?.code === 'AMR_INSUFFICIENT_BALANCE'
+  ) {
     return classification(
       'insufficient_balance',
       'amr_insufficient_balance',
@@ -1036,7 +1046,10 @@ function classifyRunFailureBase(
     );
   }
 
-  if (errorCode === 'AMR_TIER_UPGRADE_REQUIRED') {
+  if (
+    errorCode === 'AMR_TIER_UPGRADE_REQUIRED'
+    || accountFailure?.code === 'AMR_TIER_UPGRADE_REQUIRED'
+  ) {
     return classification(
       'entitlement_required',
       'amr_tier_upgrade_required',
@@ -1051,6 +1064,7 @@ function classifyRunFailureBase(
 
   if (
     errorCode === 'AMR_AUTH_REQUIRED' ||
+    accountFailure?.code === 'AMR_AUTH_REQUIRED' ||
     errorCode === 'AGENT_AUTH_REQUIRED' ||
     errorCode === 'UNAUTHORIZED'
   ) {
