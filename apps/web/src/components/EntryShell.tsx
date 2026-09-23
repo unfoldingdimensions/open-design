@@ -1,3 +1,4 @@
+import type { AmrWalletSnapshot, AmrSessionState } from '../runtime/legacy-scope-types';
 // EntryShell — the centered-hero entry layout.
 //
 // This component owns the entire JSX render and local UI state for
@@ -25,14 +26,13 @@ import {
 import {
   automaticStrategyTaskProfileForProjectMetadata,
   defaultScenarioPluginIdForProjectMetadata,
-  type AmrWalletSnapshot,
   type ChatSessionMode,
   type ConnectorDetail,
   type CreateProjectExampleReference,
   type InstalledPluginRecord,
   type RunContextSelection,
   type ProjectScenarioTaskProfile,
-  type WorkspaceProjectSummary,
+  type ProjectListEntry,
 } from '@capydesign/contracts';
 import type { CapyDesignHostProjectImportSuccess } from '@capydesign/host';
 import {
@@ -431,7 +431,7 @@ interface Props {
   // During a transient Cloud outage it prevents the rail from presenting a
   // still-signed-in user as signed out.
   amrLoggedIn?: boolean | null;
-  amrSessionState?: import('@capydesign/contracts').AmrSessionState;
+  amrSessionState?: AmrSessionState;
   /**
    * vela login-status account/user plan (ACCOUNT-scoped). Used for personal
    * workspaces so a confirmed free account is not stuck as campaign audience
@@ -701,7 +701,7 @@ export function EntryShell({
   // ever shared now, so the predicate is constant.
   const optimisticOwnershipScopeKey = 'local';
   const isSharedProject: SharedProjectPredicate = () => false;
-  const markProjectShared = useCallback((_project: WorkspaceProjectSummary) => false, []);
+  const markProjectShared = useCallback((_project: ProjectListEntry) => false, []);
   const markProjectShareFailed = useCallback((_projectId: string) => false, []);
   const markProjectUnshared = useCallback((_projectId: string) => false, []);
   const draftProjectsList: Project[] = projects;

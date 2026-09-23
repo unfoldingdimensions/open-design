@@ -1,15 +1,12 @@
 import { useEffect, useRef } from 'react';
+import type { CollabProjectInvalidationSsePayload, ProjectContentTransferStateSsePayload } from '../runtime/legacy-scope-types';
 import { BackoffController } from '../lib/backoff';
 import { bindStreamVisibility } from '../lib/stream-visibility';
 import {
-  COLLAB_PROJECT_INVALIDATION_EVENTS,
-  PROJECT_CONTENT_TRANSFER_STATE_EVENT,
   type ChatArtifactRefsChangedSsePayload,
-  type CollabProjectInvalidationSsePayload,
   type LiveArtifactRefreshSsePayload,
   type LiveArtifactSsePayload,
   type ProjectConversationCreatedSsePayload,
-  type ProjectContentTransferStateSsePayload,
   type WorkspaceCollabContext,
 } from '@capydesign/contracts';
 export interface ProjectFileChangeEvent {
@@ -31,6 +28,16 @@ export type ProjectLiveArtifactEvent = LiveArtifactSsePayload | LiveArtifactRefr
 // `project-metadata-changed`). The consumer re-fetches the affected resource on
 // receipt — the event carries no body.
 export type ProjectCollabInvalidationEvent = CollabProjectInvalidationSsePayload;
+
+/** The SSE `event:` names for the project-scoped collab invalidations. */
+export const COLLAB_PROJECT_INVALIDATION_EVENTS = [
+  'comment-changed',
+  'presence-changed',
+  'project-metadata-changed',
+] as const;
+
+/** Event name for a project's content-transfer state change. */
+export const PROJECT_CONTENT_TRANSFER_STATE_EVENT = 'project-content-transfer-state';
 
 /**
  * A finished message's artifact refs changed after its run's terminal frame.

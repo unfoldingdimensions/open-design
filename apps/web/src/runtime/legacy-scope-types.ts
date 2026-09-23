@@ -62,3 +62,100 @@ export interface AmrAuthRetryContinuation {
   accountIdAtArm: string | null;
   createdAtMs: number;
 }
+
+// ---------------------------------------------------------------------------
+// Stand-ins for the removed Cloud / AMR schema modules
+//
+// These names used to be exported by contracts modules that went with the Cloud
+// surface (`analytics/events/amr-auth`, the workspace invalidation schema, the
+// collaboration SSE payloads). Surviving call sites still annotate local UI
+// state with them, so they are declared here rather than deleted — the shapes
+// stay deliberately open because nothing cross-process consumes them any more.
+// ---------------------------------------------------------------------------
+
+/** AMR sign-in session state as the local vela-status projection reports it. */
+export type AmrSessionState = string;
+
+/** Network route an AMR sign-in attempt took. */
+export type AmrAuthNetworkPath = string;
+
+/** One step of an AMR sign-in attempt. */
+export type AmrAuthStage = string;
+
+/** Outcome of one AMR sign-in step. */
+export type AmrAuthStageResult = string;
+
+/** Where an AMR sign-in step's signal came from. */
+export type AmrAuthStageSource = string;
+
+/** Error kind reported by an AMR sign-in step. */
+export type AmrAuthErrorKind = string;
+
+/** A signed-in AMR profile as the wallet projection reports it. */
+export interface AmrWalletSnapshotUser {
+  [key: string]: unknown;
+}
+
+/** AMR wallet projection. No wallet exists locally, so the status stays inert. */
+export interface AmrWalletSnapshot {
+  status: string;
+  profile?: string;
+  user?: AmrWalletSnapshotUser | null;
+  balanceUsd?: string | null;
+  updatedAt?: string | null;
+  fetchedAt?: string;
+  stale?: boolean;
+  source?: string;
+  error?: { code: string; message: string };
+}
+
+/** A comment was added / edited / status-changed / deleted for this project. */
+export interface CommentChangedSsePayload {
+  type: 'comment-changed';
+  projectId: string;
+  at?: number;
+}
+
+/** A member joined / left this project's presence set. */
+export interface PresenceChangedSsePayload {
+  type: 'presence-changed';
+  projectId: string;
+  at?: number;
+}
+
+/** The project's name / settings / share metadata changed. */
+export interface ProjectMetadataChangedSsePayload {
+  type: 'project-metadata-changed';
+  projectId: string;
+  at?: number;
+}
+
+/**
+ * Project-scoped thin collaboration invalidations. Kept as three separate arms
+ * (not one merged shape) because the consumer narrows on the discriminant.
+ */
+export type CollabProjectInvalidationSsePayload =
+  | CommentChangedSsePayload
+  | PresenceChangedSsePayload
+  | ProjectMetadataChangedSsePayload;
+
+/** Thin invalidation for daemon-local inbound project content. */
+export interface ProjectContentTransferStateSsePayload {
+  type: 'project-content-transfer-state';
+  projectId: string;
+  at?: number;
+}
+
+/** A project was shared / unshared / created / deleted in the team. */
+export interface TeamProjectsChangedSsePayload {
+  type: 'team-projects-changed';
+  projectId?: string;
+  kind?: 'catalog' | 'metadata';
+  at?: number;
+}
+
+/**
+ * Workspace-scoped invalidation frames. Nothing is ever published locally, so
+ * only the arm the consumer narrows on is retained.
+ */
+export type WorkspaceInvalidationSsePayload = TeamProjectsChangedSsePayload;

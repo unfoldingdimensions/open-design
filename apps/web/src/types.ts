@@ -62,7 +62,7 @@ import type {
   Project,
   ProjectLocationPrefs,
   ProjectPlatform,
-  ProjectBrowserWorkspaceTab,
+  ProjectBrowserTab,
   ProjectTabsState,
   PreviewCommentMember,
   PreviewAnnotationStyle,
@@ -517,7 +517,7 @@ export type {
 };
 
 export type {
-  ProjectBrowserWorkspaceTab,
+  ProjectBrowserTab,
 };
 
 export interface Artifact {

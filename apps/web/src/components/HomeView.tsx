@@ -30,7 +30,7 @@ import type {
   LocalCatalogScope,
   ProjectKind,
   WorkspaceCollabContext,
-  WorkspaceProjectSummary,
+  ProjectListEntry,
   AudioVoiceOption,
   WorkspaceContextItem,
 } from '@capydesign/contracts';
@@ -280,7 +280,7 @@ interface Props {
    *  because the SAME answer partitions its 全部项目 / 草稿 grids — a home share
    *  must move the project between those grids too, without a refetch. */
   isSharedProject?: SharedProjectPredicate;
-  onProjectShared?: (project: WorkspaceProjectSummary) => void;
+  onProjectShared?: (project: ProjectListEntry) => void;
   onProjectShareFailed?: (projectId: string) => void;
   onProjectUnshared?: (projectId: string) => void;
   /** Authoritative catalog owners plus any exact successful-move witness. */

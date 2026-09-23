@@ -17,7 +17,7 @@ import {
 import type { AppConfig, Project } from '../src/types';
 import type {
   WorkspaceCollabContext,
-  WorkspaceProjectSummary,
+  ProjectListEntry,
 } from '@capydesign/contracts';
 
 describe('projectRouteSurfaceState', () => {
@@ -124,7 +124,7 @@ describe('hydrateReadyTeamProject', () => {
     lifecycleState: 'active',
     teamId: 'team-1',
   } as WorkspaceCollabContext;
-  const summary: WorkspaceProjectSummary = {
+  const summary: ProjectListEntry = {
     id: project.id,
     name: project.name,
     workspaceId: 'ws-1',
@@ -184,8 +184,8 @@ describe('hydrateReadyTeamProject', () => {
   });
 
   it('drops a hydration result when the workspace changes while the scoped list is in flight', async () => {
-    let resolveProjects!: (value: WorkspaceProjectSummary[]) => void;
-    const pending = new Promise<WorkspaceProjectSummary[]>((resolve) => {
+    let resolveProjects!: (value: ProjectListEntry[]) => void;
+    const pending = new Promise<ProjectListEntry[]>((resolve) => {
       resolveProjects = resolve;
     });
     let context: WorkspaceCollabContext = teamContext;

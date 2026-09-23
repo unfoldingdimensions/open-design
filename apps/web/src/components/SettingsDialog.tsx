@@ -1,10 +1,8 @@
+import type { AmrWalletSnapshot } from '../runtime/legacy-scope-types';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, Dispatch, SetStateAction } from 'react';
 import { Button, VisuallyHidden } from '@capydesign/components';
-import type {
-  AmrWalletSnapshot,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '@capydesign/contracts';
 import { validateBaseUrl } from '@capydesign/contracts/api/connectionTest';
 import {
   agentIdToTracking,

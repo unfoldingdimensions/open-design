@@ -81,7 +81,7 @@ import {
   type LiveArtifactEventItem,
   type LiveArtifactWorkspaceEntry,
   type OpenTabsState,
-  type ProjectBrowserWorkspaceTab,
+  type ProjectBrowserTab,
   type PreviewComment,
   type PreviewCommentTarget,
   type DesignSystemSummary,
@@ -1110,7 +1110,7 @@ const PAGE_KIND_TO_FACET_SLUG: Partial<Record<ProjectPageKind, string>> = {
   video: 'video',
 };
 type TabDropEdge = 'before' | 'after';
-type BrowserWorkspaceTab = ProjectBrowserWorkspaceTab;
+type BrowserWorkspaceTab = ProjectBrowserTab;
 export interface BrowserOpenRequest {
   tabId?: string;
   url: string;

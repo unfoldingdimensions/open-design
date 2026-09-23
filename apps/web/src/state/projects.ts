@@ -38,8 +38,8 @@ import type {
   ProjectWorkspaceScopeResponse,
   TerminalSession,
   WorkspaceCollabContext,
-  WorkspaceProjectSummary,
-  WorkspaceProjectsResponse,
+  ProjectListEntry,
+  ProjectSummariesResponse,
 } from '@capydesign/contracts';
 import { randomUUID } from '../utils/uuid';
 import { markProjectDisplaySnapshotsDirty } from './project-display-cache';
@@ -170,7 +170,7 @@ export async function moveWorkspaceProject(input: {
   projectId: string;
   visibility: ProjectVisibility;
   workspaceContext: WorkspaceCollabContext | null;
-}): Promise<WorkspaceProjectSummary> {
+}): Promise<ProjectListEntry> {
   const context = input.workspaceContext;
   if (!context) throw new Error('Workspace context is required');
   const resp = await fetch(
@@ -210,7 +210,7 @@ export async function moveWorkspaceProject(input: {
   // (`recent`, `drafts`, `team`, and `all`). Do not let the coalescing window
   // replay the pre-move snapshot into the immediate refresh.
   invalidateWorkspaceProjectLists(context);
-  const json = (await resp.json()) as { project: WorkspaceProjectSummary };
+  const json = (await resp.json()) as { project: ProjectListEntry };
   return json.project;
 }
 
@@ -280,7 +280,7 @@ export async function listWorkspaceProjectSummaries(options: {
   context: WorkspaceCollabContext;
   throwOnError?: boolean;
   workspaceView?: WorkspaceProjectListView;
-}): Promise<WorkspaceProjectSummary[]> {
+}): Promise<ProjectListEntry[]> {
   const { context } = options;
   const workspaceView = options.workspaceView ?? 'drafts';
   const key = workspaceProjectListCacheKey(context, workspaceView);
@@ -291,7 +291,7 @@ export async function listWorkspaceProjectSummaries(options: {
         { headers: {} },
       );
       if (!resp.ok) throw new Error(`projects ${resp.status}`);
-      const json = (await resp.json()) as WorkspaceProjectsResponse;
+      const json = (await resp.json()) as ProjectSummariesResponse;
       return json.projects ?? [];
     });
   } catch (err) {

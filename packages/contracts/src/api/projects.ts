@@ -391,7 +391,7 @@ export interface ProjectTemplate {
   createdAt: number;
 }
 
-export interface ProjectBrowserWorkspaceTab {
+export interface ProjectBrowserTab {
   id: string;
   insertAfter?: string | null;
   label: string;
@@ -403,7 +403,7 @@ export interface ProjectBrowserWorkspaceTab {
 export interface ProjectTabsState {
   tabs: string[];
   active: string | null;
-  browserTabs?: ProjectBrowserWorkspaceTab[];
+  browserTabs?: ProjectBrowserTab[];
   hasSavedState?: boolean;
   updatedAt?: number;
 }
@@ -634,7 +634,7 @@ export interface ProjectAccessFlags {
  */
 export type TeamResourceState = 'active' | 'frozen' | 'deleted';
 
-export interface WorkspaceProjectSummary {
+export interface ProjectListEntry {
   id: string;
   name: string;
   workspaceId: string;
@@ -661,8 +661,8 @@ export interface WorkspaceProjectSummary {
   project: Project;
 }
 
-export interface WorkspaceProjectsResponse {
-  projects: WorkspaceProjectSummary[];
+export interface ProjectSummariesResponse {
+  projects: ProjectListEntry[];
 }
 
 export interface MoveWorkspaceProjectRequest {

@@ -11,12 +11,12 @@ import {
   projectCardCategory,
 } from '../../src/components/RecentProjectsStrip';
 import type { Project } from '../../src/types';
-import type { WorkspaceProjectSummary } from '@capydesign/contracts';
+import type { ProjectListEntry } from '@capydesign/contracts';
 
 // Typed on the argument the component actually passes, so `.mock.calls`
 // destructures instead of widening to the empty tuple.
 interface MoveCall { projectId: string; visibility: string }
-function movedProject(input: MoveCall): WorkspaceProjectSummary {
+function movedProject(input: MoveCall): ProjectListEntry {
   return {
     id: input.projectId,
     name: input.projectId,

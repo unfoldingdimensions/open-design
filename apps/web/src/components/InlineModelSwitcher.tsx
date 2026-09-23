@@ -1,3 +1,4 @@
+import type { AmrWalletSnapshot } from '../runtime/legacy-scope-types';
 // InlineModelSwitcher — top-bar chip exposing CLI/BYOK + model picker.
 //
 // Lives in the entry view's sticky top-bar so users can swap between a
@@ -18,7 +19,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from 'react';
-import type { AmrWalletSnapshot } from '@capydesign/contracts';
+/* removed: imports from '@capydesign/contracts' no longer exist in contracts */
 import { VisuallyHidden } from '@capydesign/components';
 import { useT } from '../i18n';
 import {

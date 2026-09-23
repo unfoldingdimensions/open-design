@@ -1,3 +1,4 @@
+import type { AmrSessionState, AmrAuthNetworkPath, AmrAuthStage, AmrAuthStageResult, AmrAuthStageSource, AmrAuthErrorKind, AmrWalletSnapshot } from '../runtime/legacy-scope-types';
 /**
  * Daemon provider — fetch-based SSE client for /api/runs. The daemon can
  * emit three event streams depending on the agent's streamFormat:
@@ -10,13 +11,7 @@
  *                 non-zero (tail appended to the error message).
  */
 import type { AgentEvent, ChatCommentAttachment, ChatMessage } from '../types';
-import type {
-  AmrAuthErrorKind,
-  AmrAuthNetworkPath,
-  AmrAuthStage,
-  AmrAuthStageResult,
-  AmrAuthStageSource,
-} from '@capydesign/contracts/analytics';
+/* removed: imports from '@capydesign/contracts/analytics' no longer exist in contracts */
 import type {
   ApiErrorResponse,
   ChatAnalyticsHints,
@@ -30,7 +25,6 @@ import type {
   ChatSseStartPayload,
   DaemonAgentPayload,
   AmrModelsResponse,
-  AmrWalletSnapshot,
   ByokChatProviderConfig,
   MediaExecutionPolicy,
   ResearchOptions,
@@ -1322,7 +1316,7 @@ export interface VelaLiveAccount {
 
 export interface VelaLoginStatus {
   loggedIn: boolean;
-  sessionState?: import('@capydesign/contracts').AmrSessionState;
+  sessionState?: AmrSessionState;
   credentialRevision?: string;
   loginInFlight?: boolean;
   profile: string;

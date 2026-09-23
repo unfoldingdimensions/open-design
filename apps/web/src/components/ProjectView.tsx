@@ -1,3 +1,4 @@
+import type { AmrWalletSnapshot } from '../runtime/legacy-scope-types';
 import {
   startTransition,
   useCallback,
@@ -81,7 +82,6 @@ import {
 import {
   isTodoWriteToolName,
   workspaceBillingAuthorityContext,
-  type AmrWalletSnapshot,
   type ByokChatProviderConfig,
   type ByokMediaDefaults,
   type ByokChatProtocol,

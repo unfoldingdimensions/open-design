@@ -40,7 +40,7 @@ import { moveWorkspaceProject, workspaceProjectMoveErrorCode } from '../state/pr
 import {
   workspaceContextHasTeamIdentity,
   type WorkspaceCollabContext,
-  type WorkspaceProjectSummary,
+  type ProjectListEntry,
 } from '@capydesign/contracts';
 import {
   THUMBNAIL_OVERSCAN_MARGIN,
@@ -98,7 +98,7 @@ interface Props {
   isSharedProject?: SharedProjectPredicate;
   /** Reported after a successful share/unshare so the caller can fold the change
    *  into its optimistic layer before the team-projects poll catches up. */
-  onProjectShared?: (project: WorkspaceProjectSummary) => void;
+  onProjectShared?: (project: ProjectListEntry) => void;
   /** Clears any optimistic owner proof when a share did not commit. */
   onProjectShareFailed?: (projectId: string) => void;
   onProjectUnshared?: (projectId: string) => void;
@@ -1152,7 +1152,7 @@ export function RecentProjectsStrip({
       }),
     );
     const succeeded = moved.filter(
-      (result): result is { id: string; project: WorkspaceProjectSummary } => result !== null,
+      (result): result is { id: string; project: ProjectListEntry } => result !== null,
     );
     for (const result of succeeded) {
       if (action === 'to-team') onProjectShared?.(result.project);

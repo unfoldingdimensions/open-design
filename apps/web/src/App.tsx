@@ -1,3 +1,4 @@
+import type { WorkspaceInvalidationSsePayload } from './runtime/legacy-scope-types';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import { AnimatePresence, motion, MotionConfig } from 'motion/react';
@@ -21,10 +22,9 @@ import type {
   RunContextSelection,
   TeamProject,
   WorkspaceCollabContext,
-  WorkspaceInvalidationSsePayload,
   ProjectWorkspaceScope,
   ProjectScenarioTaskProfile,
-  WorkspaceProjectSummary,
+  ProjectListEntry,
 } from '@capydesign/contracts';
 import { DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID } from '@capydesign/contracts';
 import { EntryView } from './components/EntryView';
@@ -803,7 +803,7 @@ export async function hydrateReadyTeamProject(
     getWorkspaceContext: () => WorkspaceCollabContext | null;
     listWorkspaceProjects: (
       context: WorkspaceCollabContext,
-    ) => Promise<WorkspaceProjectSummary[]>;
+    ) => Promise<ProjectListEntry[]>;
     onReady?: (project: Project, context: WorkspaceCollabContext) => void;
     applyProject: (project: Project) => void;
   },
