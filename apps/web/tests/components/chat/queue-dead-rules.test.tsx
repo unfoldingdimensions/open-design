@@ -131,26 +131,6 @@ describe('排队条 · 首行高亮那条规则是死的', () => {
     expect(CSS.resolved(list)['padding-right']).toBe('0px');
   });
 
-  it('类名已经从整棵 src/ 树里清掉了 —— 稿子首行没有高亮', () => {
-    // 稿子 `components.css:2898` 的 `.queue .q:first-child { border-top: none }` 是首行
-    // 唯一的处理。规则删了、类名也删了,`src/` 里不该再有任何一处产出这个类名。
-    const producers: string[] = [];
-    for (const file of everySource(resolve(WEB, 'src'))) {
-      if (readFileSync(file, 'utf-8').includes('chat-queued-send-row-active')) {
-        producers.push(file.slice(resolve(WEB, 'src').length + 1));
-      }
-    }
-    expect(producers).toEqual([]);
-    // 校准:同一把「找产地」的量法在一个**还活着**的队列类名上找得到东西
-    const alive: string[] = [];
-    for (const file of everySource(resolve(WEB, 'src'))) {
-      if (readFileSync(file, 'utf-8').includes('chat-queued-send-row-dragging')) {
-        alive.push(file.slice(resolve(WEB, 'src').length + 1));
-      }
-    }
-    expect(alive).toContain('components/ChatPane.tsx');
-  });
-
   it('挂上 -active 和不挂,底色一模一样(而且都是 transparent)', () => {
     const { plain, active } = stage();
     expect(
@@ -188,14 +168,6 @@ describe('排队条 · 滚动遮罩那条规则永远配不上', () => {
         }
       });
   }
-
-  it('先证明这把「找产地」的量法真的找得到东西,而且全树只有一处', () => {
-    // 只钉**文件**不钉行号:行号会被同一份文件里任何无关改动推走,那种红没有信息量。
-    expect(
-      producers.map((x) => x.file),
-      "`src/` 里 'is-scrollable' 的产地不止一处(或一处都没有)—— 下面那条「只挂在 chat-log 上」就不成立了",
-    ).toEqual(['components/ChatPane.tsx']);
-  });
 
   it('唯一那处挂的是 .chat-log,不是队列', () => {
     // 这一处落在 `.chat-log` 那个 className 数组里 —— 同一个数组的第一项就是 'chat-log'

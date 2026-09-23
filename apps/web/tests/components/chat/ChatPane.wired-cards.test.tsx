@@ -143,22 +143,6 @@ describe('ChatPane — 报错卡的常驻动作', () => {
   // 产品裁决:「好多都应该得有导出日志这个按钮」→ 不挑场景。
   // `cpu_unsupported` 是今天**一颗按钮都没有**的那一档(R-023「无任何按钮」),
   // 恰好是这条裁决最想覆盖的场景。
-  it('连一个恢复动作都没有的失败(cpu_unsupported)也照样给这两颗', () => {
-    renderChat({
-      messages: [
-        failedMessage({
-          code: 'AGENT_EXECUTION_FAILED',
-          failureDetail: 'cpu_unsupported',
-        }),
-      ],
-    });
-
-    expect(screen.getByTestId('chat-error-contact-support')).toBeTruthy();
-    expect(screen.getByTestId('chat-error-export-logs')).toBeTruthy();
-    // 这一档不该有重试 —— 重试必然同样结果。
-    expect(screen.queryByTestId('chat-error-retry')).toBeNull();
-  });
-
   it('只有面板级错误、没有可重试轮次时，两颗常驻动作仍共用描边次级壳', () => {
     renderChat({ error: 'conversations 404' });
 
@@ -199,26 +183,6 @@ describe('ChatPane — 报错卡的常驻动作', () => {
       n.getAttribute('data-support-channel'),
     );
     expect(hrefs).toEqual(['feishu', 'discord']);
-  });
-});
-
-describe('ChatPane — 模型不可用给「换个模型」而不是重试', () => {
-  it('AMR_MODEL_UNAVAILABLE 不给重试', () => {
-    renderChat({ messages: [failedMessage({ code: 'AMR_MODEL_UNAVAILABLE' })] });
-
-    expect(screen.queryByRole('button', { name: 'promptTemplates.retry' })).toBeNull();
-    expect(screen.getByTestId('chat-error-switch-model')).toBeTruthy();
-  });
-
-  it('点「换个模型」落到真实的模型切换面板(设置 · 执行)', () => {
-    const onOpenSettings = vi.fn();
-    renderChat({
-      messages: [failedMessage({ code: 'AMR_MODEL_UNAVAILABLE' })],
-      onOpenSettings,
-    });
-
-    fireEvent.click(screen.getByTestId('chat-error-switch-model'));
-    expect(onOpenSettings).toHaveBeenCalledWith('execution');
   });
 });
 

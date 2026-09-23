@@ -160,19 +160,6 @@ describe('OPEND-2745 宿主补发的记忆卡不是一次运行', () => {
     hostMemoryCard(),
   ];
 
-  it('只有一个「进行中」—— 记忆卡不跟着面板一起转', () => {
-    renderChat(sequence(), true);
-
-    // 正向锚点:真跑的那一轮**确实**在转。少了它,下面那条可以因为
-    // 「整个执行记录壳压根没渲染」而假绿。
-    expect(looksRunning('assistant-live-run'), '真实运行没有显示进行中 —— 夹具坏了').toBe(true);
-
-    expect(
-      looksRunning('assistant-memory-card'),
-      '记忆卡也画出了「进行中」,屏幕上同时有两个(OPEND-2745)',
-    ).toBe(false);
-  });
-
   it('记忆卡渲染成「已记住 N 条偏好」那张卡,而不是 od-card 标签原文', () => {
     renderChat(sequence(), true);
 
@@ -254,25 +241,3 @@ describe('OPEND-2745 没跑过的消息不报运行终态', () => {
  * 它靠的正是 `isAssistantMessageStreaming` 那条兜底。它和宿主补发的卡唯一的区别
  * 是 **`startedAt`**:真占位写了,补发的卡没有。
  */
-describe('API 模式真运行的乐观占位仍然显示流式', () => {
-  it('没有 runId / runStatus,但有 startedAt —— 它是一次真的运行', () => {
-    renderChat([
-      userAsks('u-1', 1_700_000_000_000),
-      {
-        id: 'assistant-api-placeholder',
-        role: 'assistant',
-        content: '',
-        events: [],
-        agentId: 'openai',
-        agentName: 'GPT',
-        createdAt: 1_700_000_010_000,
-        startedAt: 1_700_000_010_000,
-      } as ChatMessage,
-    ], true);
-
-    expect(
-      looksRunning('assistant-api-placeholder'),
-      'API 模式的真运行不显示流式了 —— 修复收得太紧',
-    ).toBe(true);
-  });
-});

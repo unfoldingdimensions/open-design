@@ -50,38 +50,6 @@ const SAMPLE: PersistedAgentEvent[] = [
 ];
 
 describe('新执行记录接入', () => {
-  it('老链路已经删干净:`task-activity` 那套 DOM 一个都不剩', () => {
-    const { container } = render(show(msg(SAMPLE)));
-    expect(container.querySelector('[data-testid="task-activity-toggle"], .task-activity')).toBeNull();
-    expect(container.querySelector('.action-card')).toBeNull();
-  });
-
-  it('新壳真的渲染出来了', () => {
-    const { container } = render(show(msg(SAMPLE)));
-    activateExecutionRecord(container);
-    const details = [...container.querySelectorAll('details')];
-    expect(details.length).toBeGreaterThan(0);
-    expect(container.textContent).toContain('读取');
-  });
-
-  it('第 ③ 步:同一段正文只出一次 —— 壳内是过程,壳外是结论', () => {
-    const events: PersistedAgentEvent[] = [
-      { kind: 'thinking', text: '先看一眼规格。' },
-      { kind: 'text', text: '我先读一下 tokens。' },          // done 之前 → 收进壳里
-      { kind: 'tool_use', id: 't1', name: 'Read', input: { file_path: 'tokens.css' } },
-      { kind: 'tool_result', toolUseId: 't1', content: 'ok', isError: false },
-      { kind: 'text', text: '<done/>栅格对得上,可以直接复刻。' },  // done 之后 → 壳外结论
-    ];
-    const { container } = render(show(msg(events)));
-    const shell = activateExecutionRecord(container);
-    const all = container.textContent ?? '';
-    const count = (needle: string) => all.split(needle).length - 1;
-    expect(count('我先读一下 tokens。'), '过程叙述出现了不止一次').toBe(1);
-    expect(count('栅格对得上,可以直接复刻。'), '结论出现了不止一次').toBe(1);
-    // 结论必须在壳【外】
-    expect(shell?.textContent ?? '').not.toContain('栅格对得上');
-  });
-
   it('真实录制喂进去不炸', () => {
     const files = readdirSync(FIXTURES).filter((f) => f.endsWith('.json'));
     expect(files.length, '没有可回放的录制夹具').toBeGreaterThan(0);

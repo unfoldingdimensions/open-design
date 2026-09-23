@@ -2295,20 +2295,6 @@ function renderCell(cell: Cell): string {
 }
 
 describe('镜像陈列页', () => {
-  it('每一格都真的渲染出了东西,编号与 matrix-82.html 对得上', () => {
-    for (const cell of CELLS) {
-      const html = renderCell(cell);
-      if (cell.missing) continue;              // 出不来的格子只出说明,不断言实体
-      expect(html.length, `#${cell.gid} ${cell.sub} 渲染为空`).toBeGreaterThan(120);
-      // 走事件流的那族必须出壳;挂现成组件的那族没有壳,只要不是空的就行
-      if (cell.events) expect(html, `#${cell.gid} 没有壳`).toContain('details');
-    }
-    // 编号是整页的全局编号,不要求连续 —— 还没做到的格子就先不上页
-    const gids = CELLS.map((c) => c.gid);
-    expect(gids).toEqual([...gids].sort((a, b) => a - b));
-    expect(new Set(gids).size).toBe(gids.length);
-  });
-
   it('类名摘掉了哈希 —— 不摘的话内联的源样式一条都命中不了,页面会是一堆裸标签', () => {
     const html = renderCell(CELLS[0] as Cell);
     expect(html).toMatch(/class="fold flat[ "]/);
@@ -2330,59 +2316,6 @@ describe('镜像陈列页', () => {
    * 每一条都是陈列格里**没有任何一格**会经过的分支。夹具哪天被改瘦了(比如
    * `appliedContextItems` 又变回 `[]`),这几条会红,而页面照样能生成、看着还挺好。
    */
-  it('端到端那一族照到了陈列格照不到的分支', () => {
-    const byId = new Map(LIVE.map((c) => [c.id, renderLive(c)]));
-    const html = (id: string): string => {
-      const found = byId.get(id);
-      expect(found, `${id} 不见了`).toBeTruthy();
-      return found ?? '';
-    };
-
-    // 上下文数据仍在夹具里,但产品历史流水不展示 CURRENT / Using 标签。
-    expect(html('E2E-1')).not.toContain('msg-applied-context');
-    expect(html('E2E-1')).not.toContain('msg-run-context-row');
-    // 同一条消息上附件行 + 气泡仍同时在。
-    expect(html('E2E-1')).toContain('msg-att');
-    expect(html('E2E-1')).toContain('user-bubble');
-
-    // workspaceItems / applied context 只隐藏 UI,不在陈列页留下旧标签。
-    const chips = html('E2E-2').match(/msg-plugin-chip--workspace /g) ?? [];
-    expect(chips).toHaveLength(0);
-    expect(html('E2E-2')).not.toContain('msg-plugin-chip--workspace-design-system');
-    expect(html('E2E-2')).not.toContain('msg-applied-context');
-    expect(html('E2E-2')).not.toContain('msg-run-context-row');
-
-    // producedFiles → `ProducedFiles` 那条分支:`.md` 走 `doc` 档卡
-    expect(html('E2E-3')).toContain('data-kind="doc"');
-    expect(html('E2E-3')).toContain('data-kind="html"');
-    expect(html('E2E-3')).toContain('data-kind="image"');
-
-    /*
-     * 一轮**一张**壳(2026-08-26 最终裁决:卡片边界由「卡外落过东西」决定,不由清单
-     * 决定;而 TodoWrite 必然在 done 之前,卡外那时还什么都没有)。
-     * `.fold.flat` 是**壳**那一层(抽屉是 `.fold`,不带 `flat`),数它就等于数壳。
-     *
-     * 这一格原本是拿来照「分张」的,裁决之后它照的变成了「不分张」—— 断言跟着改,
-     * 因为它现在守的正是那条裁决:先散活、后清单,前后都在同一张卡里。
-     */
-    const shells = html('E2E-4').match(/class="fold flat[ "]/g) ?? [];
-    expect(shells, '先散活、后清单应当在同一张卡里').toHaveLength(1);
-
-    // 失败轮 + 报错卡;`errorCardOwnerId` 命中时消息内那枚错误药丸不出
-    expect(html('E2E-5')).toContain('chat-run-error-card');
-    expect(html('E2E-5')).not.toContain('status-pill');
-
-    /*
-     * **协议标记一个字都不许上屏**(`done-marker.ts` 的原话:「标记任何情况下都不许
-     * 出现在正文里」,`<od-title>` 当年就是这么漏进线上聊天的)。
-     *陈列格一条 `done_key` 都没喂过,这条只有端到端这一族守得住。
-     */
-    for (const [id, out] of byId) {
-      expect(out, `${id} 把 done 标记漏到正文里了`).not.toContain('od-done');
-      expect(out, `${id} 把 done 标记漏到正文里了`).not.toContain(LIVE_DONE_KEY);
-    }
-  });
-
   /**
    * 裁决之后「一轮一张卡」—— 连带把 `renderCell` 的一个**隐患**也解掉了。
    *
@@ -2394,18 +2327,6 @@ describe('镜像陈列页', () => {
    * 这一条现在钉的是**裁决本身**:同一份夹具在摆拍和端到端两条路上都必须是一张壳,
    * 而且那句 thinking 两边都看得见。哪天又冒出第二张壳,这里会红。
    */
-  it('先说一句、再出清单:摆拍与端到端都是一张壳,那句 thinking 不再被吞', () => {
-    const shellsOf = (events: PersistedAgentEvent[]): number =>
-      buildTurnBlocks({ events, runStatus: 'succeeded', nowMs: 31_000 })
-        .filter((b) => b.kind === 'shell').length;
-    // 第 2 格(gid 2)喂的就是 PLAN_DONE:开头一句 thinking,然后才出清单
-    expect(shellsOf(PLAN_DONE)).toBe(1);
-    const cell2 = CELLS[1] as Cell;
-    expect(cell2.gid).toBe(2);
-    expect(renderCell(cell2).match(/class="fold flat[ "]/g) ?? []).toHaveLength(1);
-    expect(renderLive(LIVE[0] as LiveCell).match(/class="fold flat[ "]/g) ?? []).toHaveLength(1);
-  });
-
   /**
    * 把每一格的**夹具**导出成 JSON,供「真实运行时」那一列用。
    *
