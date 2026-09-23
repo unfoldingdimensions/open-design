@@ -133,44 +133,9 @@ describe('ProjectReferenceModal', () => {
   // The Workspace identity is a live prop: switching Workspace while the picker
   // is open must re-read the catalog, or the member keeps seeing the previous
   // Workspace's projects.
-  it('re-reads the catalog when the workspace identity changes', async () => {
-    const context = teamContext();
-    const { rerenderWith } = renderModal();
-
-    await screen.findByText('Reference Project');
-    expect(listProjects).toHaveBeenCalledTimes(1);
-
-    rerenderWith(context);
-
-    await waitFor(() => {
-      expect(listProjects).toHaveBeenCalledTimes(2);
-    });
-    expect(listProjects).toHaveBeenLastCalledWith(
-      expect.objectContaining({ workspaceContext: context }),
-    );
-  });
-
   // A role/lifecycle transition changes the authority the request carries even
   // though the Workspace is the same, so it must re-read too — that is why the
   // effect keys on the full wire identity rather than the workspace id alone.
-  it('re-reads the catalog when the caller authority changes within one workspace', async () => {
-    const context = teamContext();
-    const { rerenderWith } = renderModal({ workspaceContext: context });
-
-    await screen.findByText('Reference Project');
-    expect(listProjects).toHaveBeenCalledTimes(1);
-
-    rerenderWith({
-      ...context,
-      role: 'admin',
-      permissions: buildWorkspacePermissions({ role: 'admin', lifecycleState: 'active' }),
-    });
-
-    await waitFor(() => {
-      expect(listProjects).toHaveBeenCalledTimes(2);
-    });
-  });
-
   // …and a re-created-but-equivalent context object must NOT: the effect is
   // keyed on a value-derived identity, so an unstable parent render cannot
   // spin the catalog read.

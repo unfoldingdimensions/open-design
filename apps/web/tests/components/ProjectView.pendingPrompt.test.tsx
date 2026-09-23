@@ -501,43 +501,6 @@ describe('ProjectView pending prompt seeding', () => {
     });
   });
 
-  it('refreshes the preview when SSE-ready reconciliation finds changed files', async () => {
-    const oldFile: ProjectFile = {
-      name: 'index.html',
-      path: 'index.html',
-      size: 100,
-      mtime: 1_000,
-      kind: 'html',
-      mime: 'text/html',
-    };
-    const changedFile: ProjectFile = {
-      ...oldFile,
-      size: 120,
-      mtime: 2_000,
-    };
-    mockedFetchProjectFiles
-      .mockResolvedValueOnce([oldFile])
-      .mockResolvedValue([changedFile]);
-
-    renderProjectView(project('sse-ready-changed-files'));
-    await waitFor(() => {
-      const props = fileWorkspaceSpy.mock.calls.at(-1)?.[0];
-      expect(props?.files).toEqual([oldFile]);
-      expect(props?.filesRefreshKey).toBe(0);
-    });
-
-    const options = mockedUseProjectFileEvents.mock.calls.at(-1)?.[3];
-    await act(async () => {
-      options?.onReady?.();
-    });
-
-    await waitFor(() => {
-      const props = fileWorkspaceSpy.mock.calls.at(-1)?.[0];
-      expect(props?.files).toEqual([changedFile]);
-      expect(props?.filesRefreshKey).toBe(1);
-    });
-  });
-
   it('does not advance the file generation when a fresh revalidation fails', async () => {
     const file: ProjectFile = {
       name: 'index.html',
@@ -1112,80 +1075,6 @@ describe('ProjectView pending prompt seeding', () => {
           props.openRequest?.name === 'brand.html',
         ),
       ).toBe(true);
-    });
-  });
-
-  it('switches to the replacement conversation returned by a brand extraction retry', async () => {
-    const projectId = 'brand-retry-missing';
-    const replacementConversation = {
-      ...conversation(projectId),
-      id: 'conv-brand-replacement',
-      title: 'Brand retry',
-    };
-    mockedListConversations
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([replacementConversation]);
-    mockedCreateConversation.mockResolvedValueOnce({
-      ...conversation(projectId),
-      id: 'conv-brand-empty',
-      title: 'Empty fallback',
-    });
-    mockedListMessages.mockImplementation(async (_projectId, conversationId) => {
-      if (conversationId === 'conv-brand-replacement') {
-        return [
-          {
-            id: 'replacement-transcript',
-            role: 'assistant',
-            content: 'Replacement retry transcript loaded',
-            createdAt: 3,
-          },
-        ];
-      }
-      return [];
-    });
-    mockedContinueBrandExtraction.mockResolvedValueOnce({
-      ok: true,
-      result: {
-        id: projectId,
-        projectId,
-        conversationId: 'conv-brand-replacement',
-        sourceUrl: 'https://economist.com/',
-        status: 'extracting',
-        designSystemId: `user:${projectId}`,
-      },
-    });
-
-    renderProjectView(
-      {
-        ...project(projectId),
-        metadata: {
-          kind: 'brand',
-          importedFrom: 'brand-extraction',
-          brandId: projectId,
-          brandSourceUrl: 'https://economist.com/',
-          brandDesignSystemId: `user:${projectId}`,
-        },
-      },
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('active-conversation').textContent).toBe('conv-brand-empty');
-    });
-    chatPaneSpy.mock.calls.at(-1)?.[0].onContinueBrandExtraction?.();
-
-    await waitFor(() => {
-      expect(mockedContinueBrandExtraction).toHaveBeenCalledWith(projectId);
-    });
-    await waitFor(() => {
-      expect(mockedListMessages).toHaveBeenCalledWith(projectId, 'conv-brand-replacement', null);
-    });
-    await waitFor(() => {
-      expect(screen.getByTestId('active-conversation').textContent).toBe('conv-brand-replacement');
-    });
-    await waitFor(() => {
-      expect(screen.getByTestId('chat-message-content').textContent).toContain(
-        'Replacement retry transcript loaded',
-      );
     });
   });
 

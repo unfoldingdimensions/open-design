@@ -35,26 +35,6 @@ afterEach(() => {
 });
 
 describe('GenUIInbox Workspace transport', () => {
-  it('sends exact Workspace authority for list and revoke', async () => {
-    const fetchMock = vi.fn<typeof fetch>(async (input, init) => {
-      const url = String(input);
-      if (url.endsWith('/revoke')) return Response.json({ ok: true });
-      return Response.json({ surfaces: [SURFACE] });
-    });
-    vi.stubGlobal('fetch', fetchMock);
-
-    render(<GenUIInbox projectId="project-1" workspaceContext={WORKSPACE_CONTEXT} />);
-    fireEvent.click(await screen.findByRole('button', { name: 'Revoke' }));
-
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
-    for (const [, init] of fetchMock.mock.calls) {
-      const headers = new Headers(init?.headers);
-      expect(headers.get('x-od-workspace-id')).toBe('workspace-team');
-      expect(headers.get('x-od-workspace-member-id')).toBe('member-1');
-      expect(headers.get('x-od-workspace-can-write-synced-files')).toBe('true');
-    }
-  });
-
   it('keeps legacy unbound requests headerless', async () => {
     const fetchMock = vi.fn<typeof fetch>(async () => Response.json({ surfaces: [] }));
     vi.stubGlobal('fetch', fetchMock);

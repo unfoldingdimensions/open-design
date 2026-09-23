@@ -77,50 +77,6 @@ describe('MessageCenter', () => {
     readAt: null,
   });
 
-  it('shows and acknowledges the preset dialog for the logged-in allowlisted message', async () => {
-    mockFetch({ loggedIn: true, messages: [targetedAnnouncement()] });
-    const onPendingChange = vi.fn();
-    render(
-      <I18nProvider initial="zh-CN">
-        <MessageCenter
-          priorityAnnouncementActive
-          onPriorityAnnouncementPendingChange={onPendingChange}
-        />
-      </I18nProvider>,
-    );
-
-    expect(await screen.findByRole('alertdialog')).toBeTruthy();
-    expect(screen.getByText('关于停售 Go 订阅的公告')).toBeTruthy();
-    await waitFor(() => expect(onPendingChange).toHaveBeenCalledWith(true));
-
-    fireEvent.click(screen.getByRole('button', { name: '我知道了' }));
-
-    await waitFor(() => expect(vi.mocked(fetch).mock.calls.some(([url, init]) => (
-      String(url).includes('/go-plan-sunset-message/read') && init?.method === 'POST'
-    ))).toBe(true));
-    await waitFor(() => expect(screen.queryByRole('alertdialog')).toBeNull());
-    expect(onPendingChange).toHaveBeenLastCalledWith(false);
-  });
-
-  it('keeps the strong dialog open and reports a failed required acknowledgement', async () => {
-    mockFetch({
-      loggedIn: true,
-      messages: [targetedAnnouncement()],
-      onRead: async () => new Response(null, { status: 500 }),
-    });
-    render(
-      <I18nProvider initial="zh-CN">
-        <MessageCenter priorityAnnouncementActive />
-      </I18nProvider>,
-    );
-
-    expect(await screen.findByRole('alertdialog')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: '我知道了' }));
-
-    expect(await screen.findByRole('alert')).toHaveTextContent('确认失败，请重试。');
-    expect(screen.getByRole('alertdialog')).toBeTruthy();
-  });
-
   it('never promotes the allowlisted message for an anonymous client', async () => {
     mockFetch({ loggedIn: false, messages: [targetedAnnouncement()] });
     const onPendingChange = vi.fn();

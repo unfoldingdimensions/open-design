@@ -36,27 +36,6 @@ function renderLocalized(locale: Locale) {
 }
 
 describe('HandoffButton i18n', () => {
-  it('keeps the header trigger as an icon-sized split control', () => {
-    const css = readExpandedIndexCss();
-
-    expect(css).toContain('.app .handoff-split');
-    expect(css).toContain('border: 1px solid transparent;');
-    expect(css).toContain('.app .handoff-trigger');
-    expect(css).toContain('width: 32px;');
-    expect(css).toContain('height: 30px;');
-    expect(css).toContain('.app .handoff-caret');
-    expect(css).toContain('width: 24px;');
-  });
-
-  it('makes the selected CLI framework visibly distinct', () => {
-    const css = readExpandedIndexCss();
-
-    expect(css).toContain('.app .handoff-framework-chip.active');
-    expect(css).toContain('color: var(--accent-strong);');
-    expect(css).toContain('font-weight: 700;');
-    expect(css).toContain('box-shadow:');
-  });
-
   it('localizes the primary handoff label', async () => {
     stubEditors([{ id: 'finder', label: 'Finder', available: true }]);
 

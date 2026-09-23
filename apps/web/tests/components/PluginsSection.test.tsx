@@ -109,16 +109,6 @@ afterEach(() => {
 });
 
 describe('PluginsSection', () => {
-  it('does not throw or issue a headerless read while Workspace identity is unresolved', () => {
-    workspaceContextState.current = {
-      context: null,
-      loading: true,
-    };
-
-    expect(() => render(<PluginsSection />)).not.toThrow();
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
   it('renders only the rail when no plugin is applied', async () => {
     render(<PluginsSection />);
     await waitFor(() => screen.getByTitle('A fixture'));

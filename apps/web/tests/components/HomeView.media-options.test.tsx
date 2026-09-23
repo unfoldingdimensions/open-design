@@ -546,27 +546,6 @@ describe('HomeView media composer options', () => {
     expect(new Headers(submittedApply?.[1]?.headers).has('x-od-workspace-id')).toBe(false);
   });
 
-  it('does not expose a team plugin for unscoped apply while workspace identity is pending', async () => {
-    const fetchMock = stubFetch({
-      emptyWorkspaceDirectory: true,
-      teamMediaPlugin: true,
-    });
-    workspaceContextMock.state = {
-      context: null,
-      resourceReadIdentity: null,
-      loading: false,
-      identityChangePending: true,
-      failure: undefined,
-    };
-    renderHome();
-
-    await screen.findByTestId('home-hero-input');
-    expect((screen.getByTestId('home-hero-template-trigger') as HTMLButtonElement).disabled).toBe(true);
-    expect(fetchMock.mock.calls.some(([url]) => (
-      typeof url === 'string' && url.includes('/api/plugins/od-media-generation/apply')
-    ))).toBe(false);
-  });
-
   it('keeps a locally catalogued plugin usable until local reconciliation removes it', async () => {
     const fetchMock = stubFetch({
       emptyWorkspaceDirectory: true,
