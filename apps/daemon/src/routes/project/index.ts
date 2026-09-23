@@ -3244,7 +3244,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
           }
         : authoritativeCtx;
       if (ctx.memberStatus === 'removed') {
-        /** @type {import('@capydesign/contracts').WorkspaceProjectsResponse} */
+        /** @type {import('@capydesign/contracts').ProjectSummariesResponse} */
         const body = { projects: [] };
         return res.json(body);
       }
@@ -3314,7 +3314,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
           groupCountProperties,
         );
       }
-      /** @type {import('@capydesign/contracts').WorkspaceProjectsResponse} */
+      /** @type {import('@capydesign/contracts').ProjectSummariesResponse} */
       const body = { projects };
       res.json(body);
     } catch (err: any) {

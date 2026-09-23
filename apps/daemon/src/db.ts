@@ -13,7 +13,7 @@ import type {
   ChatMessage,
   CollabCloudComment,
   OdNextDevicePlatformV1,
-  ProjectBrowserWorkspaceTab,
+  ProjectBrowserTab,
   ProjectTabsState,
 } from '@capydesign/contracts';
 import {
@@ -4889,12 +4889,12 @@ function normalizeRoutineRun(row: DbRow) {
 
 // ---------- tabs ----------
 
-function normalizeBrowserWorkspaceTab(value: unknown): ProjectBrowserWorkspaceTab | null {
+function normalizeBrowserWorkspaceTab(value: unknown): ProjectBrowserTab | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const record = value as Record<string, unknown>;
   if (typeof record.id !== 'string' || !record.id.trim()) return null;
   if (typeof record.label !== 'string' || !record.label.trim()) return null;
-  const tab: ProjectBrowserWorkspaceTab = {
+  const tab: ProjectBrowserTab = {
     id: record.id,
     label: record.label,
   };
@@ -4915,7 +4915,7 @@ function normalizeProjectTabsState(value: unknown): ProjectTabsState | null {
   const browserTabs = Array.isArray(record.browserTabs)
     ? record.browserTabs
         .map(normalizeBrowserWorkspaceTab)
-        .filter((tab): tab is ProjectBrowserWorkspaceTab => Boolean(tab))
+        .filter((tab): tab is ProjectBrowserTab => Boolean(tab))
     : [];
   const state: ProjectTabsState = {
     tabs: record.tabs.slice(),

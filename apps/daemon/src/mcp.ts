@@ -34,7 +34,7 @@ import {
   ANALYTICS_HEADER_SESSION_ID,
   buildProjectRawFileUrl,
   type McpAnalyticsContextResponse,
-  type WorkspaceProjectsResponse,
+  type ProjectSummariesResponse,
 } from '@capydesign/contracts';
 import { randomUUID } from 'node:crypto';
 
@@ -2125,7 +2125,7 @@ async function handleMcpToolCall(
       }
       case 'list_projects':
         if (workspaceId && headers) {
-          const data = await getJson<WorkspaceProjectsResponse>(
+          const data = await getJson<ProjectSummariesResponse>(
             `${baseUrl}/api/workspaces/${encodeURIComponent(workspaceId)}/projects`,
             headers,
           );
@@ -2964,7 +2964,7 @@ async function fetchProjectList(
   }
   let list: ProjectSummary[];
   if (workspaceId && headers) {
-    const data = await getJson<WorkspaceProjectsResponse>(
+    const data = await getJson<ProjectSummariesResponse>(
       `${baseUrl}/api/workspaces/${encodeURIComponent(workspaceId)}/projects`,
       headers,
     );
