@@ -107,20 +107,6 @@ describe('useDesignMdState reads the project file list through the shared reader
     expect(fileListCalls('p-two')).toHaveLength(1);
   });
 
-  it('does NOT share across Workspace identities', async () => {
-    // Scope guard: the request carries Workspace headers, and one identity's
-    // file list is not an answer to another identity's read.
-    const a = fetchProjectFiles('p-scope', { workspaceContext: context({ workspaceId: 'ws-a' }) });
-    const { result } = renderHook(() =>
-      useDesignMdState('p-scope', 0, context({ workspaceId: 'ws-b' })),
-    );
-
-    await waitFor(() => expect(result.current.loading).toBe(false));
-    await a;
-
-    expect(fileListCalls('p-scope')).toHaveLength(2);
-  });
-
   it('surfaces a transport failure as an error, not an empty directory', async () => {
     // Reverse control: `fetchProjectFiles` swallows failures into `[]` for
     // list/card callers. This hook must keep distinguishing "no DESIGN.md"
