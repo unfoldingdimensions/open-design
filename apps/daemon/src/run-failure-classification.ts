@@ -13,10 +13,7 @@ import type {
   TrackingRunRepairOwner,
   TrackingRunTerminalTrigger,
 } from '@capydesign/contracts/analytics';
-import {
-  isMembershipConcurrencyLimitFailure,
-  isModelWindowLimitFailure,
-} from '@capydesign/contracts';
+import { isModelWindowLimitFailure } from '@capydesign/contracts';
 
 import {
   classifyAccountFailure,
@@ -847,7 +844,6 @@ function classification(
   const policy = [
     'hard_quota',
     'model_window_limit',
-    'membership_concurrency_limit',
     'workspace_credits_exhausted',
     'amr_insufficient_balance',
     'amr_tier_upgrade_required',
@@ -918,9 +914,7 @@ function classification(
           : failure_category === 'timeout' || failure_category === 'process_exit'
             ? 'cross_boundary'
             : 'unknown';
-  const inferredEvidenceLevel: TrackingRunEvidenceLevel = failure_detail === 'membership_concurrency_limit'
-    ? 'structured_code'
-    : failure_detail === 'interrupted'
+  const inferredEvidenceLevel: TrackingRunEvidenceLevel = failure_detail === 'interrupted'
       ? 'lifecycle_signal'
     : transport
       ? 'legacy_text'
@@ -1319,20 +1313,6 @@ function classifyRunFailureBase(
       'session_init',
       false,
       'login',
-    );
-  }
-
-  // Vela reports a full membership concurrency policy through an ACP fatal
-  // envelope. Claim the named policy limit before fatal close promotion. Even
-  // when the envelope says retryable, an immediate automatic replay only hits
-  // the same occupied slots, so leave retry to the user after the reset time.
-  if (input.agentId === 'amr' && isMembershipConcurrencyLimitFailure(text)) {
-    return classification(
-      'rate_limit',
-      'membership_concurrency_limit',
-      'session_init',
-      false,
-      'none',
     );
   }
 

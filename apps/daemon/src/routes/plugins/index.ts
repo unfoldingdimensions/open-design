@@ -7,7 +7,7 @@ import type {
   ProjectMetadata,
   WorkspaceCollabContext,
 } from '@capydesign/contracts';
-import { TeamResourceCopyForbiddenError } from '@capydesign/contracts';
+import { TeamResourceCopyForbiddenError } from '../../local/team-resource-state.js';
 import {
   duplicatePluginExampleIntoProject,
   PluginDuplicateProjectError,
