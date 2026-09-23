@@ -100,6 +100,64 @@ Cases dropped inside kept suites: `workspace-scope-context-switch` (3),
   otherwise hundreds of unrelated assertions fail spuriously.
 - Regression checks diff per-file error counts between logs, never totals alone.
 
+## i18n key prune across all 19 locales
+
+Scope: the dictionary keys orphaned by the Cloud removal. Method:
+
+1. Parsed the canonical key set from `locales/en.ts` (5,370 keys, mixing single- and
+double-quoted keys).
+2. Walked 1,486 source files under `apps/web/{src,app}`, `apps/daemon/src`, and `packages/`,
+marking keys used as string literals anywhere. Keys reachable only through a dynamic
+construction (`t(\`ns.${x}\`)`) were excluded from pruning — 277 such keys were held back.
+3. Intersected the unreferenced set with the Cloud surface vocabulary (AMR, Vela, workspace,
+collab/presence, invite, wallet, billing, seat, tier, recharge, cloud, share/publish),
+excluding unreferenced keys that are not Cloud-related (e.g. `settings.onboardingDesignIntro*`,
+`designFiles.moveLabel`).
+
+Result: **214 keys removed from `Dict` and from every one of the 19 locale files — 4,280
+dictionary entries total.**
+
+| | before | after |
+| --- | --- | --- |
+| Keys in `types.ts` (`Dict` + labels) | 5,389 | 5,175 |
+| Keys per locale | 5,370 | 5,156 |
+| Distinct per-locale key counts | 1 | 1 |
+
+Families removed whole because every key was orphaned: `invite.*` (38), `collabPresence.*` (15),
+`goPlanSunset.*` (13), `workspaceInvite.*` (21), `avatar.amrConsole*` (2),
+`assistant.shareToOpenDesign*` (2), plus `chat.amr*`, `settings.amr*`,
+`settings.onboardingAmrCloud*`, `entry.cloud*`, `fileViewer.share*`, `settings.workspace*`.
+
+Parity was preserved exactly: the string-aware pruner removed 214 entries from each of the 20
+files (types.ts + 19 locales), so `locales.test.ts`'s "keeps locale dictionaries aligned with
+English keys and placeholders" lock still holds, and the zh-CN/ja tier-1 explicit-translation
+locks still hold.
+
+One test needed editing: the zh-CN/zh-TW terminology lock listed four pruned keys. The four dead
+keys and their stale comment block were removed and the test retitled
+`keeps Chinese credits quota terminology consistent across zh-CN and zh-TW`; its other six
+assertions cover keys that are still live and were kept.
+
+One test file mentions a pruned key — `FileWorkspace.test.tsx` — but only inside a comment
+(`// instead of the removed workspace.allProjectFiles label`), so no assertion changed.
+
+## Regression found and fixed during the prune
+
+The post-prune full run passed every test but exited 1: vitest reported **4 unhandled errors**,
+all `TypeError: collabCheckStatusNow is not a function` thrown from `ProjectView.tsx` on a
+coalesced watcher flush. The WS6 stand-in for `useProjectCollab` returned an object without the
+`checkStatusNow` / `refreshPresence` callbacks the component destructures and calls, so any
+debounced file-change path threw asynchronously — invisible to the per-test assertions, which is
+exactly why it survived the earlier sweeps.
+
+The stand-in now returns a complete shape with callable no-op callbacks
+(`checkStatusNow`, `refreshPresence`) plus the boolean/string members the component reads
+(`viewerOnly`, `materializationPending`, `writerAuthority`, `isSharedNonOwner`,
+`ownerDisplayName`, `downloadPending`, `present`, `syncState`).
+
+After the fix: `Test Files 903 passed | 1 skipped (904)`, `Tests 8700 passed | 19 skipped (8719)`,
+0 unhandled errors, command exit code **0**, duration 868.34s.
+
 ## Open items (not WS6 regressions)
 
 1. WS1 licence attribution item blocking `pnpm guard` — needs a product call.
