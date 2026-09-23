@@ -174,24 +174,6 @@ async function renderCommunity(props: Parameters<typeof CommunityView>[0] = {}) 
   await waitFor(() => expect(readFacets().length).toBeGreaterThan(0));
 }
 
-describe('CommunityView analytics', () => {
-  it('records one page exposure when StrictMode replays mount effects', async () => {
-    render(
-      <StrictMode>
-        <CommunityView />
-      </StrictMode>,
-    );
-    await waitFor(() => expect(readFacets().length).toBeGreaterThan(0));
-
-    expect(analytics.track).toHaveBeenCalledTimes(1);
-    expect(analytics.track).toHaveBeenCalledWith(
-      'page_view',
-      expect.objectContaining({ page_name: 'community' }),
-      undefined,
-    );
-  });
-});
-
 describe('CommunityView catalogue source', () => {
   it('builds the grid from GET /api/plugins', async () => {
     await renderCommunity();

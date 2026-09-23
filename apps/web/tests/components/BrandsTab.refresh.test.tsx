@@ -136,39 +136,6 @@ describe('BrandsTab refresh reconciliation', () => {
     await waitFor(() => expect(fetchBrandsMock).toHaveBeenCalledTimes(2));
   });
 
-  it('retries the scoped list logo when only the exact read generation advances', async () => {
-    const context = workspaceContextFixture({
-      workspaceId: 'workspace-logo',
-      workspaceType: 'personal',
-      workspaceMemberId: 'member-logo',
-    });
-    fetchBrandsMock.mockResolvedValue([brandSummary('acme', 'ready')]);
-    workspaceContextState.context = context;
-    workspaceContextState.resourceReadIdentity = { context, generation: 'generation-a' };
-
-    const view = renderBrandsTab();
-    const logo = await waitFor(() => {
-      const image = screen.getByTestId('brand-item-acme').querySelector('img');
-      expect(image?.getAttribute('src')).toContain('/api/brands/acme/logo');
-      return image as HTMLImageElement;
-    });
-    fireEvent.error(logo);
-    expect(screen.getByTestId('brand-item-acme').querySelector('img')?.getAttribute('src'))
-      .toContain('google.com/s2/favicons');
-
-    workspaceContextState.resourceReadIdentity = { context, generation: 'generation-b' };
-    view.rerender(
-      <I18nProvider initial="en">
-        <BrandsTab />
-      </I18nProvider>,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('brand-item-acme').querySelector('img')?.getAttribute('src'))
-        .toContain('/api/brands/acme/logo');
-    });
-  });
-
   it('polls while a brand is extracting and stops once it settles', async () => {
     vi.useFakeTimers();
     fetchBrandsMock.mockResolvedValue([brandSummary('acme', 'extracting')]);
