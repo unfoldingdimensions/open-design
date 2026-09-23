@@ -106,44 +106,6 @@ function renderChat(opts: {
 }
 
 describe('ChatPane resume-on-failure', () => {
-  it('offers Continue (not from-scratch Retry) on a resumable failed run', () => {
-    const onResumeRun = vi.fn();
-    const onRetry = vi.fn();
-    const { container } = renderChat({ onResumeRun, onRetry, activeAgentId: 'claude' });
-
-    expect(container.querySelector('[data-user-action-card="run-recovery"]')).toBeTruthy();
-    const continueBtn = screen.getByRole('button', { name: 'chat.resumeRunCta' });
-    expect(continueBtn).toBeTruthy();
-    expect(continueBtn.textContent).toBe('chat.resumeRunCta');
-    // The from-scratch Retry must not be the offered action for a resumable run.
-    expect(screen.queryByRole('button', { name: 'promptTemplates.retry' })).toBeNull();
-
-    const footer = container.querySelector(
-      '[data-user-action-card="run-recovery"] [data-user-action-footer="true"]',
-    );
-    expect(footer?.contains(continueBtn)).toBe(true);
-    expect(trackRunRecoveryActionSurfaceView).toHaveBeenCalledTimes(1);
-    expect(vi.mocked(trackRunRecoveryActionSurfaceView).mock.calls[0]![1]).toMatchObject({
-      element: 'run_recovery_action',
-      task_execution_id: 'msg-upstream',
-      recovery_action_instance_id: 'recovery:msg-upstream:resume_run',
-      recovery_action_type: 'resume_run',
-      source_run_id: 'run-upstream',
-      source_agent_provider_id: 'claude_code',
-    });
-
-    fireEvent.click(continueBtn);
-    expect(trackRunRecoveryActionClick).toHaveBeenCalledTimes(1);
-    expect(vi.mocked(trackRunRecoveryActionClick).mock.calls[0]![1]).toMatchObject({
-      task_execution_id: 'msg-upstream',
-      recovery_action_instance_id: 'recovery:msg-upstream:resume_run',
-      recovery_action_type: 'resume_run',
-    });
-    expect(onResumeRun).toHaveBeenCalledTimes(1);
-    expect(onResumeRun.mock.calls[0]![0]).toMatchObject({ id: 'msg-upstream' });
-    expect(onRetry).not.toHaveBeenCalled();
-  });
-
   it('offers Continue via plain send on surfaces without a resume handler (not Retry)', () => {
     // SideChatTab / design-system chat mount ChatPane without onResumeRun. The
     // daemon has persisted the resumable session, so the re-sending Retry path

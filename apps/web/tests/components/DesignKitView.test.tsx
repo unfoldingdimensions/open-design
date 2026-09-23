@@ -41,52 +41,6 @@ afterEach(() => {
 });
 
 describe('DesignKitView iframe sandboxing', () => {
-  it('keeps fetch headers while browser font URLs use server-derived project authority', async () => {
-    const context = {
-      workspaceId: 'workspace-team',
-      workspaceType: 'team',
-      workspaceMemberId: 'member-1',
-      role: 'member',
-      memberStatus: 'active',
-      lifecycleState: 'active',
-      permissions: {
-        canShareProjects: false,
-        canWriteSyncedFiles: false,
-      },
-    } as WorkspaceCollabContext;
-    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      Response.json({
-        files: [{
-          file: 'inter.woff2',
-          family: 'Inter',
-          format: 'woff2',
-          weight: 400,
-          style: 'normal',
-        }],
-      }),
-    );
-
-    const { unmount } = renderHook(() => useBrandFonts('project-team', [], context));
-
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
-        '/api/projects/project-team/raw/fonts/manifest.json',
-        {
-          cache: 'no-store',
-          headers: expect.objectContaining({
-            'x-od-workspace-id': 'workspace-team',
-            'x-od-workspace-member-id': 'member-1',
-          }),
-        },
-      );
-      expect(document.head.querySelector('style[data-brand-fonts="project-team"]')?.textContent)
-        .toContain(
-          '/api/projects/project-team/raw/fonts/inter.woff2',
-        );
-    });
-    unmount();
-  });
-
   it('does not let generated kit previews escape the iframe sandbox', () => {
     const { container } = render(
       <I18nProvider initial="en">

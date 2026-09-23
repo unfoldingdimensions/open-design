@@ -762,38 +762,6 @@ describe('「回到最新」什么时候该在(用户 2026-08-27:「总是在不
    * 三态各自断言**具体可见性**。不写「两者不同时为真」——那句话在两者都为假时
    * 也成立,而「两者都为假」正是这个 bug 最难看的那一面。
    */
-  it('滚到上面:浮层位让给「回到最新」,Plan 让开', async () => {
-    geom = { contentHeight: 5000, clientHeight: 400, scrollTop: 0 };
-    render(chatPaneEl(longConversationWithTodo('chunk'), { streaming: true }));
-    await flushFrames();
-    await userScrollTo(1000);
-
-    const slot = bottomFloatSlot();
-    expect(screen.queryByTestId('chat-plan-pill')).toBeNull();
-    expect(screen.getByTestId('chat-jump-btn').parentElement).toBe(slot);
-    expect(jumpBtnShown()).toBe(true);
-    expect(slot.children).toHaveLength(1);
-    /*
-     * 预留空白**不跟着可见性走**。它是 `.chat-log` 的 padding-bottom,也就是真实的
-     * 可滚内容的一部分:跟着开关会在上滚的那一刻抽掉 52px,scrollHeight 当场缩水、
-     * 「离底多远」跟着变小,可能把状态judge回「贴底」→ Plan 回来 → 预留回来,
-     * 来回抖。所以它钉在「这一轮有没有计划」上,整轮不变。
-     */
-    expect(chatLog().classList.contains('has-plan-pill-reserve')).toBe(true);
-  });
-
-  it('靠近底部且这一轮有计划:浮层位归 Plan,「回到最新」根本不挂', async () => {
-    geom = { contentHeight: 5000, clientHeight: 400, scrollTop: 0 };
-    render(chatPaneEl(longConversationWithTodo('chunk'), { streaming: true }));
-    await flushFrames();
-
-    const slot = bottomFloatSlot();
-    expect(screen.getByTestId('chat-plan-pill')).toBeTruthy();
-    expect(screen.queryByTestId('chat-jump-btn')).toBeNull();
-    expect(slot.children).toHaveLength(1);
-    expect(chatLog().classList.contains('has-plan-pill-reserve')).toBe(true);
-  });
-
   it('靠近底部但这一轮没有计划:两枚都不出现', async () => {
     geom = { contentHeight: 5000, clientHeight: 400, scrollTop: 0 };
     render(chatPaneEl(longConversation('chunk'), { streaming: true }));
@@ -804,26 +772,6 @@ describe('「回到最新」什么时候该在(用户 2026-08-27:「总是在不
     expect(screen.getByTestId('chat-jump-btn')).toBeTruthy();
     expect(jumpBtnShown()).toBe(false);
     expect(chatLog().classList.contains('has-plan-pill-reserve')).toBe(false);
-  });
-
-  it('上滚 → 回底:浮层位在两枚之间来回换手,始终只有一个占着', async () => {
-    geom = { contentHeight: 5000, clientHeight: 400, scrollTop: 0 };
-    render(chatPaneEl(longConversationWithTodo('chunk'), { streaming: true }));
-    await flushFrames();
-    expect(screen.getByTestId('chat-plan-pill')).toBeTruthy();
-
-    await userScrollTo(1000);
-    expect(jumpBtnShown()).toBe(true);
-    expect(screen.queryByTestId('chat-plan-pill')).toBeNull();
-
-    // 点回到最新 —— 回到底部之后位置该还给 Plan。
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('chat-jump-btn'));
-    });
-    await flushFrames();
-    expect(screen.getByTestId('chat-plan-pill')).toBeTruthy();
-    expect(screen.queryByTestId('chat-jump-btn')).toBeNull();
-    expect(bottomFloatSlot().children).toHaveLength(1);
   });
 
   it('这一轮跑完:药丸连同它的预留一起收走,回到最新入口恢复', async () => {

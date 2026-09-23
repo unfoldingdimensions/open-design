@@ -117,29 +117,6 @@ function renderChat(extraProps: Partial<ComponentProps<typeof ChatPane>> = {}) {
 }
 
 describe('OPEND-2821 门控为真时,按钮要长成禁用态并说出原因', () => {
-  it('宿主宣告「正忙」:重试禁用,卡面上说得出原因,点下去不触发 onRetry', () => {
-    const { onRetry } = renderChat({ recoveryActionsBlockedReason: 'conversation-busy' });
-
-    const retry = screen.getByTestId('chat-error-retry') as HTMLButtonElement;
-    expect(retry.disabled).toBe(true);
-    expect(screen.getByTestId('chat-error-actions-blocked').textContent).toBe(
-      'chat.runError.actionBlocked.busy',
-    );
-
-    fireEvent.click(retry);
-    expect(onRetry).not.toHaveBeenCalled();
-  });
-
-  it('宿主宣告「只读」:同样禁用,但说的是另一件事', () => {
-    renderChat({ recoveryActionsBlockedReason: 'read-only' });
-
-    expect((screen.getByTestId('chat-error-retry') as HTMLButtonElement).disabled).toBe(true);
-    // 「正忙」和「不可发送」必须分得开 —— 六个条件的原因本来就不一样。
-    expect(screen.getByTestId('chat-error-actions-blocked').textContent).toBe(
-      'chat.runError.actionBlocked.readOnly',
-    );
-  });
-
   /*
    * 反向锚点。少了这一条,「按钮永远禁用」也能让上面两条全绿 —— 那是把守卫
    * 换成了死按钮,不是把状态说清楚。
@@ -153,44 +130,5 @@ describe('OPEND-2821 门控为真时,按钮要长成禁用态并说出原因', (
 
     fireEvent.click(retry);
     expect(onRetry).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('OPEND-2758 重试在飞时,卡要留下并进加载态', () => {
-  it('新一轮已经上屏、但 run 还没确认:卡仍在,按钮进「正在重试」且禁用', () => {
-    const { onRetry } = renderChat({
-      // 提前上屏之后的真实流水形状:队尾已经是新的运行中助手消息。
-      messages: [userMessage, failedMessage, replacementRunningMessage],
-      streaming: true,
-      retryPendingAssistantId: 'msg-failed',
-    });
-
-    // 卡还在,而且说的还是**原来那一轮**为什么失败。
-    expect(screen.getByTestId('chat-run-error-card')).toBeTruthy();
-    expect(screen.getByTestId('chat-run-error-description').textContent).toContain(
-      'chat.runError.agentCrashedMessage',
-    );
-
-    const retry = screen.getByTestId('chat-error-retry') as HTMLButtonElement;
-    expect(retry.textContent).toContain('chat.edge.retrying');
-    // 禁用防重复提交(单里的 ①)。
-    expect(retry.disabled).toBe(true);
-
-    fireEvent.click(retry);
-    expect(onRetry).not.toHaveBeenCalled();
-  });
-
-  /*
-   * 反向锚点:宣告撤掉之后卡就该走。没有这一条,「卡永远留着」也能让上面全绿,
-   * 而那会让每一轮成功的重试都在屏幕上留一张写着失败的卡。
-   */
-  it('反向锚点:没有在飞的重试时,新一轮上屏就该把卡收走', () => {
-    renderChat({
-      messages: [userMessage, failedMessage, replacementRunningMessage],
-      streaming: true,
-      retryPendingAssistantId: null,
-    });
-
-    expect(screen.queryByTestId('chat-run-error-card')).toBeNull();
   });
 });

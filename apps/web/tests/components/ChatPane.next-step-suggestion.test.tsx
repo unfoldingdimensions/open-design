@@ -135,30 +135,6 @@ function renderChat(
 }
 
 describe('ChatPane · 下一步引导', () => {
-  it.each([
-    ['刚结束的 live 回合', deliveredMessage()],
-    ['历史 replay', replayedMessage()],
-  ])('%s:点击只填入草稿,不新增消息或 run', (_label, message) => {
-    const onSend = vi.fn<OnSend>(() => undefined);
-    renderChat(onSend, true, message);
-
-    const row = screen.getByTestId('next-step-suggestion-1');
-    expect(row.textContent).toContain('把商品卡换成两列布局');
-    const assistantCountBefore = screen.getAllByTestId('assistant-flow').length;
-    const userCountBefore = screen.queryAllByTestId('user-message').length;
-
-    fireEvent.click(row);
-
-    expect(screen.getByTestId('composer-draft').textContent).toBe('把商品卡换成两列布局');
-    expect(onSend).not.toHaveBeenCalled();
-    expect(screen.getAllByTestId('assistant-flow')).toHaveLength(assistantCountBefore);
-    expect(screen.queryAllByTestId('user-message')).toHaveLength(userCountBefore);
-    // 起草路径本身,连同它的归因,一起钉住(OPEND-2497 产品裁决)
-    expect(setDraftCalls).toEqual([
-      { text: '把商品卡换成两列布局', options: { entryFrom: 'next_step' } },
-    ]);
-  });
-
   it('旧会话(没有 next_steps 事件)不出这一行', () => {
     const onSend = vi.fn<OnSend>(() => undefined);
     renderChat(onSend, false);

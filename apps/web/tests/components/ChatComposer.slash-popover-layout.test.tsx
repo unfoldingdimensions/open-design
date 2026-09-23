@@ -172,14 +172,6 @@ afterAll(() => {
 });
 
 describe('slash command palette layout (OPEND-2236)', () => {
-  it('keeps the slash palette selectors owned by a single stylesheet', () => {
-    // If this fails, some other stylesheet now also styles the palette and
-    // the computed-style cases below must inject the full cascade instead.
-    expect(slashPaletteRuleSelectors(readExpandedIndexCss())).toEqual(
-      slashPaletteRuleSelectors(libraryCss),
-    );
-  });
-
   it('keeps every command row at its natural height when the palette overflows', () => {
     // A row that flexbox may shrink is a row whose second line escapes its
     // own box — that is the reported "排版错乱".

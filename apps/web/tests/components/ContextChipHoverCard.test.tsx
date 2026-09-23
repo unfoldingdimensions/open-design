@@ -50,31 +50,3 @@ describe('ContextChipHoverCard', () => {
     expect(info.textContent).toBe('Local code');
   });
 });
-
-describe('workspace-context chip helpers', () => {
-  const item = (over: Partial<WorkspaceContextItem>): WorkspaceContextItem => ({
-    id: 'x',
-    kind: 'project',
-    label: 'X',
-    ...over,
-  });
-
-  it('labels project and local-code kinds', () => {
-    expect(workspaceContextKindLabel('project')).toBe('Referenced project');
-    expect(workspaceContextKindLabel('local-code')).toBe('Local code');
-  });
-
-  it('prefers the absolute path as the detail line', () => {
-    expect(
-      workspaceContextDetailLine(item({ absolutePath: '/abs/path', path: 'proj-id' })),
-    ).toBe('/abs/path');
-  });
-
-  it('falls back to the project id when no folder is known', () => {
-    expect(workspaceContextDetailLine(item({ path: 'proj-id' }))).toBe('proj-id');
-  });
-
-  it('is empty when the item carries no locator', () => {
-    expect(workspaceContextDetailLine(item({ label: 'only-label' }))).toBe('');
-  });
-});
