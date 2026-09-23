@@ -158,6 +158,55 @@ The stand-in now returns a complete shape with callable no-op callbacks
 After the fix: `Test Files 903 passed | 1 skipped (904)`, `Tests 8700 passed | 19 skipped (8719)`,
 0 unhandled errors, command exit code **0**, duration 868.34s.
 
+## Contracts trim — slice: `api/projects` Cloud members
+
+Inventory: 221 Cloud-vocabulary exported symbols with 576 external references. This slice took the
+`api/projects` group (20 refs).
+
+| Symbol | Disposition |
+| --- | --- |
+| `ProjectBrowserWorkspaceTab` | renamed `ProjectBrowserTab` — the shape carried **no workspace data**, so the name was the only Cloud debt (10 occurrences, 4 files) |
+| `WorkspaceProjectSummary` | renamed `ProjectListEntry` (23 occurrences, 9 files) |
+| `WorkspaceProjectsResponse` | renamed `ProjectSummariesResponse` (8 occurrences, 4 files) |
+| `ProjectWorkspaceScope` | deferred — every arm's `context` is `WorkspaceCollabContext`, so it belongs with the `api/collab` slice (137 refs) |
+
+Names were chosen after checking for collisions: `ProjectSummary` is already a local interface in
+`daemon/src/mcp.ts` and in three web components, and `ProjectsResponse` already exists in contracts
+as `{ projects: Project[] }`. Renaming to either would have created duplicate-identifier errors.
+
+### A stale build was masking 22 dangling imports
+
+Rebuilding `contracts/dist` exposed something bigger: **22 imports in web source still referenced
+symbols deleted back in step 5** (`AmrWalletSnapshot`, `AmrSessionState`, `AmrAuth*`,
+`CollabProjectInvalidationSsePayload`, `buildInviteDeeplink`, …). They typechecked because the stale
+dist still contained the deleted modules — the earlier cleanup had removed only the `amr`-named
+artifacts. No clean checkout would have built.
+
+Fixed by porting the real definitions from `main` (verbatim, not invented) into
+`apps/web/src/runtime/legacy-scope-types.ts`, restoring the three collab invalidation event names
+(`comment-changed`, `presence-changed`, `project-metadata-changed`) and the
+`project-content-transfer-state` event constant, and deleting `tests/invite-deeplink.test.ts`,
+whose subject module was removed.
+
+Two self-inflicted errors worth recording: an empty `COLLAB_PROJECT_INVALIDATION_EVENTS` broke the
+listener wiring (`project-events.test.ts` caught it — 18/18 after the real list was restored), and a
+`| string` in a payload's `type` widened the discriminant and defeated union narrowing in
+`ProjectView`.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| contracts build (dist wiped first) | exit 0 |
+| contracts test | 60 files, 636 tests, exit 0 |
+| daemon typecheck | exit 0, 0 errors |
+| web typecheck | exit 0, 0 errors |
+| daemon project/mcp suites | 3 files, 61 tests, exit 0 |
+| client runtime suites | 4 files, 60 tests, exit 0 |
+| **full web suite** | **902 passed, 1 skipped (903); 8,688 passed, 19 skipped (8,707); 0 failed; exit 0; 927.80s** |
+
+The full-suite test total fell from 8,719 to 8,707 because the deleted invite suite held 12 tests.
+
 ## Open items (not WS6 regressions)
 
 1. WS1 licence attribution item blocking `pnpm guard` — needs a product call.
