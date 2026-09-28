@@ -308,6 +308,51 @@ JSDoc), repointed at the local module.
 | **full web suite** | **902 passed, 1 skipped (903); 8,688 passed, 19 skipped (8,707); 0 failed; exit 0; 760.70s** |
 | leftover references to the deleted module | **0** |
 
+## Contracts trim — `api/context` and `plugins/share-actions`
+
+Both entries from the inventory resolved, and both turned out to be different from their label.
+
+### `api/context::WorkspaceContextItem` — shared, so renamed in place
+
+`api/context.ts` (56 lines) is **not** Cloud-only: contracts' own `api/chat.ts`, `api/automations.ts`,
+`api/routines.ts` and `api/projects.ts` all consume `RunContextSelection` from it, and the daemon has
+independently declared its own `RunContextItem` / `RunContextSelection` copies for some time. So the
+module cannot be deleted — only de-vocabularised.
+
+Renamed in place across contracts and web:
+
+| Before | After |
+| --- | --- |
+| `WorkspaceContextItem` | `RunContextItem` (87 occurrences, 13 files) |
+| `WorkspaceContextKind` | `RunContextItemKind` (2 occurrences, 1 file) |
+
+Three exports in the same file were genuinely dead and are gone: `ProjectContextPluginRef`,
+`ProjectContextMcpServerRef`, `ProjectContextConnectorRef`. A first attempt to delete the whole module
+was reverted — the per-export reference count I had used scanned only *outside* contracts, which is
+exactly the blind spot that hid those internal consumers.
+
+### `plugins/share-actions` — a false positive, minus one dead export
+
+The names are Cloud-vocabulary-free (`PluginShareAction`, `PLUGIN_SHARE_ACTION_PLUGIN_IDS`) and the two
+actions — `publish-github` and `contribute-open-design` — are **live and tested** in the daemon
+(`share-helpers.ts`, `routes/plugins/index.ts`, `server.ts`, `plugins-headless-run.test.ts`) and the web
+(`PluginsView`). It appeared in the inventory only because the scan regex included the word `share`.
+The one genuinely dead export, `CreatePluginShareProjectRequest` (0 references anywhere), is deleted.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| contracts build | exit 0 |
+| contracts test | 60 files, 636 tests, exit 0 |
+| daemon typecheck | exit 0, 0 errors |
+| web typecheck | exit 0, 0 errors |
+| daemon `plugins-headless-run` | 4 failed / 3 passed — **identical on a stashed baseline**, i.e. pre-existing |
+| **full web suite** | **902 passed, 1 skipped (903); 8,688 passed, 19 skipped (8,707); 0 failed; exit 0; 791.31s** |
+
+The pre-existing plugin-test failures were confirmed by stashing every change and re-running the same
+file: the same 4 tests fail at the unmodified tip.
+
 ## Open items (not WS6 regressions)
 
 1. WS1 licence attribution item blocking `pnpm guard` — needs a product call.
