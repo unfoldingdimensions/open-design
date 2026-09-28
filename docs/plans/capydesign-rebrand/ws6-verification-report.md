@@ -258,6 +258,56 @@ One coordinated change: move the 40 surviving exports (852 lines) into a local m
 repoint the importers (~90 web files, ~10 daemon files, 1 in `packages/host`), then delete
 `api/collab.ts` and the `ProjectWorkspaceScope` union with it.
 
+### Option A executed — the cluster is localised and `api/collab.ts` is gone
+
+The 40 surviving exports (852 lines) now live in two app-local modules:
+
+- `apps/web/src/runtime/collab-contract.ts`
+- `apps/daemon/src/local/collab-contract.ts`
+
+`ProjectWorkspaceScope` and `ProjectWorkspaceScopeResponse` moved out of `api/projects.ts` into both
+modules (with the now-unused `WorkspaceCollabContext` import dropped). `packages/contracts/src/api/collab.ts`
+is **deleted**, as is its barrel export.
+
+**141 files repointed** by an import-partitioning pass that splits each `@capydesign/contracts`
+import into kept specifiers and moved specifiers, then emits a second import against the app-local
+module at the correct relative depth (with a `.js` extension for the daemon, which compiles as
+NodeNext ESM).
+
+`packages/host` needed no change: it only *mentions* `WorkspaceCollabContext` in a comment and
+deliberately declares its own `CapyDesignHostWorkspaceContext` to stay independent of the app
+contracts.
+
+#### Three bugs caught in my own tooling
+
+1. **A regex that spanned statements.** `import\s+\{([\s\S]*?)\}\s+from '...contracts'` matched from
+   the *first* `import {` in a file straight to the collab statement's closing brace, swallowing whole
+   preceding import blocks. It reported 93 files instead of 141, and silently skipped files it had
+   mis-parsed. Anchoring at a line start and forbidding `}` inside the body produced the correct 141.
+2. **A type-modifier collision.** Moving specifiers into an existing `import type { ... }` produced
+   `import type { type X }`; and a function moved by a type-only import became uncallable
+   (`TS1361`). Fixed by classifying the 12 runtime exports as values and emitting a value import
+   whenever any moved name is one.
+3. **A bad `edit`.** Removing a line with an edit whose `oldText` ended in `\n` merged two import
+   lines in `ProjectView.pendingPrompt.test.tsx`. Caught by reading the file back and repaired — a
+   reminder to verify the result of a line-oriented edit on a CRLF file rather than trusting success.
+
+Also fixed: the double-quoted import form (`from "@capydesign/contracts"`) that the first quote-only
+regex missed, and two `import('@capydesign/contracts').<name>` type queries (one real, one in a
+JSDoc), repointed at the local module.
+
+#### Verification
+
+| Check | Result |
+| --- | --- |
+| contracts build | exit 0 |
+| contracts test | 60 files, 636 tests, exit 0 |
+| daemon typecheck | exit 0, 0 errors |
+| web typecheck | exit 0, 0 errors |
+| daemon subset (projects/mcp/failure/comment-pin) | 5 files, 211 tests, exit 0 |
+| **full web suite** | **902 passed, 1 skipped (903); 8,688 passed, 19 skipped (8,707); 0 failed; exit 0; 760.70s** |
+| leftover references to the deleted module | **0** |
+
 ## Open items (not WS6 regressions)
 
 1. WS1 licence attribution item blocking `pnpm guard` — needs a product call.
