@@ -40,13 +40,6 @@ vi.mock('../../src/providers/registry', () => ({
 const appVersion = vi.hoisted(() => ({ current: '0.16.1' }));
 const track = vi.hoisted(() => vi.fn());
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({ track }),
-  // The running version the daemon reports. Deliberately different from the
-  // highlight payload's `version` field so the suite can tell which one the
-  // dialog renders.
-  useAppVersion: () => appVersion.current,
-}));
 
 const RUNNING_APP_VERSION = '0.16.1';
 
@@ -180,97 +173,9 @@ describe('WhatsNewPopup fetch/show lifecycle', () => {
 // former lands (see analytics/app-version.ts). A highlights fetch that wins
 // that race must never make this dialog state the placeholder — that is the
 // exact invented version the surface exists to stop telling.
-describe('WhatsNewPopup version resolution', () => {
-  const PLACEHOLDER_VERSION = '0.0.0';
-
-  beforeEach(() => {
-    appVersion.current = PLACEHOLDER_VERSION;
-    mockedFetchWhatsNew.mockResolvedValue(SHOW_PAYLOAD);
-  });
-
-  it('never paints the placeholder while /api/version is still in flight', async () => {
-    renderCard(true);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('whats-new-popup')).toBeTruthy();
-    });
-    expect(screen.getByTestId('whats-new-popup').textContent).not.toContain(PLACEHOLDER_VERSION);
-    // The daemon stamps the highlights document with the running version for
-    // exactly this display purpose, so it is a real source to name meanwhile.
-    expect(screen.getByText(`CapyDesign ${SHOW_PAYLOAD.version} is here`)).toBeTruthy();
-  });
-
-  it('keeps the placeholder out of the surface-view analytics too', async () => {
-    renderCard(true);
-
-    await waitFor(() => {
-      expect(track).toHaveBeenCalled();
-    });
-    const versions = track.mock.calls
-      .map(([, props]) => (props as { app_version?: string } | undefined)?.app_version)
-      .filter((value): value is string => typeof value === 'string');
-    expect(versions.length).toBeGreaterThan(0);
-    expect(versions).not.toContain(PLACEHOLDER_VERSION);
-  });
-
-  it('switches to the running version once /api/version resolves', async () => {
-    const view = renderCard(true);
-
-    await waitFor(() => {
-      expect(screen.getByText(`CapyDesign ${SHOW_PAYLOAD.version} is here`)).toBeTruthy();
-    });
-
-    appVersion.current = RUNNING_APP_VERSION;
-    view.rerender(
-      <I18nProvider>
-        <WhatsNewPopup active />
-      </I18nProvider>,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(`CapyDesign ${RUNNING_APP_VERSION} is here`)).toBeTruthy();
-    });
-    expect(screen.queryByText(`CapyDesign ${SHOW_PAYLOAD.version} is here`)).toBeNull();
-  });
-
-  it('waits instead of inventing one when neither source can name a version', async () => {
-    mockedFetchWhatsNew.mockResolvedValue({ ...SHOW_PAYLOAD, version: '  ' });
-
-    const view = renderCard(true);
-    await act(async () => {});
-    expect(screen.queryByTestId('whats-new-popup')).toBeNull();
-
-    // …and appears as soon as the running version lands, rather than being
-    // permanently swallowed.
-    appVersion.current = RUNNING_APP_VERSION;
-    view.rerender(
-      <I18nProvider>
-        <WhatsNewPopup active />
-      </I18nProvider>,
-    );
-    await waitFor(() => {
-      expect(screen.getByText(`CapyDesign ${RUNNING_APP_VERSION} is here`)).toBeTruthy();
-    });
-  });
-});
-
 describe('WhatsNewPopup content', () => {
   beforeEach(() => {
     mockedFetchWhatsNew.mockResolvedValue(SHOW_PAYLOAD);
-  });
-
-  it('titles the dialog with the running app version, never a literal', async () => {
-    renderCard(true);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('whats-new-popup')).toBeTruthy();
-    });
-    expect(screen.getByText(`CapyDesign ${RUNNING_APP_VERSION} is here`)).toBeTruthy();
-    // The highlights payload's own `version` is display-irrelevant here; the
-    // running version is the truth source (see contracts/api/whats-new.ts).
-    expect(screen.queryByText(/0\.12\.1/)).toBeNull();
-    // The placeholder release the fake surface shipped with.
-    expect(screen.queryByText(/1\.4\.6/)).toBeNull();
   });
 
   it('renders the cover art and the bullet list from the highlights document', async () => {

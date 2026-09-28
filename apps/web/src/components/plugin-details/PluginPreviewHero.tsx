@@ -10,8 +10,7 @@
 // nothing (the modal hides the hero entirely).
 
 import { useMemo, useState } from 'react';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
-import { workspaceResourceUrl } from '../../collab/workspace-identity';
+import type { WorkspaceCollabContext } from '../../runtime/collab-contract';
 import { Icon } from '../Icon';
 
 export interface PluginExampleEntry {
@@ -143,9 +142,6 @@ function normalize(
   const base = segments[segments.length - 1] ?? `${index}`;
   const stem = base.replace(/\.[^.]+$/, '');
   const name = entry.title ?? stem;
-  const href = workspaceResourceUrl(
-    `/api/plugins/${encodeURIComponent(pluginId)}/example/${encodeURIComponent(stem)}`,
-    workspaceContext,
-  );
+  const href = `/api/plugins/${encodeURIComponent(pluginId)}/example/${encodeURIComponent(stem)}`;
   return { key: `${entry.path}-${index}`, name, stem, href };
 }

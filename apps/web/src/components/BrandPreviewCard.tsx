@@ -14,17 +14,9 @@ import { Button } from '@capydesign/components';
 import type { BrandSummary } from '@capydesign/contracts';
 import { useT } from '../i18n';
 import { navigate } from '../router';
-import { useAnalytics } from '../analytics/provider';
-import { trackDesignSystemEditClick } from '../analytics/events';
 import { requestHomeChip } from '../runtime/home-intent';
 import { brandSummaryToKit } from '../runtime/design-kit';
 import { DesignKitView } from './DesignKitView';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import {
-  resolveWorkspaceResourceReadIdentity,
-  workspaceProjectHeaders,
-  workspaceResourceReadIdentityKey,
-} from '../collab/workspace-identity';
 import styles from './BrandPreviewCard.module.css';
 
 // Re-exports preserving the previous public surface of this module.
@@ -51,12 +43,10 @@ export function BrandPreviewCard({
   onOpenProject,
 }: BrandPreviewCardProps) {
   const t = useT();
-  const analytics = useAnalytics();
-  const workspaceState = useWorkspaceContext();
-  const mutationWorkspaceContext = workspaceState.context;
-  const resourceReadIdentity = resolveWorkspaceResourceReadIdentity(workspaceState);
-  const workspaceContext = resourceReadIdentity?.context ?? null;
-  const workspaceReadGeneration = workspaceResourceReadIdentityKey(resourceReadIdentity);
+  // CapyDesign has no workspace identity layer; brand surfaces are local-only.
+  const workspaceContext = null;
+  const mutationWorkspaceContext = null;
+  const workspaceReadGeneration = 'none';
   const compact = variant === 'compact';
   const { meta, brand } = summary;
   const name = brand?.name?.trim() || (meta.sourceUrl ? new URL(meta.sourceUrl).hostname.replace(/^www\./, '') : 'Brand');
@@ -75,16 +65,7 @@ export function BrandPreviewCard({
   const useInChat = useCallback(async () => {
     const designSystemId = meta.designSystemId;
     if (!designSystemId || busy) return;
-    trackDesignSystemEditClick(analytics.track, {
-      page_name: 'design_systems',
-      area: 'design_system_edit',
-      element: 'brand_card_use_in_chat',
-      module: 'brand_card',
-      edit_surface: 'direct_module',
-      artifact_kind: 'design_system',
-      design_system_id: designSystemId,
-      project_id: projectId ?? undefined,
-    });
+    
     setBusy(true);
     try {
       if (onApplyDesignSystem) {
@@ -101,22 +82,13 @@ export function BrandPreviewCard({
     } finally {
       setBusy(false);
     }
-  }, [meta.designSystemId, busy, onApplyDesignSystem, analytics.track, projectId]);
+  }, [meta.designSystemId, busy, onApplyDesignSystem, projectId]);
 
   const openProject = useCallback(async () => {
     if (!projectId) return;
     const designSystemId = meta.designSystemId;
     if (designSystemId) {
-      trackDesignSystemEditClick(analytics.track, {
-        page_name: 'design_systems',
-        area: 'design_system_edit',
-        element: 'brand_card_open_project',
-        module: 'brand_card',
-        edit_surface: 'direct_module',
-        artifact_kind: 'design_system',
-        design_system_id: designSystemId,
-        project_id: projectId,
-      });
+      
     }
     if (onOpenProject) {
       const opened = await onOpenProject(projectId);
@@ -124,7 +96,7 @@ export function BrandPreviewCard({
       return;
     }
     navigate({ kind: 'project', projectId, fileName: null, conversationId: null });
-  }, [onOpenProject, projectId, analytics.track, meta.designSystemId]);
+  }, [onOpenProject, projectId, meta.designSystemId]);
 
   const deleteBrand = useCallback(async () => {
     if (busy) return;
@@ -132,23 +104,14 @@ export function BrandPreviewCard({
     if (!ok) return;
     const designSystemId = meta.designSystemId;
     if (designSystemId) {
-      trackDesignSystemEditClick(analytics.track, {
-        page_name: 'design_systems',
-        area: 'design_system_edit',
-        element: 'brand_card_delete',
-        module: 'brand_card',
-        edit_surface: 'direct_module',
-        artifact_kind: 'design_system',
-        design_system_id: designSystemId,
-        project_id: projectId ?? undefined,
-      });
+      
     }
     setBusy(true);
     try {
       const response = await fetch(`/api/brands/${encodeURIComponent(meta.id)}`, {
         method: 'DELETE',
         ...(mutationWorkspaceContext
-          ? { headers: workspaceProjectHeaders(mutationWorkspaceContext) }
+          ? { headers: {} }
           : {}),
       });
       if (!response.ok) throw new Error(`brand delete ${response.status}`);
@@ -164,7 +127,6 @@ export function BrandPreviewCard({
     name,
     onChanged,
     t,
-    analytics.track,
     projectId,
     mutationWorkspaceContext,
   ]);

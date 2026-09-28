@@ -1,115 +1,115 @@
 import type { Dict } from '../types';
 
 export const ptBR: Dict = {
-  'invite.header.eyebrow': "Team invitation",
-  'invite.loading': "Loading invitation…",
-  'invite.landing.title': "Join the team",
-  'invite.landing.subtitle': "You’ve been invited to collaborate in CapyDesign.",
-  'invite.landing.roleLabel': "Role",
-  'invite.landing.invitedEmail': "Invited email",
-  'invite.landing.expires': "Expires",
-  'invite.role.admin': "Admin",
-  'invite.role.member': "Member",
-  'invite.role.admin.desc': "Can manage members, seats, and all project settings.",
-  'invite.role.member.desc': "Can create your own projects, and view and comment on shared team projects.",
-  'invite.accept.cta': "Accept invitation",
-  'invite.accountMismatch.title': "You’re signed in as a different account",
-  'invite.accountMismatch.body': "This invitation was sent to a different email address. You can continue with your current account, or switch accounts.",
-  'invite.accountMismatch.continue': "Continue with current account",
-  'invite.accountMismatch.switch': "Switch account",
-  'invite.accepting.title': "Joining the team…",
-  'invite.accepting.body': "Setting up your membership.",
-  'invite.success.title': "You’re in",
-  'invite.success.body': "Opening CapyDesign so you can start collaborating.",
-  'invite.success.roleReceipt': "Joined as",
-  'invite.success.enter': "Enter workspace",
-  'invite.open.cta': "Open CapyDesign",
-  'invite.open.opening': "Opening CapyDesign…",
-  'invite.open.retry': "Already installed? Try opening again",
-  'invite.notInstalled.title': "Didn’t open automatically?",
-  'invite.notInstalled.body': "You may not have CapyDesign installed yet. Install it, then reopen this link to finish joining.",
-  'invite.notInstalled.download': "Download CapyDesign",
-  'invite.error.title': "Can’t accept this invitation",
-  'invite.error.invite_expired': "This invitation has expired. Ask an admin to send a new one.",
-  'invite.error.invite_consumed': "This invitation has already been used.",
-  'invite.error.workspace_seat_limit_reached': "The team has no seats left. Ask an admin to free up a seat or add more.",
-  'invite.error.workspace_subscription_locked': "The team’s subscription is inactive, so new members can’t join right now.",
-  'invite.error.workspace_not_found': "This workspace no longer exists.",
-  'invite.error.workspace_forbidden': "Your account isn’t allowed to accept this invitation.",
-  'invite.error.invite_unavailable': "This invitation is no longer available.",
-  'invite.error.generic': "Something went wrong. Please try again.",
-  'invite.error.retry': "Try again",
-  "workspaceInvite.dialogAria": "Invite members",
-  "workspaceInvite.title": "Invite members to your team",
-  "workspaceInvite.freePlanBody": "The free plan includes 1 seat. Inviting teammates will guide you to upgrade to Teams.",
-  "workspaceInvite.teamPlanBody": "Invite teammates to share projects, design systems, and plugins together.",
-  "workspaceInvite.seatsExhaustedBody": "Este workspace não tem mais assentos. Adicione assentos para convidar colegas.",
-  "workspaceInvite.seatsExhaustedAction": "Ver assentos e plano",
-  "workspaceInvite.emailLabel": "Invite members by email",
-  "workspaceInvite.roleLabel": "Assign role",
-  "workspaceInvite.defaultRoleLabel": "Default role",
-  "workspaceInvite.emailPlaceholder": "Enter email address…",
-  "workspaceInvite.removeRow": "Remove",
-  "workspaceInvite.addMember": "Add member",
-  "workspaceInvite.visibilityQuestion": "Will team members see my designs?",
-  "workspaceInvite.visibilityAnswer": "Team members can see designs you share to the team space. Private designs kept in Personal projects are not visible to others.",
-  "workspaceInvite.sent": "Invitation sent",
-  "workspaceInvite.sending": "Inviting…",
-  "workspaceInvite.confirm": "Confirm and invite",
-  "workspaceInvite.submitFailed": "Failed to send invitation. Try again later.",
-  "workspaceInvite.errorAlreadyMember": "Este e-mail já é membro da equipe.",
-  "workspaceInvite.errorPendingInvite": "Este e-mail já tem um convite pendente.",
-  "workspaceInvite.errorNoSession": "Entre na sua conta Vela antes de convidar membros.",
-  "workspaceInvite.errorNoWorkspace": "Ainda não há um espaço de equipe para convidar membros.",
-  "workspaceInvite.errorUnreachable": "Não foi possível enviar o convite. Tente novamente mais tarde.",
-  'chat.amrCard.switchTitle': 'Falha ao chamar o modelo — esta execução está pausada',
-  'chat.amrCard.switchBody': 'Mude para o serviço oficial de modelos do CapyDesign Cloud — sem precisar configurar API Key. Após entrar, autorizar e recarregar, esta execução será repetida automaticamente.',
-  'chat.amrCard.chipOfficial': 'Hospedagem oficial',
-  'chat.amrCard.chipNoKey': 'Sem API Key',
-  'chat.amrCard.chipAutoRetry': 'Nova tentativa automática após entrar',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrCard.switchCta': 'Mudar para Cloud',
-  'chat.amrError.authMessage': 'Sua conta CapyDesign Cloud ainda não está autorizada. Autorize-a e esta execução será repetida automaticamente.',
-  'chat.amrError.balanceMessage': 'Seu saldo CapyDesign Cloud acabou. Recarregue para continuar esta execução.',
+  
+  
   'chat.amrError.authorizeCta': 'Autorizar e tentar novamente',
   'chat.amrError.rechargeCta': 'Recarregar',
-  'chat.amrBalanceGate.title': 'Faça upgrade e continue criando',
-  'chat.amrBalanceGate.message': 'Créditos insuficientes (restam {balance}). Faça upgrade do plano ou recarregue e a tarefa pode começar na hora.',
-  'chat.amrBalanceGate.benefitsTitle': 'O que o CapyDesign Cloud oferece',
-  'chat.amrBalanceGate.benefit1': 'Sem chave de API, vários modelos à escolha',
-  'chat.amrBalanceGate.benefit2': 'Agente de design SOTA integrado, sem configuração',
-  'chat.amrBalanceGate.benefit3': 'Serviço oficial e confiável',
-  'chat.amrBalanceGate.benefit4': 'Sempre evoluindo: deploy em 1 clique, multimodal, equipes e mais',
-  'chat.amrBalanceGate.laterCta': 'Agora não',
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrBalanceGate.plansCta': 'Fazer upgrade',
-  'chat.amrBalanceGate.signedOutTitle': 'Entre para começar a criar',
-  'chat.amrBalanceGate.signedOutMessage': 'Você está usando o agente CapyDesign Cloud — entre e esta tarefa pode começar na hora.',
-  'chat.amrBalanceGate.signInCta': 'Entrar',
-  'chat.amrBalanceGate.watchingWallet': 'Continuaremos automaticamente assim que seu saldo for atualizado.',
-  'chat.amrArtifactUpgrade.title': 'Continue refinando com modelos mais potentes',
-  'chat.amrArtifactUpgrade.message': 'Desbloqueie modelos avançados, mais tarefas paralelas e mais créditos mensais.',
-  'chat.amrArtifactUpgrade.benefit1': 'Mais modelos avançados, incluindo Fable 5 e GPT-5.6',
-  'chat.amrArtifactUpgrade.benefit2': 'Até 10 vezes mais tarefas simultâneas',
-  'chat.amrArtifactUpgrade.benefit3': 'Até 300 vezes mais créditos mensais',
-  'chat.amrArtifactUpgrade.benefit4': 'Fila prioritária nos horários de pico para gerar mais rápido',
-  'chat.amrArtifactUpgrade.promoBanner': 'Por tempo limitado: economize até 67% nos planos de assinatura',
-  'chat.amrArtifactUpgrade.countdownLabel': 'Termina em',
-  'chat.amrArtifactUpgrade.plansCta': 'Faça upgrade agora, até 67% de desconto',
-  'chat.amrArtifactUpgrade.homePlansCta': 'Economize 67%',
-  'chat.amrArtifactUpgrade.laterCta': 'Continuar com Free e enviar',
-  'chat.amrArtifactUpgrade.homeTitle': 'Sua criação está pronta. Leve a próxima ideia ainda mais longe.',
-  'chat.amrArtifactUpgrade.homeMessage': 'Faça upgrade para modelos mais potentes, mais tarefas paralelas e mais créditos.',
-  'chat.amrArtifactUpgrade.homeArtifactCta': 'Ver criação',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.antigravityError.launchTerminalCta': 'Entrar pelo terminal',
   'chat.antigravityError.launchSwitchModelCta': 'Alternar modelo no terminal',
   'chat.connectionDropped': 'Verifique se sua conexão de rede está funcionando e tente novamente.',
   'chat.runError.title.authRequired': 'Autorização necessária',
-  'chat.runError.title.balance': 'Saldo insuficiente',
+  
   'chat.runError.title.connectionDropped': 'Conexão de rede interrompida',
-  'chat.runError.title.signInRequired.other': '{agent} não está conectado',
-  'chat.runError.title.signInRequired.amr': 'CapyDesign não está conectado',
+  
+  
   'chat.runError.title.rateLimited': 'Serviço do modelo está congestionado',
   'chat.runError.title.modelWindowLimit': 'Alta demanda',
-  'chat.runError.title.membershipConcurrencyLimit': 'Limite de tarefas simultâneas atingido',
+  
   'chat.runError.title.strategyTaskHalted': "Tarefa interrompida pelo controle de qualidade",
   'chat.runError.title.agentReplyIncomplete': "Resposta recebida, mas não registrada",
   'chat.runError.title.clarificationRepeated': "O agente fez outra pergunta",
@@ -117,8 +117,8 @@ export const ptBR: Dict = {
   'chat.runError.title.generic': 'A tarefa falhou',
   'chat.runError.title.artifactMissing': "Nenhum arquivo para visualizar",
   'chat.runError.artifactMissingMessage': "Esta tarefa não gerou arquivos para visualizar. Informe o que você quer gerar e tente novamente.",
-  'chat.runError.signInMessage.amr': 'Faça login para ver seus projetos e continuar a conversa.',
-  'chat.runError.signInMessage.other': 'Faça login no {agent} primeiro e tente novamente.',
+  
+  
   'chat.runError.agentFallback': 'o agente',
   'chat.runError.sourceLabel': 'Detalhes do erro',
   'chat.runError.sourceExpandAria': 'Expandir origem do erro',
@@ -139,8 +139,8 @@ export const ptBR: Dict = {
   'chat.runError.rateLimitedMessage': 'No momento há muitas solicitações para este serviço do modelo e o limite de frequência do provedor foi atingido. Tente novamente mais tarde ou experimente trocar para outro modelo.',
   'chat.runError.modelWindowLimitMessage': 'Alta demanda no momento. Tente novamente após {retryAt}. Esta solicitação não foi cobrada.',
   'chat.runError.modelWindowLimitMessageNoTime': 'Alta demanda no momento. Tente novamente em instantes. Esta solicitação não foi cobrada.',
-  'chat.runError.membershipConcurrencyLimitMessage': 'O limite de tarefas simultâneas da sua assinatura foi atingido. Aguarde até {retryAt} e tente novamente, ou troque de agente. Tentar imediatamente não ajudará.',
-  'chat.runError.membershipConcurrencyLimitMessageNoTime': 'O limite de tarefas simultâneas da sua assinatura foi atingido. Aguarde outra tarefa terminar e tente novamente, ou troque de agente.',
+  
+  
   'chat.runError.upstreamUnavailableMessage': 'O modelo atual está temporariamente indisponível. Tente novamente mais tarde ou troque de modelo.',
   'chat.runError.toolLoopMessage': 'O {agent} repetiu a mesma ação sem progredir e foi interrompido. Verifique o arquivo ou comando de destino e tente novamente.',
   'chat.runError.outputInvalidMessage': 'Tente gerar novamente, ou troque de modelo e tente de novo. Se continuar acontecendo, entre em contato com o suporte.',
@@ -154,7 +154,7 @@ export const ptBR: Dict = {
   'chat.runError.title.cpuUnsupported': "Processador não compatível",
   'chat.runError.title.cliSessionRefused': "Versão do agente incompatível",
   'chat.runError.quotaExhaustedMessage': "A cota ou o limite de cobrança do seu serviço de modelo acabou, então tentar de novo não vai ajudar. Recarregue com seu provedor ou mude para outro modelo ou serviço.",
-  'chat.runError.workspaceCreditsMessage': "Seu espaço de trabalho ficou sem créditos. Adicione créditos (ou peça ao proprietário do espaço para recarregar) ou mude para outro modelo ou serviço.",
+  
   'chat.runError.timedOutMessage': "Faz muito tempo que a IA não envia uma nova resposta, então esta execução foi interrompida. Tente novamente mais tarde.",
   'chat.runError.inactivityTimeoutMessage': "Faz muito tempo que a IA não envia uma nova resposta, então esta execução foi interrompida. Tente novamente mais tarde.",
   'chat.runError.emptyOutputMessage': "O agente terminou sem produzir nenhuma saída. Isso costuma ser temporário, tente novamente.",
@@ -163,8 +163,8 @@ export const ptBR: Dict = {
   'chat.runError.cpuUnsupportedMessage': "O runtime deste agente precisa de um conjunto de instruções de CPU (AVX2) que este dispositivo não possui, por isso não consegue iniciar. Atualize o CapyDesign para a versão mais recente, que inclui um runtime compatível.",
   'chat.runError.title.agentCrashed': 'Tarefa interrompida inesperadamente',
   'chat.runError.agentCrashedMessage': 'Tente gerar novamente, ou troque de modelo e tente de novo. Se continuar acontecendo, entre em contato com o suporte.',
-  'chat.runError.title.accountSuspended': 'Conta suspensa',
-  'chat.runError.accountSuspendedMessage': 'Para saber o motivo ou solicitar a reativação, entre em contato com o suporte.',
+  
+  
   'chat.runError.fallbackMessage': 'Desta vez não deu certo. Se continuar acontecendo, envie os logs para nós.',
   'chat.runError.cliSessionRefusedMessage':
     "{agent} recusou-se a iniciar uma sessão. Normalmente a versão instalada é incompatível com o CapyDesign: mude para outra versão e tente novamente.",
@@ -340,17 +340,17 @@ export const ptBR: Dict = {
   'settings.onboardingSystemsBody': 'Escolha ou crie um sistema de marca para que o trabalho gerado siga as cores, a tipografia e a linguagem real do produto.',
   'settings.onboardingExecutionTitle': 'Escolha a origem do modelo',
   'settings.onboardingExecutionBody': 'Use o CapyDesign Hosted, conecte um agente local ou utilize sua própria chave de modelo.',
-  'settings.onboardingAmrCloudBenefitOfficial': 'Recomendado oficialmente',
-  'settings.onboardingAmrCloudBenefitReady': 'Sem deploy',
+  
+  
   'settings.onboardingAmrCloudBenefitModels': 'Acesse Claude, GPT, Fable 5 e 5.6 sol com desconto por tempo limitado e alta simultaneidade.',
-  'settings.onboardingAmrCloudBenefitPricing': 'Harness SOTA',
-  'settings.onboardingAmrCloudUpcomingLabel': 'Em breve',
-  'settings.onboardingAmrCloudUpcomingImageVideo': 'Imagem e vídeo',
-  'settings.onboardingAmrCloudUpcomingSkills': 'Skills em massa',
-  'settings.onboardingAmrCloudUpcomingRouting': 'Roteamento inteligente',
+  
+  
+  
+  
+  
   'settings.onboardingAmrModelSourceLabel': 'CapyDesign Hosted',
-  'settings.onboardingAmrCloudAuthorizeAction': 'Autorizar CapyDesign Cloud',
-  'settings.onboardingAmrCloudAuthorizedAction': 'Autorizado',
+  
+  
   'settings.onboardingStepConnect': 'Connect',
   'settings.onboardingStepDesignSystem': 'Criar um sistema de design',
   'settings.onboardingStepProfile': 'About you',
@@ -363,15 +363,15 @@ export const ptBR: Dict = {
   'settings.onboardingCloudBody': 'Entre e comece a criar na hora com IA na nuvem, sem configurações complicadas.',
   'settings.onboardingCloudSignIn': 'Entrar no CapyDesign',
   'settings.onboardingCloudContinue': 'Continuar (conectado)',
-  'settings.onboardingCloudAlternative': 'Usar uma CLI local ou sua própria chave de API',
+  
   'settings.onboardingCloudRights': 'Todos os direitos reservados.',
   'settings.onboardingCloudOr': 'ou',
   'settings.onboardingGateTooltipNoRuntime': 'As próximas etapas rodam em IA — escolha um runtime para continuar.',
-  'settings.onboardingGateTooltipAmr': 'As próximas etapas rodam em IA — faça login no CapyDesign Cloud para continuar.',
+  
   'settings.onboardingGateTooltipLocal': 'As próximas etapas rodam em IA — selecione uma CLI local disponível para continuar.',
   'settings.onboardingGateTooltipByok': 'As próximas etapas rodam em IA — adicione e teste sua chave de modelo para continuar.',
   'settings.onboardingRecommended': 'Recomendado',
-  'settings.onboardingAmrCloudOfficialBadge': 'Oficial',
+  
   'settings.onboardingLocalTitle': 'Agente local',
   'settings.onboardingLocalBody': 'Use Claude Code, Codex, Cursor, OpenCode, Kimi, Qwen, Hermes, Kiro e outros.',
   'settings.onboardingLocalAction': 'Open CLI settings',
@@ -417,7 +417,7 @@ export const ptBR: Dict = {
   'settings.onboardingSelectPlaceholder': 'Selecione uma opção',
   'settings.onboardingSelectMultiplePlaceholder': 'Selecione uma ou mais',
   'settings.onboardingOrgSolo': 'Individual / pessoal (1)',
-  'settings.onboardingOrgTeam': 'Equipe pequena (2-10)',
+  
   'settings.onboardingOrgStartup': 'Startup / PME (11-50)',
   'settings.onboardingOrgGrowth': 'Empresa em crescimento (51-200)',
   'settings.onboardingOrgMidMarket': 'Médio porte (201-1000)',
@@ -460,7 +460,7 @@ export const ptBR: Dict = {
   'settings.modeApi': 'Provedor de API',
   'settings.cloudCalloutTitle': 'Use CapyDesign Cloud',
   'settings.cloudCalloutBody': 'Sign in to the cloud version to enable team spaces, shared projects, member permissions, and the audit dashboard.',
-  'settings.cloudCalloutButton': 'Sign in / Register',
+  
   'settings.modeApiMeta': 'Provedores de API',
   'settings.byokNoFileToolsNotice': 'O BYOK não consegue ler, gravar ou editar arquivos do projeto. Use o Local CLI quando precisar fazer alterações no código.',
   'settings.byokDraftNotice': 'Preencha os campos obrigatórios para salvar este provedor. Sua configuração atual continuará ativa.',
@@ -507,29 +507,29 @@ export const ptBR: Dict = {
   'settings.agentInstallGroup': 'Disponíveis para instalar ({count})',
   'settings.agentAuthRequired': 'Autenticação necessária',
   'settings.agentAuthUnknown': 'Status de autenticação desconhecido',
-  'settings.amrCloud': 'CapyDesign Cloud',
-  'settings.amrAuthorize': 'Autorizar',
+  
+  
   'settings.amrBenefitOfficial': 'Officially maintained',
-  'settings.amrBenefitLowerPrice': 'Lower price',
+  
   'settings.amrBenefitManyModels': 'Vários modelos',
-  'settings.amrPromoBonus': 'Bônus limitado: +100%',
-  'settings.amrSignInToContinue': 'Faça login para continuar',
+  
+  
   'settings.amrSignIn': 'Entrar',
   'settings.amrSignedIn': 'Conectado',
-  'settings.amrWalletBalance': 'Wallet balance',
+  
   'settings.amrWalletUnavailable': 'Balance temporarily unavailable',
-  'settings.amrWalletUpdatedAt': 'Updated {time}',
-  'settings.amrWalletCached': 'cached',
-  'settings.amrWalletRefresh': 'Refresh',
-  'settings.amrWalletRefreshTitle': 'Refresh CapyDesign Cloud wallet balance',
-  'settings.amrNotSignedIn': 'Não conectado',
+  
+  
+  
+  
+  
   'settings.amrSigningIn': 'Entrando…',
   'settings.amrActivationHint': 'A página de login não abriu? Toque no botão abaixo para abri-la novamente.',
   'settings.amrActivationBrowserFailed': 'Não foi possível abrir o navegador automaticamente. Abra a página de login abaixo para continuar.',
   'settings.amrActivationOpen': 'Abrir página de login',
   'settings.amrCancelSignIn': 'Cancelar login',
-  'settings.amrAccountStatus': 'Status da conta CapyDesign Cloud',
-  'settings.amrConsole': 'Gerenciar',
+  
+  
   'settings.amrBalance': 'Cota',
   'settings.amrPlan': 'Plano',
   'settings.amrUpgrade': 'Fazer upgrade',
@@ -537,13 +537,13 @@ export const ptBR: Dict = {
   'settings.amrLoginErrorCompact': 'Falha no login do CapyDesign Cloud.',
   'settings.advanced': 'Avançado',
   'settings.amrLogin': 'Entrar',
-  'settings.amrLogout': 'Sair',
-  'settings.amrLoggingIn': 'Entrando…',
-  'settings.amrLoggingOut': 'Saindo…',
-  'settings.amrLoggedInAs': 'Conectado como {email}',
-  'settings.amrLoggedInWithPlan': 'Conectado como {email} · {plan}',
-  'settings.amrLoggedInPill': 'Conectado',
-  'settings.amrNotLoggedIn': 'Não conectado',
+  
+  
+  
+  
+  
+  
+  
   'settings.apiSection': 'API da Anthropic',
   'settings.quickFillProvider': 'Preencher provedor',
   'settings.providerPreset': 'Predefinição do provedor',
@@ -625,7 +625,7 @@ export const ptBR: Dict = {
   'settings.modelUsesCliDefault': 'Padrão da CLI',
   'settings.modelSourceFallback': 'Lista integrada',
   'settings.reasoningPicker': 'Esforço de raciocínio',
-  'settings.serviceTierPicker': 'Camada de serviço',
+  
   'settings.modelPickerHint': 'Buscado na CLI quando ela expõe um comando `models`. "Padrão" deixa a escolha para a configuração da própria CLI; "Personalizado…" permite digitar qualquer id de modelo aceito pela CLI.',
   'settings.modelPickerLiveHint': 'Os modelos foram atualizados a partir da CLI instalada. O padrão ainda usa a configuração da CLI.',
   'settings.modelPickerLiveCatalogOnlyHint': 'Os modelos foram atualizados a partir da CLI instalada.',
@@ -766,21 +766,21 @@ export const ptBR: Dict = {
   'entry.mailAria': 'Dúvidas? Envie um e-mail para nós',
   'entry.accountSettings': 'Configurações',
   'chat.collapsePane': 'Recolher o painel de conversa',
-  'collabPresence.ariaOne': '1 collaborator online',
-  'collabPresence.aria': '{count} collaborators online',
-  'collabPresence.ariaWithSelfOne': '1 collaborator online, including you',
-  'collabPresence.ariaWithSelf': '{count} collaborators online, including you',
-  'collabPresence.moreOnline': '{count} more online',
-  'collabPresence.dialogTitle': 'Online collaborators',
-  'collabPresence.onlineCount': '{count} online',
-  'collabPresence.selfBadge': 'You',
-  'collabPresence.roleOwner': 'Owner',
-  'collabPresence.roleAdmin': 'Admin',
-  'collabPresence.roleMember': 'Member',
-  'collabPresence.viewingFileSelf': 'You are viewing {file}',
-  'collabPresence.viewingFileOther': 'Viewing {file}',
-  'collabPresence.viewingProjectSelf': 'You are viewing this project',
-  'collabPresence.viewingProjectOther': 'Viewing this project',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'entry.followXLabel': 'Siga @OpenDesignHQ no X',
   'entry.followThreadsLabel': 'Follow CapyDesign on Threads',
   'entry.youtubeLabel': 'CapyDesign on YouTube',
@@ -800,7 +800,7 @@ export const ptBR: Dict = {
   "entry.billingTierTeam": "Teams",
   "entry.billingTierFree": "Free",
   "entry.billingTierPro": "Pro",
-  "entry.billingFamilyCreator": "Creator",
+  
   "entry.creditsAria": "{tier} · credits remaining",
   "entry.creditsAriaWithBalance": "{tier} · {balance} credits remaining",
   "entry.creditsGrantTip": "Teams credits are granted by subscription allowance. Usage is available in billing.",
@@ -812,12 +812,12 @@ export const ptBR: Dict = {
   "entry.creditsMemberNoticeTitle": "Need more credits?",
   "entry.creditsMemberNoticeBody": "You are currently a Member and cannot add credits yourself. Ask a team Admin to increase the allowance when you need more.",
   "entry.creditsMemberNoticeAction": "Ask Admin to increase allowance",
-  "entry.accountToggleTheme": "Toggle theme",
-  "entry.accountSwitchLanguage": "Switch language",
-  "entry.accountLanguageMeta": "中文 / English",
+  
+  
+  
   "entry.accountGithubHelp": "Get help on GitHub",
   "entry.accountFeatureRequest": "Submit feature request",
-  "entry.accountAddAccount": "Add account",
+  
   "entry.accountSignOut": "Sign out",
   "signOut.confirmTitle": "Sair",
   "signOut.confirmMessage": "Tem certeza de que deseja sair?",
@@ -829,8 +829,8 @@ export const ptBR: Dict = {
   "entry.blankAllProjectsTitle": "No team projects yet",
   "entry.blankAllProjectsDescription": "Projects shared to the team will appear here for everyone in the workspace.",
   "entry.blankCreate": "New project",
-  'entry.workspaceTeamsTitle': 'Workspace para Times — conte o que sua equipe precisa',
-  'entry.workspaceTeamsAria': 'Abrir a página do Workspace para Times',
+  
+  
   'entry.navExpand': 'Expandir barra lateral',
   'entry.navCollapse': 'Recolher barra lateral',
   'entry.navNewProject': 'Novo projeto',
@@ -848,18 +848,18 @@ export const ptBR: Dict = {
   'entry.draftsDescription': 'Projects you created, visible only to you',
   'entry.allProjectsDescription': 'Projects owned by everyone on the team',
   'entry.navBoard': 'Board',
-  'entry.navTeamSection': 'Team',
+  
   'entry.teamSlotNote': 'This space is provided by the team service. Integration is in progress.',
-  "entry.cloudCalloutTitle": "CapyDesign Cloud",
-  'entry.cloudRecovering': 'Account connection interrupted. Recovering automatically…',
+  
+  
   'entry.authExpiredBody': 'Your sign-in has expired. Sign in to continue using CapyDesign Cloud.',
   'home.createFailed': 'Failed to start the run. Try again.',
   'home.daemonRecovering': 'Local service connection interrupted. Recovering automatically…',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
-  "entry.cloudCalloutBody": "Entre para usar o CapyDesign Cloud e colaborar na nuvem",
-  "entry.cloudCalloutDismissAria": "Dispensar o aviso do CapyDesign Cloud",
-  'entry.workspaceLockedNote': 'This workspace is locked. Restore billing to resume editing shared projects.',
-  'entry.workspaceLockedRecover': 'Restore access',
+  
+  
+  
+  
   'messageCenter.openAria': 'Open message center',
   'messageCenter.unreadCount': '{count} unread',
   'messageCenter.title': 'Message center',
@@ -889,8 +889,8 @@ export const ptBR: Dict = {
   'goPlanSunset.confirming': 'Confirming…',
   'goPlanSunset.acknowledge': 'Got it',
   'workspaceTabs.project': 'Projeto',
-  'workspaceTabs.pluginDetails': 'Detalhes do plugin',
-  'workspaceTabs.marketplace': 'Marketplace',
+  
+  
   'homeHero.title': 'O que você vai projetar hoje com seu agente?',
   'homeHero.startWithTemplate': 'Começar com um modelo…',
   'homeHero.startBlankProject': 'começar um projeto em branco',
@@ -1057,7 +1057,7 @@ export const ptBR: Dict = {
   'handoff.frameworkPrompt.solid': 'SolidJS',
   'handoff.frameworkPrompt.next': 'Next.js / React',
   'handoff.frameworkPrompt.vanilla': 'JavaScript puro, HTML e CSS',
-  'handoff.amrWebsite': 'Abrir site da CapyDesign Cloud',
+  
   'handoff.copyPrompt': 'Copiar prompt',
   'handoff.copyPromptForTarget': 'Copiar prompt para {target}',
   'handoff.copied': 'Copiado',
@@ -1111,7 +1111,7 @@ export const ptBR: Dict = {
   'recentProjects.sortName': 'Name',
   'recentProjects.viewList': 'List view',
   'recentProjects.sharedBadge': 'Shared',
-  'recentProjects.sharedProjectFallbackName': 'Shared project',
+  
   'recentProjects.creatorLine': 'Created by {name}',
   'recentProjects.selfCreator': 'Me',
   'recentProjects.teamMemberCreator': 'Team member',
@@ -1670,7 +1670,7 @@ export const ptBR: Dict = {
   'connectors.title': 'Conectores',
   'connectors.subtitle': 'Fontes locais e futuras que podem alimentar artefatos live.',
   'connectors.account': 'Conta',
-  'connectors.noAccount': 'Não conectado',
+  
   'connectors.tools': 'Ferramentas',
   'connectors.connect': 'Conectar',
   'connectors.disconnect': 'Desconectar',
@@ -2016,8 +2016,8 @@ export const ptBR: Dict = {
   'avatar.useApi': 'Usar API · BYOK',
   'avatar.codeAgent': 'Agente de código',
   'avatar.rescan': 'Reescanear PATH',
-  'avatar.amrConsole': 'Conta CapyDesign Cloud',
-  'avatar.amrConsoleMeta': 'Saldo e recarga',
+  
+  
   'avatar.settings': 'Configurações',
   'avatar.backToProjects': 'Voltar aos projetos',
   'avatar.metaActive': 'ativo',
@@ -2775,7 +2775,7 @@ export const ptBR: Dict = {
   'misc.primary': 'Principal',
   'misc.designSystem': 'Sistema de design',
   'workspace.designFiles': 'Arquivos de design',
-  'workspace.focusMode': 'Focar no workspace',
+  
   'workspace.showChat': 'Mostrar chat',
   'workspace.closeTab': 'Fechar aba',
   'workspace.fileSyncDownloading': 'Baixando da equipe…',
@@ -2786,13 +2786,13 @@ export const ptBR: Dict = {
   'workspace.deleteSelectedFilesConfirm': 'Excluir {n} arquivo(s) selecionado(s) da pasta do projeto?',
   'workspace.deleteSelectedFilesPartial': 'Falha ao excluir {n} arquivo(s).',
   'workspace.openFromDesignFiles': 'Abra um arquivo em',
-  'workspace.designFilesLink': 'Arquivos de design',
+  
   'workspace.loadingSketch': 'Carregando esboço…',
   'workspace.newTab': 'Nova aba',
   'workspace.searchFilesPlaceholder': 'Pesquisar arquivos…',
   'workspace.openTabs': 'Abrir abas',
-  'workspace.searchTabs': 'Search tabs',
-  'workspace.noTabsFound': 'No tabs found',
+  
+  
   'workspace.openFile': 'Abrir um arquivo',
   'workspace.noFilesMatch': 'Nenhum arquivo corresponde',
   'workspace.allFiles': 'Todos',
@@ -3203,14 +3203,14 @@ export const ptBR: Dict = {
   'fileViewer.presenterMode': 'Modo do apresentador',
   'fileViewer.exitPresentation': 'Sair da apresentação',
   'fileViewer.shareLabel': 'Compartilhar',
-  'fileViewer.shareMenuShareLink': 'COMPARTILHAR',
+  
   'fileViewer.shareMenuPublishOnline': 'COMPARTILHAR NA SUA HOSPEDAGEM',
-  'fileViewer.shareMenuDownload': 'BAIXAR',
-  'fileViewer.shareMenuPresentation': 'Apresentação',
-  'fileViewer.shareMenuSourceFiles': 'Arquivos-fonte',
-  'fileViewer.shareMenuSave': 'SALVAR',
+  
+  
+  
+  
   'fileViewer.shareMenuPublishViaOd': 'COMPARTILHAMENTO RÁPIDO · OPENDESIGN',
-  'fileViewer.unifiedShareAria': 'Share and export actions',
+  
   'fileViewer.unifiedShareTab': 'Share',
   'fileViewer.unifiedExportTab': 'Export',
   'fileViewer.unifiedSendTab': 'Send to...',
@@ -3226,13 +3226,13 @@ export const ptBR: Dict = {
   'fileViewer.publishFile': 'Publish file',
   'fileViewer.publishingFile': 'Criando link…',
   'fileViewer.unpublishFile': 'Parar de compartilhar',
-  'fileViewer.shareEmptyStateTitle': 'Nada para compartilhar ainda',
-  'fileViewer.shareEmptyStateDescription': 'Crie ou participe de uma equipe para compartilhar este arquivo com colegas',
-  'fileViewer.shareEmptyStateCreateTeam': 'Criar equipe',
-  'fileViewer.shareTeamMissingTitle': 'Ainda não há uma equipe para compartilhar',
+  
+  
+  
+  
 
-  'fileViewer.publishFileRequiresTeam': 'Publicar um link público exige um espaço de trabalho de equipe. Mude para um espaço de equipe ou use Implantar para publicar este arquivo.',
-  'fileViewer.publishFileRequiresWorkspace': 'Um link de compartilhamento exige um workspace conectado. Entre no CapyDesign Cloud ou compartilhe este arquivo por deploy.',
+  
+  
   'fileViewer.publishFileFailed': 'Não foi possível criar o link de compartilhamento. Tente novamente ou use uma opção de deploy abaixo.',
   'fileViewer.workspaceShareSuccess': 'Shared with workspace members',
   'fileViewer.workspaceShareFailed': 'Could not share with workspace',
@@ -3242,10 +3242,10 @@ export const ptBR: Dict = {
   'fileViewer.copyShareLink': 'Copiar link de compartilhamento',
   'fileViewer.openSharePage': 'Abrir página compartilhada',
   'fileViewer.shareLinkRequiresDeploy': 'Publique online primeiro para obter um link',
-  'fileViewer.shareLinkPublishGuide': 'Publique online acima para habilitar o compartilhamento ↑',
+  
   'fileViewer.shareAfterGenerationComplete': 'Compartilhamento disponível após a geração',
   'fileViewer.copyProviderLink': 'Copiar link do {provider}',
-  'fileViewer.copyCloudflareLink': 'Copiar link do Cloudflare',
+  
   'fileViewer.screenshotCopying': 'Copiando captura de tela...',
   'fileViewer.screenshotCopied': 'Captura de tela copiada para a área de transferência',
   'fileViewer.screenshotClipboardDenied': 'O navegador bloqueou o acesso à área de transferência',
@@ -3404,12 +3404,12 @@ export const ptBR: Dict = {
   'fileViewer.cloudflareDomainPrefixPlaceholder': 'demo',
   'fileViewer.cloudflareDomainPrefixInvalid': 'Use apenas um rótulo DNS: letras minúsculas, números e hífens.',
   'fileViewer.cloudflareHostnamePreview': 'Prévia do domínio personalizado: {hostname}',
-  'fileViewer.cloudflareCustomDomainHint': 'Opcional: vincule um domínio personalizado. Se deixar em branco, um link pages.dev ainda será criado.',
+  
   'fileViewer.cloudflarePagesDevLinkLabel': 'URL do pages.dev',
   'fileViewer.cloudflareCustomDomainLinkLabel': 'Domínio personalizado',
   'fileViewer.optional': 'Opcional',
   'fileViewer.vercelPreviewOnly': 'As implantações são apenas Preview por enquanto.',
-  'fileViewer.cloudflarePagesPreviewHint': 'Cloudflare Pages usa Direct Upload.',
+  
   'fileViewer.savingConfig': 'Salvando…',
   'fileViewer.deployConfigSaveFailed': 'Não foi possível salvar as configurações da Vercel.',
   'fileViewer.deployFailed': 'Falha na implantação. Verifique as configurações da Vercel e tente novamente.',
@@ -3461,8 +3461,8 @@ export const ptBR: Dict = {
   'assistant.forkConversation': 'Nova conversa',
   'assistant.forkingConversation': 'Iniciando nova conversa…',
   'assistant.forkNote': 'Continuação da conversa',
-  'assistant.shareToOpenDesign': 'Compartilhar com CapyDesign',
-  'assistant.shareToOpenDesignBusy': 'Preparando pacote…',
+  
+  
   'assistant.feedbackPrompt': 'Feedback',
   'assistant.feedbackPositive': 'Útil',
   'assistant.feedbackNegative': 'Não útil',
@@ -3502,10 +3502,10 @@ export const ptBR: Dict = {
   'chat.runError.actionBlocked.busy': "Esta conversa ainda tem uma tarefa em andamento. Você poderá tentar novamente quando ela terminar.",
   'chat.support.channel.feishu': "Comunidade no Feishu",
   'chat.support.channel.discord': "Discord",
-  'chat.amrBalanceOwner.title': "Peça ao proprietário da equipe para recarregar",
-  'chat.amrBalanceOwner.message': "Somente o proprietário da equipe pode recarregar o saldo da equipe. Peça a “{name}” que faça a recarga antes de continuar.",
-  'chat.amrBalanceOwner.messageNoOwnerName': "Somente o proprietário da equipe pode recarregar o saldo da equipe. Peça ao proprietário da equipe que faça a recarga antes de continuar.",
-  'chat.amrBalanceOwner.dismissCta': "Entendi",
+  
+  
+  
+  
   'assistant.outTokens': '{n} saída',
   'assistant.producedFiles': 'Arquivos deste turno',
   'assistant.openFile': 'Abrir',
@@ -4717,16 +4717,16 @@ export const ptBR: Dict = {
   // other-lane workspace destinations (members / billing / team space).
   'settings.workspace': 'Workspace',
   'settings.workspaceHint': 'Members, billing, and team spaces',
-  'settings.workspaceLede': 'Team-level settings for this workspace. These areas are managed by the team service — open one to continue.',
-  'settings.workspaceBack': 'Back to workspace',
-  'settings.workspaceMembers': 'Members & invites',
-  'settings.workspaceMembersHint': 'Manage who can access this workspace and send invitations.',
-  'settings.workspaceBilling': 'Subscription & seats',
-  'settings.workspaceBillingHint': 'Plan, seats, and payment for this workspace.',
-  'settings.workspaceAutoRecharge': 'Auto-recharge',
-  'settings.workspaceAutoRechargeHint': 'Automatically top up credits when the balance runs low.',
-  'settings.workspaceTeamSpace': 'Team space',
-  'settings.workspaceTeamSpaceHint': 'Shared projects and visibility for your team.',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   // Full-page Settings (`/settings`): sidebar nav head above the section list.
   'settings.pageBackToHome': 'Back to home',
   'settings.pageNavGroupPersonal': 'Personal',
@@ -4734,9 +4734,9 @@ export const ptBR: Dict = {
   'newproj.startBlank': 'Em branco',
   'newproj.startBlankHint': 'Começar do zero',
   'workspace.pages': 'Páginas',
-  'workspace.allProjectFiles': 'Todos os arquivos do projeto',
+  
   'workspace.newBlankPage': 'Nova página em branco',
-  'workspace.noPagesYet': 'Nenhuma página ainda',
+  
   'workspace.pageCreateFailed': 'Não foi possível criar a página.',
   'workspace.pageCreatorTitle': 'Criar página',
   'workspace.pageCreatorSearch': 'Buscar modelos',

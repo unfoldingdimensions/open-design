@@ -11,9 +11,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { RecentProjectsStrip } from '../../src/components/RecentProjectsStrip';
 import type { Project } from '../../src/types';
-import type { WorkspaceProjectSummary } from '@capydesign/contracts';
+import type { ProjectListEntry } from '@capydesign/contracts';
 
-const movedTeamProject: WorkspaceProjectSummary = {
+const movedTeamProject: ProjectListEntry = {
   id: 'project-1',
   name: 'Draft',
   workspaceId: 'ws-1',

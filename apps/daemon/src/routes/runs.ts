@@ -32,17 +32,17 @@ import {
   type TrackingRunRecoveryActionType,
 } from '@capydesign/contracts/analytics';
 import type { OdNativeEvent } from '@capydesign/agui-adapter';
-import { newInsertId, readAnalyticsContext } from '../analytics.js';
-import type { AnalyticsContext } from '../analytics.js';
+import { newInsertId, readAnalyticsContext } from '../local/telemetry-sink.js';
+import type { AnalyticsContext } from '../local/telemetry-sink.js';
 import { spawnEnvForAgent } from '../agents.js';
 import { agentCliEnvForAgent, readAppConfig } from '../app-config.js';
-import type { AuthorizeProjectRequest } from '../collab/project-request-authority.js';
+import type { AuthorizeProjectRequest } from '../local/project-request-authority.js';
 import { hasImageAttachment, messageReferencesProjectImage, routeImageVisionRequest } from '../image-vision-router.js';
 import {
   workspaceResourceContextFromRequest,
   type BoundWorkspaceResourceMutationGate,
   type WorkspaceResourceAccessInput,
-} from '../collab/workspace-resource-mutation.js';
+} from '../local/workspace-resource-mutation.js';
 import {
   codexSessionIdFromRunEvents,
   readCodexRolloutFirstCall,
@@ -57,7 +57,7 @@ import {
   updateProject,
   upsertMessage,
 } from '../db.js';
-import { readVelaLoginStatus } from '../integrations/vela.js';
+import { readSessionStatus } from '../local/session-state.js';
 import {
   ensureDetectedRuntimeCapabilities,
   ensureDetectedRuntimeVersions,
@@ -70,9 +70,9 @@ import {
 } from '../runtimes/od-next-capability-gate.js';
 import { mintRunDoneKey } from '../runtimes/run-done-key.js';
 import {
-  deriveLangfuseDeliveryState,
+  deriveTelemetryDeliveryState,
   readTelemetrySinkConfig,
-} from '../langfuse-trace.js';
+} from '../local/telemetry-sink.js';
 import { parseMediaExecutionPolicyInput } from '../media/policy.js';
 import { isManagedProjectCwd } from '../mcp-config.js';
 import {

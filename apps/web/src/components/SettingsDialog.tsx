@@ -1,10 +1,8 @@
+import type { AmrWalletSnapshot } from '../runtime/legacy-scope-types';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, Dispatch, SetStateAction } from 'react';
 import { Button, VisuallyHidden } from '@capydesign/components';
-import type {
-  AmrWalletSnapshot,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { validateBaseUrl } from '@capydesign/contracts/api/connectionTest';
 import {
   agentIdToTracking,
@@ -12,32 +10,7 @@ import {
   executionModeToTracking,
   settingsSectionToTracking,
 } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
 import { byokErrorCode } from '../analytics/byok-error-code';
-import {
-  amrHandoffDeviceId,
-  attributedAmrUrl,
-  recordAmrEntry,
-  type TrackingAmrEntrySource,
-} from '../analytics/amr-attribution';
-import { getResolvedDeviceId } from '../analytics/client';
-import {
-  trackByokPreflightBlocked,
-  trackSettingsByokModelsFetchResult,
-  trackSettingsByokTestResult,
-  trackSettingsCliTestResult,
-  trackSettingsByokFieldClick,
-  trackSettingsByokProviderOptionClick,
-  trackSettingsConnectorAuthResult,
-  trackSettingsDesignReviewClick,
-  trackSettingsLanguageClick,
-  trackSettingsLocalCliClick,
-  trackSettingsExecutionModeTabClick,
-  trackSettingsMediaProvidersClick,
-  trackSettingsNotificationsClick,
-  trackSettingsPrivacyClick,
-  trackSettingsView,
-} from '../analytics/events';
 import { LOCALE_LABEL, LOCALES, useI18n } from '../i18n';
 import type { Locale } from '../i18n';
 import type { Dict } from '../i18n/types';
@@ -45,14 +18,7 @@ import { AgentIcon } from './AgentIcon';
 import { ImageAgentPicker } from './ImageAgentPicker';
 import { AgentDiagnosticRow } from './AgentDiagnosticRow';
 import { DeepSeekHarnessSetupDialog } from './DeepSeekHarnessSetupDialog';
-import { AmrLoginPill } from './AmrLoginPill';
-import { PlanBadge } from './PlanBadge';
 import { orderAgentsWithCapyDesignFirst } from './agentOrdering';
-import {
-  AMR_LOGIN_STATUS_EVENT,
-  amrLoginStatusEventReason,
-  isAmrSessionAuthenticated,
-} from './amrLoginPolling';
 import {
   fetchAmrWalletSnapshot,
   fetchVelaLoginStatus,
@@ -60,7 +26,6 @@ import {
   type VelaLoginStatus,
 } from '../providers/daemon';
 import { installDeepSeekHarnessCompanion } from '../providers/agent-companion';
-import { amrProfileBadgeLabel } from '../runtime/amr-guidance';
 import {
   availableVisibleAgentCount,
   deepSeekHarnessNeedsSetup,
@@ -168,17 +133,7 @@ import { DesignSystemsSection } from './DesignSystemsSection';
 import { PrivacySection } from './PrivacySection';
 import { ProjectLocationsSection } from './ProjectLocationsSection';
 import { RoutinesSection } from './RoutinesSection';
-import { SettingsWorkspaceSection } from './SettingsWorkspaceSection';
-import {
-  useWorkspaceBillingResponse,
-  useWorkspaceContext,
-  workspaceBillingBalanceUsd,
-  workspaceBillingSummaryForContext,
-} from '../collab/useWorkspaceContext';
-import { canUpgradeFromPlanTier, resolvePlanTier } from '../collab/team-plan';
-import { planBadgeTierForWorkspace } from './PlanWordmark';
 import { workspaceUpgradeUrl } from './EntryNavRail';
-import { canShowWorkspaceSettings } from '../collab/settings-access';
 import { ConnectorsBrowser } from './ConnectorsBrowser';
 import { MemoryModelInline } from './MemoryModelInline';
 import { MemorySection } from './MemorySection';
@@ -202,11 +157,6 @@ import {
   setCritiqueTheaterEnabled,
   useCritiqueTheaterEnabled,
 } from './Theater';
-import {
-  projectWorkspaceContext,
-  projectWorkspaceScopeReady,
-  useProjectWorkspaceScope,
-} from '../collab/useProjectWorkspaceScope';
 import {
   applyAppearanceToDocument,
   resolveAccentColor,
@@ -1529,7 +1479,6 @@ export function SettingsDialog({
   onDraftChange,
 }: Props) {
   const { t, locale, setLocale } = useI18n();
-  const analytics = useAnalytics();
   // Backfill the fixed-origin base URL on mount too, so a config persisted with
   // an empty baseUrl (e.g. selected AIHubMix before this resolution existed)
   // isn't stuck blocking the live model fetch until the user re-selects the tab.
@@ -1644,23 +1593,18 @@ export function SettingsDialog({
   // gate now guards the deep-link (`initialSection='workspace'`) path — it must
   // stay, otherwise a deep link would hand workspace settings to a viewer the
   // permission bits exclude.
-  const {
-    context: workspaceContext,
-    loading: workspaceContextLoading,
-  } = useWorkspaceContext();
+  const workspaceContext = null;
+  const workspaceContextLoading = false;
   // Workspace billing drives both the plan and the money shown beside it. The
   // CLI identity remains account-scoped, but a Team badge must never be paired
   // with that account's personal wallet: the entry chrome and Settings must
   // describe the same selected environment + workspace.
-  const workspaceBillingResponse = useWorkspaceBillingResponse();
+  const workspaceBillingResponse = null;
   // Same partition for the plan half: `response.summary` is an ACCOUNT read, so
   // the AMR card's plan badge and both upgrade routes must consume it projected
   // onto the selected workspace. See `workspaceBillingSummaryForContext`.
-  const workspaceBilling = workspaceBillingSummaryForContext(
-    workspaceBillingResponse,
-    workspaceContext,
-  );
-  const showWorkspaceSettings = canShowWorkspaceSettings(workspaceContext);
+  const workspaceBilling = null;
+  const showWorkspaceSettings = false;
   // All generic AMR upgrade buttons route through public Pricing. While the
   // workspace read is pending, hide the owner-only action to avoid a flash for
   // admins or members.
@@ -1696,7 +1640,7 @@ export function SettingsDialog({
   });
   const [amrCardStatus, setAmrCardStatus] = useState<VelaLoginStatus | null>(null);
   const [amrCardStatusReady, setAmrCardStatusReady] = useState(false);
-  const amrCardSignedIn = isAmrSessionAuthenticated(amrCardStatus);
+  const amrCardSignedIn = false;
   const [amrWalletSnapshot, setAmrWalletSnapshot] = useState<AmrWalletSnapshot | null>(null);
   const [amrWalletReady, setAmrWalletReady] = useState(false);
   const [hoveredAgentCardId, setHoveredAgentCardId] = useState<string | null>(null);
@@ -1712,7 +1656,7 @@ export function SettingsDialog({
     // The wallet endpoint is account-scoped. Until the selected workspace is
     // known, fetching it can race a Team context read and briefly put personal
     // money (or a personal auth error) on the Team card.
-    if (workspaceContextLoading || workspaceContext?.workspaceType === 'team') {
+    if (workspaceContextLoading) {
       setAmrWalletSnapshot(null);
       setAmrWalletReady(false);
       return;
@@ -1721,7 +1665,7 @@ export function SettingsDialog({
     const next = await fetchAmrWalletSnapshot(options);
     setAmrWalletSnapshot(next);
     setAmrWalletReady(true);
-  }, [workspaceContext?.workspaceType, workspaceContextLoading]);
+  }, [workspaceContextLoading]);
 
   useEffect(() => {
     const hasAmrAgent = agents.some((agent) => agent.id === 'amr' && agent.available);
@@ -1755,8 +1699,7 @@ export function SettingsDialog({
     if (
       !hasAmrAgent ||
       !amrCardSignedIn ||
-      workspaceContextLoading ||
-      workspaceContext?.workspaceType === 'team'
+      workspaceContextLoading
     ) {
       setAmrWalletSnapshot(null);
       setAmrWalletReady(false);
@@ -1778,7 +1721,6 @@ export function SettingsDialog({
     amrCardStatus?.profile,
     amrCardStatus?.user?.id,
     amrCardStatus?.user?.email,
-    workspaceContext?.workspaceType,
     workspaceContextLoading,
   ]);
 
@@ -1803,7 +1745,7 @@ export function SettingsDialog({
       void fetchVelaLoginStatus({ refresh: true }).then((next) => {
         if (cancelled || !next) return;
         setAmrCardStatus(next);
-        if (isAmrSessionAuthenticated(next)) void refreshAmrWalletSnapshot({ refresh: true });
+        if (false) void refreshAmrWalletSnapshot({ refresh: true });
       });
     };
     window.addEventListener('focus', resyncAmrStatus);
@@ -1820,18 +1762,16 @@ export function SettingsDialog({
     if (!hasAmrAgent) return;
     let cancelled = false;
     const resyncAmrStatus = (event: Event) => {
-      const reason = amrLoginStatusEventReason(event);
-      if (reason === 'login-canceled') return;
       void fetchVelaLoginStatus().then((next) => {
         if (cancelled || !next) return;
         setAmrCardStatus(next);
         setAmrCardStatusReady(true);
       });
     };
-    window.addEventListener(AMR_LOGIN_STATUS_EVENT, resyncAmrStatus);
+    window.addEventListener('open-design:amr-login-status', resyncAmrStatus);
     return () => {
       cancelled = true;
-      window.removeEventListener(AMR_LOGIN_STATUS_EVENT, resyncAmrStatus);
+      window.removeEventListener('open-design:amr-login-status', resyncAmrStatus);
     };
   }, [agents]);
   const [byokPreconditionNotice, setByokPreconditionNotice] = useState<{
@@ -2060,11 +2000,8 @@ export function SettingsDialog({
     // execution_mode / has_available_cli / selected_cli_id signal that v1
     // tagged onto every view now lives in the configure-state global
     // properties (registered once and inherited by every event).
-    trackSettingsView(analytics.track, {
-      page_name: 'settings',
-      area: settingsSectionToTracking(activeSection),
-    });
-  }, [activeSection, analytics.track]);
+    
+  }, [activeSection]);
   useEffect(() => {
     const el = settingsContentRef.current;
     if (el) el.scrollTop = 0;
@@ -2195,14 +2132,7 @@ export function SettingsDialog({
       const modeBefore = executionModeToTracking(c.mode);
       const modeAfter = executionModeToTracking(mode);
       if (modeBefore !== modeAfter) {
-        trackSettingsExecutionModeTabClick(analytics.track, {
-          page_name: 'settings',
-          area: 'configure_execution_mode',
-          element: 'execution_mode_tab',
-          action: 'switch_execution_mode',
-          mode_before: modeBefore,
-          mode_after: modeAfter,
-        });
+        
       }
       if (mode === 'api' && c.mode !== 'api') {
         return restorePendingByokProviderDraft({ ...c, mode });
@@ -2388,30 +2318,17 @@ export function SettingsDialog({
       });
     }
   };
-  const attributedAmrSettingsUrl = (
-    url: string,
-    sourceDetail: TrackingAmrEntrySource,
-  ) => {
-    const attribution = recordAmrEntry(analytics.track, sourceDetail, new Date(), {
-      metricsConsent: cfg.telemetry?.metrics === true,
-    });
-    const deviceId = amrHandoffDeviceId({
-      metricsConsent: cfg.telemetry?.metrics === true,
-      resolvedDeviceId: getResolvedDeviceId(),
-      installationId: cfg.installationId,
-    });
-    return attributedAmrUrl(url, attribution, deviceId);
-  };
+  const attributedAmrSettingsUrl = (url: string) => url;
   const openAgentFixUrl = (
     url: string | undefined,
-    amrEntrySourceDetail?: TrackingAmrEntrySource,
+    amrEntrySourceDetail?: string,
   ) => {
     const href = sanitizeHttpsUrl(url);
     if (!href) return;
     markAgentInstallIntent();
     void openExternalUrl(
       amrEntrySourceDetail
-        ? attributedAmrSettingsUrl(href, amrEntrySourceDetail)
+        ? attributedAmrSettingsUrl(href)
         : href,
     );
   };
@@ -2548,14 +2465,7 @@ export function SettingsDialog({
         return;
       }
       setAgentTestState({ status: 'done', result });
-      trackSettingsCliTestResult(analytics.track, {
-        page_name: 'settings',
-        area: 'configure_execution_mode',
-        cli_provider_id: cliProviderId,
-        result: result.ok ? 'success' : 'failed',
-        ...(result.ok ? {} : { error_code: result.kind || 'UNKNOWN' }),
-        duration_ms: Math.round(performance.now() - startedAt),
-      });
+      
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') return;
       if (agentTestRevisionRef.current !== revision) {
@@ -2572,14 +2482,7 @@ export function SettingsDialog({
           detail: err instanceof Error ? err.message : 'Test request failed',
         },
       });
-      trackSettingsCliTestResult(analytics.track, {
-        page_name: 'settings',
-        area: 'configure_execution_mode',
-        cli_provider_id: cliProviderId,
-        result: 'failed',
-        error_code: err instanceof Error ? err.name : 'UNKNOWN',
-        duration_ms: Math.round(performance.now() - startedAt),
-      });
+      
     } finally {
       if (agentTestAbortRef.current === controller) {
         agentTestAbortRef.current = null;
@@ -2618,18 +2521,7 @@ export function SettingsDialog({
       showByokDraftValidationNotice('test', byokDraftValidation);
       const byokProviderId = byokProtocolToTracking(apiProtocol);
       if (byokProviderId) {
-        trackSettingsByokTestResult(analytics.track, {
-          page_name: 'settings',
-          area: 'execution_model',
-          provider_id: byokProviderId,
-          result: 'failed',
-          error_code: byokErrorKindFromIssues(blockingIssues),
-          error_kind: byokErrorKindFromIssues(blockingIssues),
-          field_missing: byokFieldMissingFromIssues(blockingIssues),
-          config_key_changed: configKeyChanged,
-          success_after_action: false,
-          duration_ms: 0,
-        });
+        
       }
       byokLastUnsuccessfulTestKeyRef.current = currentConfigKey;
       return;
@@ -2669,18 +2561,7 @@ export function SettingsDialog({
       }
       const byokProviderId = byokProtocolToTracking(apiProtocol);
       if (byokProviderId) {
-        trackSettingsByokTestResult(analytics.track, {
-          page_name: 'settings',
-          area: 'execution_model',
-          provider_id: byokProviderId,
-          result: byokTrackingTestResult(result),
-          ...(result.ok ? {} : { error_code: byokErrorCode(result) }),
-          ...(result.ok ? {} : { error_kind: result.kind || 'UNKNOWN' }),
-          field_missing: 'none',
-          config_key_changed: configKeyChanged,
-          success_after_action: result.ok && configKeyChanged,
-          duration_ms: Math.round(performance.now() - startedAt),
-        });
+        
       }
       byokLastUnsuccessfulTestKeyRef.current = result.ok ? null : currentConfigKey;
     } catch (err) {
@@ -2701,18 +2582,7 @@ export function SettingsDialog({
       });
       const byokProviderId = byokProtocolToTracking(apiProtocol);
       if (byokProviderId) {
-        trackSettingsByokTestResult(analytics.track, {
-          page_name: 'settings',
-          area: 'execution_model',
-          provider_id: byokProviderId,
-          result: 'failed',
-          error_code: err instanceof Error ? err.name : 'UNKNOWN',
-          error_kind: err instanceof Error ? err.name : 'UNKNOWN',
-          field_missing: 'none',
-          config_key_changed: configKeyChanged,
-          success_after_action: false,
-          duration_ms: Math.round(performance.now() - startedAt),
-        });
+        
       }
       byokLastUnsuccessfulTestKeyRef.current = currentConfigKey;
     } finally {
@@ -2747,31 +2617,19 @@ export function SettingsDialog({
     const byokProviderId = byokProtocolToTracking(apiProtocol);
     const trackModelsFetchResult = (
       props: Omit<
-        Parameters<typeof trackSettingsByokModelsFetchResult>[1],
+        Record<string, unknown>,
         'page_name' | 'area' | 'provider_id' | 'trigger' | 'source'
       >,
       source: 'network' | 'cache' = 'network',
     ) => {
       if (!byokProviderId) return;
-      trackSettingsByokModelsFetchResult(analytics.track, {
-        page_name: 'settings',
-        area: 'configure_execution_mode_byok',
-        provider_id: byokProviderId,
-        trigger,
-        source,
-        ...props,
-      });
+      
     };
     if (providerModelsState.status === 'running') {
       return;
     }
     if (apiProtocol === 'azure') {
-      trackModelsFetchResult({
-        result: 'failed',
-        error_code: 'unsupported_azure',
-        error_kind: 'unsupported_azure',
-        duration_ms: 0,
-      });
+      
       if (!options.silent) {
         setByokPreconditionNotice({
           action: 'test',
@@ -2781,12 +2639,7 @@ export function SettingsDialog({
       return;
     }
     if (apiProtocol === 'ollama') {
-      trackModelsFetchResult({
-        result: 'failed',
-        error_code: 'unsupported_ollama',
-        error_kind: 'unsupported_ollama',
-        duration_ms: 0,
-      });
+      
       if (!options.silent) {
         setByokPreconditionNotice({
           action: 'test',
@@ -2796,12 +2649,7 @@ export function SettingsDialog({
       return;
     }
     if (isProviderModelDiscoveryUnsupported(apiProtocol, cfg.baseUrl)) {
-      trackModelsFetchResult({
-        result: 'failed',
-        error_code: 'unsupported_provider_models',
-        error_kind: 'unsupported_provider_models',
-        duration_ms: 0,
-      });
+      
       if (!options.silent) {
         setByokPreconditionNotice({
           action: 'test',
@@ -2825,13 +2673,7 @@ export function SettingsDialog({
       return;
     }
     if (modelFetchBlockingIssues.length > 0) {
-      trackModelsFetchResult({
-        result: 'failed',
-        error_code: byokErrorKindFromIssues(modelFetchBlockingIssues),
-        error_kind: byokErrorKindFromIssues(modelFetchBlockingIssues),
-        field_missing: byokFieldMissingFromIssues(modelFetchBlockingIssues),
-        duration_ms: 0,
-      });
+      
       if (!options.silent) {
         showByokDraftValidationNotice('test', byokModelFetchDraftValidation);
       }
@@ -2845,14 +2687,7 @@ export function SettingsDialog({
     );
     const cachedModels = activeProviderModelsCache[cacheKey];
     if (cachedModels) {
-      trackModelsFetchResult(
-        {
-          result: 'success',
-          model_count: cachedModels.length,
-          duration_ms: 0,
-        },
-        'cache',
-      );
+      
       setProviderModelsState({
         status: 'done',
         cacheKey,
@@ -2895,13 +2730,7 @@ export function SettingsDialog({
           [cacheKey]: result.models ?? [],
         }));
       }
-      trackModelsFetchResult({
-        result: result.ok ? 'success' : 'failed',
-        ...(result.ok ? {} : { error_code: result.kind || 'UNKNOWN' }),
-        ...(result.ok ? {} : { error_kind: result.kind || 'UNKNOWN' }),
-        model_count: result.ok ? result.models?.length ?? 0 : 0,
-        duration_ms: Math.round(performance.now() - startedAt),
-      });
+      
       setProviderModelsState({ status: 'done', cacheKey, result });
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') return;
@@ -2919,13 +2748,7 @@ export function SettingsDialog({
           detail: err instanceof Error ? err.message : 'Model list request failed',
         },
       });
-      trackModelsFetchResult({
-        result: 'failed',
-        error_code: err instanceof Error ? err.name : 'UNKNOWN',
-        error_kind: err instanceof Error ? err.name : 'UNKNOWN',
-        model_count: 0,
-        duration_ms: Math.round(performance.now() - startedAt),
-      });
+      
     } finally {
       if (providerModelsAbortRef.current === controller) {
         providerModelsAbortRef.current = null;
@@ -3298,12 +3121,7 @@ export function SettingsDialog({
         ].join(':');
         if (byokPreflightTrackingRef.current !== trackingKey) {
           byokPreflightTrackingRef.current = trackingKey;
-          trackByokPreflightBlocked(analytics.track, {
-            source: 'settings',
-            reason: preflightReason,
-            provider_id: providerId,
-            active_execution_mode: activeExecutionMode,
-          });
+          
         }
       } else {
         byokPreflightTrackingRef.current = null;
@@ -3401,7 +3219,6 @@ export function SettingsDialog({
       }
     };
   }, [
-    analytics.track,
     autosaveCommitTick,
     autosaveRetryTick,
     cfg,
@@ -4168,12 +3985,12 @@ export function SettingsDialog({
                     selected.id === 'amr' &&
                     !workspaceContextLoading &&
                     (!workspaceContext ||
-                      workspaceContext.permissions?.canManageBilling === true)
+                      false)
                       ? () => {
                           const upgradeUrl = amrUpgradeUrl(amrCardStatus?.profile);
                           if (!upgradeUrl) return;
                           void openExternalUrl(
-                            attributedAmrSettingsUrl(upgradeUrl, 'settings_amr_upgrade'),
+                            attributedAmrSettingsUrl(upgradeUrl),
                           );
                         }
                       : undefined
@@ -4523,25 +4340,6 @@ export function SettingsDialog({
                     <strong>{t('settings.cloudCalloutTitle')}</strong>
                     <p>{t('settings.cloudCalloutBody')}</p>
                   </div>
-                  {/* Same device-auth flow as the 授权 button on the CapyDesign
-                      agent card below — the AMR/vela session IS the cloud
-                      identity, so signing in here is that one flow. This used to
-                      navigate to onboarding, which walked the user through the
-                      whole first-run tour to reach the same authorization. */}
-                  <AmrLoginPill
-                    className="settings-cloud-signin-callout__button"
-                    hideSignedOutStatus
-                    hideSignedInStatus
-                    initialStatus={amrCardStatus}
-                    skipInitialRefresh
-                    signInLabel={t('settings.cloudCalloutButton')}
-                    signInIcon="log-in"
-                    amrEntrySourceDetail="settings_cloud_callout"
-                    metricsConsent={cfg.telemetry?.metrics === true}
-                    installationId={cfg.installationId}
-                    onStatusChange={setAmrCardStatus}
-                    onSignedOut={onAmrSignedOut}
-                  />
                 </div>
               ) : null}
               {cfg.mode === 'api' ? (
@@ -4570,14 +4368,7 @@ export function SettingsDialog({
                             onClick={() => {
                               const byokProviderId = byokProtocolToTracking(provider.protocol);
                               if (byokProviderId) {
-                                trackSettingsByokProviderOptionClick(analytics.track, {
-                                  page_name: 'settings',
-                                  area: 'configure_execution_mode_byok',
-                                  element: 'byok_provider_option',
-                                  action: 'select_byok_provider',
-                                  provider_id: byokProviderId,
-                                  is_selected: active,
-                                });
+                                
                               }
                               if (!active) {
                                 setByokProvider(provider);
@@ -4719,7 +4510,7 @@ export function SettingsDialog({
                               : '';
                           const amrCardProfileBadge =
                             isAmrAgent && active && amrCardSignedIn
-                              ? amrProfileBadgeLabel(amrCardStatus?.profile)
+                              ? null
                               : null;
                           const amrWalletVisible =
                             isAmrAgent && active && amrCardSignedIn;
@@ -4739,16 +4530,13 @@ export function SettingsDialog({
                           // credits count as a dollar amount is what put
                           // "Balance $388307.00" on a workspace whose real
                           // balance was under $39.
-                          const workspaceBalanceUsd = workspaceBillingBalanceUsd(
-                            workspaceBillingResponse,
-                            workspaceContext,
-                          );
+                          const workspaceBalanceUsd = null;
                           const amrWorkspaceBalance =
                             amrWalletVisible && workspaceBalanceUsd
                               ? formatVelaBalanceUsd(workspaceBalanceUsd)
                               : null;
                           const amrCardIsTeam =
-                            workspaceContext?.workspaceType === 'team';
+                            false;
                           const amrCardBalanceLabel =
                             isAmrAgent &&
                             active &&
@@ -4776,18 +4564,9 @@ export function SettingsDialog({
                           // the badge set still renders verbatim.
                           const amrCardResolvedPlan =
                             isAmrAgent && active && amrCardSignedIn
-                              ? resolvePlanTier({
-                                  billing: workspaceBilling,
-                                  context: workspaceContext,
-                                  accountPlan: amrCardStatus?.account?.plan,
-                                })
+                              ? null
                               : null;
-                          const amrCardPlanLabel = amrCardResolvedPlan
-                            ? planBadgeTierForWorkspace({
-                                tier: amrCardResolvedPlan,
-                                workspaceType: workspaceContext?.workspaceType,
-                              }) ?? amrCardResolvedPlan
-                            : null;
+                          const amrCardPlanLabel = amrCardResolvedPlan ?? null;
                           // recvqfYKutwWlQ: a team member without billing
                           // permission (owner-only) can't act on an upgrade
                           // even when the plan tier itself is upgradeable, so
@@ -4807,11 +4586,7 @@ export function SettingsDialog({
                           // 团队版 Max owner was measured as "free" and offered
                           // an upgrade to the top tier they already hold, while
                           // the badge beside it correctly read Max.
-                          const amrCardCanUpgrade =
-                            isAmrAgent && active && amrCardSignedIn
-                              ? canUpgradeFromPlanTier(amrCardResolvedPlan) &&
-                                Boolean(workspaceContext?.permissions?.canManageBilling)
-                              : false;
+                          const amrCardCanUpgrade = false;
                           const amrRevealPendingCancelAction =
                             isAmrAgent &&
                             active &&
@@ -4844,27 +4619,10 @@ export function SettingsDialog({
                                   className="agent-card-select"
                                   data-testid={`settings-agent-select-${a.id}`}
                                   onClick={() => {
-                                    trackSettingsLocalCliClick(analytics.track, {
-                                      page_name: 'settings',
-                                      area: 'configure_execution_mode_local_cli',
-                                      element: 'cli_provider',
-                                      cli_provider_id: agentIdToTracking(a.id),
-                                      install_status: 'installed',
-                                    });
+                                    
                                     if (needsSetup) {
                                       setDshSetup({ busy: false, error: null });
                                       return;
-                                    }
-                                    if (isAmrAgent) {
-                                      recordAmrEntry(
-                                        analytics.track,
-                                        'settings_amr_agent_card',
-                                        new Date(),
-                                        {
-                                          metricsConsent:
-                                            cfg.telemetry?.metrics === true,
-                                        },
-                                      );
                                     }
                                     setCfg((c) => ({ ...c, agentId: a.id }));
                                   }}
@@ -4937,16 +4695,6 @@ export function SettingsDialog({
                                               className="agent-card-plan-badge-slot"
                                               aria-hidden="true"
                                             >
-                                              <PlanBadge
-                                                plan={amrCardPlanLabel}
-                                                size="sm"
-                                                className="agent-card-plan-badge"
-                                                title={
-                                                  amrCardPlanLabel
-                                                    ? `${t('settings.amrPlan')} ${amrCardPlanLabel}`
-                                                    : undefined
-                                                }
-                                              />
                                             </span>
                                           ) : null}
                                           {amrCardProfileBadge ? (
@@ -5019,10 +4767,7 @@ export function SettingsDialog({
                                             );
                                             if (!upgradeUrl) return;
                                             void openExternalUrl(
-                                              attributedAmrSettingsUrl(
-                                                upgradeUrl,
-                                                'settings_amr_upgrade',
-                                              ),
+                                              attributedAmrSettingsUrl(upgradeUrl),
                                             );
                                           }}
                                         >
@@ -5039,22 +4784,6 @@ export function SettingsDialog({
                                           {t('settings.amrUpgrade')}
                                         </button>
                                       ) : null}
-                                      <AmrLoginPill
-                                        className="agent-card-amr-auth"
-                                        hideSignedOutStatus
-                                        hideSignedInStatus
-                                        initialStatus={amrCardStatus}
-                                        skipInitialRefresh
-                                        signInLabel={t('settings.amrAuthorize')}
-                                        showConsoleAction={amrCardSignedIn}
-                                        iconOnlySignOut
-                                        amrEntrySourceDetail="settings_amr_authorize"
-                                        metricsConsent={cfg.telemetry?.metrics === true}
-                                        installationId={cfg.installationId}
-                                        revealPendingCancelAction={amrRevealPendingCancelAction}
-                                        onStatusChange={setAmrCardStatus}
-                                        onSignedOut={onAmrSignedOut}
-                                      />
                                     </span>
                                   ) : (
                                     <div
@@ -5315,10 +5044,7 @@ export function SettingsDialog({
                                     onClick={(event) => {
                                       markAgentInstallIntent();
                                       if (a.id === 'amr') {
-                                        event.currentTarget.href = attributedAmrSettingsUrl(
-                                          installUrl,
-                                          'settings_amr_install',
-                                        );
+                                        event.currentTarget.href = attributedAmrSettingsUrl(installUrl);
                                       }
                                     }}
                                   >
@@ -5626,13 +5352,7 @@ export function SettingsDialog({
                 onFocus={() => {
                   const byokProviderId = byokProtocolToTracking(apiProtocol);
                   if (byokProviderId) {
-                    trackSettingsByokFieldClick(analytics.track, {
-                      page_name: 'settings',
-                      area: 'configure_execution_mode_byok',
-                      element: 'api_key',
-                      provider_id: byokProviderId,
-                      has_value: Boolean(cfg.apiKey?.trim()),
-                    });
+                    
                   }
                 }}
                 onToggleShowApiKey={() => setShowApiKey((v) => !v)}
@@ -5668,13 +5388,7 @@ export function SettingsDialog({
                   onFocus={() => {
                     const byokProviderId = byokProtocolToTracking(apiProtocol);
                     if (byokProviderId) {
-                      trackSettingsByokFieldClick(analytics.track, {
-                        page_name: 'settings',
-                        area: 'configure_execution_mode_byok',
-                        element: 'base_url',
-                        provider_id: byokProviderId,
-                        has_value: Boolean(cfg.baseUrl?.trim()),
-                      });
+                      
                     }
                   }}
                 />
@@ -5756,13 +5470,7 @@ export function SettingsDialog({
                 onFocus={() => {
                   const byokProviderId = byokProtocolToTracking(apiProtocol);
                   if (byokProviderId) {
-                    trackSettingsByokFieldClick(analytics.track, {
-                      page_name: 'settings',
-                      area: 'configure_execution_mode_byok',
-                      element: 'model',
-                      provider_id: byokProviderId,
-                      has_value: Boolean(cfg.model?.trim()),
-                    });
+                    
                   }
                 }}
                 onModelSelect={(nextValue) => {
@@ -5924,16 +5632,7 @@ export function SettingsDialog({
               setCfg={setCfg}
               composioConfigLoading={composioConfigLoading}
               onPersistComposioKey={onPersistComposioKey}
-              onConnectorAuthResult={({ connectorId, action, result, errorCode }) =>
-                trackSettingsConnectorAuthResult(analytics.track, {
-                  page_name: 'settings',
-                  area: 'connectors',
-                  connector_id: connectorId,
-                  action,
-                  result,
-                  ...(errorCode ? { error_code: errorCode } : {}),
-                })
-              }
+              onConnectorAuthResult={({ connectorId, action, result, errorCode }) => {}}
             />
           ) : null}
 
@@ -5981,11 +5680,7 @@ export function SettingsDialog({
                         // P1 ui_click area=language — record the locale id
                         // that was picked, regardless of whether it differs
                         // from the current one (user clicked = signal).
-                        trackSettingsLanguageClick(analytics.track, {
-                          page_name: 'settings',
-                          area: 'language',
-                          element: next,
-                        });
+                        
                         setLocale(next);
                       }}
                     >
@@ -6282,9 +5977,6 @@ export function SettingsDialog({
             </section>
           ) : null}
 
-          {activeSection === 'workspace' && showWorkspaceSettings ? (
-            <SettingsWorkspaceSection context={workspaceContext} />
-          ) : null}
           {aboutToast ? (
             <Toast
               message={aboutToast}
@@ -7735,7 +7427,6 @@ function MediaProvidersSection({
   onChange: (providerId: string) => void;
 }) {
   const { t } = useI18n();
-  const analytics = useAnalytics();
   const [reloadRunning, setReloadRunning] = useState(false);
   const [reloadNotice, setReloadNotice] = useState<{ kind: 'error' | 'success'; message: string } | null>(null);
   const [visibleApiKeys, setVisibleApiKeys] = useState<ReadonlySet<string>>(
@@ -7917,11 +7608,7 @@ function MediaProvidersSection({
               reloadNotice?.kind === 'success' ? ' is-success-flash' : ''
             }`}
             onClick={() => {
-              trackSettingsMediaProvidersClick(analytics.track, {
-                page_name: 'settings',
-                area: 'media_providers',
-                element: 'reload',
-              });
+              
               void handleReload();
             }}
             disabled={reloadRunning}
@@ -8021,13 +7708,7 @@ function MediaProvidersSection({
                     placeholder={activeIsSavedState ? t('settings.connectorsReplaceKeyPlaceholder') : t('settings.mediaProviderPlaceholder')}
                     aria-label={`${activeProvider.label} ${t('settings.mediaProviderApiKey')}`}
                     onFocus={() => {
-                      trackSettingsMediaProvidersClick(analytics.track, {
-                        page_name: 'settings',
-                        area: 'media_providers',
-                        element: 'key_input',
-                        providers_id: activeProvider.id,
-                        is_configured: activeClearable,
-                      });
+                      
                     }}
                     onChange={(e) => updateProvider(activeProvider, { apiKey: e.target.value })}
                   />
@@ -8053,13 +7734,7 @@ function MediaProvidersSection({
                   placeholder={activeProvider.defaultBaseUrl || t('settings.mediaProviderBaseUrlPlaceholder')}
                   aria-label={`${activeProvider.label} ${t('settings.mediaProviderBaseUrl')}`}
                   onFocus={() => {
-                    trackSettingsMediaProvidersClick(analytics.track, {
-                      page_name: 'settings',
-                      area: 'media_providers',
-                      element: 'url_input',
-                      providers_id: activeProvider.id,
-                      is_configured: activeClearable,
-                    });
+                    
                   }}
                   onChange={(e) => updateProvider(activeProvider, { baseUrl: e.target.value })}
                 />
@@ -8107,17 +7782,7 @@ function MediaProvidersSection({
               className="ghost"
               disabled={!activeClearable}
               onClick={() => {
-                trackSettingsMediaProvidersClick(analytics.track, {
-                  page_name: 'settings',
-                  area: 'media_providers',
-                  element: 'clear',
-                  providers_id: activeProvider.id,
-                  // The click reports the state at the moment the
-                  // user pressed Clear; the actual clear only lands
-                  // after they confirm the dialog below, but the
-                  // dashboard cares about the intent signal.
-                  is_configured: activeClearable,
-                });
+                
                 // Match the existing window.confirm guard the rest of
                 // the app uses for destructive actions (conversation
                 // delete, design delete, file delete in FileWorkspace).
@@ -8923,16 +8588,11 @@ function ProjectScopedCritiqueTheaterSection({
   callerWorkspaceContext: WorkspaceCollabContext | null;
   persistedProjectWorkspaceId: string | null;
 }) {
-  const projectScope = useProjectWorkspaceScope(
-    projectId,
-    callerWorkspaceContext,
-    persistedProjectWorkspaceId,
-  );
   return (
     <CritiqueTheaterSectionContent
       activeProjectId={projectId}
-      projectScopeReady={projectWorkspaceScopeReady(projectScope.scope)}
-      workspaceContext={projectWorkspaceContext(projectScope.scope)}
+      projectScopeReady
+      workspaceContext={callerWorkspaceContext}
     />
   );
 }
@@ -8947,19 +8607,11 @@ function CritiqueTheaterSectionContent({
   workspaceContext: WorkspaceCollabContext | null;
 }) {
   const { t } = useI18n();
-  const analytics = useAnalytics();
   const enabled = useCritiqueTheaterEnabled();
 
   const handleToggle = () => {
     const next = !enabled;
-    trackSettingsDesignReviewClick(analytics.track, {
-      page_name: 'settings',
-      area: 'design_review',
-      element: 'enable_toggle',
-      status_before: enabled ? 'on' : 'off',
-      status_after: next ? 'on' : 'off',
-      has_active_project: activeProjectId !== null,
-    });
+    
     if (activeProjectId !== null && projectScopeReady) {
       void setCritiqueTheaterEnabled(next, {
         projectId: activeProjectId,
@@ -9050,7 +8702,6 @@ function NotificationsSection({
   setCfg: Dispatch<SetStateAction<AppConfig>>;
 }) {
   const { t } = useI18n();
-  const analytics = useAnalytics();
   const notif = cfg.notifications ?? DEFAULT_NOTIFICATIONS;
   const [permission, setPermission] = useState<NotificationPermission | 'unsupported'>(
     () => notificationPermission(),
@@ -9071,12 +8722,7 @@ function NotificationsSection({
     // P1 ui_click area=notifications element=completion_sound — the toggle
     // emits the post-click state on `completion_sound_status` so a single
     // event captures intent + outcome.
-    trackSettingsNotificationsClick(analytics.track, {
-      page_name: 'settings',
-      area: 'notifications',
-      element: 'completion_sound',
-      completion_sound_status: next ? 'on' : 'off',
-    });
+    
     updateNotif({ soundEnabled: next });
     // Give the user immediate audible feedback when turning the master
     // switch on so they know which sound they're signing up for. Resuming
@@ -9086,32 +8732,17 @@ function NotificationsSection({
 
   const toggleDesktop = async () => {
     if (notif.desktopEnabled) {
-      trackSettingsNotificationsClick(analytics.track, {
-        page_name: 'settings',
-        area: 'notifications',
-        element: 'desktop_notification',
-        desktop_notification_status: 'off',
-      });
+      
       updateNotif({ desktopEnabled: false });
       return;
     }
     const result = await requestNotificationPermission();
     setPermission(result);
     if (result === 'granted') {
-      trackSettingsNotificationsClick(analytics.track, {
-        page_name: 'settings',
-        area: 'notifications',
-        element: 'desktop_notification',
-        desktop_notification_status: 'on',
-      });
+      
       updateNotif({ desktopEnabled: true });
     } else {
-      trackSettingsNotificationsClick(analytics.track, {
-        page_name: 'settings',
-        area: 'notifications',
-        element: 'desktop_notification',
-        desktop_notification_status: 'off',
-      });
+      
       updateNotif({ desktopEnabled: false });
     }
   };
@@ -9168,12 +8799,7 @@ function NotificationsSection({
                     aria-pressed={notif.successSoundId === sound.id}
                     onClick={() => {
                       const trackingSoundId = soundIdToTracking(sound.id);
-                      trackSettingsNotificationsClick(analytics.track, {
-                        page_name: 'settings',
-                        area: 'notifications',
-                        element: 'success_sound',
-                        ...(trackingSoundId ? { sound_id: trackingSoundId } : {}),
-                      });
+                      
                       updateNotif({ successSoundId: sound.id });
                       playSound(sound.id);
                     }}
@@ -9195,12 +8821,7 @@ function NotificationsSection({
                     aria-pressed={notif.failureSoundId === sound.id}
                     onClick={() => {
                       const trackingSoundId = soundIdToTracking(sound.id);
-                      trackSettingsNotificationsClick(analytics.track, {
-                        page_name: 'settings',
-                        area: 'notifications',
-                        element: 'failure_sound',
-                        ...(trackingSoundId ? { sound_id: trackingSoundId } : {}),
-                      });
+                      
                       updateNotif({ failureSoundId: sound.id });
                       playSound(sound.id);
                     }}
@@ -9251,11 +8872,7 @@ function NotificationsSection({
         {notif.desktopEnabled && permission === 'granted' ? (
           <>
             <Button variant="ghost" onClick={() => {
-              trackSettingsNotificationsClick(analytics.track, {
-                page_name: 'settings',
-                area: 'notifications',
-                element: 'send_test',
-              });
+              
               void sendTestNotification();
             }}>
               {t('settings.notifyTest')}

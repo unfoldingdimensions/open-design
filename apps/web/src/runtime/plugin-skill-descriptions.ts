@@ -193,7 +193,7 @@ async function fetchSkillMarkdown(
     const response = await fetch(pluginAssetUrl(pluginId, assetPath), {
       signal: controller.signal,
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     });
     if (!response.ok) return null;
@@ -241,5 +241,4 @@ export async function loadPluginSkillDescriptions(
     entries.filter((entry): entry is readonly [string, string] => entry !== null),
   );
 }
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
-import { workspaceProjectHeaders } from '../collab/workspace-identity';
+import type { WorkspaceCollabContext } from './collab-contract';

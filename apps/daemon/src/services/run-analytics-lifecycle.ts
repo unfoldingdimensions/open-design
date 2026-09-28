@@ -28,8 +28,8 @@ import {
   type TrackingRunRecoveryActionType,
 } from '@capydesign/contracts/analytics';
 import { spawnEnvForAgent } from '../agents.js';
-import { newInsertId, normalizeAnalyticsCaptureResult } from '../analytics.js';
-import type { AnalyticsCaptureResult, AnalyticsContext } from '../analytics.js';
+import { newInsertId, normalizeAnalyticsCaptureResult } from '../local/telemetry-sink.js';
+import type { AnalyticsCaptureResult, AnalyticsContext } from '../local/telemetry-sink.js';
 import { agentCliEnvForAgent, readAppConfig } from '../app-config.js';
 import {
   codexSessionIdFromRunEvents,
@@ -40,11 +40,11 @@ import {
   getProject,
   updateProject,
 } from '../db.js';
-import { readVelaLoginStatus } from '../integrations/vela.js';
+import { readSessionStatus } from '../local/session-state.js';
 import {
-  deriveLangfuseDeliveryState,
+  deriveTelemetryDeliveryState,
   readTelemetrySinkConfig,
-} from '../langfuse-trace.js';
+} from '../local/telemetry-sink.js';
 import {
   agentProviderIdForRunAnalytics,
   amrUserIdForRunAnalytics,
@@ -393,7 +393,7 @@ export function createRunAnalyticsLifecycle(
               (appCfgForAnalytics as { agentCliEnv?: AgentCliEnv }).agentCliEnv,
               'amr',
             );
-            return readVelaLoginStatus(process.env, configuredAmrEnv);
+            return readSessionStatus(process.env, configuredAmrEnv);
           } catch {
             return null;
           }
@@ -706,7 +706,7 @@ export function createRunAnalyticsLifecycle(
           const appCfgAtFinish = await readAppConfig(RUNTIME_DATA_DIR).catch(
             () => ({} as Record<string, unknown>),
           );
-          const langfuseDeliveryForAnalytics = deriveLangfuseDeliveryState(
+          const langfuseDeliveryForAnalytics = deriveTelemetryDeliveryState(
             (appCfgAtFinish as { telemetry?: Record<string, unknown> }).telemetry ?? {},
             readTelemetrySinkConfig(),
           );

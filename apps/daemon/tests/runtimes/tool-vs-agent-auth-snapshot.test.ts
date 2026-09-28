@@ -6,7 +6,7 @@ import {
   reportsToolPrincipalAuthFailure,
 } from '../../src/runtimes/auth.js';
 import { SHIPPED_AGENT_DEFS } from '../../src/runtimes/registry.js';
-import { classifyAmrAccountFailure } from '../../src/integrations/vela-errors.js';
+import { classifyAccountFailure } from '../../src/local/legacy-bridge.js';
 import {
   GENERIC_ACP_FAILURE_CODE,
   withAcpServiceFailureCode,
@@ -26,7 +26,7 @@ import { classifyRunFailure } from '../../src/run-failure-classification.js';
 // It exists because the daemon's three auth classifiers answer ONE question
 // each, and all three answer it about the same flat blob of text:
 //
-//   - `classifyAmrAccountFailure`   — "is the AMR Cloud sign-in broken?"
+//   - `classifyAccountFailure`   — "is the AMR Cloud sign-in broken?"
 //   - `classifyAgentServiceFailure` — "is this agent's model-service credential
 //                                     broken?" (its `AGENT_AUTH_REQUIRED` is
 //                                     what becomes the SSE `error.code`)
@@ -49,7 +49,7 @@ interface Row {
   id: string;
   /** Real upstream text. Provenance in the comment above the row when not obvious. */
   text: string;
-  /** `classifyAmrAccountFailure(text)?.code` — unchanged by this work on every row. */
+  /** `classifyAccountFailure(text)?.code` — unchanged by this work on every row. */
   amrCode: string | null;
   /** `classifyAgentServiceFailure(text)` BEFORE this change. Documentation, and asserted below. */
   serviceCodeBefore: string | null;
@@ -214,9 +214,9 @@ describe('tool-vs-agent auth attribution landing table', () => {
   });
 
   it.each(ROWS)('$id keeps the AMR account verdict it already had', (row) => {
-    // The preceding change fixed `classifyAmrAccountFailure`. This one must not
+    // The preceding change fixed `classifyAccountFailure`. This one must not
     // move any of it: the AMR column is identical before and after.
-    expect(classifyAmrAccountFailure(row.text)?.code ?? null).toBe(row.amrCode);
+    expect(classifyAccountFailure(row.text)?.code ?? null).toBe(row.amrCode);
   });
 
   it('changes exactly the rows this work set out to change', () => {

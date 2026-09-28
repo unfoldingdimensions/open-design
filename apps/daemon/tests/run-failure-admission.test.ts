@@ -4,7 +4,6 @@ import { classifyRunFailure, type RunEventForFailureClassification } from '../sr
 // Minimized audit counterexamples: generic model/IDs, no user text or commands.
 // These are runtime inputs, not PH records augmented with LF-only errors.
 const windowError = '[code=model_limit_exceeded] model usage limit exceeded';
-const concurrencyError = '[code=tier_limit_exceeded] membership concurrency limit exceeded';
 const routeError = '[code=model_not_found] model "media-example" has no active routes for request kind "chat_completions"';
 const start = { event: 'start', data: { agentId: 'amr', model: 'media-example', streamFormat: 'acp-json-rpc' } };
 const prompt = { event: 'agent', data: { type: 'status', label: 'waiting_for_first_output' } };
@@ -19,13 +18,6 @@ function classify(message: string, events: RunEventForFailureClassification[] = 
 }
 
 describe('admission and attribution v3', () => {
-  it('keeps an explicit current-attempt handshake policy refusal before execution', () => {
-    expect(classify(`json-rpc id 2: ${concurrencyError}`, [start])).toMatchObject({
-      failure_category: 'rate_limit', failure_detail: 'membership_concurrency_limit',
-      policy_reason: 'membership_concurrency_limit', admission_phase: 'before_execution',
-      admission_status: 'rejected_policy', classifier_version: 'run-failure-v3',
-    });
-  });
   it('keeps an AMR handshake policy error without an attempt boundary unknown', () => {
     expect(classify(`json-rpc id 2: ${windowError}`, [])).toMatchObject({
       policy_reason: 'model_window_limit', admission_phase: 'unknown',

@@ -1,5 +1,3 @@
-import { useAnalytics } from '../analytics/provider';
-import { trackPrivacyModalClick } from '../analytics/events';
 import { useT } from '../i18n';
 import { Icon } from './Icon';
 
@@ -30,7 +28,6 @@ interface Props {
  */
 export function PrivacyConsentModal({ onShare, onDecline }: Props): JSX.Element {
   const t = useT();
-  const analytics = useAnalytics();
   return (
     <div className="privacy-consent-banner" role="region" aria-labelledby="privacy-consent-title">
       <div className="privacy-consent-banner-head">
@@ -80,11 +77,7 @@ export function PrivacyConsentModal({ onShare, onDecline }: Props): JSX.Element 
           type="button"
           className="privacy-consent-action privacy-consent-action--primary"
           onClick={() => {
-            trackPrivacyModalClick(analytics.track, {
-              page_name: 'home',
-              area: 'privacy_modal',
-              element: 'yes',
-            });
+            
             onShare();
           }}
         >

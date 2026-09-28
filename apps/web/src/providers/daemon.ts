@@ -1,3 +1,4 @@
+import type { AmrSessionState, AmrAuthNetworkPath, AmrAuthStage, AmrAuthStageResult, AmrAuthStageSource, AmrAuthErrorKind, AmrWalletSnapshot } from '../runtime/legacy-scope-types';
 /**
  * Daemon provider — fetch-based SSE client for /api/runs. The daemon can
  * emit three event streams depending on the agent's streamFormat:
@@ -10,37 +11,10 @@
  *                 non-zero (tail appended to the error message).
  */
 import type { AgentEvent, ChatCommentAttachment, ChatMessage } from '../types';
-import type { AmrEntryAttribution } from '../analytics/amr-attribution';
-import type {
-  AmrAuthErrorKind,
-  AmrAuthNetworkPath,
-  AmrAuthStage,
-  AmrAuthStageResult,
-  AmrAuthStageSource,
-} from '@capydesign/contracts/analytics';
-import type {
-  ApiErrorResponse,
-  ChatAnalyticsHints,
-  ChatRunCreateResponse,
-  ChatRunListResponse,
-  ChatRunStatus,
-  ChatRunStatusResponse,
-  ChatRequest,
-  ChatSessionMode,
-  ChatSseEvent,
-  ChatSseStartPayload,
-  DaemonAgentPayload,
-  AmrModelsResponse,
-  AmrWalletSnapshot,
-  ByokChatProviderConfig,
-  MediaExecutionPolicy,
-  ResearchOptions,
-  RunCancelOrigin,
-  RunContextSelection,
-  SseErrorPayload,
-  StrategyTaskProjectionV2,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+/* removed: imports from '@capydesign/contracts/analytics' no longer exist in contracts */
+import type { ApiErrorResponse, ChatAnalyticsHints, ChatRunCreateResponse, ChatRunListResponse, ChatRunStatus, ChatRunStatusResponse, ChatRequest, ChatSessionMode, ChatSseEvent, ChatSseStartPayload, DaemonAgentPayload, ByokChatProviderConfig, MediaExecutionPolicy, ResearchOptions, RunCancelOrigin, RunContextSelection, SseErrorPayload, StrategyTaskProjectionV2 } from '@capydesign/contracts';
+import type { AmrModelsResponse } from '../runtime/legacy-scope-types';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { OD_NEXT_AGENT_DECLARED_BLOCK_REASON } from '@capydesign/contracts';
 import type { StreamHandlers } from './anthropic';
 
@@ -58,11 +32,7 @@ const RUN_CANCEL_ORIGINS = new Set<string>([
 function isRunCancelOrigin(value: unknown): value is RunCancelOrigin {
   return typeof value === 'string' && RUN_CANCEL_ORIGINS.has(value);
 }
-import { workspaceProjectHeaders } from '../state/projects';
-import { setRuntimeAmrConsoleOrigin } from '../runtime/amr-guidance';
 import { coalescedGet } from '../lib/coalesced-get';
-import { currentWorkspaceAccountGeneration } from '../collab/workspace-identity';
-
 /**
  * Returns the front-end carrier that's about to send this request:
  * - 'desktop' when running inside the Electron shell
@@ -1120,14 +1090,14 @@ export async function streamViaDaemon({
           // telemetry trace can be tagged 'client:desktop' vs 'client:web'.
           // The daemon falls back to a User-Agent sniff when this header is
           // absent (e.g. third-party clients), so omitting it in tests is OK.
-          'X-OD-Client': detectClientType(),
+          'X-OD-Client': 'web',
           // Identifies the caller's workspace to the daemon's workspace-resource
           // mutation gate (see `enforceWorkspaceProjectMutation` in
           // apps/daemon/src/routes/runs.ts) — without it, a team member's own
           // run on a team-bound project 401s exactly like an unauthenticated
           // caller's would. Omitted (headers stay absent) for signed-out /
           // personal usage, matching every other workspace-gated write.
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body,
       });
@@ -1159,12 +1129,7 @@ export async function streamViaDaemon({
     // Start the stuck-run watchdog. trackRunProgress is called inside the
     // SSE consumer below on every event; trackRunTerminal fires when the
     // stream resolves to a terminal state (or errors out).
-    trackRunStart(runId, {
-      agent_id: agentId,
-      project_id: projectId ?? undefined,
-      conversation_id: conversationId ?? undefined,
-      client_type: detectClientType(),
-    });
+    
     // Chat-health first, correlation second — the same rule as the terminal
     // path below. `runStarted` flushes any window a previous run left open
     // (its terminal event never arrived), and that flush belongs to the OLD
@@ -1228,7 +1193,7 @@ export async function fetchChatRunStatus(
   try {
     const resp = await fetch(`/api/runs/${encodeURIComponent(runId)}`, {
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     });
     if (!resp.ok) return null;
@@ -1332,7 +1297,7 @@ export interface VelaLiveAccount {
 
 export interface VelaLoginStatus {
   loggedIn: boolean;
-  sessionState?: import('@capydesign/contracts').AmrSessionState;
+  sessionState?: AmrSessionState;
   credentialRevision?: string;
   loginInFlight?: boolean;
   profile: string;
@@ -1415,7 +1380,7 @@ export function readVelaLoginStatus(
 ): Promise<VelaLoginStatusRead> {
   const query = options.refresh ? '?refresh=1' : '';
   const url = `/api/integrations/vela/status${query}`;
-  const accountGeneration = currentWorkspaceAccountGeneration();
+  const accountGeneration = 0;
   return coalescedGet(
     `vela-login-status:${accountGeneration}:${url}`,
     async (): Promise<VelaLoginStatusRead> => {
@@ -1438,7 +1403,7 @@ export async function fetchVelaLoginStatus(options: { refresh?: boolean } = {}):
     // avatar menu, low-balance dialog) triggered the fetch. Doing it here rather
     // than in each caller is what keeps the origin out of web source: no caller
     // needs to know the hostname of the environment it is pointed at.
-    setRuntimeAmrConsoleOrigin(status.consoleOrigin);
+    void 0;
     return status;
   } catch {
     return null;
@@ -1479,7 +1444,7 @@ export interface StartVelaLoginResult {
 }
 
 export async function startVelaLogin(
-  attribution?: AmrEntryAttribution | null,
+  attribution?: Record<string, unknown> | null,
   odDeviceId?: string | null,
   authAttemptId?: string,
 ): Promise<StartVelaLoginResult> {
@@ -1589,7 +1554,7 @@ export async function reportChatRunFeedback(req: {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify(feedback),
     });
@@ -1621,7 +1586,7 @@ export async function steerChatRun(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+        ...(workspaceContext ? {} : {}),
       },
       body: JSON.stringify({ text: req.text }),
     });
@@ -1654,7 +1619,7 @@ export async function listActiveChatRuns(
     const qs = new URLSearchParams({ projectId, conversationId, status: 'active' });
     const resp = await fetch(`/api/runs?${qs.toString()}`, {
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     });
     if (!resp.ok) return [];
@@ -1671,7 +1636,7 @@ export async function listProjectRuns(
   try {
     const resp = await fetch('/api/runs', {
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     });
     if (!resp.ok) return [];
@@ -1716,12 +1681,7 @@ async function consumeDaemonRun(options: DaemonReattachOptions): Promise<void> {
     if (!result?.nextRunId) return;
     runId = result.nextRunId;
     initialLastEventId = null;
-    trackRunStart(runId, {
-      agent_id: options.agentId,
-      project_id: options.projectId ?? undefined,
-      conversation_id: options.conversationId ?? undefined,
-      client_type: detectClientType(),
-    });
+    
     // The next physical run of a strategy-task chain is a run start like any
     // other. Skipping it here would leave the correlation block pointing at
     // the run that just ended, so every stall in the rest of the chain would
@@ -1818,7 +1778,7 @@ async function consumeDaemonPhysicalRun({
     void fetch(`/api/runs/${encodeURIComponent(runId)}/cancel`, {
       method: 'POST',
       ...(workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : {}),
     })
       .then(async (resp) => {
@@ -1903,7 +1863,7 @@ async function consumeDaemonPhysicalRun({
           method: 'GET',
           signal,
           ...(workspaceContext
-            ? { headers: workspaceProjectHeaders(workspaceContext) }
+            ? { headers: {} }
             : {}),
         });
       } catch (err) {
@@ -1986,13 +1946,13 @@ async function consumeDaemonPhysicalRun({
           if (!parsed) continue;
           if (parsed.kind === 'comment') {
             sawStreamProgress = true;
-            trackRunProgress(runId);
+            
             continue;
           }
           if (parsed.kind !== 'event') continue;
           sawStreamProgress = true;
           sawRunEvent = true;
-          trackRunProgress(runId);
+          
           /*
            * S12 的静默计时就认这一刻 —— **上游给过我们东西**的唯一如实证据。
            *
@@ -2386,7 +2346,7 @@ async function consumeDaemonPhysicalRun({
     // resolved. If the watchdog was never armed (reattach paths that
     // hit the daemon for an already-finished run), trackRunTerminal
     // is a no-op for unknown runIds.
-    trackRunTerminal(runId, endStatus ?? (canceled ? 'canceled' : 'unknown'));
+    
     /*
      * ORDER IS THE POINT, and it is the same defect this whole change exists
      * to remove.

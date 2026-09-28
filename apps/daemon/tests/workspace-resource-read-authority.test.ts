@@ -2,7 +2,7 @@ import express from 'express';
 import type { AddressInfo } from 'node:net';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../src/local/collab-contract.js';
 
 import { registerPluginRoutes } from '../src/routes/plugins/index.js';
 import { registerStaticResourceRoutes } from '../src/routes/static-resource.js';

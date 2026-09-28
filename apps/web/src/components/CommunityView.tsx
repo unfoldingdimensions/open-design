@@ -16,11 +16,6 @@ import { canDuplicatePluginPreview } from './plugins-home/duplicate';
 import { PluginDetailsModal } from './PluginDetailsModal';
 import type { PluginUseAction } from './plugins-home/useActions';
 import { useInView } from './plugins-home/useInView';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import { useAnalytics } from '../analytics/provider';
-import { trackCommunityTemplateClick, trackPageView } from '../analytics/events';
-import { workspaceAnalyticsDimensions } from '../analytics/workspace';
-
 export interface CommunityTemplateUseTarget {
   templateId: string;
   prompt: string;
@@ -80,9 +75,8 @@ interface CommunityViewProps {
 
 export function CommunityView({ onRemixTemplate, onUsePrompt, onUsePlugin }: CommunityViewProps) {
   const { locale, t } = useI18n();
-  const analytics = useAnalytics();
-  const { context: workspaceContext } = useWorkspaceContext();
-  const workspaceDimensions = workspaceAnalyticsDimensions(workspaceContext);
+  const workspaceContext = null;
+  const workspaceDimensions = undefined;
   const pageViewRecordedRef = useRef(false);
   useEffect(() => {
     // React StrictMode replays mount effects in development. Keep one
@@ -90,8 +84,8 @@ export function CommunityView({ onRemixTemplate, onUsePrompt, onUsePlugin }: Com
     // dashboards share the same one-view/one-event contract.
     if (pageViewRecordedRef.current) return;
     pageViewRecordedRef.current = true;
-    trackPageView(analytics.track, { page_name: 'community' });
-  }, [analytics.track]);
+    
+  }, []);
   const [plugins, setPlugins] = useState<InstalledPluginRecord[]>([]);
   // The gallery card opens the FULL plugin details modal (Use split action +
   // Share + close) — the same surface the plugin library uses — while the
@@ -175,30 +169,14 @@ export function CommunityView({ onRemixTemplate, onUsePrompt, onUsePlugin }: Com
     // whether a request goes out. See the remixingIdRef comment above for
     // why the state flag alone cannot gate this.
     if (remixingIdRef.current) return;
-    trackCommunityTemplateClick(analytics.track, {
-      page_name: 'community',
-      area: 'community_templates',
-      element: 'remix',
-      template_key: template.id,
-      template_type: template.type,
-      resource_scope: templateScope(template.id),
-      ...workspaceDimensions,
-    });
+    
     remixingIdRef.current = template.id;
     setRemixingId(template.id);
     onRemixTemplate?.({ templateId: template.id, prompt: template.prompt });
   };
   const handleCardUse = (template: TemplateDemo) => {
     const target = templateUseTarget(template);
-    trackCommunityTemplateClick(analytics.track, {
-      page_name: 'community',
-      area: 'community_templates',
-      element: 'use_prompt',
-      template_key: template.id,
-      template_type: template.type,
-      resource_scope: templateScope(template.id),
-      ...workspaceDimensions,
-    });
+    
     const record = pluginById.get(template.id);
     if (record && onUsePlugin) {
       onUsePlugin(record, 'use-with-query', target);
@@ -217,15 +195,7 @@ export function CommunityView({ onRemixTemplate, onUsePrompt, onUsePlugin }: Com
   /** Card body → FULL details modal. Templates are a projection of the plugin
    *  catalogue, so the record behind a card is always present in `plugins`. */
   const openTemplateDetails = (template: TemplateDemo) => {
-    trackCommunityTemplateClick(analytics.track, {
-      page_name: 'community',
-      area: 'community_templates',
-      element: 'template_detail',
-      template_key: template.id,
-      template_type: template.type,
-      resource_scope: templateScope(template.id),
-      ...workspaceDimensions,
-    });
+    
     const record = plugins.find((row) => row.id === template.id) ?? null;
     setDetailsRecord(record);
   };
@@ -275,14 +245,7 @@ export function CommunityView({ onRemixTemplate, onUsePrompt, onUsePlugin }: Com
                 type="button"
                 className={activeType === type ? 'is-active' : ''}
                 onClick={() => {
-                  trackCommunityTemplateClick(analytics.track, {
-                    page_name: 'community',
-                    area: 'community_templates',
-                    element: 'filter',
-                    filter_type: 'category',
-                    filter_value: type,
-                    ...workspaceDimensions,
-                  });
+                  
                   setSelectedType(type);
                   setActiveSubtype('All');
                 }}
@@ -299,14 +262,7 @@ export function CommunityView({ onRemixTemplate, onUsePrompt, onUsePlugin }: Com
               type="button"
               className={activeSubtype === 'All' ? 'is-active' : ''}
               onClick={() => {
-                trackCommunityTemplateClick(analytics.track, {
-                  page_name: 'community',
-                  area: 'community_templates',
-                  element: 'filter',
-                  filter_type: 'subtype',
-                  filter_value: 'all',
-                  ...workspaceDimensions,
-                });
+                
                 setActiveSubtype('All');
               }}
             >
@@ -318,14 +274,7 @@ export function CommunityView({ onRemixTemplate, onUsePrompt, onUsePlugin }: Com
                 type="button"
                 className={activeSubtype === subtype ? 'is-active' : ''}
                 onClick={() => {
-                  trackCommunityTemplateClick(analytics.track, {
-                    page_name: 'community',
-                    area: 'community_templates',
-                    element: 'filter',
-                    filter_type: 'subtype',
-                    filter_value: subtype,
-                    ...workspaceDimensions,
-                  });
+                  
                   setActiveSubtype(subtype);
                 }}
               >

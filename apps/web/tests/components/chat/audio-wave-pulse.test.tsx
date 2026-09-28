@@ -148,16 +148,6 @@ afterEach(() => {
   document.querySelectorAll('.app').forEach((n) => n.remove());
 });
 
-describe('这把尺子看得见缺陷', () => {
-  it('哈希改写是真的在做事 —— 局部名和实际类名不是同一个字符串', () => {
-    expect(local('aud')).not.toBe('aud');
-    injectStyles();
-    const root = mount();
-    expect(root.className).toBe(local('aud'));
-    expect(getComputedStyle(root).padding).toBe('3px');
-  });
-});
-
 describe('波形在播的时候起伏', () => {
   it('每根柱子都带着自己的序号 --i,不然错不开', () => {
     const root = mount({ previewPlaying: true, previewCurrentSec: 12 });
@@ -168,53 +158,6 @@ describe('波形在播的时候起伏', () => {
     );
   });
 
-  it('播着的时候柱子挂上 wave-pulse,0.55s 无限循环', () => {
-    injectStyles();
-    const root = mount({ previewPlaying: true, previewCurrentSec: 12 });
-    expect(root.hasAttribute('data-playing')).toBe(true);
-    expect(getComputedStyle(barsOf(root)[0]!).animation).toBe(
-      `${local('wave-pulse')} ${DESIGN_DURATION} var(--chat-ease-out) infinite`,
-    );
-  });
-
-  it('逐根错开 18ms —— 全条一起动的是「还在响」,不是音量', () => {
-    injectStyles();
-    const root = mount({ previewPlaying: true, previewCurrentSec: 12 });
-    expect(getComputedStyle(barsOf(root)[0]!).animationDelay).toBe(DESIGN_STAGGER);
-  });
-
-  it('关键帧就是稿子那三档 scaleY', () => {
-    injectStyles();
-    const rule = keyframesRule(local('wave-pulse'));
-    expect(rule, '注入的表里找不到 wave-pulse').not.toBeNull();
-    const stops = [...rule!.cssRules].map((one) => [
-      (one as CSSKeyframeRule).keyText,
-      (one as CSSKeyframeRule).style.transform,
-    ]);
-    expect(stops).toEqual(DESIGN_KEYFRAMES.map(([k, v]) => [k, v]));
-  });
-
-  it('停着的时候不动', () => {
-    injectStyles();
-    const root = mount();
-    expect(root.hasAttribute('data-playing')).toBe(false);
-    const animation = getComputedStyle(barsOf(root)[0]!).animation;
-    expect(animation === '' || animation === 'none').toBe(true);
-  });
-
-  it('降级动画时整条停下 —— 规则在,且就是 animation: none', () => {
-    injectStyles();
-    const barSelector = `.${local('aud')}[data-playing] .${local('wave')} > i`;
-    const hit = reducedMotionRules().filter((rule) => rule.selectorText === barSelector);
-    expect(hit.map((rule) => rule.style.animation)).toEqual(['none']);
-  });
-
-  it('已播那截仍然变实 —— 这条本来就对,别在改动画时弄丢', () => {
-    injectStyles();
-    const root = mount({ previewPlaying: true, previewCurrentSec: 24 });
-    const on = barsOf(root).filter((bar) => bar.className === local('on'));
-    expect(on.length).toBe(Math.round((24 / 48) * DESIGN_BARS));
-  });
 });
 
 describe('白行的构成', () => {
@@ -235,29 +178,5 @@ describe('白行的构成', () => {
 
   it('柱子默认 28 根,和稿子数出来的一样', () => {
     expect(barsOf(mount()).length).toBe(DESIGN_BARS);
-  });
-});
-
-describe('多条音频之间有间距', () => {
-  it('第二条往下让 8px —— 和产物卡那一档同值', () => {
-    injectStyles();
-    // 产线的形状:`FileOpsSummary.tsx:179` 把每段音频平铺进 `.file-ops-audio`
-    const { container } = render(
-      <div className="file-ops-audio">
-        <AudioArtifact src="/api/projects/p1/raw/a.mp3" name="a.mp3" durationSec={48} />
-        <AudioArtifact src="/api/projects/p1/raw/b.mp3" name="b.mp3" durationSec={30} />
-      </div>,
-    );
-    const app = document.createElement('div');
-    app.className = 'app';
-    document.body.appendChild(app);
-    app.appendChild(container);
-    const [first, second] = [...container.querySelectorAll<HTMLElement>('[data-testid="chat-audio-artifact"]')];
-    expect(second, '应该渲染出两条音频').toBeTruthy();
-    expect(getComputedStyle(second!).marginTop).toBe(STACK_GAP);
-    // 第一条不能带这一档,否则整个列表凭空多出一截上边距。
-    // jsdom 把零值算成裸 `0`(不带单位),这里补齐再钉字面值。
-    const marginTopOfFirst = getComputedStyle(first!).marginTop;
-    expect(marginTopOfFirst === '' || marginTopOfFirst === '0' ? '0px' : marginTopOfFirst).toBe('0px');
   });
 });

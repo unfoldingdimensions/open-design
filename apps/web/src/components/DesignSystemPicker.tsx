@@ -12,7 +12,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent as ReactKeyboardEvent, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import type { DesignSystemSummary, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { DesignSystemSummary } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { useI18n } from '../i18n';
 import {
   localizeDesignSystemCategory,

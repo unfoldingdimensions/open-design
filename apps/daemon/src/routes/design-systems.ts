@@ -12,7 +12,7 @@ import type {
 } from '../design-systems/index.js';
 import type { DesignTokenContractRebuildPreparation } from '../design-systems/token-contract-rebuild.js';
 import { workspaceTeamDesignSystemBindingResourceId } from '../design-systems/workspace-team-binding.js';
-import { teamResourceWorkspaceRoot } from '../collab/team-resource-materialization.js';
+import { teamResourceWorkspaceRoot } from '../local/team-resource-materialization.js';
 import type {
   DesignSystemGenerationJob,
   DesignSystemRevisionInput,
@@ -27,7 +27,7 @@ import {
   resolveOptionalLocalWorkspaceRequestAuthority,
   type VerifyWorkspaceRequestAuthority,
   type WorkspaceResourceAccessInput,
-} from '../collab/workspace-resource-mutation.js';
+} from '../local/workspace-resource-mutation.js';
 import type { Project, ProjectFile } from '@capydesign/contracts';
 
 type DbHandle = ReturnType<typeof openDatabase>;
@@ -351,13 +351,6 @@ export function registerDesignSystemRoutes(
       });
       return false;
     }
-    if (binding && !resolution.context) {
-      res.status(400).json({
-        error: 'WORKSPACE_CONTEXT_REQUIRED',
-        message: 'an explicit workspace context is required',
-      });
-      return false;
-    }
     return enforceVerifiedWorkspaceResourceRead(
       'design_system',
       req,
@@ -423,13 +416,6 @@ export function registerDesignSystemRoutes(
       res.status(403).json({
         error: 'WORKSPACE_DESIGN_SYSTEM_PERMISSION_DENIED',
         message: 'workspace design_system mutation is not allowed',
-      });
-      return false;
-    }
-    if (binding && !resolution.context) {
-      res.status(400).json({
-        error: 'WORKSPACE_CONTEXT_REQUIRED',
-        message: 'an explicit workspace context is required',
       });
       return false;
     }

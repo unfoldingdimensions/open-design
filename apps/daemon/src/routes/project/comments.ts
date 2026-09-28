@@ -1,11 +1,9 @@
 import type { Express, Request } from 'express';
-import type {
-  PreviewComment,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { PreviewComment } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../local/collab-contract.js';
 import { projectKindFromMetadataToTrackingOrLegacyDefault } from '@capydesign/contracts/analytics';
 import type { RouteDeps } from '../../server-context.js';
-import type { BoundWorkspaceResourceMutationGate } from '../../collab/workspace-resource-mutation.js';
+import type { BoundWorkspaceResourceMutationGate } from '../../local/workspace-resource-mutation.js';
 import { getProject, isProjectCommentAnchorConversationId } from '../../db.js';
 
 export type ProjectCommentWorkspaceContextResolution =

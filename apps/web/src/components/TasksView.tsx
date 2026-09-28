@@ -21,21 +21,14 @@ import { useT } from '../i18n';
 import type { SkillSummary } from '../types';
 
 type TranslateFn = ReturnType<typeof useT>;
-import { useAnalytics } from '../analytics/provider';
-import { trackAutomationsClick, trackPageView } from '../analytics/events';
 import {
   NewAutomationModal,
   type AutomationTemplate,
   type AutomationTemplateKind,
 } from './NewAutomationModal';
 import { describeRoutineSchedule } from './routineScheduleLabels';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
 import { listProjects } from '../state/projects';
-import {
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-} from '../collab/workspace-identity';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 
 type ProjectSummary = { id: string; name: string };
 type TemplateFilter =
@@ -396,7 +389,6 @@ function errorMessage(err: unknown): string {
 
 export function TasksView({ skills = [], designTemplates = [], connectors = [], isActive = true }: Props) {
   const t = useT();
-  const analytics = useAnalytics();
   // Attaches the same workspace identity headers project reads already carry,
   // so the daemon's `GET /api/workspaces/:id/projects` returns the caller's
   // team projects instead of falling back to the no-scope `GET /api/projects`
@@ -410,11 +402,11 @@ export function TasksView({ skills = [], designTemplates = [], connectors = [], 
   // is omitted (that default is right for the Home "Drafts" tab, wrong here —
   // see `workspaceProjectListViewForRoute` in App.tsx for the same per-surface
   // view choice made project-browsing routes).
-  const { context: tasksWorkspaceContext } = useWorkspaceContext();
-  const tasksWorkspaceIdentity = workspaceIdentityCacheKey(tasksWorkspaceContext);
+  const tasksWorkspaceContext = null;
+  const tasksWorkspaceIdentity = 'none';
   const routineHeaders = useMemo(
     () => tasksWorkspaceContext
-      ? workspaceProjectHeaders(tasksWorkspaceContext)
+      ? {}
       : undefined,
     // The identity contains every authority field placed on the wire.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -426,8 +418,8 @@ export function TasksView({ skills = [], designTemplates = [], connectors = [], 
   useEffect(() => {
     if (pageViewFiredRef.fired) return;
     pageViewFiredRef.fired = true;
-    trackPageView(analytics.track, { page_name: 'automations' });
-  }, [analytics.track, pageViewFiredRef]);
+    
+  }, [ pageViewFiredRef]);
   // P2 ui_click page_name=automations. Fire on every actionable click inside
   // the tab before running the handler, so navigations that unmount the view
   // still report.
@@ -436,14 +428,9 @@ export function TasksView({ skills = [], designTemplates = [], connectors = [], 
       element: AutomationsClickProps['element'],
       extra?: Pick<AutomationsClickProps, 'type_id' | 'filter_id' | 'template_kind'>,
     ) => {
-      trackAutomationsClick(analytics.track, {
-        page_name: 'automations',
-        area: 'automations',
-        element,
-        ...extra,
-      });
+      
     },
-    [analytics.track],
+    [],
   );
   const [routines, setRoutines] = useState<Routine[]>([]);
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
@@ -1104,7 +1091,7 @@ function AutomationRunHistory({
   t: TranslateFn;
 }) {
   const [runs, setRuns] = useState<RoutineRun[] | null>(null);
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+  const workspaceIdentity = 'none';
 
   useEffect(() => {
     let cancelled = false;
@@ -1112,7 +1099,7 @@ function AutomationRunHistory({
     void (async () => {
       try {
         const res = await fetch(`/api/routines/${routineId}/runs?limit=10`, workspaceContext
-          ? { headers: workspaceProjectHeaders(workspaceContext) }
+          ? { headers: {} }
           : undefined);
         if (!res.ok) throw new Error(`runs: ${res.status}`);
         const json = await res.json();

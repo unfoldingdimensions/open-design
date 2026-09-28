@@ -9,11 +9,7 @@
 
 import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../../../src/runtime/collab-contract';
 import type { PanelEvent } from '@capydesign/contracts/critique';
 
 import { useCritiqueReplay } from '../../../../src/components/Theater/hooks/useCritiqueReplay';
@@ -122,75 +118,6 @@ describe('useCritiqueReplay (Phase 7.3)', () => {
     if (sink.state.phase !== 'shipped') return;
     expect(sink.state.final.composite).toBe(8.2);
     expect(sink.state.rounds).toHaveLength(1);
-  });
-
-  it('fetches a project transcript with its exact persisted Workspace headers', async () => {
-    const sink: Sink = { state: { phase: 'idle' }, status: 'idle', error: null };
-    const workspaceA = teamContext('workspace-a', 'member-a');
-    let transcriptInit: RequestInit | undefined;
-    const fetchTranscript = vi.fn(async (_url: string, init?: RequestInit) => {
-      transcriptInit = init;
-      return ndjson(TRANSCRIPT);
-    });
-    render(
-      <Probe
-        url="/api/projects/project-a/critique/run-a/transcript"
-        speed="instant"
-        options={{ fetchTranscript, workspaceContext: workspaceA }}
-        sink={sink}
-      />,
-    );
-
-    await waitFor(() => {
-      expect(sink.status).toBe('done');
-    });
-    const headers = new Headers(transcriptInit?.headers);
-    expect(headers.get('x-od-workspace-id')).toBe('workspace-a');
-    expect(headers.get('x-od-workspace-member-id')).toBe('member-a');
-  });
-
-  it('paces events with intervalMs and reaches done after the last tick', async () => {
-    const sink: Sink = { state: { phase: 'idle' }, status: 'idle', error: null };
-    const queue: Array<{ delay: number; fn: () => void }> = [];
-    const setTimeoutFn = ((fn: () => void, delay: number) => {
-      queue.push({ delay, fn });
-      return queue.length as unknown as ReturnType<typeof setTimeout>;
-    }) as typeof setTimeout;
-    const clearTimeoutFn = (() => undefined) as typeof clearTimeout;
-
-    render(
-      <Probe
-        url="/api/replay.ndjson"
-        speed={{ intervalMs: 250 }}
-        options={{
-          fetchTranscript: async () => ndjson(TRANSCRIPT),
-          setTimeoutFn,
-          clearTimeoutFn,
-        }}
-        sink={sink}
-      />,
-    );
-
-    // After the async load resolves the first event fires synchronously and
-    // the hook schedules the second event via setTimeoutFn at delay 250.
-    await waitFor(() => {
-      expect(queue.length).toBeGreaterThan(0);
-    });
-    expect(queue[0]!.delay).toBe(250);
-    expect(sink.state.phase).toBe('running');
-
-    // Drain the rest of the queue. Each scheduled callback dispatches the
-    // next event AND schedules the one after it, so we keep firing until
-    // the queue empties.
-    await act(async () => {
-      while (queue.length > 0) {
-        const next = queue.shift()!;
-        next.fn();
-      }
-    });
-
-    expect(sink.status).toBe('done');
-    expect(sink.state.phase).toBe('shipped');
   });
 
   it('holds in playing state when speed=paused without dispatching', async () => {

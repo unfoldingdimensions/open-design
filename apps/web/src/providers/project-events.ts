@@ -1,21 +1,9 @@
 import { useEffect, useRef } from 'react';
+import type { CollabProjectInvalidationSsePayload, ProjectContentTransferStateSsePayload } from '../runtime/legacy-scope-types';
 import { BackoffController } from '../lib/backoff';
 import { bindStreamVisibility } from '../lib/stream-visibility';
-import {
-  COLLAB_PROJECT_INVALIDATION_EVENTS,
-  PROJECT_CONTENT_TRANSFER_STATE_EVENT,
-  type ChatArtifactRefsChangedSsePayload,
-  type CollabProjectInvalidationSsePayload,
-  type LiveArtifactRefreshSsePayload,
-  type LiveArtifactSsePayload,
-  type ProjectConversationCreatedSsePayload,
-  type ProjectContentTransferStateSsePayload,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
-import {
-  workspaceIdentityCacheKey,
-  workspaceResourceUrl,
-} from '../collab/workspace-identity';
+import { type ChatArtifactRefsChangedSsePayload, type LiveArtifactRefreshSsePayload, type LiveArtifactSsePayload, type ProjectConversationCreatedSsePayload } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 export interface ProjectFileChangeEvent {
   type: 'file-changed';
   path: string;
@@ -35,6 +23,16 @@ export type ProjectLiveArtifactEvent = LiveArtifactSsePayload | LiveArtifactRefr
 // `project-metadata-changed`). The consumer re-fetches the affected resource on
 // receipt — the event carries no body.
 export type ProjectCollabInvalidationEvent = CollabProjectInvalidationSsePayload;
+
+/** The SSE `event:` names for the project-scoped collab invalidations. */
+export const COLLAB_PROJECT_INVALIDATION_EVENTS = [
+  'comment-changed',
+  'presence-changed',
+  'project-metadata-changed',
+] as const;
+
+/** Event name for a project's content-transfer state change. */
+export const PROJECT_CONTENT_TRANSFER_STATE_EVENT = 'project-content-transfer-state';
 
 /**
  * A finished message's artifact refs changed after its run's terminal frame.
@@ -87,10 +85,7 @@ export function projectEventsUrl(
   projectId: string,
   workspaceContext?: WorkspaceCollabContext | null,
 ): string {
-  return workspaceResourceUrl(
-    `/api/projects/${encodeURIComponent(projectId)}/events`,
-    workspaceContext,
-  );
+  return `/api/projects/${encodeURIComponent(projectId)}/events`;
 }
 
 export interface ProjectEventsConnection {
@@ -364,7 +359,7 @@ export function useProjectFileEvents(
   }, [
     projectId,
     enabled,
-    workspaceIdentityCacheKey(workspaceContext),
+    'none',
     options.EventSourceCtor,
     options.initialBackoffMs,
     options.maxBackoffMs,

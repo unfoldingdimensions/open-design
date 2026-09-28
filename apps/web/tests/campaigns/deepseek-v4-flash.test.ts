@@ -137,13 +137,6 @@ describe('DeepSeek V4 Flash campaign', () => {
     expect(campaignDialogSource).toContain('styles.boundary');
   });
 
-  it('keeps the unpaid DeepSeek upgrade on Pricing without rendering Go', () => {
-    expect(campaignDialogSource).toContain('goPlanPricingUrl');
-    expect(campaignDialogSource).toContain("'deepseek_unpaid_modal'");
-    expect(campaignDialogSource).toContain("t('campaign.deepseekV4Flash.unpaid.cta')");
-    expect(campaignDialogSource).not.toContain('styles.goWelcome');
-  });
-
   it('keeps campaign visibility free of every URL review backdoor (product decision)', () => {
     const campaignLibSource = readFileSync(
       new URL('../../src/campaigns/deepseek-v4-flash.ts', import.meta.url),

@@ -54,8 +54,6 @@ import {
   acpToolResultContent,
   acpSafeToolResultContent,
   acpTelemetryToolCallId,
-  promotedAmrRetryStatusPayload,
-  promotedAmrStderrPayload,
 } from './updates.js';
 import {
   findModelConfigOption,
@@ -64,7 +62,6 @@ import {
 } from './models.js';
 import { buildAcpSessionNewParams, buildPromptBlocks, type AcpMcpServerInput } from './session-params.js';
 import { withholdStdioMcpServersForBuild } from './stdio-mcp.js';
-import { createVelaChildEvidenceConsumer } from '../../runtimes/vela-child-evidence.js';
 import { withAcpEmissionProvenance, type AcpEmissionMeta } from './emission-provenance.js';
 import {
   createToolExecutionLifecycleDeduper,
@@ -329,22 +326,6 @@ export function attachAcpSession({
     openedBlocks: 0,
     closedBlocks: 0,
   };
-  // The AMR discriminator is deliberately required here. A generic ACP agent
-  // advertising a same-named extension must not silently expand the daemon's
-  // accepted protocol surface.
-  const velaChildEvidenceConsumer = modelUnavailableErrorCode
-    ? createVelaChildEvidenceConsumer({
-        onFact: (fact) => {
-          send('agent', {
-            type: 'diagnostic',
-            name: 'vela_opencode_child_agent_lifecycle',
-            source: 'amr-opencode',
-            elapsedMs: Date.now() - runStartedAt,
-            ...fact,
-          });
-        },
-      })
-    : null;
   const acpArtifactWriteToolCallIds = new Set<string>();
   // Per toolCallId: accumulate name/input/path/result across partial ACP frames
   // and emit exactly one tool_use + one tool_result at terminal status (or on
@@ -1099,37 +1080,6 @@ export function attachAcpSession({
     }
     const update = asObject(params?.update);
     if (obj.method === 'session/update' && update) {
-      if (modelUnavailableErrorCode) {
-        const promotedPayload = promotedAmrRetryStatusPayload(update);
-        if (promotedPayload) {
-          failWithPayload(promotedPayload);
-          return;
-        }
-      }
-      const velaChildResult = velaChildEvidenceConsumer?.observe({
-        expectedAcpSessionId: sessionId,
-        envelopeAcpSessionId: params?.sessionId,
-        update,
-      });
-      if (velaChildResult?.handled) {
-        if (
-          velaChildResult.reason &&
-          velaChildRejectionDiagnosticCount < ACP_RAW_EVENT_SHAPE_DIAGNOSTIC_LIMIT
-        ) {
-          velaChildRejectionDiagnosticCount += 1;
-          send('agent', {
-            type: 'diagnostic',
-            name: 'vela_opencode_child_evidence_rejected',
-            source: 'amr-opencode',
-            elapsedMs: Date.now() - runStartedAt,
-            reason: velaChildResult.reason,
-          });
-        }
-        // Accepted facts are emitted by onFact. Rejected child frames must not
-        // fall through to generic status/raw diagnostics, which could copy
-        // unallowlisted producer fields.
-        return;
-      }
       if (emitAcpExecutionObservability(update)) {
         return;
       }
@@ -1345,16 +1295,6 @@ export function attachAcpSession({
       return;
     }
     if (expectedId === 1) {
-      const negotiation = velaChildEvidenceConsumer?.negotiate(result);
-      if (negotiation?.advertised) {
-        send('agent', {
-          type: 'diagnostic',
-          name: 'vela_opencode_child_evidence_capability',
-          source: 'amr-opencode',
-          elapsedMs: Date.now() - runStartedAt,
-          ...negotiation,
-        });
-      }
       expectedId = nextId;
       if (resumeSessionId) {
         // Resume the prior upstream session instead of creating a fresh one.
@@ -1487,9 +1427,6 @@ export function attachAcpSession({
     acpStderrTail = `${acpStderrTail}${String(chunk)}`.slice(
       -AMR_STDERR_RETRY_TAIL_LIMIT,
     );
-    if (!modelUnavailableErrorCode) return;
-    const promotedPayload = promotedAmrStderrPayload(acpStderrTail);
-    if (promotedPayload) failWithPayload(promotedPayload);
   });
   child.on('close', (code, signal) => {
     clearStageTimer();
@@ -1538,19 +1475,6 @@ export function attachAcpSession({
     /** Returns `true` when the session ended with a fatal protocol or transport error, allowing the caller to surface the failure. */
     hasFatalError() {
       return fatal;
-    },
-    /**
-     * Child-evidence coverage for this ACP run, or `undefined` when the agent
-     * is not the AMR-discriminated runtime and therefore has no child-evidence
-     * consumer. The daemon publishes this as the `child_evidence_coverage_v1`
-     * diagnostic at child close; without it every AMR task aggregates as
-     * `child_lifecycle_unavailable_not_zero`, which cannot distinguish a run
-     * that had no Child agents from a run nobody was observing.
-     */
-    childEvidenceCoverage() {
-      return velaChildEvidenceConsumer?.childEvidenceCoverage({
-        sessionComplete: promptCompletedCleanly(),
-      });
     },
     // The durable upstream session handle to persist for resume, or null when
     // none was reported (older agents, or a handshake that never established a

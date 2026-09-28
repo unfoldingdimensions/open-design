@@ -14,10 +14,8 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { VisuallyHidden } from '@capydesign/components';
-import type {
-  InstalledPluginRecord,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { InstalledPluginRecord } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../runtime/collab-contract';
 import { useI18n } from '../../i18n';
 import { useDeckPreviewScale } from '../../lib/use-deck-preview-scale';
 import type { PluginShareAction } from '../../state/projects';

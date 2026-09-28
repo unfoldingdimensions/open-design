@@ -1,6 +1,6 @@
 import { Counter, Histogram, register } from 'prom-client';
 
-import type { WorkspaceAuthorityCacheMode } from '../collab/workspace-authority-health.js';
+import type { WorkspaceAuthorityCacheMode } from '../local/workspace-authority-health.js';
 
 export type WorkspaceAuthorityMetricSource =
   | 'cache'

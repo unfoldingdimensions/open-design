@@ -6,8 +6,6 @@ import { useBrandExtract } from '../runtime/useBrandExtract';
 import type { BrandReference } from '../runtime/brand-references';
 import { BrandReferencePicker } from './BrandReferencePicker';
 import styles from './NewBrandModal.module.css';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -18,7 +16,7 @@ interface Props {
 
 export function NewBrandModal({ open, onClose, onCreated }: Props) {
   const t = useT();
-  const { context: workspaceContext } = useWorkspaceContext();
+  const workspaceContext = null;
   const { state, run, reset } = useBrandExtract();
   const [url, setUrl] = useState('');
   const inputRef = useRef<HTMLInputElement | null>(null);

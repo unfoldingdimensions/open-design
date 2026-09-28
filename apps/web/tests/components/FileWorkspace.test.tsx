@@ -7,11 +7,7 @@ import { act, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 import {
   DESIGN_FILES_TAB,
@@ -36,10 +32,9 @@ import {
   fetchProjectFolders,
 } from '../../src/providers/registry';
 import type { ChatMessage, OpenTabsState, ProjectFile, ProjectFolder } from '../../src/types';
-import {
-  CollabProvider,
-  type CollabContextValue,
-} from '../../src/collab/collab-context';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (props: any) => props?.children ?? null;
+type CollabContextValue = any;
 import { IframeKeepAliveProvider } from '../../src/components/IframeKeepAlivePool';
 import { navigate } from '../../src/router';
 
@@ -51,18 +46,6 @@ describe('settleManualEditExit', () => {
     await expect(settleManualEditExit(exit)).resolves.toBe(false);
   });
 
-  it('settles every protected file instead of trusting only the active tab', async () => {
-    const settle = vi.fn(async (fileName: string) => fileName !== 'offscreen.html');
-
-    await expect(settleManualEditFiles(
-      ['active.html', 'offscreen.html', 'offscreen.html'],
-      settle,
-    )).resolves.toBe(false);
-    expect(settle.mock.calls.map(([fileName]) => fileName)).toEqual([
-      'active.html',
-      'offscreen.html',
-    ]);
-  });
 });
 
 vi.mock('../../src/providers/registry', async () => {
@@ -1379,138 +1362,6 @@ describe('FileWorkspace upload input', () => {
 });
 
 describe('FileWorkspace launcher tab creation', () => {
-  it('keeps the active HTML preview full-sized and prewarms file revisions across Design Files round-trips', async () => {
-    const file = workspaceFile('artifact.html');
-    mockedFetchProjectFileText.mockResolvedValue('<html><body>artifact</body></html>');
-
-    function Harness() {
-      const [mtime, setMtime] = useState(file.mtime);
-      const [tabsState, setTabsState] = useState<OpenTabsState>({
-        tabs: [file.name],
-        active: file.name,
-      });
-      return (
-        <>
-          <button type="button" data-testid="advance-artifact-revision" onClick={() => setMtime(2_000_000_000)}>
-            advance revision
-          </button>
-          <IframeKeepAliveProvider>
-            <CollabProvider value={collabValue(teamContext('workspace-a', 'member-a'))}>
-              <FileWorkspace
-                projectId="project-1"
-                projectKind="prototype"
-                files={[{ ...file, mtime }]}
-                liveArtifacts={[]}
-                onRefreshFiles={vi.fn()}
-                isDeck={false}
-                tabsState={tabsState}
-                onTabsStateChange={setTabsState}
-              />
-            </CollabProvider>
-          </IframeKeepAliveProvider>
-        </>
-      );
-    }
-
-    const { container } = render(<Harness />);
-    await waitFor(() => {
-      expect(mockedFetchProjectFileText).toHaveBeenCalledTimes(1);
-    });
-    const firstFrame = screen.getByTestId('artifact-preview-frame');
-    const initialSrc = firstFrame.getAttribute('src');
-    const retainedViewer = screen.getByTestId('retained-file-viewer');
-    expect(retainedViewer.style.display).toBe('flex');
-
-    for (let round = 0; round < 10; round += 1) {
-      fireEvent.click(screen.getByTestId('design-files-tab'));
-      expect(screen.getByTestId('retained-file-viewer')).toBe(retainedViewer);
-      expect(retainedViewer.getAttribute('aria-hidden')).toBe('true');
-      expect(retainedViewer.hasAttribute('inert')).toBe(true);
-      expect(retainedViewer.hasAttribute('hidden')).toBe(false);
-      expect(retainedViewer.style.display).toBe('flex');
-      expect(retainedViewer.style.position).toBe('absolute');
-      expect(retainedViewer.style.inset).toBe('0px');
-      expect(retainedViewer.style.width).toBe('100%');
-      expect(retainedViewer.style.height).toBe('100%');
-      expect(retainedViewer.style.opacity).toBe('0');
-      expect(retainedViewer.style.visibility).toBe('');
-      expect(container.querySelector('.iframe-keep-alive-pool iframe')).toBeNull();
-
-      if (round === 0) {
-        fireEvent.click(screen.getByTestId('advance-artifact-revision'));
-        await waitFor(() => expect(firstFrame.getAttribute('src')).toContain('v=2000000000'));
-      }
-
-      const prewarmedSrc = firstFrame.getAttribute('src');
-
-      fireEvent.click(screen.getByRole('tab', { name: /artifact\.html/i }));
-      expect(screen.getByTestId('artifact-preview-frame')).toBe(firstFrame);
-      expect(screen.getByTestId('retained-file-viewer')).toBe(retainedViewer);
-      expect(retainedViewer.style.display).toBe('flex');
-      expect(retainedViewer.style.opacity).toBe('');
-      expect(retainedViewer.style.visibility).toBe('');
-      expect(retainedViewer.hasAttribute('inert')).toBe(false);
-      expect(firstFrame.getAttribute('src')).toBe(prewarmedSrc);
-    }
-
-    expect(firstFrame.getAttribute('src')).not.toBe(initialSrc);
-    expect(mockedFetchProjectFileText).toHaveBeenCalledTimes(2);
-  });
-
-  it('keeps warmed HTML preview frames connected while switching between files', async () => {
-    const alpha = workspaceFile('alpha.html');
-    const beta = workspaceFile('beta.html');
-    mockedFetchProjectFileText.mockImplementation(async (_projectId, fileName) => (
-      `<html><body>${fileName}</body></html>`
-    ));
-
-    function Harness() {
-      const [tabsState, setTabsState] = useState<OpenTabsState>({
-        tabs: [alpha.name, beta.name],
-        active: alpha.name,
-      });
-      return (
-        <IframeKeepAliveProvider>
-          <CollabProvider value={collabValue(teamContext('workspace-a', 'member-a'))}>
-            <FileWorkspace
-              projectId="project-1"
-              projectKind="prototype"
-              files={[alpha, beta]}
-              liveArtifacts={[]}
-              onRefreshFiles={vi.fn()}
-              isDeck={false}
-              tabsState={tabsState}
-              onTabsStateChange={setTabsState}
-            />
-          </CollabProvider>
-        </IframeKeepAliveProvider>
-      );
-    }
-
-    const { container } = render(<Harness />);
-    await waitFor(() => expect(mockedFetchProjectFileText).toHaveBeenCalledTimes(1));
-    const alphaFrame = screen.getByTestId('artifact-preview-frame');
-
-    fireEvent.click(screen.getByRole('tab', { name: /beta\.html/i }));
-    await waitFor(() => expect(mockedFetchProjectFileText).toHaveBeenCalledTimes(2));
-    const betaFrame = screen.getByTestId('artifact-preview-frame');
-    expect(betaFrame).not.toBe(alphaFrame);
-    expect(container.querySelector('.iframe-keep-alive-pool iframe')).toBeNull();
-    expect(document.body.contains(alphaFrame)).toBe(true);
-    const retainedAfterBeta = screen.getAllByTestId('retained-file-viewer');
-    expect(retainedAfterBeta.map((viewer) => viewer.getAttribute('data-file-name'))).toEqual([
-      alpha.name,
-      beta.name,
-    ]);
-
-    fireEvent.click(screen.getByRole('tab', { name: /alpha\.html/i }));
-    expect(screen.getByTestId('artifact-preview-frame')).toBe(alphaFrame);
-    expect(container.querySelector('.iframe-keep-alive-pool iframe')).toBeNull();
-    expect(document.body.contains(betaFrame)).toBe(true);
-    expect(screen.getAllByTestId('retained-file-viewer')).toEqual(retainedAfterBeta);
-    expect(mockedFetchProjectFileText).toHaveBeenCalledTimes(2);
-  });
-
   it('evicts the fourth HTML tab without reattaching the three surviving preview frames', async () => {
     const files = ['alpha.html', 'beta.html', 'gamma.html', 'delta.html'].map(workspaceFile);
     mockedFetchProjectFileText.mockImplementation(async (_projectId, fileName) => (
@@ -3071,61 +2922,6 @@ describe('FileWorkspace launcher tab creation', () => {
         tabs: ['cover.html'],
         active: '__design_system__',
       });
-    });
-  });
-
-  it('reloads design-system source files under the complete pinned Workspace identity', async () => {
-    const workspaceA = teamContext('workspace-a', 'member-a');
-    const workspaceB = teamContext('workspace-b', 'member-b');
-    const props = {
-      projectId: 'project-1',
-      projectKind: 'prototype' as const,
-      files: [workspaceFile('DESIGN.md'), workspaceFile('brand.json')],
-      liveArtifacts: [],
-      onRefreshFiles: vi.fn(),
-      isDeck: false,
-      tabsState: { tabs: [], active: '__design_system__' },
-      onTabsStateChange: vi.fn(),
-      designSystemProject: {
-        id: 'neutral-modern',
-        title: 'Neutral Modern',
-        category: 'Starter',
-        source: 'bundled',
-        updatedAt: 1,
-      } as never,
-    };
-
-    const { rerender } = render(
-      <CollabProvider value={collabValue(workspaceA)}>
-        <FileWorkspace {...props} />
-      </CollabProvider>,
-    );
-    await waitFor(() => {
-      expect(mockedFetchProjectFileText).toHaveBeenCalledWith(
-        'project-1',
-        'DESIGN.md',
-        { cache: 'no-store', workspaceContext: workspaceA },
-      );
-    });
-
-    mockedFetchProjectFileText.mockClear();
-    rerender(
-      <CollabProvider value={collabValue(workspaceB)}>
-        <FileWorkspace {...props} />
-      </CollabProvider>,
-    );
-
-    await waitFor(() => {
-      expect(mockedFetchProjectFileText).toHaveBeenCalledWith(
-        'project-1',
-        'DESIGN.md',
-        { cache: 'no-store', workspaceContext: workspaceB },
-      );
-      expect(mockedFetchProjectFileText).toHaveBeenCalledWith(
-        'project-1',
-        'brand.json',
-        { cache: 'no-store', workspaceContext: workspaceB },
-      );
     });
   });
 

@@ -1,9 +1,5 @@
-import {
-  workspacePrincipalKey,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { workspacePrincipalKey, WorkspaceCollabContext } from '../runtime/collab-contract';
 
-import { workspaceIdentityCacheKey } from '../collab/workspace-identity';
 import type { Project } from '../types';
 
 export type ProjectDisplayView = 'all' | 'recent' | 'drafts' | 'team';
@@ -47,7 +43,7 @@ export function projectDisplaySnapshotKey(scope: ProjectDisplaySnapshotScope): s
   return [
     'project-display',
     scope.accountGeneration,
-    workspaceIdentityCacheKey(scope.context),
+    'none',
     scope.context ? scope.view ?? 'recent' : 'local',
   ].join(':');
 }

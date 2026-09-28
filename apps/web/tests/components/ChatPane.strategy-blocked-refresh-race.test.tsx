@@ -53,16 +53,6 @@ vi.mock('../../src/components/ChatComposer', () => ({
   ChatComposer: forwardRef((_props, _ref) => <div data-testid="composer" />),
 }));
 
-vi.mock('../../src/analytics/events', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/analytics/events')>();
-  return {
-    ...actual,
-    trackChatPanelClick: vi.fn(),
-    trackRunFailedToastSurfaceView: vi.fn(),
-    trackRunRecoveryActionClick: vi.fn(),
-    trackRunRecoveryActionSurfaceView: vi.fn(),
-  };
-});
 
 beforeAll(() => {
   const store = new Map<string, string>();
@@ -409,30 +399,6 @@ describe('服务端对齐到达后,blocked 的原因码要活下来', () => {
 });
 
 describe('对齐之后那张卡:专用文案,不是泛化的「任务执行失败」', () => {
-  it('标题和正文都是 agentReplyIncomplete 那一档,英文原文不出现在卡上', () => {
-    const merged = mergeServerMessagesIntoConversation(
-      localMessagesBeforeAlignment(),
-      serverAlignedMessages(),
-    );
-    const { container } = renderChat(merged, STRATEGY_TASK_BLOCKED_MESSAGE);
-
-    const card = container.querySelector<HTMLElement>(
-      '[data-user-action-card="run-recovery"]',
-    );
-    expect(card).toBeTruthy();
-    expect(card!.textContent).toContain('chat.runError.title.agentReplyIncomplete');
-    // 泛化标题被顶掉了才算真的命中这一档。
-    expect(card!.textContent).not.toContain('chat.runError.title.generic');
-
-    const description = card!.querySelector('[data-testid="chat-run-error-description"]');
-    expect(description?.textContent).toContain('chat.runError.agentReplyIncompleteMessage');
-    expect(description?.textContent).not.toContain('chat.runError.fallbackMessage');
-
-    // 用户实际看到的那串英文诊断句,一个字都不该出现在卡面上。
-    expect(card!.textContent).not.toContain('machine-readable state');
-    expect(card!.textContent).not.toContain(STRATEGY_TASK_BLOCKED_MESSAGE);
-  });
-
   // OPEND-2422:「阻断错误卡缺少重试按钮」。那一排动作整体挂在
   // `retryAssistant && onRetry && runFailureUi` 上,runFailureUi 为空时
   // 一颗按钮都画不出来 —— 同一处根因的下游后果。
@@ -452,23 +418,3 @@ describe('对齐之后那张卡:专用文案,不是泛化的「任务执行失�
 // (`deliverableValid`)时,endStatus 保持 `succeeded`、不构造错误。那一路本地的
 // `runStatus` 就是 `succeeded`,所以合并不该无中生有地把它翻成失败。
 // 少了这条,一个「本地 blocked 就一律判失败」的实现也会绿。
-describe('blocked 但已交付的那一路不受影响', () => {
-  it('本地本来就是 succeeded,合并后不冒出报错卡', () => {
-    const [user, serverAssistant] = serverAlignedMessages();
-    const settled = strategySettledMessageFields(BLOCKED_PROJECTION);
-    const deliveredDespiteBlock: ChatMessage = {
-      ...serverAssistant!,
-      events: streamedRunEvents(),
-      ...settled,
-    };
-    const merged = mergeServerMessagesIntoConversation(
-      [user!, deliveredDespiteBlock],
-      serverAlignedMessages(),
-    );
-    const assistant = merged.find((message) => message.id === ASSISTANT_ID);
-    expect(assistant!.runStatus).toBe('succeeded');
-
-    const { container } = renderChat(merged, null);
-    expect(container.querySelector('[data-user-action-card="run-recovery"]')).toBeNull();
-  });
-});

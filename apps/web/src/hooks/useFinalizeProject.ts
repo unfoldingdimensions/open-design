@@ -13,15 +13,8 @@
 //     just the daemon's category label (#450 verification commitment).
 
 import { useCallback, useRef, useState } from 'react';
-import type {
-  ApiErrorCode,
-  FinalizeAnthropicRequest,
-  FinalizeAnthropicResponse,
-  FinalizeProviderProtocol,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
-import { workspaceProjectHeaders } from '../collab/workspace-identity';
-
+import type { ApiErrorCode, FinalizeAnthropicRequest, FinalizeAnthropicResponse, FinalizeProviderProtocol } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 // 130 000 ms = daemon timeout (120 s) + 10 s buffer so the daemon's
 // own retry/timeout layer always wins under normal failure modes.
 const FETCH_TIMEOUT_MS = 130_000;
@@ -111,7 +104,7 @@ export function useFinalizeProject(
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+              ...(workspaceContext ? {} : {}),
             },
             body: JSON.stringify(req),
             signal: controller.signal,

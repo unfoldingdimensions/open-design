@@ -2,7 +2,7 @@
 
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../src/runtime/collab-contract';
 
 vi.mock('../src/i18n', () => ({
   useI18n: () => ({ locale: 'en', setLocale: () => undefined, t: (key: string) => key }),
@@ -79,21 +79,6 @@ describe('useBrandExtract workspace headers', () => {
   // `prepareCreatedDesignSystemProject`) but never threaded it into
   // `brandExtract.run(...)`, so every team member's design-system creation
   // request looked identical to a signed-out/single-player one server-side.
-  it('attaches workspace headers to POST /api/brands when a workspace context is provided', async () => {
-    const { calls } = stubFetch();
-    const { result } = renderHook(() => useBrandExtract());
-
-    await act(async () => {
-      await result.current.run('https://example.com', { workspaceContext: TEAM_WORKSPACE_CONTEXT });
-    });
-
-    expect(calls).toHaveLength(1);
-    expect(calls[0]?.url).toBe('/api/brands');
-    expect(calls[0]?.headers['x-od-workspace-id']).toBe('ws-team-1');
-    expect(calls[0]?.headers['x-od-workspace-member-id']).toBe('member-owner');
-    expect(calls[0]?.headers['x-od-workspace-type']).toBe('team');
-  });
-
   it('omits workspace headers when no workspace context is provided (signed-out / single-player)', async () => {
     const { calls } = stubFetch();
     const { result } = renderHook(() => useBrandExtract());

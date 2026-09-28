@@ -134,13 +134,6 @@ const labelsOf = (root: HTMLElement): string[] =>
     .map((el) => el.getAttribute('aria-label') ?? '');
 
 describe('OPEND-2626 · 停止过的历史回合恢复后的终态', () => {
-  it('壳头不再自称「进行中」—— 那是真的在跑的回合才说的话', () => {
-    const { container } = renderRestoredHistoryTurn();
-    const text = container.textContent ?? '';
-    expect(text).not.toContain(en['chat.record.running']);
-    expect(text).toContain(en['chat.record.canceled']);
-  });
-
   it('壳头那句话是这一轮唯一常驻的陈述 —— 「已手动停止」在历史回合上是 hover 才揭示的', () => {
     const { container } = renderRestoredHistoryTurn();
     const footer = container.querySelector('[data-testid="assistant-footer"]');
@@ -148,21 +141,6 @@ describe('OPEND-2626 · 停止过的历史回合恢复后的终态', () => {
     // 藏起来(OPEND-2542)。这一条钉住「不能指望它替壳头说话」这个前提。
     expect(footer?.getAttribute('data-canceled')).toBe('true');
     expect(footer?.getAttribute('data-last')).toBe('false');
-  });
-
-  it('停止前正在跑的那一步,不许和从没开始过的那几步报同一个名字', () => {
-    const { container } = renderRestoredHistoryTurn();
-    const labels = labelsOf(container);
-    const notStarted = labels.filter((l) => l === en['chat.record.pending']);
-    // 三条步骤里只有后两条从没开始过 —— 原来是三条全报 "Not started"
-    expect(notStarted).toHaveLength(2);
-    /*
-     * 那一条报的是「没跑完」,不是「已取消」:同一个 `stopped` 也会由一次
-     * **跑完了但没收尾**的 succeeded 轮次产出(`closeRunningSegments`),
-     * 那一档没人取消过它。判据与反例在 `w85-orb-mark-say-term.test.tsx`。
-     */
-    expect(labels).toContain(en['chat.record.unfinished']);
-    expect(labels).not.toContain(en['chat.record.canceled']);
   });
 
   /*

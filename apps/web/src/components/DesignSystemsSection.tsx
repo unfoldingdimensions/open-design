@@ -14,9 +14,6 @@ import { DesignSystemPreviewModal } from './DesignSystemPreviewModal';
 import { Icon } from './Icon';
 import { orderDesignSystemGroups } from './design-system-group-order';
 import { AnimatePresence } from 'motion/react';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import { workspaceIdentityCacheKey } from '../collab/workspace-identity';
-
 // Sibling Settings section that hosts the design-systems registry.
 // Lifted out of the previous LibrarySection so each surface (functional
 // skills vs. design systems) gets its own dedicated nav entry instead of
@@ -74,8 +71,8 @@ export function DesignSystemsSection({
   const [importedDesignSystem, setImportedDesignSystem] = useState<DesignSystemSummary | null>(null);
   const [highlightedDesignSystemId, setHighlightedDesignSystemId] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
-  const { context: workspaceContext } = useWorkspaceContext();
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+  const workspaceContext = null;
+  const workspaceIdentity = 'none';
 
   useEffect(() => {
     let cancelled = false;

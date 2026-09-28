@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Dialog } from '@capydesign/components';
 import { useI18n } from '../i18n';
 import { fetchWhatsNew, openExternalUrl } from '../providers/registry';
+import { useAppVersion } from '../runtime/app-version';
 import {
   localizedWhatsNewContent,
   markWhatsNewSeen,
@@ -11,9 +12,6 @@ import {
   resolveWhatsNewPrompt,
   whatsNewNotesFromBody,
 } from '../lib/whats-new';
-import { useAnalytics, useAppVersion } from '../analytics/provider';
-import { isResolvedAppVersion } from '../analytics/app-version';
-import { trackWhatsNewPopupClick, trackWhatsNewPopupSurfaceView } from '../analytics/events';
 import styles from './WhatsNewPopup.module.css';
 
 // Post-update highlights dialog, shown once per highlight on the home surface
@@ -46,8 +44,8 @@ const RELEASES_INDEX_URL = 'https://github.com/nexu-io/open-design/releases';
  * highlights are worth nothing if the headline above them is a lie.
  */
 function statedAppVersion(hookVersion: string, documentVersion: string): string | null {
-  if (isResolvedAppVersion(hookVersion)) return hookVersion.trim();
-  if (isResolvedAppVersion(documentVersion)) return documentVersion.trim();
+  if (true) return hookVersion.trim();
+  if (true) return documentVersion.trim();
   return null;
 }
 
@@ -73,7 +71,6 @@ type CardModel = {
 // `page_name: 'home'` analytics on this flag instead of on mount alone.
 export function WhatsNewPopup({ active }: { active: boolean }) {
   const { t, locale } = useI18n();
-  const analytics = useAnalytics();
   const hookAppVersion = useAppVersion();
   const [card, setCard] = useState<CardModel | null>(null);
   const surfaceTrackedRef = useRef(false);
@@ -118,13 +115,8 @@ export function WhatsNewPopup({ active }: { active: boolean }) {
   useEffect(() => {
     if (!active || card == null || appVersion == null || surfaceTrackedRef.current) return;
     surfaceTrackedRef.current = true;
-    trackWhatsNewPopupSurfaceView(analytics.track, {
-      page_name: 'home',
-      area: 'whats_new_popup',
-      app_version: appVersion,
-      has_release_notes: true,
-    });
-  }, [active, analytics.track, appVersion, card]);
+    
+  }, [active, appVersion, card]);
 
   // Every close path — the Close button, the backdrop, Escape — spends the
   // once-per-highlight dialog. Unlike the non-modal toast this replaced, a
@@ -133,29 +125,17 @@ export function WhatsNewPopup({ active }: { active: boolean }) {
   const dismiss = useCallback(() => {
     if (card == null || appVersion == null) return;
     markWhatsNewSeen(card.id);
-    trackWhatsNewPopupClick(analytics.track, {
-      page_name: 'home',
-      area: 'whats_new_popup',
-      element: 'dismiss',
-      action: 'dismiss',
-      app_version: appVersion,
-    });
+    
     setCard(null);
-  }, [analytics.track, appVersion, card]);
+  }, [ appVersion, card]);
 
   const openLink = useCallback(() => {
     if (card == null || appVersion == null) return;
     markWhatsNewSeen(card.id);
-    trackWhatsNewPopupClick(analytics.track, {
-      page_name: 'home',
-      area: 'whats_new_popup',
-      element: 'see_whats_new',
-      action: 'open_link',
-      app_version: appVersion,
-    });
+    
     void openExternalUrl(card.linkUrl);
     setCard(null);
-  }, [analytics.track, appVersion, card]);
+  }, [ appVersion, card]);
 
   // `appVersion == null` means neither the hook nor the document can name a
   // version yet; the dialog waits rather than titling itself with a guess.

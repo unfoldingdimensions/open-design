@@ -17,9 +17,7 @@ import {
   clearPathResolutionCache,
   forgetUnusableExecutables,
   rememberUnusableExecutable,
-  resolveAmrOpenCodeExecutable,
 } from './executables.js';
-import { resolveAmrProfile } from '../integrations/vela.js';
 import {
   buildAuthDiagnostic,
   buildCompatibilityDiagnostic,
@@ -254,21 +252,6 @@ function configuredEnvForAgent(
   return configuredEnvByAgent?.[configAgentId] ?? {};
 }
 
-function amrModelScopeFromEnv(env: NodeJS.ProcessEnv): string {
-  return resolveAmrProfile(env);
-}
-
-function withRememberedAmrModels(
-  def: RuntimeAgentDef,
-  env: NodeJS.ProcessEnv,
-  modelResult: FetchedRuntimeModels,
-): FetchedRuntimeModels {
-  if (def.id !== 'amr' || modelResult.models.length > 0) return modelResult;
-  const rememberedModels = getRememberedLiveModels(def.id, amrModelScopeFromEnv(env));
-  if (rememberedModels.length === 0) return modelResult;
-  return { models: rememberedModels, source: 'live' };
-}
-
 async function fetchModels(
   def: RuntimeAgentDef,
   resolvedBin: string,
@@ -444,24 +427,6 @@ function versionIsSupported(policy: RuntimeVersionPolicy, version: string): bool
   return policy.supportedVersionPattern?.test(version) ?? false;
 }
 
-async function probeAmrOpenCodeVersion(
-  def: RuntimeAgentDef,
-  env: NodeJS.ProcessEnv,
-): Promise<string | null> {
-  if (def.id !== 'amr') return null;
-  const companion = resolveAmrOpenCodeExecutable(env);
-  if (!companion) return null;
-  try {
-    const { stdout } = await execAgentFile(companion, ['--version'], {
-      env,
-      timeout: def.versionProbeTimeoutMs ?? 3000,
-    });
-    return String(stdout).trim().split('\n')[0] || null;
-  } catch {
-    return null;
-  }
-}
-
 type RuntimeVersionProbeContext = {
   launchPath: string;
   probeEnv: NodeJS.ProcessEnv;
@@ -529,9 +494,6 @@ function runtimeVersionProbeContext(
     ),
     launch,
   );
-  const companionPath = def.id === 'amr'
-    ? resolveAmrOpenCodeExecutable(probeEnv)
-    : null;
   const context: RuntimeVersionProbeContext = {
     launchPath: launch.launchPath,
     probeEnv,
@@ -539,7 +501,6 @@ function runtimeVersionProbeContext(
       agentId: def.id,
       selectedPath: launch.selectedPath,
       launchPath: launch.launchPath,
-      companionPath,
     })).digest('hex'),
   };
   versionProbeContextCache.set(key, context);
@@ -550,20 +511,11 @@ async function probeRuntimeVersionsOnly(
   def: RuntimeAgentDef,
   context: RuntimeVersionProbeContext,
 ): Promise<DetectedRuntimeVersions | null> {
-  const [outcome, amrOpenCodeVersion] = await Promise.all([
-    probeVersionAtPath(def, context.launchPath, context.probeEnv),
-    probeAmrOpenCodeVersion(def, context.probeEnv),
-  ]);
+  const outcome = await probeVersionAtPath(def, context.launchPath, context.probeEnv);
   if (outcome.kind !== 'spawned') return null;
   const versions: DetectedRuntimeVersions = {
     invocable: true,
     ...(outcome.version ? { agentCliVersion: outcome.version } : {}),
-    ...(amrOpenCodeVersion
-      ? {
-          runtimeCompanionName: 'opencode',
-          runtimeCompanionVersion: amrOpenCodeVersion,
-        }
-      : {}),
   };
   detectedRuntimeVersions.set(def.id, versions);
   detectedRuntimeVersionScopes.set(def.id, context.scope);
@@ -828,13 +780,12 @@ async function probe(
   // so a single agent's detection wall is max(help, models, auth) ≈ 5s rather
   // than the sum ≈ 15s. `--help` capabilities are cached on `agentCapabilities`
   // for buildArgs to consult.
-  const [helpCaps, hiddenCaps, modelResult, auth, amrOpenCodeVersion] =
+  const [helpCaps, hiddenCaps, modelResult, auth] =
     await Promise.all([
       probeCapabilities(def, launch.launchPath, probeEnv),
       probeHiddenCapabilityFlags(def, launch.launchPath, probeEnv),
       fetchModels(def, launch.launchPath, probeEnv),
       probeAgentAuthStatus(def, launch.launchPath, probeEnv),
-      probeAmrOpenCodeVersion(def, probeEnv),
     ]);
   // `probeCapabilities` returns null when the agent declares no help metadata;
   // hidden-flag results still deserve to land, so only collapse to null when
@@ -843,7 +794,7 @@ async function probe(
     helpCaps || Object.keys(hiddenCaps).length > 0
       ? { ...(helpCaps ?? {}), ...hiddenCaps }
       : null;
-  const surfacedModelResult = withRememberedAmrModels(def, probeEnv, modelResult);
+  const surfacedModelResult = modelResult;
   if (caps) {
     agentCapabilities.set(def.id, caps);
     // The versions scope below is set unconditionally; the capabilities scope
@@ -857,12 +808,6 @@ async function probe(
   const runtimeVersions: DetectedRuntimeVersions = {
     invocable: true,
     ...(outcome.version ? { agentCliVersion: outcome.version } : {}),
-    ...(amrOpenCodeVersion
-      ? {
-          runtimeCompanionName: 'opencode',
-          runtimeCompanionVersion: amrOpenCodeVersion,
-        }
-      : {}),
     ...(runtimeCompanionVersion
       ? {
           runtimeCompanionName: def.id === 'deepseek-harness'
@@ -959,15 +904,7 @@ function rememberDetectedLiveModels(
   configuredEnv: Record<string, string>,
   agent: DetectedAgent,
 ): void {
-  if (def.id === 'amr' && agent.models.length === 0) return;
-  const scope = def.id === 'amr'
-    ? amrModelScopeFromEnv({
-        ...process.env,
-        ...(def.env || {}),
-        ...configuredEnv,
-      })
-    : null;
-  rememberLiveModels(agent.id, agent.models, scope);
+  rememberLiveModels(agent.id, agent.models, null);
 }
 
 export async function detectAgents(

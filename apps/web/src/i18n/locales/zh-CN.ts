@@ -1,119 +1,116 @@
 import type { Dict } from "../types";
 
 export const zhCN: Dict = {
-  'invite.header.eyebrow': "团队邀请",
-  'invite.loading': "正在加载邀请…",
-  'invite.landing.title': "加入团队",
-  'invite.landing.subtitle': "你被邀请加入 CapyDesign 一起协作。",
-  'invite.landing.roleLabel': "角色",
-  'invite.landing.invitedEmail': "受邀邮箱",
-  'invite.landing.expires': "有效期至",
-  'invite.role.admin': "管理员",
-  'invite.role.member': "成员",
-  'invite.role.admin.desc': "可管理成员、席位以及全部项目设置。",
-  'invite.role.member.desc': "可创建自己的项目，并查看和评论团队共享项目。",
-  'invite.accept.cta': "接受邀请",
-  'invite.accountMismatch.title': "当前登录的是其他账号",
-  'invite.accountMismatch.body': "该邀请发送至另一个邮箱。你可以继续使用当前账号，或切换账号。",
-  'invite.accountMismatch.continue': "继续使用当前账号",
-  'invite.accountMismatch.switch': "切换账号",
-  'invite.accepting.title': "正在加入团队…",
-  'invite.accepting.body': "正在为你创建成员身份。",
-  'invite.success.title': "已加入",
-  'invite.success.body': "正在打开 CapyDesign，开始协作。",
-  'invite.success.roleReceipt': "加入身份",
-  'invite.success.enter': "进入工作空间",
-  'invite.open.cta': "打开 CapyDesign",
-  'invite.open.opening': "正在打开 CapyDesign…",
-  'invite.open.retry': "已安装？再次尝试打开",
-  'invite.notInstalled.title': "没有自动打开？",
-  'invite.notInstalled.body': "你的设备可能还没有安装 CapyDesign。安装后重新打开此链接即可完成加入。",
-  'invite.notInstalled.download': "下载 CapyDesign",
-  'invite.error.title': "无法接受此邀请",
-  'invite.error.invite_expired': "该邀请已过期。请让管理员重新发送。",
-  'invite.error.invite_consumed': "该邀请已被使用。",
-  'invite.error.workspace_seat_limit_reached': "团队席位已满。请让管理员释放或增加席位。",
-  'invite.error.workspace_subscription_locked': "团队订阅未生效，暂时无法加入新成员。",
-  'invite.error.workspace_not_found': "该工作空间已不存在。",
-  'invite.error.workspace_forbidden': "你的账号无权接受此邀请。",
-  'invite.error.invite_unavailable': "该邀请已不可用。",
-  'invite.error.generic': "出了点问题，请重试。",
-  'invite.error.retry': "重试",
-  "workspaceInvite.dialogAria": "邀请成员",
-  "workspaceInvite.title": "邀请成员加入你的团队",
-  "workspaceInvite.freePlanBody": "免费版含 1 个席位，邀请同事后将引导你升级到团队版。",
-  "workspaceInvite.teamPlanBody": "邀请同事加入团队，一起共享项目、设计系统与插件。",
-  "workspaceInvite.seatsExhaustedBody": "当前工作空间的席位已用完，先增加席位后即可邀请同事。",
-  "workspaceInvite.seatsExhaustedAction": "查看席位与套餐",
-  "workspaceInvite.emailLabel": "通过电子邮件邀请成员",
-  "workspaceInvite.roleLabel": "分配角色",
-  "workspaceInvite.defaultRoleLabel": "默认身份",
-  "workspaceInvite.emailPlaceholder": "输入电子邮件地址……",
-  "workspaceInvite.removeRow": "移除",
-  "workspaceInvite.addMember": "添加成员",
-  "workspaceInvite.visibilityQuestion": "团队成员会看到我的设计吗?",
-  "workspaceInvite.visibilityAnswer": "团队成员可以看到你共享到团队空间的设计；保存在「个人项目」中的私人设计不会对其他人可见。",
-  "workspaceInvite.sent": "已发送邀请",
-  "workspaceInvite.sending": "邀请中……",
-  "workspaceInvite.confirm": "确认并邀请",
-  "workspaceInvite.submitFailed": "邀请发送失败，请稍后重试。",
-  "workspaceInvite.errorAlreadyMember": "该邮箱已是团队成员。",
-  "workspaceInvite.errorPendingInvite": "该邮箱已有待接受的邀请。",
-  "workspaceInvite.errorNoSession": "请先登录你的 Vela 账号再邀请成员。",
-  "workspaceInvite.errorNoWorkspace": "当前还没有可邀请成员的团队空间。",
-  "workspaceInvite.errorUnreachable": "邀请未能送达，请稍后重试。",
-  "chat.amrCard.switchTitle": "模型调用失败，当前任务已暂停",
-  "chat.amrCard.switchBody":
-    "可切换到 CapyDesign Cloud 官方模型服务，无需配置 API Key。完成登录、授权和充值后，将自动重试当前任务。",
-  "chat.amrCard.chipOfficial": "官方托管",
-  "chat.amrCard.chipNoKey": "无需 API Key",
-  "chat.amrCard.chipAutoRetry": "授权后自动重试",
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   "chat.amrCard.switchCta": "切换到 Cloud",
-  "chat.amrError.authMessage":
-    "CapyDesign Cloud 账号尚未授权。完成授权后将自动重试当前任务。",
-  "chat.amrError.balanceMessage":
-    "CapyDesign Cloud 额度不足。充值后可继续运行当前任务。",
+  
+  
   "chat.amrError.authorizeCta": "授权并重试",
   "chat.amrError.rechargeCta": "充值",
-  "chat.amrBalanceGate.title": "升级套餐，继续创作",
-  "chat.amrBalanceGate.message": "额度不足（当前 {balance}），升级套餐或充值后，任务马上就能开始。",
-  "chat.amrBalanceGate.benefitsTitle": "CapyDesign Cloud 为你提供",
-  "chat.amrBalanceGate.benefit1": "无需 API Key，海量模型任选",
-  "chat.amrBalanceGate.benefit2": "自带 SOTA Design Agent，零配置",
-  "chat.amrBalanceGate.benefit3": "官方服务，稳定有保障",
-  "chat.amrBalanceGate.benefit4": "持续升级：一键部署、多模态、团队版等",
-  "chat.amrBalanceGate.laterCta": "暂不需要",
+  
+  
+  
+  
+  
+  
+  
+  
   "chat.amrBalanceGate.plansCta": "升级套餐",
-  "chat.amrBalanceGate.signedOutTitle": "登录 CapyDesign Cloud，开始创作",
-  "chat.amrBalanceGate.signedOutMessage": "当前使用的是 CapyDesign Cloud 智能体，登录后这个任务马上就能开始。",
-  "chat.amrBalanceGate.signInCta": "立即登录",
-  "chat.amrBalanceGate.watchingWallet": "额度更新后将自动继续。",
-  "chat.amrArtifactUpgrade.title": "用更强模型继续完善作品",
-  "chat.amrArtifactUpgrade.message": "解锁高阶模型、更多任务并发和更高每月积分。",
-  "chat.amrArtifactUpgrade.benefit1": "更多高阶模型，如 Fable 5、GPT-5.6",
-  "chat.amrArtifactUpgrade.benefit2": "任务并发最高提升 10 倍",
-  "chat.amrArtifactUpgrade.benefit3": "月度积分最高提升 300 倍",
-  "chat.amrArtifactUpgrade.benefit4": "高峰期优先排队，生成更快",
-  "chat.amrArtifactUpgrade.promoBanner": "订阅套餐限时低至 3.3 折",
-  "chat.amrArtifactUpgrade.countdownLabel": "优惠倒计时",
-  "chat.amrArtifactUpgrade.plansCta": "立即升级套餐，低至 3.3 折",
-  "chat.amrArtifactUpgrade.homePlansCta": "3.3 折升级",
-  "chat.amrArtifactUpgrade.laterCta": "继续使用 Free 并发送",
-  "chat.amrArtifactUpgrade.homeTitle": "作品已生成，让下一次创作更进一步",
-  "chat.amrArtifactUpgrade.homeMessage": "升级即可解锁高阶模型、更多并发和更高每月积分。",
-  "chat.amrArtifactUpgrade.homeArtifactCta": "查看作品",
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   "chat.antigravityError.launchTerminalCta": "在终端中登录",
   "chat.antigravityError.launchSwitchModelCta": "在终端中切换模型",
   "chat.connectionDropped":
     "请确认网络连接正常后再试。",
   "chat.runError.title.authRequired": "需要授权",
-  "chat.runError.title.balance": "额度不足",
+  
   "chat.runError.title.connectionDropped": "当前网络中断",
-  "chat.runError.title.signInRequired.other": "{agent} 尚未登录",
-  "chat.runError.title.signInRequired.amr": "CapyDesign 尚未登录",
+  
+  
   "chat.runError.title.rateLimited": "模型服务请求繁忙",
   "chat.runError.title.modelWindowLimit": "高峰期繁忙",
-  "chat.runError.title.membershipConcurrencyLimit": "并发任务已达上限",
+  
   "chat.runError.title.strategyTaskHalted": "任务已被质量门拦下",
   "chat.runError.title.agentReplyIncomplete": "回复已收到，但没能记录下来",
   "chat.runError.title.clarificationRepeated": "智能体又问了一个问题",
@@ -121,10 +118,8 @@ export const zhCN: Dict = {
   "chat.runError.title.generic": "任务执行失败",
   "chat.runError.title.artifactMissing": "暂无可预览的文件",
   "chat.runError.artifactMissingMessage": "本次任务没有可预览的文件，请补充需要生成的内容后再试。",
-  "chat.runError.signInMessage.amr":
-    "请先登录，以便查看项目和继续对话。",
-  "chat.runError.signInMessage.other":
-    "请先完成 {agent} 的登录，再重新尝试。",
+  
+  
   "chat.runError.agentFallback": "智能体",
   "chat.runError.sourceLabel": "查看错误详情",
   "chat.runError.sourceExpandAria": "展开报错源码",
@@ -145,8 +140,8 @@ export const zhCN: Dict = {
   "chat.runError.rateLimitedMessage": "当前使用该模型服务的请求较多，已达到供应商的请求频率上限，请稍后再试，或尝试切换其他模型。",
   "chat.runError.modelWindowLimitMessage": "高峰期繁忙，请在 {retryAt} 后尝试（本次请求未扣费）",
   "chat.runError.modelWindowLimitMessageNoTime": "高峰期繁忙，请稍后再试（本次请求未扣费）",
-  "chat.runError.membershipConcurrencyLimitMessage": "当前会员的并发任务已满。请等到 {retryAt} 后重试，或切换到其他智能体；立即重复尝试不会恢复。",
-  "chat.runError.membershipConcurrencyLimitMessageNoTime": "当前会员的并发任务已满。请等待其他任务结束后重试，或切换到其他智能体；立即重复尝试不会恢复。",
+  
+  
   "chat.runError.upstreamUnavailableMessage": "当前模型暂不可用，请稍后再试，或更换模型。",
   "chat.runError.toolLoopMessage": "{agent} 在重复执行同一操作但没有进展，已自动停止。请检查目标文件或命令后重试。",
   "chat.runError.outputInvalidMessage": "请尝试重新生成，或更换模型后重试。如果问题持续出现，请联系支持。",
@@ -160,7 +155,7 @@ export const zhCN: Dict = {
   "chat.runError.title.cpuUnsupported": "处理器不支持",
   "chat.runError.title.cliSessionRefused": "智能体版本不兼容",
   "chat.runError.quotaExhaustedMessage": "所用模型服务的额度或账单上限已用尽，重试也无法恢复。请前往对应服务充值，或切换到其他模型/服务。",
-  "chat.runError.workspaceCreditsMessage": "工作区额度已用尽。请充值（或联系工作区管理员补充），或切换到其他模型/服务。",
+  
   "chat.runError.timedOutMessage": "长时间未收到 AI 的新回复，本次运行已停止，请稍后再试。",
   "chat.runError.inactivityTimeoutMessage": "长时间未收到 AI 的新回复，本次运行已停止，请稍后再试。",
   "chat.runError.emptyOutputMessage": "智能体本次结束时没有产生任何输出。这通常是暂时的，重试即可再次运行。",
@@ -169,8 +164,8 @@ export const zhCN: Dict = {
   "chat.runError.cpuUnsupportedMessage": "该智能体的运行时需要此设备处理器不支持的指令集（AVX2），因此无法启动。请将 CapyDesign 更新到最新版本，新版本附带兼容的运行时。",
   "chat.runError.title.agentCrashed": "任务意外中断",
   "chat.runError.agentCrashedMessage": "请尝试重新生成，或更换模型后重试。如果问题持续出现，请联系支持。",
-  "chat.runError.title.accountSuspended": "账号已停用",
-  "chat.runError.accountSuspendedMessage": "如需了解原因或申请恢复，请联系支持。",
+  
+  
   "chat.runError.fallbackMessage": "这次没能顺利完成。反复出现的话，把日志发给我们。",
   "chat.runError.cliSessionRefusedMessage":
     "{agent} 拒绝开始会话。通常是当前版本与 CapyDesign 不兼容，换一个版本后重试。",
@@ -318,18 +313,18 @@ export const zhCN: Dict = {
   "settings.onboardingExecutionTitle": "选择模型来源",
   "settings.onboardingExecutionBody":
     "使用 CapyDesign 托管服务、连接本地 Agent，或使用你自己的模型 Key。",
-  "settings.onboardingAmrCloudBenefitOfficial": "官方推荐",
-  "settings.onboardingAmrCloudBenefitReady": "免部署即用",
+  
+  
   "settings.onboardingAmrCloudBenefitModels":
     "限时优惠、高并发使用 Claude、GPT、Fable 5 和 5.6 sol。",
-  "settings.onboardingAmrCloudBenefitPricing": "SOTA Harness",
-  "settings.onboardingAmrCloudUpcomingLabel": "即将支持",
-  "settings.onboardingAmrCloudUpcomingImageVideo": "生图/视频",
-  "settings.onboardingAmrCloudUpcomingSkills": "海量 Skills",
-  "settings.onboardingAmrCloudUpcomingRouting": "智能路由",
+  
+  
+  
+  
+  
   "settings.onboardingAmrModelSourceLabel": "CapyDesign 托管",
-  "settings.onboardingAmrCloudAuthorizeAction": "授权 CapyDesign Cloud",
-  "settings.onboardingAmrCloudAuthorizedAction": "已授权",
+  
+  
   "settings.onboardingStepConnect": "连接",
   "settings.onboardingStepDesignSystem": "构建设计系统",
   "settings.onboardingStepProfile": "了解你",
@@ -344,19 +339,18 @@ export const zhCN: Dict = {
     "登录后可直接用云端 AI 开始设计，无需任何复杂配置。",
   "settings.onboardingCloudSignIn": "登录 CapyDesign",
   "settings.onboardingCloudContinue": "继续（已登录）",
-  "settings.onboardingCloudAlternative": "使用本地 CLI 或自己的 API Key",
+  
   "settings.onboardingCloudRights": "保留所有权利。",
   "settings.onboardingCloudOr": "或",
   "settings.onboardingGateTooltipNoRuntime":
     "后续流程由 AI 运行，请先选择一种运行方式。",
-  "settings.onboardingGateTooltipAmr":
-    "后续流程由 AI 运行，请先登录 CapyDesign Cloud。",
+  
   "settings.onboardingGateTooltipLocal":
     "后续流程由 AI 运行，请先选择一个可用的本地 CLI。",
   "settings.onboardingGateTooltipByok":
     "后续流程由 AI 运行，请先填写并测试通过你的模型 Key。",
   "settings.onboardingRecommended": "推荐",
-  "settings.onboardingAmrCloudOfficialBadge": "官方",
+  
   "settings.onboardingLocalTitle": "本地 Agent",
   "settings.onboardingLocalBody":
     "使用 Claude Code、Codex、Cursor、OpenCode、Kimi、Qwen、Hermes、Kiro 等。",
@@ -407,7 +401,7 @@ export const zhCN: Dict = {
   "settings.onboardingSelectPlaceholder": "请选择",
   "settings.onboardingSelectMultiplePlaceholder": "可选择多个",
   "settings.onboardingOrgSolo": "个人使用（1 人）",
-  "settings.onboardingOrgTeam": "小团队（2-10 人）",
+  
   "settings.onboardingOrgStartup": "初创 / 中小企业（11-50 人）",
   "settings.onboardingOrgGrowth": "成长期公司（51-200 人）",
   "settings.onboardingOrgMidMarket": "中大型公司（201-1000 人）",
@@ -450,7 +444,7 @@ export const zhCN: Dict = {
   "settings.modeApi": "API 提供方",
   "settings.cloudCalloutTitle": "使用 CapyDesign Cloud",
   "settings.cloudCalloutBody": "登录云端版本后可启用团队空间、共享项目、成员权限和审计大盘。",
-  "settings.cloudCalloutButton": "登录 / 注册",
+  
   "settings.modeApiMeta": "API 提供商",
   "settings.byokNoFileToolsNotice":
     "BYOK 无法读写或修改项目文件；需要改代码时请使用本机 CLI。",
@@ -504,40 +498,40 @@ export const zhCN: Dict = {
   "settings.agentInstallGroup": "可安装（{count}）",
   "settings.agentAuthRequired": "需要认证",
   "settings.agentAuthUnknown": "认证状态未知",
-  "settings.amrCloud": "CapyDesign Cloud",
-  "settings.amrAuthorize": "授权",
+  
+  
   "settings.amrBenefitOfficial": "官方推荐",
-  "settings.amrBenefitLowerPrice": "免部署即用",
+  
   "settings.amrBenefitManyModels": "多种模型",
-  "settings.amrPromoBonus": "限时充值赠 100%",
-  "settings.amrSignInToContinue": "授权后继续",
+  
+  
   "settings.amrSignIn": "登录",
   "settings.amrSignedIn": "已登录",
-  "settings.amrWalletBalance": "钱包余额",
+  
   "settings.amrWalletUnavailable": "余额暂不可用",
-  "settings.amrWalletUpdatedAt": "更新于 {time}",
-  "settings.amrWalletCached": "缓存",
-  "settings.amrWalletRefresh": "刷新",
-  "settings.amrWalletRefreshTitle": "刷新 CapyDesign Cloud 钱包余额",
-  "settings.amrNotSignedIn": "未授权",
+  
+  
+  
+  
+  
   "settings.amrSigningIn": "登录中…",
   "settings.amrActivationHint": "没有弹出登录页?点击下方按钮重新拉起",
   "settings.amrActivationBrowserFailed":
     "没能自动打开浏览器,请打开下面的登录页继续。",
   "settings.amrActivationOpen": "打开登录页",
   "settings.amrCancelSignIn": "取消登录",
-  "settings.amrAccountStatus": "CapyDesign Cloud 账户状态",
-  "settings.amrConsole": "CapyDesign Cloud 管理",
+  
+  
   "settings.amrLoginErrorCompact": "CapyDesign Cloud 登录失败。",
   "settings.advanced": "高级设置",
   "settings.amrLogin": "登录",
-  "settings.amrLogout": "登出",
-  "settings.amrLoggingIn": "登录中…",
-  "settings.amrLoggingOut": "退出中…",
-  "settings.amrLoggedInAs": "已登录 {email}",
-  "settings.amrLoggedInWithPlan": "已登录 {email} · {plan}",
-  "settings.amrLoggedInPill": "已登录",
-  "settings.amrNotLoggedIn": "未授权",
+  
+  
+  
+  
+  
+  
+  
   "settings.apiSection": "Anthropic API",
   "settings.quickFillProvider": "快速填充提供方",
   "settings.providerPreset": "提供商预设",
@@ -626,7 +620,7 @@ export const zhCN: Dict = {
   "settings.modelUsesCliDefault": "CLI 默认设置",
   "settings.modelSourceFallback": "内置列表",
   "settings.reasoningPicker": "推理强度",
-  "settings.serviceTierPicker": "服务层级",
+  
   "settings.modelPickerHint":
     "当 CLI 提供 `models` 命令时会自动拉取。选择「默认」则沿用 CLI 自身的配置；选择「自定义」可手动输入任何 CLI 支持的模型 id。",
   "settings.modelPickerLiveHint":
@@ -771,21 +765,21 @@ export const zhCN: Dict = {
   "entry.mailAria": "有问题？给我们发邮件",
   "entry.accountSettings": "设置",
   "chat.collapsePane": "收起对话栏",
-  "collabPresence.ariaOne": "1 位协作者在线",
-  "collabPresence.aria": "{count} 位协作者在线",
-  "collabPresence.ariaWithSelfOne": "1 位协作者在线，包含你",
-  "collabPresence.ariaWithSelf": "{count} 位协作者在线，包含你",
-  "collabPresence.moreOnline": "另外 {count} 位在线",
-  "collabPresence.dialogTitle": "在线协作成员",
-  "collabPresence.onlineCount": "{count} 在线",
-  "collabPresence.selfBadge": "你",
-  "collabPresence.roleOwner": "Owner",
-  "collabPresence.roleAdmin": "Admin",
-  "collabPresence.roleMember": "Member",
-  "collabPresence.viewingFileSelf": "你正在查看 {file}",
-  "collabPresence.viewingFileOther": "正在查看 {file}",
-  "collabPresence.viewingProjectSelf": "你正在查看此项目",
-  "collabPresence.viewingProjectOther": "正在查看此项目",
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   "entry.followXLabel": "在 X 上关注 @OpenDesignHQ",
   "entry.followThreadsLabel": "Follow CapyDesign on Threads",
   "entry.followInstagramLabel": "在 Instagram 上关注 @opendesign.ai",
@@ -805,7 +799,7 @@ export const zhCN: Dict = {
   "entry.billingTierTeam": "团队版",
   "entry.billingTierFree": "免费",
   "entry.billingTierPro": "专业版",
-  "entry.billingFamilyCreator": "创作会员",
+  
   "entry.creditsAria": "{tier} · 可用额度",
   "entry.creditsAriaWithBalance": "{tier} · 可用额度 {balance}",
   "entry.creditsGrantTip": "团队版按订阅发放额度，可在计费中查看用量。",
@@ -817,12 +811,12 @@ export const zhCN: Dict = {
   "entry.creditsMemberNoticeTitle": "额度不足？",
   "entry.creditsMemberNoticeBody": "你当前是 Member，不能自行续额度。需要更多额度时，可以提醒团队 Admin 提额。",
   "entry.creditsMemberNoticeAction": "提醒 Admin 提额",
-  "entry.accountToggleTheme": "切换主题",
-  "entry.accountSwitchLanguage": "切换语言",
-  "entry.accountLanguageMeta": "中文 / English",
+  
+  
+  
   "entry.accountGithubHelp": "在 GitHub 上获取帮助",
   "entry.accountFeatureRequest": "提交功能建议",
-  "entry.accountAddAccount": "添加账号",
+  
   "entry.accountSignOut": "退出登录",
   "signOut.confirmTitle": "退出登录",
   "signOut.confirmMessage": "确定要退出登录吗？",
@@ -834,8 +828,8 @@ export const zhCN: Dict = {
   "entry.blankAllProjectsTitle": "还没有团队项目",
   "entry.blankAllProjectsDescription": "共享到团队空间的项目会出现在这里，工作空间成员都可以访问。",
   "entry.blankCreate": "新建方案",
-  "entry.workspaceTeamsTitle": "团队版工作区 — 告诉我们你的团队需求",
-  "entry.workspaceTeamsAria": "打开团队版工作区页面",
+  
+  
   "entry.navExpand": "展开侧栏",
   "entry.navCollapse": "收起侧栏",
   "entry.navNewProject": "新建项目",
@@ -853,18 +847,18 @@ export const zhCN: Dict = {
   "entry.draftsDescription": "自己创建的项目，仅自己可见",
   "entry.allProjectsDescription": "团队所有人的项目",
   "entry.navBoard": "看板",
-  "entry.navTeamSection": "团队",
+  
   "entry.teamSlotNote": "该视图由团队服务提供，接入中。",
-  "entry.cloudCalloutTitle": "CapyDesign Cloud 版",
-  'entry.cloudRecovering': '账号连接中断，正在自动恢复…',
+  
+  
   'entry.authExpiredBody': '登录状态已过期。登录后即可继续使用 CapyDesign Cloud。',
   'home.createFailed': '启动任务失败，请重试。',
   'home.daemonRecovering': '本地服务连接中断，正在自动恢复…',
   'home.bundledScenarioMissing': '内置场景“{scenarioId}”未安装。请重新安装 CapyDesign，以恢复默认插件。',
-  "entry.cloudCalloutBody": "登录即可享受云端协作",
-  "entry.cloudCalloutDismissAria": "关闭 CapyDesign Cloud 版说明",
-  "entry.workspaceLockedNote": "工作区已锁定，恢复账单后可继续编辑共享项目。",
-  "entry.workspaceLockedRecover": "恢复访问",
+  
+  
+  
+  
   "messageCenter.openAria": "打开消息中心",
   "messageCenter.unreadCount": "{count} 条未读",
   "messageCenter.title": "消息中心",
@@ -894,8 +888,8 @@ export const zhCN: Dict = {
   "goPlanSunset.confirming": "正在确认…",
   "goPlanSunset.acknowledge": "我知道了",
   "workspaceTabs.project": "项目",
-  "workspaceTabs.pluginDetails": "插件详情",
-  "workspaceTabs.marketplace": "插件市场",
+  
+  
   "homeHero.title": "今天想和你的 Agent 一起设计什么？",
   "homeHero.startWithTemplate": "从模板开始…",
   "homeHero.startBlankProject": "创建一个空白项目",
@@ -1068,7 +1062,7 @@ export const zhCN: Dict = {
   "handoff.frameworkPrompt.solid": "SolidJS",
   "handoff.frameworkPrompt.next": "Next.js / React",
   "handoff.frameworkPrompt.vanilla": "原生 JavaScript、HTML 和 CSS",
-  "handoff.amrWebsite": "打开 CapyDesign Cloud 官网",
+  
   "handoff.copyPrompt": "复制提示词",
   "handoff.copyPromptForTarget": "复制给 {target} 的提示词",
   "handoff.copied": "已复制",
@@ -1126,7 +1120,7 @@ export const zhCN: Dict = {
   "recentProjects.sortName": "名称",
   "recentProjects.viewList": "列表视图",
   "recentProjects.sharedBadge": "共享",
-  "recentProjects.sharedProjectFallbackName": "共享项目",
+  
   "recentProjects.creatorLine": "{name}创建",
   "recentProjects.selfCreator": "我",
   "recentProjects.teamMemberCreator": "团队成员",
@@ -1751,7 +1745,7 @@ export const zhCN: Dict = {
   "connectors.title": "连接器",
   "connectors.subtitle": "可为实时看板提供数据的本地和未来数据源。",
   "connectors.account": "账号",
-  "connectors.noAccount": "未连接",
+  
   "connectors.tools": "工具",
   "connectors.connect": "连接",
   "connectors.disconnect": "断开连接",
@@ -2108,8 +2102,8 @@ export const zhCN: Dict = {
   "avatar.useApi": "使用 API · BYOK",
   "avatar.codeAgent": "代码代理",
   "avatar.rescan": "重新扫描 PATH",
-  "avatar.amrConsole": "CapyDesign Cloud 账户",
-  "avatar.amrConsoleMeta": "余额与充值",
+  
+  
   "avatar.settings": "设置",
   "avatar.backToProjects": "返回项目列表",
   "avatar.metaActive": "使用中",
@@ -2980,7 +2974,7 @@ export const zhCN: Dict = {
   "misc.primary": "主体系",
   "misc.designSystem": "设计体系",
   "workspace.designFiles": "设计文件",
-  "workspace.focusMode": "专注工作区",
+  
   "workspace.showChat": "显示聊天",
   "workspace.closeTab": "关闭标签页",
   "workspace.fileSyncDownloading": "正在从团队下载…",
@@ -2992,13 +2986,13 @@ export const zhCN: Dict = {
     "从项目文件夹中删除选中的 {n} 个文件？",
   "workspace.deleteSelectedFilesPartial": "有 {n} 个文件删除失败。",
   "workspace.openFromDesignFiles": "请从",
-  "workspace.designFilesLink": "设计文件",
+  
   "workspace.loadingSketch": "正在加载草图…",
   "workspace.newTab": "新建标签页",
   "workspace.searchFilesPlaceholder": "搜索标签页或文件…",
   "workspace.openTabs": "打开标签页",
-  "workspace.searchTabs": "搜索标签页",
-  "workspace.noTabsFound": "没有匹配的标签页",
+  
+  
   "workspace.openFile": "打开文件",
   "workspace.noFilesMatch": "没有匹配的文件",
   "workspace.allFiles": "全部",
@@ -3375,14 +3369,14 @@ export const zhCN: Dict = {
   "fileViewer.presenterMode": "演讲者模式",
   "fileViewer.exitPresentation": "退出演示",
   "fileViewer.shareLabel": "分享",
-  "fileViewer.shareMenuShareLink": "分享",
+  
   "fileViewer.shareMenuPublishOnline": "分享到自有平台",
-  "fileViewer.shareMenuDownload": "下载",
-  "fileViewer.shareMenuPresentation": "演示文稿",
-  "fileViewer.shareMenuSourceFiles": "源文件",
-  "fileViewer.shareMenuSave": "保存",
+  
+  
+  
+  
   "fileViewer.shareMenuPublishViaOd": "快速分享（CapyDesign 托管）",
-  "fileViewer.unifiedShareAria": "分享和导出操作",
+  
   "fileViewer.unifiedShareTab": "分享",
   "fileViewer.unifiedExportTab": "导出",
   "fileViewer.unifiedSendTab": "发送到...",
@@ -3398,13 +3392,13 @@ export const zhCN: Dict = {
   "fileViewer.publishFile": "发布文件",
   "fileViewer.publishingFile": "生成中…",
   "fileViewer.unpublishFile": "停止分享",
-  "fileViewer.shareEmptyStateTitle": "暂时无法分享",
-  "fileViewer.shareEmptyStateDescription": "创建或加入一个团队,就能把这个文件分享给同事",
-  "fileViewer.shareEmptyStateCreateTeam": "创建团队",
-  "fileViewer.shareTeamMissingTitle": "还没有团队可以分享",
+  
+  
+  
+  
 
-  "fileViewer.publishFileRequiresTeam": "发布公开链接需要团队工作区。请切换到团队工作区，或使用「部署」发布此文件。",
-  "fileViewer.publishFileRequiresWorkspace": "生成分享链接需要登录工作区。请登录 CapyDesign Cloud，或改用「部署」分享此文件。",
+  
+  
   "fileViewer.publishFileFailed": "生成分享链接失败，请稍后重试，或改用下方的部署方式。",
   "fileViewer.workspaceShareSuccess": "已分享给工作空间成员",
   "fileViewer.workspaceShareFailed": "分享到工作空间失败",
@@ -3414,10 +3408,10 @@ export const zhCN: Dict = {
   "fileViewer.copyShareLink": "复制分享链接",
   "fileViewer.openSharePage": "打开分享页面",
   "fileViewer.shareLinkRequiresDeploy": "先发布到线上以获取链接",
-  "fileViewer.shareLinkPublishGuide": "先发布线上，即可分享 ↑",
+  
   "fileViewer.shareAfterGenerationComplete": "生成完成后可分享",
   "fileViewer.copyProviderLink": "复制 {provider} 链接",
-  "fileViewer.copyCloudflareLink": "复制 Cloudflare 链接",
+  
   "fileViewer.screenshotCopying": "正在复制截图…",
   "fileViewer.screenshotCopied": "截图已保存到剪贴板",
   "fileViewer.screenshotClipboardDenied": "浏览器拒绝写入剪贴板",
@@ -3595,14 +3589,12 @@ export const zhCN: Dict = {
   "fileViewer.cloudflareDomainPrefixInvalid":
     "请仅使用单个 DNS 标签:小写字母、数字和连字符。",
   "fileViewer.cloudflareHostnamePreview": "自定义域名预览:{hostname}",
-  "fileViewer.cloudflareCustomDomainHint":
-    "可选：绑定自定义域名。不填也会生成 pages.dev 链接。",
+  
   "fileViewer.cloudflarePagesDevLinkLabel": "pages.dev URL",
   "fileViewer.cloudflareCustomDomainLinkLabel": "自定义域名",
   "fileViewer.optional": "可选",
   "fileViewer.vercelPreviewOnly": "当前仅部署 Preview。",
-  "fileViewer.cloudflarePagesPreviewHint":
-    "Cloudflare Pages 使用 Direct Upload。",
+  
   "fileViewer.savingConfig": "保存中…",
   "fileViewer.deployConfigSaveFailed": "保存 Vercel 设置失败。",
   "fileViewer.deployFailed": "部署失败，请检查 Vercel 设置后重试。",
@@ -3655,8 +3647,8 @@ export const zhCN: Dict = {
   "assistant.forkConversation": "新会话",
   "assistant.forkingConversation": "正在开始新会话…",
   "assistant.forkNote": "从上一个会话继续",
-  "assistant.shareToOpenDesign": "分享到 CapyDesign",
-  "assistant.shareToOpenDesignBusy": "正在准备投稿…",
+  
+  
   "assistant.feedbackPrompt": "反馈",
   "assistant.feedbackPositive": "有帮助",
   "assistant.feedbackNegative": "没帮助",
@@ -3697,10 +3689,10 @@ export const zhCN: Dict = {
   "chat.runError.actionBlocked.busy": "这条对话还有任务在运行，结束后才能重试。",
   "chat.support.channel.feishu": "飞书社群",
   "chat.support.channel.discord": "Discord",
-  "chat.amrBalanceOwner.title": "请联系团队所有者充值",
-  "chat.amrBalanceOwner.message": "当前仅团队所有者可以为团队充值，请联系「{name}」完成充值后再继续使用。",
-  "chat.amrBalanceOwner.messageNoOwnerName": "当前仅团队所有者可以为团队充值，请联系团队所有者完成充值后再继续使用。",
-  "chat.amrBalanceOwner.dismissCta": "知道了",
+  
+  
+  
+  
   "assistant.outTokens": "{n} 输出",
   "assistant.producedFiles": "本轮产出的文件",
   "assistant.openFile": "打开",
@@ -5131,16 +5123,16 @@ export const zhCN: Dict = {
   // other-lane workspace destinations (members / billing / team space).
   'settings.workspace': '工作区',
   'settings.workspaceHint': '成员、订阅与团队空间',
-  'settings.workspaceLede': '该工作区的团队级设置。以下区域由团队服务提供，点击任一入口继续。',
-  'settings.workspaceBack': '返回工作区',
-  'settings.workspaceMembers': '成员与邀请',
-  'settings.workspaceMembersHint': '管理谁可以访问该工作区，并发送邀请。',
-  'settings.workspaceBilling': '订阅与席位',
-  'settings.workspaceBillingHint': '该工作区的套餐、席位与付款。',
-  'settings.workspaceAutoRecharge': '自动充值',
-  'settings.workspaceAutoRechargeHint': '余额不足时自动充值额度。',
-  'settings.workspaceTeamSpace': '团队空间',
-  'settings.workspaceTeamSpaceHint': '团队的共享项目与可见性。',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   // Full-page Settings (`/settings`): sidebar nav head above the section list.
   'settings.pageBackToHome': '返回首页',
   'settings.pageNavGroupPersonal': '个人',
@@ -5148,9 +5140,9 @@ export const zhCN: Dict = {
   "newproj.startBlank": "空白",
   "newproj.startBlankHint": "从零开始",
   "workspace.pages": "页面",
-  "workspace.allProjectFiles": "全部项目文件",
+  
   "workspace.newBlankPage": "新建空白页面",
-  "workspace.noPagesYet": "还没有页面",
+  
   "workspace.pageCreateFailed": "无法创建页面。",
   "workspace.pageCreatorTitle": "新建页面",
   "workspace.pageCreatorSearch": "搜索模板",

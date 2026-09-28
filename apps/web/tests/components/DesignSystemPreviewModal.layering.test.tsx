@@ -3,7 +3,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createElement, type ComponentProps } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 import { DesignSystemPreviewModal } from '../../src/components/DesignSystemPreviewModal';
 import { I18nProvider } from '../../src/i18n';
@@ -54,11 +54,6 @@ vi.mock('../../src/providers/registry', () => ({
   projectRawUrl: projectRawUrlMock,
 }));
 
-vi.mock('../../src/collab/useWorkspaceContext', () => ({
-  useWorkspaceContext: () => workspaceContextState,
-  workspaceResourceReadContext: (state: typeof workspaceContextState) =>
-    state.resourceReadIdentity?.context ?? state.context,
-}));
 
 const SYSTEM = {
   id: 'claymorphism',
@@ -120,53 +115,6 @@ describe('DesignSystemPreviewModal layering', () => {
     workspaceContextState.context = null;
     workspaceContextState.resourceReadIdentity = null;
     workspaceContextState.loading = false;
-  });
-
-  it('uses the exact directory read identity while the richer context is loading', async () => {
-    workspaceContextState.resourceReadIdentity = {
-      context: PROJECT_WORKSPACE_CONTEXT,
-      generation: 'directory-generation',
-    };
-    workspaceContextState.loading = true;
-
-    render(
-      <I18nProvider>
-        <DesignSystemPreviewModal
-          system={{ ...SYSTEM, projectId: 'project-clay' }}
-          onClose={() => {}}
-        />
-      </I18nProvider>,
-    );
-
-    await waitFor(() => {
-      expect(fetchDesignSystemMock).toHaveBeenCalledWith('claymorphism', PROJECT_WORKSPACE_CONTEXT);
-      expect(projectRawUrlMock).toHaveBeenCalledWith(
-        'project-clay',
-        'logos/mark.svg',
-        PROJECT_WORKSPACE_CONTEXT,
-      );
-    });
-  });
-
-  it('uses the exact project Workspace scope when the ambient shell context is unresolved', async () => {
-    const props = {
-      system: { ...SYSTEM, projectId: 'project-clay' },
-      initialViewId: 'kit' as const,
-      onClose: () => {},
-      workspaceContext: PROJECT_WORKSPACE_CONTEXT,
-    } as ComponentProps<typeof DesignSystemPreviewModal> & {
-      workspaceContext: WorkspaceCollabContext;
-    };
-
-    render(
-      <I18nProvider>
-        {createElement(DesignSystemPreviewModal, props)}
-      </I18nProvider>,
-    );
-
-    await waitFor(() => {
-      expect(fetchDesignSystemMock).toHaveBeenCalledWith('claymorphism', PROJECT_WORKSPACE_CONTEXT);
-    });
   });
 
   it('portals the preview to document.body so composer overlays cannot cover it', () => {

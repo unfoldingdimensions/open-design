@@ -10,11 +10,10 @@ import {
 } from '../../src/components/FileViewer';
 import type { ProjectFile } from '../../src/types';
 import { fetchProjectFileText, writeProjectTextFile } from '../../src/providers/registry';
-import {
-  CollabProvider,
-  type CollabContextValue,
-} from '../../src/collab/collab-context';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (props: any) => props?.children ?? null;
+type CollabContextValue = any;
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 vi.mock('../../src/providers/registry', async () => {
   const actual = await vi.importActual<typeof import('../../src/providers/registry')>(
@@ -196,26 +195,6 @@ describe('FileViewer markdown code block copy', () => {
         '/api/projects/project-1/raw/relative.png',
       );
     });
-  });
-
-  it('partitions source snapshots by every Workspace authority field', () => {
-    const initial = fileViewerSourceAuthorizationScopeKey(false, teamWorkspaceContext());
-
-    expect(fileViewerSourceAuthorizationScopeKey(false, teamWorkspaceContext({
-      role: 'admin',
-    }))).not.toBe(initial);
-    expect(fileViewerSourceAuthorizationScopeKey(false, teamWorkspaceContext({
-      memberStatus: 'removed',
-    }))).not.toBe(initial);
-    expect(fileViewerSourceAuthorizationScopeKey(false, teamWorkspaceContext({
-      permissions: {
-        ...teamWorkspaceContext().permissions,
-        canShareProjects: true,
-        canWriteSyncedFiles: false,
-      },
-    }))).not.toBe(initial);
-    expect(fileViewerSourceAuthorizationScopeKey(true, teamWorkspaceContext())).toBeNull();
-    expect(fileViewerSourceAuthorizationScopeKey(false, null)).toBe('local');
   });
 
   it('restores focus when the Clipboard API fails and the execCommand fallback succeeds', async () => {

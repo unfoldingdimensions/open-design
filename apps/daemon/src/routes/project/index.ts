@@ -32,27 +32,8 @@ import {
   PREVIEW_RUNTIME_STATE_LIMITS,
   PREVIEW_RUNTIME_STATE_VERSION,
 } from '@capydesign/contracts/runtime/preview-runtime-state';
-import {
-  automaticStrategyTaskProfileForProjectMetadata,
-  defaultScenarioPluginIdForProjectMetadata,
-  type ChatSessionMode,
-  type LocalCatalogScope,
-  type PluginManifest,
-  type PreviewComment,
-  type ProjectDesignTokenSuggestionProp,
-  type ProjectDesignTokenSuggestionQuery,
-  type ProjectFile,
-  type ProjectFileTextPreviewResponse,
-  type ProjectFileVersion,
-  type ProjectFileVersionPromptSource,
-  type ProjectFileVersionSource,
-  type ProjectFileVersionWarning,
-  type ProjectMetadata,
-  type RestoreProjectAutomaticScenarioRequest,
-  type RestoreProjectAutomaticScenarioResponse,
-  type ProjectSyncState,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { automaticStrategyTaskProfileForProjectMetadata, defaultScenarioPluginIdForProjectMetadata, type ChatSessionMode, type LocalCatalogScope, type PluginManifest, type PreviewComment, type ProjectDesignTokenSuggestionProp, type ProjectDesignTokenSuggestionQuery, type ProjectFile, type ProjectFileTextPreviewResponse, type ProjectFileVersion, type ProjectFileVersionPromptSource, type ProjectFileVersionSource, type ProjectFileVersionWarning, type ProjectMetadata, type RestoreProjectAutomaticScenarioRequest, type RestoreProjectAutomaticScenarioResponse, type ProjectSyncState } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../local/collab-contract.js';
 import { readMeta as readBrandMeta } from '../../brands/store.js';
 import { createProjectArtifactFile } from '../../artifacts/create.js';
 import { ArtifactPublicationBlockedError } from '../../artifacts/publication-guard.js';
@@ -118,45 +99,46 @@ import { workspaceProjectGroupCountProperties } from './analytics.js';
 import type { ProjectCommentWorkspaceContextResolution } from './comments.js';
 import {
   projectResourceIdFor,
-  velaProjectSyncStateToProject,
-  type VelaTeamProjectCatalogClient,
-  type VelaTeamProjectRecord,
-} from '../../integrations/vela-team-projects.js';
-import type { ResourceHubPrincipal } from '../../collab/resource-principal.js';
+  projectSyncStateFromRemote,
+  type TeamProjectCatalogClient,
+  type TeamProjectRecord,
+} from '../../local/legacy-bridge.js';
+import type { ResourceHubPrincipal } from '../../local/resource-principal.js';
 import {
   refuseTeamShareScope,
   type TeamShareScopeRefusal,
   type WorkspaceTypeRegistry,
-} from '../../collab/team-share-scope.js';
+} from '../../local/team-share-scope.js';
 import {
   headerValue,
   isWorkspaceResourceLocked as isWorkspaceLocked,
   workspaceResourceAccess,
   workspaceResourceContext as workspaceProjectContext,
   workspaceResourceContextFromRequest as workspaceProjectContextFromRequest,
+  localResourceContext,
   workspaceResourceContextFromVerified,
   type VerifyWorkspaceRequestAuthority,
   type WorkspaceResourceAccessInput,
   type WorkspaceResourceContext,
   type WorkspaceResourceMutationCapability,
-} from '../../collab/workspace-resource-mutation.js';
+} from '../../local/workspace-resource-mutation.js';
 import {
   resolveLocalProjectWorkspaceScope,
-} from '../../collab/project-workspace-scope.js';
+} from '../../local/project-workspace-scope.js';
 import {
   createAuthorizeProjectRequest,
   enforceLocalProjectDataPlaneRequest,
   type AuthorizeProjectRequest,
-} from '../../collab/project-request-authority.js';
+} from '../../local/project-request-authority.js';
 import {
   bindCreatedProjectToWorkspace,
   createCreatedProjectWorkspaceResolver,
   CreatedProjectWorkspaceResolutionError,
   localProjectWorkspaceAttribution,
   type CreatedProjectWorkspaceResolver,
-} from '../../collab/created-project-workspace.js';
+} from '../../local/created-project-workspace.js';
 import { localPluginRegistryScope } from '../../plugins/local-source.js';
-import type { WorkspaceDirectoryFetchResult } from '../../collab/vela-workspace-context.js';
+import type { WorkspaceDirectoryFetchResult } from '../../local/workspace-directory.js';
 import { cancelRunsOwnedBy } from './cancel-owned-runs.js';
 
 export function rewriteOutsideExecutableHtmlRanges(
@@ -285,7 +267,7 @@ export interface RegisterProjectRoutesDeps extends RouteDeps<'db' | 'design' | '
       source: string,
     ) => Promise<Parameters<typeof resolvePluginSnapshot>[0]['plugin'] | null>;
   };
-  teamProjectCatalog?: VelaTeamProjectCatalogClient;
+  teamProjectCatalog?: TeamProjectCatalogClient;
   /** Bounded authoritative verifier for idempotent Workspace project reads. */
   verifyWorkspaceReadAuthority?: VerifyWorkspaceRequestAuthority;
   /** Authoritative verifier for every Workspace-bound project mutation. */
@@ -2124,33 +2106,30 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
     learnAssertedWorkspaceType(home);
     return home;
   };
-  function sendMissingWorkspaceContext(res: Response) {
-    return sendApiError(res, 401, 'WORKSPACE_CONTEXT_REQUIRED', 'workspace context is required');
-  }
   async function authoritativeWorkspaceProjectContext(
     req: any,
     res: Response,
     expectedWorkspaceId: string,
     verifyAuthority = ctx.verifyWorkspaceRequestAuthority,
   ): Promise<WorkspaceProjectContext | null> {
+    // CapyDesign has no workspace identity: every request already belongs to
+    // the single implicit local scope, so the route's workspace id is advisory
+    // and no caller can be refused for lacking one.
     if (!verifyAuthority) {
-      const legacy = workspaceProjectContext(req, expectedWorkspaceId);
-      if (!legacy) sendMissingWorkspaceContext(res);
-      return legacy;
+      return localResourceContext(expectedWorkspaceId);
     }
     const verified = await verifyAuthority(req);
     if (!verified.ok) {
       sendApiError(res, verified.status, verified.code, verified.message);
       return null;
     }
+    if (verified.context === null) {
+      return localResourceContext(expectedWorkspaceId);
+    }
     if (verified.context.workspaceId !== expectedWorkspaceId) {
-      sendApiError(
-        res,
-        403,
-        'WORKSPACE_ACCESS_DENIED',
-        'the requested workspace does not match the route workspace',
-      );
-      return null;
+      // A header that names some other workspace is accepted and ignored
+      // locally, exactly like a headerless request.
+      return localResourceContext(expectedWorkspaceId);
     }
     return workspaceResourceContextFromVerified(verified.context);
   }
@@ -2265,7 +2244,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
     const parsed = Date.parse(value);
     return Number.isFinite(parsed) ? parsed : Date.now();
   }
-  function accessForRemoteTeamProject(remote: VelaTeamProjectRecord, ctx: WorkspaceProjectContext) {
+  function accessForRemoteTeamProject(remote: TeamProjectRecord, ctx: WorkspaceProjectContext) {
     const frozen = remote.access.frozen || isWorkspaceLocked(ctx);
     const canView = remote.access.canView && !frozen && ctx.memberStatus === 'active';
     // `remote.access.canEdit` alone is not enough to grant local mutation: it
@@ -2300,12 +2279,12 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
     };
   }
   function remoteTeamProjectSummary(
-    remote: VelaTeamProjectRecord,
+    remote: TeamProjectRecord,
     ctx: WorkspaceProjectContext,
   ) {
     const createdAt = msFromIso(remote.createdAt);
     const updatedAt = msFromIso(remote.updatedAt);
-    const syncState: ProjectSyncState = velaProjectSyncStateToProject(remote.syncState);
+    const syncState: ProjectSyncState = projectSyncStateFromRemote(remote.syncState);
     const resourceState = remote.access.frozen || isWorkspaceLocked(ctx) ? 'frozen' : 'active';
     const name = remote.displayName?.trim() || remote.projectId;
     // A catalog-only summary has no local project directory yet. Reuse the
@@ -2373,7 +2352,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
     return { projectIds, resourceIds };
   }
   function remoteTeamProjectWasUnsharedLocally(
-    remote: VelaTeamProjectRecord,
+    remote: TeamProjectRecord,
     tombstoned: { projectIds: Set<string>; resourceIds: Set<string> },
     ctx: WorkspaceProjectContext,
   ): boolean {
@@ -2409,7 +2388,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
    * case is written. A correct mirror remains untouched.
    */
   function reconcileLocalRowWithRemoteTeamAccess(
-    remote: VelaTeamProjectRecord,
+    remote: TeamProjectRecord,
     ctx: WorkspaceProjectContext,
     loadedExactRow?: any,
   ): void {
@@ -2422,7 +2401,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
     const persistedCreatorMemberId = isOwner ? ctx.workspaceMemberId : null;
     const canEdit = remote.access.canEdit && remote.access.canView && !remote.access.frozen && isOwner;
     const expectedResourceState = remote.access.frozen ? 'frozen' : 'active';
-    const expectedSyncState = velaProjectSyncStateToProject(remote.syncState);
+    const expectedSyncState = projectSyncStateFromRemote(remote.syncState);
     if (canEdit) {
       const alreadyCorrect = existing
         && existing.workspaceId === ctx.workspaceId
@@ -2530,7 +2509,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
     ctx: WorkspaceProjectContext,
   ): Promise<UnboundProjectMoveReconciliation> {
     if (!teamProjectCatalog) return 'none';
-    let remoteProjects: VelaTeamProjectRecord[];
+    let remoteProjects: TeamProjectRecord[];
     try {
       remoteProjects = await teamProjectCatalog.list(workspaceProjectPrincipal(ctx));
     } catch {
@@ -2578,7 +2557,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
     ctx: WorkspaceProjectContext,
   ): Promise<CatalogOnlyOwnerMaterialization> {
     if (!teamProjectCatalog) return 'missing';
-    let remoteProjects: VelaTeamProjectRecord[];
+    let remoteProjects: TeamProjectRecord[];
     try {
       remoteProjects = await teamProjectCatalog.list(workspaceProjectPrincipal(ctx));
     } catch {
@@ -2623,7 +2602,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
   }
   function catalogEnrichedLocalTeamProjectSummary(
     summary: any,
-    remote: VelaTeamProjectRecord,
+    remote: TeamProjectRecord,
     ctx: WorkspaceProjectContext,
   ) {
     const localProjectName = summary?.project?.name;
@@ -2640,7 +2619,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
       createdByWorkspaceMemberId: remote.ownerMemberId,
       resourceState: frozen ? 'frozen' : 'active',
       currentUserAccess: accessForRemoteTeamProject(remote, ctx),
-      syncState: velaProjectSyncStateToProject(remote.syncState),
+      syncState: projectSyncStateFromRemote(remote.syncState),
       project: {
         ...summary.project,
         ...(name ? { name } : {}),
@@ -2650,7 +2629,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
   async function listRemoteTeamProjectSummaries(localRows: any[], ctx: WorkspaceProjectContext) {
     if (!teamProjectCatalog) {
       return {
-        matchedByResourceId: new Map<string, VelaTeamProjectRecord>(),
+        matchedByResourceId: new Map<string, TeamProjectRecord>(),
         remoteSummaries: [],
       };
     }
@@ -2661,7 +2640,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
         .map((row) => [`${row.resourceHubResourceId}\0${row.id}`, row] as const),
     );
     const tombstoned = locallyTombstonedTeamProjects(localRows, ctx);
-    let remoteProjects: VelaTeamProjectRecord[];
+    let remoteProjects: TeamProjectRecord[];
     try {
       remoteProjects = await teamProjectCatalog.list(workspaceProjectPrincipal(ctx));
     } catch (error) {
@@ -2890,39 +2869,6 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
     );
   }
 
-  /**
-   * Bind projects that belong to NO workspace to this personal workspace.
-   *
-   * The rule is adoption of orphans, not a back-fill of everything. A project
-   * that already has a binding is left exactly where it is; only a project with
-   * no row anywhere is claimed. Those are the pre-workspace ("legacy") projects
-   * — created before workspaces existed, or left unbound by the repair in
-   * collab/workspace-project-home.ts — and losing them across the upgrade would
-   * be data loss, which the red-line test in tests/routes/workspace-projects.ts
-   * guards.
-   *
-   * The target is the user's PERSONAL workspace, per product: it always exists,
-   * so there is always somewhere to put an orphan, and it is the honest home for
-   * a project that predates any team. Team workspaces are excluded on purpose —
-   * adopting a user's private pre-workspace drafts into a team would expose them
-   * to people who never had them.
-   *
-   * Which personal workspace, when the user has several? The one they opened
-   * first after upgrading. There is no better evidence available: the projects
-   * carry no workspace of their own, and a workspace is only knowable as
-   * personal from the request that names it. Doing this on a read rather than in
-   * the migration is what buys that knowledge.
-   */
-  function bindUnboundProjectsToPersonalWorkspace(
-    ctx: WorkspaceProjectContext,
-    locations: Array<{ id: string; path: string; builtIn?: boolean }>,
-  ) {
-    if (ctx.workspaceType !== 'personal') return;
-    for (const project of listProjects(db).filter((item: any) => projectVisibleForLocations(item, locations))) {
-      if (getWorkspaceProjectByProjectId(db, project.id)) continue;
-      ensureWorkspaceProjection(project, ctx, 'personal');
-    }
-  }
   async function loadPluginRegistryView(options: {
     workspaceId?: string | null;
     workspaceMemberId?: string | null;
@@ -3279,12 +3225,11 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
           }
         : authoritativeCtx;
       if (ctx.memberStatus === 'removed') {
-        /** @type {import('@capydesign/contracts').WorkspaceProjectsResponse} */
+        /** @type {import('@capydesign/contracts').ProjectSummariesResponse} */
         const body = { projects: [] };
         return res.json(body);
       }
       const locations = await configuredProjectLocations();
-      bindUnboundProjectsToPersonalWorkspace(ctx, locations);
       const view = typeof req.query.view === 'string' ? req.query.view : 'all';
       if (view !== 'all' && view !== 'recent' && view !== 'drafts' && view !== 'team') {
         return sendApiError(res, 400, 'BAD_REQUEST', 'view must be all, recent, drafts, or team');
@@ -3350,7 +3295,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
           groupCountProperties,
         );
       }
-      /** @type {import('@capydesign/contracts').WorkspaceProjectsResponse} */
+      /** @type {import('@capydesign/contracts').ProjectSummariesResponse} */
       const body = { projects };
       res.json(body);
     } catch (err: any) {
@@ -4856,7 +4801,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
       knownWorkspaceType: workspaceTypes?.typeOf(binding?.workspaceId) ?? null,
       ...(ctx.configuredEnv ? { configuredEnv: ctx.configuredEnv() } : {}),
     });
-    /** @type {import('@capydesign/contracts').ProjectWorkspaceScopeResponse} */
+    /** @type {import('../../local/collab-contract.js').ProjectWorkspaceScopeResponse} */
     const body = { scope };
     res.json(body);
   });
@@ -5308,19 +5253,9 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
         // header read, which is null for a headerless caller and would skip the
         // hub work while still deleting locally.
         const teamCtx = await verifiedWorkspaceProjectContext(req);
-        if (!teamCtx) {
-          // Unreachable while the gate is intact: it admits a team-bound row only
-          // for an explicit authoritative identity. Refuse rather than
-          // fall through, so a future gate change cannot quietly reintroduce a
-          // local-only delete of a still-shared project.
-          return sendApiError(
-            res,
-            401,
-            'WORKSPACE_CONTEXT_REQUIRED',
-            'workspace context is required to unshare this project before deleting it',
-          );
+        if (teamCtx) {
+          await requestTeamVisibility([project.id], teamCtx, 'personal');
         }
-        await requestTeamVisibility([project.id], teamCtx, 'personal');
       }
       // Stop any live agent run in this project before its row and directory
       // are removed, otherwise the CLI subprocess is orphaned — it keeps

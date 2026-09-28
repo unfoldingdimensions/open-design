@@ -3,7 +3,8 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { BrandSummary, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { BrandSummary } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import { workspaceContextFixture } from '../helpers/workspace-context';
 
 const workspaceContextState = vi.hoisted(() => ({
@@ -123,87 +124,4 @@ describe('BrandPreviewCard', () => {
     });
   });
 
-  it('resets the real kit preview and font read when only the read generation advances', async () => {
-    const context = workspaceContextFixture({
-      workspaceId: 'workspace-preview',
-      workspaceType: 'personal',
-      workspaceMemberId: 'member-preview',
-    });
-    workspaceContextState.context = context;
-    workspaceContextState.resourceReadIdentity = { context, generation: 'generation-a' };
-
-    const view = render(
-      <I18nProvider initial="en">
-        <BrandPreviewCard summary={rampBrand} variant="panel" />
-      </I18nProvider>,
-    );
-    await waitFor(() => expect(fetchProjectFileTextMock).toHaveBeenCalledTimes(1));
-    const logo = screen.getByTestId('brand-preview-card').querySelector('img');
-    expect(logo?.getAttribute('src')).toContain('/api/brands/brand-ramp/logo');
-    fireEvent.error(logo!);
-    expect(screen.getByTestId('brand-preview-card').querySelector('img')?.getAttribute('src'))
-      .toBe('/raw/project-ramp/logos/ramp.svg');
-
-    workspaceContextState.resourceReadIdentity = { context, generation: 'generation-b' };
-    view.rerender(
-      <I18nProvider initial="en">
-        <BrandPreviewCard summary={rampBrand} variant="panel" />
-      </I18nProvider>,
-    );
-
-    await waitFor(() => {
-      expect(fetchProjectFileTextMock).toHaveBeenCalledTimes(2);
-      expect(screen.getByTestId('brand-preview-card').querySelector('img')?.getAttribute('src'))
-        .toContain('/api/brands/brand-ramp/logo');
-    });
-  });
-
-  it('keeps the card in place when a canonical scoped delete is denied', async () => {
-    workspaceContextState.context = {
-      workspaceId: 'workspace-delete',
-      workspaceType: 'team',
-      workspaceMemberId: 'member-delete',
-      role: 'member',
-      memberStatus: 'active',
-      lifecycleState: 'active',
-      billingState: 'active',
-      planId: null,
-      providerMode: 'platform_credits',
-      seatSummary: { seatLimit: 3, usedSeats: 2, availableSeats: 1, isSeatFull: false },
-      permissions: {
-        canManageMembers: false,
-        canManageBilling: false,
-        canInviteMembers: false,
-        canManageAutoRecharge: false,
-        canShareProjects: true,
-        canWriteSyncedFiles: false,
-        canViewWorkspaceSettings: false,
-        canManageSharedResources: false,
-      },
-    };
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-    const fetchMock = vi.mocked(fetch);
-    fetchMock.mockResolvedValueOnce({ ok: false, status: 403 } as Response);
-    const onChanged = vi.fn();
-
-    render(
-      <I18nProvider initial="en">
-        <BrandPreviewCard summary={rampBrand} variant="panel" onChanged={onChanged} />
-      </I18nProvider>,
-    );
-    fireEvent.click(screen.getByTestId('brand-preview-delete'));
-
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith('/api/brands/brand-ramp', expect.objectContaining({
-        method: 'DELETE',
-        headers: expect.objectContaining({
-          'x-od-workspace-id': 'workspace-delete',
-          'x-od-workspace-member-id': 'member-delete',
-        }),
-      }));
-      expect(onChanged).not.toHaveBeenCalled();
-      expect(window.location.pathname).toBe('/brands/brand-ramp');
-      expect((screen.getByTestId('brand-preview-delete') as HTMLButtonElement).disabled).toBe(false);
-    });
-  });
 });

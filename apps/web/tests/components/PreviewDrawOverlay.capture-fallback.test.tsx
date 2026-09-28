@@ -15,7 +15,7 @@ import { PreviewDrawOverlay } from '../../src/components/PreviewDrawOverlay';
 import { requestPreviewSnapshot } from '../../src/runtime/exports';
 
 vi.mock('../../src/runtime/exports', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/runtime/exports')>();
+  const actual = await importOriginal<any>();
   return {
     ...actual,
     // The snapshot bridge fails — the shape every foreignObject failure mode

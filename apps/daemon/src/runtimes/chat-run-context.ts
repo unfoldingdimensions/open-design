@@ -11,7 +11,7 @@ const WORKSPACE_CONTEXT_KINDS = new Set([
   'live-artifact',
 ]);
 
-export interface WorkspaceContextItem {
+export interface RunContextItem {
   id: string;
   kind: string;
   label: string;
@@ -27,7 +27,7 @@ export interface RunContextSelection {
   pluginIds?: string[];
   mcpServerIds?: string[];
   connectorIds?: string[];
-  workspaceItems?: WorkspaceContextItem[];
+  workspaceItems?: RunContextItem[];
 }
 
 type MetadataContextRef = {
@@ -55,9 +55,9 @@ function cleanString(value: unknown, max = 500): string {
   return typeof value === 'string' ? value.trim().slice(0, max) : '';
 }
 
-export function normalizeWorkspaceContextItems(items: unknown): WorkspaceContextItem[] {
+export function normalizeWorkspaceContextItems(items: unknown): RunContextItem[] {
   if (!Array.isArray(items)) return [];
-  const out: WorkspaceContextItem[] = [];
+  const out: RunContextItem[] = [];
   const seen = new Set<string>();
   for (const item of items) {
     if (!isRecord(item)) continue;
@@ -70,7 +70,7 @@ export function normalizeWorkspaceContextItems(items: unknown): WorkspaceContext
     if (seen.has(dedupeKey)) continue;
     seen.add(dedupeKey);
 
-    const normalized: WorkspaceContextItem = { id, kind, label };
+    const normalized: RunContextItem = { id, kind, label };
     const tabId = cleanString(item.tabId, 240);
     const pathValue = cleanString(item.path, 500);
     const absolutePath = cleanString(item.absolutePath, 1000);
@@ -190,7 +190,7 @@ function formatContextRefList(ids: string[], refs: unknown, titleKey: 'title' | 
     .join('\n');
 }
 
-function formatWorkspaceContextList(items: WorkspaceContextItem[]) {
+function formatWorkspaceContextList(items: RunContextItem[]) {
   return items
     .map((item, index) => {
       const details = [
@@ -205,7 +205,7 @@ function formatWorkspaceContextList(items: WorkspaceContextItem[]) {
     .join('\n');
 }
 
-function renderWorkspaceContextToolHints(items: WorkspaceContextItem[]) {
+function renderWorkspaceContextToolHints(items: RunContextItem[]) {
   if (items.length === 0) return '';
   const kinds = new Set(items.map((item) => item.kind).filter(Boolean));
   const hints: string[] = [];

@@ -1,14 +1,8 @@
 import { effectiveMaxTokens } from '../state/maxTokens';
 import type { AppConfig, ChatMessage } from '../types';
-import type {
-  ProxyImageContentBlock,
-  ProxyMessage,
-  ProxyMessageContent,
-  ProxyTextContentBlock,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { ProxyImageContentBlock, ProxyMessage, ProxyMessageContent, ProxyTextContentBlock } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { projectFileUrl } from './registry';
-import { workspaceProjectHeaders } from '../collab/workspace-identity';
 import type { StreamHandlers } from './anthropic';
 import { parseSseFrame } from './sse';
 import { isAnthropicSupportedImagePath } from '../utils/apiProtocol';
@@ -58,7 +52,7 @@ export async function streamProxyEndpoint(
       headers: {
         'Content-Type': 'application/json',
         ...(context?.workspaceContext
-          ? workspaceProjectHeaders(context.workspaceContext)
+          ? {}
           : {}),
       },
       body: JSON.stringify({
@@ -225,7 +219,7 @@ async function readAnthropicImageBlock(
   try {
     const resp = await fetch(projectFileUrl(projectId, path, workspaceContext), {
       cache: 'no-store',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     if (!resp.ok) return null;
 

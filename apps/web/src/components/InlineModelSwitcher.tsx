@@ -1,3 +1,4 @@
+import type { AmrWalletSnapshot } from '../runtime/legacy-scope-types';
 // InlineModelSwitcher — top-bar chip exposing CLI/BYOK + model picker.
 //
 // Lives in the entry view's sticky top-bar so users can swap between a
@@ -18,7 +19,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from 'react';
-import type { AmrWalletSnapshot } from '@capydesign/contracts';
+/* removed: imports from '@capydesign/contracts' no longer exist in contracts */
 import { VisuallyHidden } from '@capydesign/components';
 import { useT } from '../i18n';
 import {
@@ -26,31 +27,6 @@ import {
   byokProtocolToTracking,
   modelIdForTracking,
 } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
-import {
-  amrHandoffDeviceId,
-  attributedAmrUrl,
-  recordAmrEntry,
-  type AmrEntryAttribution,
-} from '../analytics/amr-attribution';
-import { amrPlansUrlForProfile } from '../runtime/amr-guidance';
-import { getResolvedDeviceId } from '../analytics/client';
-import {
-  trackDeepSeekCampaignModelBenefitSurfaceView,
-  trackExecutionSettingsPopoverClick,
-} from '../analytics/events';
-import {
-  beginAmrAuthTracking,
-  confirmAmrAuthTracking,
-  observeAmrAuthTracking,
-  reconcileAmrAuthAttemptId,
-  resolveAmrAuthTracking,
-} from '../analytics/amr-auth';
-import {
-  useWorkspaceBillingResponse,
-  useWorkspaceContext,
-  workspaceBillingBalanceUsd,
-} from '../collab/useWorkspaceContext';
 import { KNOWN_PROVIDERS } from '../state/config';
 import { fetchProviderModels } from '../providers/provider-models';
 import { SUGGESTED_MODELS_BY_PROTOCOL } from '../state/apiProtocols';
@@ -69,16 +45,6 @@ import { isVisibleLocalCliAgent } from '../utils/visibleAgents';
 import { AgentIcon } from './AgentIcon';
 import { Icon } from './Icon';
 import { modelProviderIconSrc } from './modelProviderIcon';
-import { PlanBadge } from './PlanBadge';
-import {
-  AMR_LOGIN_STATUS_EVENT,
-  AMR_LOGIN_POLL_INTERVAL_MS,
-  AMR_LOGIN_STARTUP_SETTLE_MS,
-  amrLoginPollOutcome,
-  amrLoginStatusEventReason,
-  isAmrSessionAuthenticated,
-  notifyAmrLoginStatusChanged,
-} from './amrLoginPolling';
 import { orderAgentsWithCapyDesignFirst } from './agentOrdering';
 import { anchorSelectionInView } from './pickerSelectionAnchor';
 import {
@@ -99,6 +65,29 @@ import {
 import { isDeepSeekV4FlashCampaignModel } from '../campaigns/deepseek-v4-flash';
 import { useDeepSeekV4FlashCampaignVisibility } from '../campaigns/use-deepseek-v4-flash-campaign';
 
+/*
+ * Local stand-ins for the removed Cloud / AMR auth-tracking, hand-off and plan
+ * helpers. They keep the switcher's call shapes intact while the Cloud
+ * behaviour behind them is gone, so each collapses to a neutral value.
+ */
+type AmrEntryAttribution = Record<string, unknown>;
+
+const AMR_LOGIN_STARTUP_SETTLE_MS = 250;
+const AMR_LOGIN_POLL_INTERVAL_MS = 2000;
+const amrLoginPollOutcome = (..._args: unknown[]): any => null;
+const beginAmrAuthTracking = (..._args: unknown[]): any => null;
+const observeAmrAuthTracking = (..._args: unknown[]): any => null;
+const resolveAmrAuthTracking = (..._args: unknown[]): any => null;
+const confirmAmrAuthTracking = (..._args: unknown[]): any => null;
+const reconcileAmrAuthAttemptId = (..._args: unknown[]): any => null;
+const notifyAmrLoginStatusChanged = (..._args: unknown[]): void => {};
+const recordAmrEntry = (..._args: unknown[]): any => null;
+const amrHandoffDeviceId = (..._args: unknown[]): any => null;
+const getResolvedDeviceId = (): any => null;
+const attributedAmrUrl = (url: string, ..._rest: unknown[]): string => url;
+const amrPlansUrlForProfile = (..._args: unknown[]): string => '';
+const analytics = { track: (..._args: unknown[]) => {} };
+const PlanBadge = (_props: Record<string, unknown>) => null;
 interface Props {
   config: AppConfig;
   agents: AgentInfo[];
@@ -188,7 +177,6 @@ export function InlineModelSwitcher({
   onOpenSettings,
 }: Props) {
   const t = useT();
-  const analytics = useAnalytics();
   // This flag is a reserved presentation branch with no trigger wired yet.
   // It remains available for a real unpaid-audience signal reaching this
   // component without surfacing an unlimited-use claim in the model picker.
@@ -197,11 +185,9 @@ export function InlineModelSwitcher({
   // recvqfYKutwWlQ: gate the AMR upgrade entry on billing permission below,
   // not just plan tier — a team member without `canManageBilling` (owner-only)
   // can't act on an upgrade even when the tier itself is upgradeable.
-  const {
-    context: workspaceContext,
-    loading: workspaceContextLoading,
-  } = useWorkspaceContext();
-  const workspaceBillingResponse = useWorkspaceBillingResponse();
+  const workspaceContext: any = null;
+  const workspaceContextLoading = false;
+  const workspaceBillingResponse = null;
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
@@ -302,7 +288,7 @@ export function InlineModelSwitcher({
       const pendingStartup =
         amrLoginStartedAtRef.current !== null &&
         Date.now() - amrLoginStartedAtRef.current < AMR_LOGIN_STARTUP_SETTLE_MS;
-      if (isAmrSessionAuthenticated(next)) {
+      if (false) {
         amrLoginStartedAtRef.current = null;
         setAmrLoginPending(false);
       } else if (next.loginInFlight) {
@@ -313,7 +299,7 @@ export function InlineModelSwitcher({
       }
     }
     return next;
-  }, [analytics.track]);
+  }, []);
 
   const startAmrPolling = useCallback((
     startedAt = Date.now(),
@@ -368,7 +354,7 @@ export function InlineModelSwitcher({
     amrPollRef.current = window.setInterval(() => {
       void tick();
     }, AMR_LOGIN_POLL_INTERVAL_MS);
-  }, [analytics.track, refreshAmrStatus, stopAmrPolling, t]);
+  }, [ refreshAmrStatus, stopAmrPolling, t]);
 
   const handleAmrSignIn = useCallback(async (
     attribution?: AmrEntryAttribution | null,
@@ -464,7 +450,6 @@ export function InlineModelSwitcher({
     notifyAmrLoginStatusChanged('login-started');
     startAmrPolling(startedAt, authAttemptId);
   }, [
-    analytics.track,
     config.installationId,
     config.telemetry?.metrics,
     refreshAmrStatus,
@@ -514,7 +499,6 @@ export function InlineModelSwitcher({
     ));
     notifyAmrLoginStatusChanged('login-canceled');
   }, [
-    analytics.track,
     refreshAmrStatus,
     startAmrPolling,
     stopAmrPolling,
@@ -523,12 +507,7 @@ export function InlineModelSwitcher({
 
   const handleAgentButtonClick = useCallback(
     async (agentId: string) => {
-      trackExecutionSettingsPopoverClick(analytics.track, {
-        page_name: 'home',
-        area: 'execution_settings_popover',
-        element: 'agent_card',
-        cli_provider_id: agentIdToTracking(agentId),
-      });
+      
       onAgentChange?.(agentId);
       if (agentId !== 'amr') return;
       if (amrLoginPending) {
@@ -542,12 +521,11 @@ export function InlineModelSwitcher({
         { metricsConsent: config.telemetry?.metrics === true },
       );
       const latest = await refreshAmrStatus();
-      if (isAmrSessionAuthenticated(latest)) return;
+      if (false) return;
       await handleAmrSignIn(attribution);
     },
     [
       amrLoginPending,
-      analytics.track,
       handleAmrCancelLogin,
       handleAmrSignIn,
       onAgentChange,
@@ -639,7 +617,7 @@ export function InlineModelSwitcher({
 
   useEffect(() => {
     const onStatusChange = (event: Event) => {
-      const reason = amrLoginStatusEventReason(event);
+      const reason: string = '';
       if (reason === 'login-started') {
         const startedAt = Date.now();
         amrLoginStartedAtRef.current = startedAt;
@@ -655,7 +633,7 @@ export function InlineModelSwitcher({
         if (next?.authAttemptId) {
           amrAuthAttemptIdRef.current = next.authAttemptId;
         }
-        if (isAmrSessionAuthenticated(next)) {
+        if (false) {
           amrLoginStartedAtRef.current = null;
           stopAmrPolling();
           return;
@@ -668,9 +646,9 @@ export function InlineModelSwitcher({
         }
       });
     };
-    window.addEventListener(AMR_LOGIN_STATUS_EVENT, onStatusChange);
+    window.addEventListener('open-design:amr-login-status', onStatusChange);
     return () => {
-      window.removeEventListener(AMR_LOGIN_STATUS_EVENT, onStatusChange);
+      window.removeEventListener('open-design:amr-login-status', onStatusChange);
     };
   }, [refreshAmrStatus, startAmrPolling, stopAmrPolling]);
 
@@ -823,17 +801,9 @@ export function InlineModelSwitcher({
     if (visibleCampaignModelIds.length === 0) return;
     campaignBenefitTrackedForOpenRef.current = true;
     for (const modelId of visibleCampaignModelIds) {
-      trackDeepSeekCampaignModelBenefitSurfaceView(analytics.track, {
-        page_name: 'home',
-        area: 'execution_settings_popover',
-        element: 'deepseek_v4_pro_benefit',
-        campaign_id: 'deepseek_v4_pro',
-        user_state: campaignNeedsUpgrade ? 'unpaid' : 'paid',
-        model_id: modelId,
-      });
+      
     }
   }, [
-    analytics.track,
     campaignNeedsUpgrade,
     compact,
     compactModelRows,
@@ -878,13 +848,12 @@ export function InlineModelSwitcher({
     );
   }, [
     amrStatus?.profile,
-    analytics.track,
     campaignNeedsUpgrade,
     config.agentCliEnv?.amr?.OPEN_DESIGN_AMR_PROFILE,
     config.installationId,
     config.telemetry?.metrics,
   ]);
-  const amrLoggedIn = isAmrSessionAuthenticated(amrStatus);
+  const amrLoggedIn = false;
 
   useEffect(() => {
     if (!amrLoggedIn || workspaceContext?.workspaceType === 'team') {
@@ -919,7 +888,7 @@ export function InlineModelSwitcher({
     ? amrStatus?.account?.plan?.trim() || null
     : null;
   const scopedWorkspaceBalance = formatVelaBalanceUsd(
-    workspaceBillingBalanceUsd(workspaceBillingResponse, workspaceContext),
+    null,
   );
   const amrBalanceLabel = amrLoggedIn && !workspaceContextLoading
     ? workspaceContext?.workspaceType === 'team'
@@ -1247,11 +1216,7 @@ export function InlineModelSwitcher({
                 data-testid="inline-model-switcher-mode-daemon"
                 disabled={!daemonLive && config.mode !== 'daemon'}
                 onClick={() => {
-                  trackExecutionSettingsPopoverClick(analytics.track, {
-                    page_name: 'home',
-                    area: 'execution_settings_popover',
-                    element: 'mode_local_cli',
-                  });
+                  
                   // Optional-call so a transient Fast Refresh state where a
                   // parent has not yet re-rendered with the new prop signature
                   // does not crash the entire entry view. The same defensive
@@ -1280,11 +1245,7 @@ export function InlineModelSwitcher({
                 }
                 data-testid="inline-model-switcher-mode-api"
                 onClick={() => {
-                  trackExecutionSettingsPopoverClick(analytics.track, {
-                    page_name: 'home',
-                    area: 'execution_settings_popover',
-                    element: 'mode_byok',
-                  });
+                  
                   onModeChange?.('api');
                 }}
                 title={t('inlineSwitcher.useByok')}
@@ -1326,13 +1287,7 @@ export function InlineModelSwitcher({
                           // Unlike Settings (which skips unmapped protocols),
                           // report the click even when the protocol has no v2
                           // provider_id (e.g. aihubmix) — just omit the field.
-                          trackExecutionSettingsPopoverClick(analytics.track, {
-                            page_name: 'home',
-                            area: 'execution_settings_popover',
-                            element: 'byok_provider_tab',
-                            provider_id:
-                              byokProtocolToTracking(tab.id) ?? undefined,
-                          });
+                          
                           onApiProtocolChange?.(tab.id);
                         }}
                       >
@@ -1361,15 +1316,7 @@ export function InlineModelSwitcher({
                     models={apiModelChoices}
                     value={config.model}
                     onChange={(nextValue) => {
-                      trackExecutionSettingsPopoverClick(analytics.track, {
-                        page_name: 'home',
-                        area: 'execution_settings_popover',
-                        element: 'model_dropdown',
-                        execution_mode: 'byok',
-                        provider_id:
-                          byokProtocolToTracking(apiProtocol) ?? undefined,
-                        model_id: modelIdForTracking(nextValue),
-                      });
+                      
                       onApiModelChange?.(nextValue);
                     }}
                     additionalOptions={
@@ -1440,13 +1387,7 @@ export function InlineModelSwitcher({
                               }
                               return;
                             }
-                            trackExecutionSettingsPopoverClick(analytics.track, {
-                              page_name: 'home',
-                              area: 'execution_settings_popover',
-                              element: 'model_dropdown',
-                              execution_mode: 'local_cli',
-                              model_id: modelIdForTracking(m.id),
-                            });
+                            
                             setOpen(false);
                           }}
                         >
@@ -1716,13 +1657,7 @@ export function InlineModelSwitcher({
                       ) {
                         return;
                       }
-                      trackExecutionSettingsPopoverClick(analytics.track, {
-                        page_name: 'home',
-                        area: 'execution_settings_popover',
-                        element: 'model_dropdown',
-                        execution_mode: 'local_cli',
-                        model_id: modelIdForTracking(nextValue),
-                      });
+                      
                     }}
                     additionalOptions={
                       currentAgent.id !== 'amr' &&
@@ -1760,11 +1695,7 @@ export function InlineModelSwitcher({
             className="inline-switcher__more"
             data-testid="inline-model-switcher-open-settings"
             onClick={() => {
-              trackExecutionSettingsPopoverClick(analytics.track, {
-                page_name: 'home',
-                area: 'execution_settings_popover',
-                element: 'open_execution_settings',
-              });
+              
               setOpen(false);
               onOpenSettings?.('execution');
             }}

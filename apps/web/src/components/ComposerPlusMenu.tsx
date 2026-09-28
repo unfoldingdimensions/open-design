@@ -8,13 +8,8 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import type {
-  ConnectorDetail,
-  InstalledPluginRecord,
-  McpServerConfig,
-  SkillSummary,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { ConnectorDetail, InstalledPluginRecord, McpServerConfig, SkillSummary } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { useI18n, useT } from '../i18n';
 import { LIBRARY_UI_VISIBLE } from '../features/libraryUi';
 import { ComposerPluginPreview } from './ComposerPluginPreview';

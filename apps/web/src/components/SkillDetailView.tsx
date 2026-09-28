@@ -15,8 +15,6 @@ import {
 } from '../i18n/content';
 import { fetchSkill } from '../providers/registry';
 import { Icon } from './Icon';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-
 interface Props {
   skill: SkillSummary;
   author?: string;
@@ -80,7 +78,7 @@ export function SkillDetailView({
   onUse,
 }: Props) {
   const { locale, t } = useI18n();
-  const { context: workspaceContext } = useWorkspaceContext();
+  const workspaceContext = null;
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const [detail, setDetail] = useState<SkillDetail | null>(null);
   const [loading, setLoading] = useState(true);

@@ -1,11 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { installMockCapyDesignHost } from '@capydesign/host/testing';
-import { advanceWorkspaceAccountGeneration } from '../../src/collab/workspace-identity';
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 import {
   cancelConnectorAuthorization,
@@ -81,18 +76,6 @@ describe('skill operation diagnostics', () => {
     });
   });
 
-  it('drops a syntactically valid but unknown import error code', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({
-      error: { code: 'UPSTREAM_abc123', message: 'Unknown upstream failure' },
-    }), { status: 503 })));
-
-    await expect(importSkill({ name: 'broken', body: 'broken' })).resolves.toEqual({
-      error: {
-        message: 'Unknown upstream failure',
-        status: 503,
-      },
-    });
-  });
 });
 
 function personalWorkspaceContext(): WorkspaceCollabContext {
@@ -146,93 +129,6 @@ describe('design-system Workspace scope', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
-  });
-
-  it('attaches the captured Workspace/member identity to catalog reads', async () => {
-    const fetchMock = vi.fn(async () =>
-      new Response(JSON.stringify({ designSystems: [] }), { status: 200 }));
-    vi.stubGlobal('fetch', fetchMock);
-    const context = personalWorkspaceContext();
-
-    await expect(fetchDesignSystemsResult(context)).resolves.toEqual({
-      ok: true,
-      designSystems: [],
-    });
-
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-
-    expect(fetchMock).toHaveBeenCalledWith('/api/design-systems', {
-      headers: expect.objectContaining({
-        'x-od-workspace-id': context.workspaceId,
-        'x-od-workspace-member-id': context.workspaceMemberId,
-      }),
-    });
-  });
-
-  it('preserves the permission code from a denied design-system delete', async () => {
-    const fetchMock = vi.fn(async () => new Response(JSON.stringify({
-      error: 'WORKSPACE_RESOURCE_MANAGE_DENIED',
-    }), { status: 403, headers: { 'Content-Type': 'application/json' } }));
-    vi.stubGlobal('fetch', fetchMock);
-    const context = teamWorkspaceContext();
-
-    await expect(deleteDesignSystemDraft('user:team-brand', context)).rejects.toEqual(
-      expect.objectContaining<Partial<DesignSystemDeleteError>>({
-        name: 'DesignSystemDeleteError',
-        status: 403,
-        code: 'WORKSPACE_RESOURCE_MANAGE_DENIED',
-      }),
-    );
-    expect(fetchMock).toHaveBeenCalledWith('/api/design-systems/user%3Ateam-brand', {
-      method: 'DELETE',
-      headers: expect.objectContaining({
-        'x-od-workspace-id': context.workspaceId,
-        'x-od-workspace-member-id': context.workspaceMemberId,
-      }),
-    });
-  });
-
-  it('materializes the exact team Workspace catalog before listing design systems', async () => {
-    const context = teamWorkspaceContext();
-    const calls: string[] = [];
-    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
-      const url = String(input);
-      calls.push(url);
-      if (url === '/api/workspace/design-systems/team') {
-        return new Response(JSON.stringify({ ids: ['user:team-brand'] }), { status: 200 });
-      }
-      return new Response(JSON.stringify({
-        designSystems: [{
-          id: 'user:team-brand',
-          title: 'Team Brand',
-          category: 'Custom',
-          summary: 'Shared by the team.',
-          swatches: [],
-          surface: 'web',
-          source: 'user',
-          status: 'published',
-          isEditable: true,
-        }],
-      }), { status: 200 });
-    });
-    vi.stubGlobal('fetch', fetchMock);
-
-    await expect(fetchDesignSystemsResult(context)).resolves.toMatchObject({
-      ok: true,
-      designSystems: [expect.objectContaining({ id: 'user:team-brand', teamShared: true })],
-    });
-
-    expect(calls).toEqual([
-      '/api/workspace/design-systems/team',
-      '/api/design-systems',
-    ]);
-    expect(fetchMock).toHaveBeenNthCalledWith(1, '/api/workspace/design-systems/team', {
-      cache: 'no-store',
-      headers: expect.objectContaining({
-        'x-od-workspace-id': context.workspaceId,
-        'x-od-workspace-member-id': context.workspaceMemberId,
-      }),
-    });
   });
 
   it('reuses an exact Team-index witness instead of materializing the same scope twice', async () => {
@@ -406,67 +302,6 @@ describe('design-system Workspace scope', () => {
       })],
     });
     expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-
-  it('partitions team materialization when the Workspace changes', async () => {
-    const contexts = [
-      teamWorkspaceContext(),
-      {
-        ...teamWorkspaceContext(),
-        workspaceId: 'ws-team-b',
-        workspaceMemberId: 'wm-team-b',
-      },
-    ];
-    const teamRequestHeaders: Array<{ workspaceId: string | null; memberId: string | null }> = [];
-    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-      if (String(input) === '/api/workspace/design-systems/team') {
-        const headers = new Headers(init?.headers);
-        teamRequestHeaders.push({
-          workspaceId: headers.get('x-od-workspace-id'),
-          memberId: headers.get('x-od-workspace-member-id'),
-        });
-        return new Response(JSON.stringify({ ids: [] }), { status: 200 });
-      }
-      return new Response(JSON.stringify({ designSystems: [] }), { status: 200 });
-    });
-    vi.stubGlobal('fetch', fetchMock);
-
-    await Promise.all(contexts.map((context) => fetchDesignSystemsResult(context)));
-
-    expect(teamRequestHeaders).toEqual([
-      { workspaceId: 'ws-team-a', memberId: 'wm-team-a' },
-      { workspaceId: 'ws-team-b', memberId: 'wm-team-b' },
-    ]);
-  });
-
-  it('attaches the same identity to design-system creation', async () => {
-    const fetchMock = vi.fn(async () =>
-      new Response(JSON.stringify({
-        designSystem: {
-          id: 'user:brand-a',
-          title: 'Brand A',
-          category: 'Custom',
-          summary: '',
-          swatches: [],
-          surface: 'web',
-          body: '# Brand A',
-          source: 'user',
-          status: 'draft',
-          isEditable: true,
-        },
-      }), { status: 201 }));
-    vi.stubGlobal('fetch', fetchMock);
-    const context = personalWorkspaceContext();
-
-    await createDesignSystemDraft({ title: 'Brand A' }, context);
-
-    expect(fetchMock).toHaveBeenCalledWith('/api/design-systems', expect.objectContaining({
-      method: 'POST',
-      headers: expect.objectContaining({
-        'x-od-workspace-id': context.workspaceId,
-        'x-od-workspace-member-id': context.workspaceMemberId,
-      }),
-    }));
   });
 
   it('collapses concurrent catalog reads for one identity into a single request', async () => {
@@ -655,118 +490,6 @@ describe('design-system Workspace scope', () => {
       ],
     });
     await issuedBeforeShare;
-  });
-
-  it('never lets a pre-account-boundary catalog read answer a post-boundary one', async () => {
-    // A sign-out/sign-in cycle can leave every context field identical while the
-    // authority behind them has changed — that is exactly why the app keys the
-    // catalog on [accountGeneration, workspaceIdentity] and the team-project
-    // catalog carries a request generation. `ttl = 0` does not cover this: it
-    // disables settled-result reuse, but a post-boundary reader could still JOIN
-    // the promise of a request issued before the boundary and adopt its answer.
-    const context = personalWorkspaceContext();
-    const gates: Array<ReturnType<typeof deferred<Response>>> = [];
-    let catalogReads = 0;
-    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL) => {
-      if (String(input) === '/api/workspace/design-systems/team') {
-        return Promise.resolve(new Response(JSON.stringify({ ids: [] }), { status: 200 }));
-      }
-      catalogReads += 1;
-      const gate = deferred<Response>();
-      gates.push(gate);
-      return gate.promise;
-    }));
-
-    const beforeBoundary = fetchDesignSystemsResult(context);
-    await vi.waitFor(() => expect(catalogReads).toBe(1));
-
-    advanceWorkspaceAccountGeneration('account-boundary');
-
-    const afterBoundary = fetchDesignSystemsResult(context);
-    await vi.waitFor(() => expect(catalogReads).toBe(2));
-
-    for (const gate of gates) {
-      gate.resolve(new Response(JSON.stringify({ designSystems: [] }), { status: 200 }));
-    }
-    await Promise.all([beforeBoundary, afterBoundary]);
-  });
-
-  it('never lets a pre-boundary Team witness decorate a post-boundary catalog', async () => {
-    // The catalog key carries the account generation, but the Team-index read it
-    // awaits first did not. A `/team` request still in flight across a
-    // sign-out/sign-in would be joined by the post-boundary caller, so the fresh
-    // catalog got decorated with the previous account's Team-share flags — the
-    // account-boundary guarantee held for the rows and not for the flags.
-    const context = teamWorkspaceContext();
-    const firstTeamRead = deferred<Response>();
-    let teamReads = 0;
-    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL) => {
-      if (String(input) === '/api/workspace/design-systems/team') {
-        teamReads += 1;
-        if (teamReads === 1) return firstTeamRead.promise;
-        return Promise.resolve(new Response(JSON.stringify({ ids: ['user:b'] }), { status: 200 }));
-      }
-      return Promise.resolve(new Response(JSON.stringify({
-        designSystems: [
-          { id: 'user:a', title: 'A', source: 'user', status: 'published' },
-          { id: 'user:b', title: 'B', source: 'user', status: 'published' },
-        ],
-      }), { status: 200 }));
-    }));
-
-    const beforeBoundary = fetchDesignSystemsResult(context);
-    await vi.waitFor(() => expect(teamReads).toBe(1));
-
-    advanceWorkspaceAccountGeneration('team-witness-boundary');
-
-    const afterBoundary = fetchDesignSystemsResult(context);
-    await vi.waitFor(() => expect(teamReads).toBe(2));
-
-    firstTeamRead.resolve(new Response(JSON.stringify({ ids: ['user:a'] }), { status: 200 }));
-
-    await expect(afterBoundary).resolves.toMatchObject({
-      ok: true,
-      designSystems: [
-        expect.not.objectContaining({ teamShared: true }),
-        expect.objectContaining({ id: 'user:b', teamShared: true }),
-      ],
-    });
-    await beforeBoundary;
-  });
-
-  it('never lets a headerless catalog read answer a Workspace-scoped one', async () => {
-    // A read issued before `/api/workspace/context` settles carries no identity
-    // headers, and `/api/design-systems` is fail-closed on a missing scope — it
-    // is a different, smaller catalog, not a cheaper copy of the scoped answer.
-    const context = personalWorkspaceContext();
-    const scopedIds: string[] = [];
-    let headerlessReads = 0;
-    // Each read gets its own Response: a shared body can only be read once, so
-    // reusing one would hide a join behind a parse error instead of a count.
-    const gates: Array<ReturnType<typeof deferred<Response>>> = [];
-    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
-      if (String(input) === '/api/workspace/design-systems/team') {
-        return Promise.resolve(new Response(JSON.stringify({ ids: [] }), { status: 200 }));
-      }
-      const headers = (init?.headers ?? {}) as Record<string, string>;
-      const workspaceId = headers['x-od-workspace-id'];
-      if (workspaceId) scopedIds.push(workspaceId);
-      else headerlessReads += 1;
-      const gate = deferred<Response>();
-      gates.push(gate);
-      return gate.promise;
-    }));
-
-    const headerless = fetchDesignSystemsResult(null);
-    const scoped = fetchDesignSystemsResult(context);
-    await vi.waitFor(() => expect(headerlessReads + scopedIds.length).toBe(2));
-    expect(headerlessReads).toBe(1);
-    expect(scopedIds).toEqual([context.workspaceId]);
-
-    for (const gate of gates) {
-      gate.resolve(new Response(JSON.stringify({ designSystems: [] }), { status: 200 }));
-    }
-    await Promise.all([headerless, scoped]);
   });
 
 });
@@ -1137,34 +860,6 @@ describe('writeProjectTextFileDetailed', () => {
     });
   });
 
-  it('attaches workspace identity headers when a workspace context is passed', async () => {
-    const fetchMock = vi.fn<typeof fetch>(async () => new Response(
-      JSON.stringify({ file: { name: 'preview.html', path: 'preview.html', size: 0, mtime: 0 } }),
-      { status: 200 },
-    ));
-    vi.stubGlobal('fetch', fetchMock);
-
-    await writeProjectTextFileDetailed(
-      'project-1',
-      'preview.html',
-      '<html></html>',
-      undefined,
-      personalWorkspaceContext(),
-    );
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/projects/project-1/files',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json',
-          'x-od-workspace-id': 'ws-personal',
-          'x-od-workspace-member-id': 'wm-1',
-        }),
-      }),
-    );
-  });
-
   it('omits workspace headers when there is no workspace context (legacy local mode)', async () => {
     const fetchMock = vi.fn<typeof fetch>(async () => new Response(
       JSON.stringify({ file: { name: 'preview.html', path: 'preview.html', size: 0, mtime: 0 } }),
@@ -1223,30 +918,6 @@ describe('upsertPreviewComment', () => {
   // `WORKSPACE_CONTEXT_REQUIRED` on every real click — silently, since the
   // caller collapsed any non-ok response to `null`. Reproduced against the
   // real dogfood daemon via curl before this fix landed.
-  it('attaches workspace identity headers when a workspace context is passed', async () => {
-    const fetchMock = vi.fn<typeof fetch>(async () => previewCommentResponse());
-    vi.stubGlobal('fetch', fetchMock);
-
-    await upsertPreviewComment(
-      'project-1',
-      'conv-1',
-      { target: PREVIEW_COMMENT_TARGET, note: 'hi' },
-      personalWorkspaceContext(),
-    );
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/projects/project-1/conversations/conv-1/comments',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json',
-          'x-od-workspace-id': 'ws-personal',
-          'x-od-workspace-member-id': 'wm-1',
-        }),
-      }),
-    );
-  });
-
   it('omits workspace headers when there is no workspace context (legacy local mode)', async () => {
     const fetchMock = vi.fn<typeof fetch>(async () => previewCommentResponse());
     vi.stubGlobal('fetch', fetchMock);
@@ -1258,87 +929,10 @@ describe('upsertPreviewComment', () => {
   });
 });
 
-describe('preview comment scoped mutations', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-    vi.unstubAllGlobals();
-  });
-
-  it('attaches workspace identity headers to status updates', async () => {
-    const fetchMock = vi.fn<typeof fetch>(async () => previewCommentResponse());
-    vi.stubGlobal('fetch', fetchMock);
-
-    await patchPreviewCommentStatus(
-      'project-1',
-      'conv-1',
-      'cmt_1',
-      'applying',
-      personalWorkspaceContext(),
-    );
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/projects/project-1/conversations/conv-1/comments/cmt_1',
-      expect.objectContaining({
-        method: 'PATCH',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json',
-          'x-od-workspace-id': 'ws-personal',
-          'x-od-workspace-member-id': 'wm-1',
-        }),
-      }),
-    );
-  });
-
-  it('attaches workspace identity headers to deletes', async () => {
-    const fetchMock = vi.fn<typeof fetch>(async () => new Response(
-      JSON.stringify({ ok: true }),
-      { status: 200, headers: { 'content-type': 'application/json' } },
-    ));
-    vi.stubGlobal('fetch', fetchMock);
-
-    await deletePreviewComment(
-      'project-1',
-      'conv-1',
-      'cmt_1',
-      personalWorkspaceContext(),
-    );
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/projects/project-1/conversations/conv-1/comments/cmt_1',
-      expect.objectContaining({
-        method: 'DELETE',
-        headers: expect.objectContaining({
-          'x-od-workspace-id': 'ws-personal',
-          'x-od-workspace-member-id': 'wm-1',
-        }),
-      }),
-    );
-  });
-});
-
 describe('patchPreviewCommentSortKey', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
-  });
-
-  it('attaches workspace identity headers when a workspace context is passed', async () => {
-    const fetchMock = vi.fn<typeof fetch>(async () => previewCommentResponse({ sortKey: 42 }));
-    vi.stubGlobal('fetch', fetchMock);
-
-    await patchPreviewCommentSortKey('project-1', 'conv-1', 'cmt_1', 42, personalWorkspaceContext());
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/projects/project-1/conversations/conv-1/comments/cmt_1/reorder',
-      expect.objectContaining({
-        method: 'PATCH',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json',
-          'x-od-workspace-id': 'ws-personal',
-          'x-od-workspace-member-id': 'wm-1',
-        }),
-      }),
-    );
   });
 
   it('omits workspace headers when there is no workspace context (legacy local mode)', async () => {
@@ -1537,34 +1131,6 @@ describe('fetchPluginExampleHtml', () => {
     await expect(
       fetchPluginExampleHtml('example-live-artifact', 'index'),
     ).resolves.toEqual({ error: 'HTTP 500' });
-  });
-});
-
-describe('Workspace-scoped resource reads', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-    vi.unstubAllGlobals();
-  });
-
-  it('sends the exact Workspace/member headers on skill, plugin and asset fetches', async () => {
-    const context = personalWorkspaceContext();
-    const fetchMock = vi.fn(
-      async (_input: RequestInfo | URL, _init?: RequestInit) =>
-        new Response('<html>ok</html>', { status: 200 }),
-    );
-    vi.stubGlobal('fetch', fetchMock);
-
-    await fetchSkillExample('skill-a', 'html', context);
-    await fetchPluginPreviewHtml('plugin-a', context);
-    await fetchPluginExampleHtml('plugin-a', 'example-a', context);
-    await fetchPluginAssetText('plugin-a', './DESIGN.md', context);
-
-    expect(fetchMock).toHaveBeenCalledTimes(4);
-    for (const [, init] of fetchMock.mock.calls) {
-      const headers = new Headers(init?.headers);
-      expect(headers.get('x-od-workspace-id')).toBe(context.workspaceId);
-      expect(headers.get('x-od-workspace-member-id')).toBe(context.workspaceMemberId);
-    }
   });
 });
 
@@ -2080,27 +1646,6 @@ describe('uploadProjectFiles', () => {
     expect(result.uploaded).toHaveLength(2);
     expect(result.failed).toHaveLength(1);
     expect(result.failed[0]).toMatchObject({ name: 'c.txt' });
-  });
-
-  it('attaches workspace identity headers when a workspace context is passed', async () => {
-    const file = new File(['hello'], 'hello.txt', { type: 'text/plain' });
-    const fetchMock = vi.fn<typeof fetch>(async () => new Response(JSON.stringify({
-      files: [{ name: 'hello.txt', path: 'hello.txt', size: 5, originalName: 'hello.txt' }],
-    }), { status: 200 }));
-    vi.stubGlobal('fetch', fetchMock);
-
-    await uploadProjectFiles('project-1', [file], undefined, personalWorkspaceContext());
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      '/api/projects/project-1/upload',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'x-od-workspace-id': 'ws-personal',
-          'x-od-workspace-member-id': 'wm-1',
-        }),
-      }),
-    );
   });
 
   it('omits workspace headers when there is no workspace context (legacy local mode)', async () => {

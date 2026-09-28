@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ClipboardEvent as ReactClipboardEvent, type CSSProperties, type DragEvent as ReactDragEvent, type MouseEvent as ReactMouseEvent, type ReactNode } from 'react';
 import type { ArtifactExportFormat } from '../runtime/chat/artifact-export';
+import type { ProjectResourceAuthority } from '../runtime/legacy-scope-types';
 import { AnchoredMenuShell } from './chat/AnchoredMenuShell';
 import { createPortal, flushSync } from 'react-dom';
 import { Button, Input, Select } from '@capydesign/components';
@@ -15,29 +16,14 @@ import {
   commentSendSucceeded,
   type CommentSendResult,
 } from './comment-send-result';
-import {
-  buildSocialSharePayload,
-  OPEN_DESIGN_GITHUB_REPO_URL,
-  workspaceContextHasTeamIdentity,
-  type CollabCloudMemberDirectoryEntry,
-  type CollabMemberRole,
-  type AgentInfo,
-  type ProjectFileVersion,
-  type SocialShareRequest,
-  type SocialShareResponse,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildSocialSharePayload, OPEN_DESIGN_GITHUB_REPO_URL, type AgentInfo, type ProjectFileVersion, type SocialShareRequest, type SocialShareResponse } from '@capydesign/contracts';
+import { workspaceContextHasTeamIdentity, CollabCloudMemberDirectoryEntry, CollabMemberRole, WorkspaceCollabContext } from '../runtime/collab-contract';
 import { PREVIEW_OBSERVABILITY_HOST_STATE_MESSAGE_TYPE } from '@capydesign/contracts/runtime/preview-observability';
 import { PREVIEW_URL_GUARD_MAX_HTML_BYTES } from '@capydesign/contracts/runtime/preview-guards';
 import {
   isPreviewRuntimeState,
   type PreviewRuntimeState,
 } from '@capydesign/contracts/runtime/preview-runtime-state';
-import {
-  appendResourceQuery,
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-} from '../collab/workspace-identity';
 import {
   anonymizeArtifactId,
   artifactKindToTracking,
@@ -49,10 +35,8 @@ import {
   type TrackingProjectKind,
   type TrackingDeployProvider,
 } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
 import { exportErrorCode } from '../analytics/export-error-code';
 import { deployErrorCode } from '../analytics/deploy-error-code';
-import { publishErrorCode } from '../analytics/publish-error-code';
 import {
   reportPreviewIframeMessage,
   reportPreviewTransportRecovery,
@@ -61,25 +45,6 @@ import {
   type PreviewTransportDocumentState,
   type PreviewTransportRecoverySignal,
 } from '../observability/iframe-error';
-import {
-  trackArtifactExportResult,
-  trackArtifactEditResult,
-  trackArtifactDeployResult,
-  trackArtifactPublishResult,
-  trackArtifactHeaderClick,
-  trackArtifactToolbarClick,
-  trackCommentPopoverClick,
-  trackDrawToolbarClick,
-  trackFileVersionModalClick,
-  trackFileVersionModalSurfaceView,
-  trackFileVersionRestoreResult,
-  trackPageView,
-  trackPresentPopoverClick,
-  trackDeckViewerSurfaceView,
-  trackDeckViewerClick,
-  trackSpeakerNotesSaveResult,
-  trackShareOptionPopoverClick,
-} from '../analytics/events';
 import { recordFirstLoopStep } from '../onboarding/first-loop';
 import { MarkdownRenderer, artifactRendererRegistry } from '../artifacts/renderer-registry';
 import { renderMarkdownToSafeHtml } from '../artifacts/markdown';
@@ -97,16 +62,6 @@ import {
 } from './markdown-scroll-sync';
 import { useT, useI18n } from '../i18n';
 import { useDismissOnOutsideInteraction } from '../hooks/useDismissOnOutsideInteraction';
-import {
-  notifyTeamProjectsChanged,
-  TEAM_PROJECTS_CHANGED_EVENT,
-} from '../collab/useWorkspaceContext';
-import {
-  canPublishPublicFile,
-  publicFileManualRevokePublication,
-  publicFilePublishFailureKey,
-  type PublicFilePublishFailureKey,
-} from '../collab/public-file-publish';
 import { moveWorkspaceProject } from '../state/projects';
 import { MoveToTeamConfirmDialog, moveConfirmSkipped } from './MoveToTeamConfirmDialog';
 import type { Dict, Locale } from '../i18n/types';
@@ -239,7 +194,6 @@ import type {
 } from '../types';
 import { Icon } from './Icon';
 import { RemixIcon } from './RemixIcon';
-import { projectIsSharedWithWorkspace } from '../collab/project-shared-status';
 import { HandoffButton } from './HandoffButton';
 import { SocialShareGrid } from './SocialShareGrid';
 import { Toast } from './Toast';
@@ -267,11 +221,6 @@ import {
   type AnchorWriteBack,
   type PreviewCommentSnapshot,
 } from '../comments';
-import {
-  useProjectCollabContext,
-  type ProjectResourceAuthority,
-} from '../collab/collab-context';
-import { currentUserDirectoryEntry, useTeamMembers } from '../collab/useTeamMembers';
 import { applyPodMemberRemoval } from '../lib/pod-members';
 import { AnnotationHoverPopover, BoardComposerPopover } from './BoardComposerPopover';
 import {
@@ -1839,7 +1788,11 @@ export const FileViewer = memo(function FileViewer({
   manualEditEntryAllowed = true,
 }: Props) {
   const t = useT();
-  const projectCollabContext = useProjectCollabContext();
+  const projectCollabContext = {
+    workspaceContext: null,
+    workspaceContextLoading: false,
+    projectResourceAuthority: null as ProjectResourceAuthority | null,
+  };
   const projectResourceAuthority = projectCollabContext.projectResourceAuthority
     ?? (projectCollabContext.workspaceContextLoading
       ? 'pending'
@@ -1860,17 +1813,14 @@ export const FileViewer = memo(function FileViewer({
   // activation funnel can attribute "user opened the produced artifact"
   // even when the sub-viewer below is HtmlViewer / MarkdownViewer / etc.
   // artifact_id is anonymized to satisfy the CSV's no-filename rule.
-  const analytics = useAnalytics();
   const studioViewKeyRef = useRef<string | null>(null);
   useEffect(() => {
     if (!workspaceActive) return;
     const key = `${projectId}::${file.name}`;
     if (studioViewKeyRef.current === key) return;
     studioViewKeyRef.current = key;
-    trackPageView(analytics.track, {
-      page_name: 'artifact',
-    });
-  }, [projectId, projectKind, file.name, file.kind, rendererMatch?.renderer.id, analytics.track, workspaceActive]);
+    
+  }, [projectId, projectKind, file.name, file.kind, rendererMatch?.renderer.id, workspaceActive]);
   useEffect(() => {
     if (projectResourceReadAllowed) return;
     invalidateHtmlSourceSnapshotProject(projectId);
@@ -2002,7 +1952,7 @@ export function LiveArtifactViewer({
   onRefreshArtifacts?: () => Promise<void> | void;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const tabs = useMemo(() => liveArtifactViewerTabs(t), [t]);
   const [mode, setMode] = useState<LiveArtifactViewerTab>('preview');
   const [detail, setDetail] = useState<LiveArtifact | null>(null);
@@ -2183,10 +2133,7 @@ export function LiveArtifactViewer({
   }, [projectId, liveArtifact.artifactId, liveArtifact.updatedAt, workspaceContext]);
 
   const previewUrl = useMemo(
-    () => appendResourceQuery(
-      liveArtifactPreviewUrl(projectId, liveArtifact.artifactId, 'rendered', workspaceContext),
-      `v=${reloadKey}`,
-    ),
+    () => (liveArtifactPreviewUrl(projectId, liveArtifact.artifactId, 'rendered', workspaceContext) + (liveArtifactPreviewUrl(projectId, liveArtifact.artifactId, 'rendered', workspaceContext).includes('?') ? '&' : '?') + `v=${reloadKey}`.replace(/^[?&]+/, '')),
     [projectId, liveArtifact.artifactId, reloadKey, workspaceContext],
   );
   const previewScale = zoom / 100;
@@ -2594,7 +2541,7 @@ function LiveArtifactCodePanel({
   reloadKey: number;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const [variant, setVariant] = useState<LiveArtifactCodeVariant>('template');
   const [code, setCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -3210,7 +3157,7 @@ function FileActions({
   file: ProjectFile;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   return (
     <div className="viewer-toolbar-actions">
       <a
@@ -3395,8 +3342,7 @@ function FileVersionManagerModal({
   viewerOnly?: boolean;
 }) {
   const { locale, t } = useI18n();
-  const analytics = useAnalytics();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const tRef = useRef(t);
   const [versions, setVersions] = useState<ProjectFileVersion[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -3444,17 +3390,7 @@ function FileVersionManagerModal({
       viewport?: PreviewViewportId;
     },
   ) => {
-    trackFileVersionModalClick(analytics.track, {
-      page_name: 'artifact',
-      area: 'file_version_modal',
-      element,
-      artifact_id: trackingArtifactId,
-      artifact_kind: trackingArtifactKind,
-      project_id: projectId,
-      project_kind: projectKind,
-      version_count: versions.length,
-      ...extra,
-    });
+    
   };
   // One impression per modal open. The component unmounts on close, so a
   // fire-once ref is enough — no dependency bookkeeping needed.
@@ -3462,16 +3398,8 @@ function FileVersionManagerModal({
   useEffect(() => {
     if (surfaceViewFiredRef.current) return;
     surfaceViewFiredRef.current = true;
-    trackFileVersionModalSurfaceView(analytics.track, {
-      page_name: 'artifact',
-      area: 'file_version_modal',
-      entry_from: entryFrom,
-      artifact_id: trackingArtifactId,
-      artifact_kind: trackingArtifactKind,
-      project_id: projectId,
-      project_kind: projectKind,
-    });
-  }, [analytics.track, entryFrom, projectId, projectKind, trackingArtifactId, trackingArtifactKind]);
+    
+  }, [ entryFrom, projectId, projectKind, trackingArtifactId, trackingArtifactKind]);
   const versionById = useMemo(() => {
     const map = new Map<string, ProjectFileVersion>();
     for (const version of versions) map.set(version.id, version);
@@ -3907,20 +3835,7 @@ function FileVersionManagerModal({
     // `versions` is sorted newest-first, so the index is "how many versions
     // back from the newest" the restore target sits.
     const fireRestoreResult = (result: 'success' | 'failed', errorCode?: string) => {
-      trackFileVersionRestoreResult(analytics.track, {
-        page_name: 'artifact',
-        area: 'file_version_modal',
-        artifact_id: trackingArtifactId,
-        artifact_kind: trackingArtifactKind,
-        project_id: projectId,
-        project_kind: projectKind,
-        version_source: fileVersionSourceToTracking(selectedVersion),
-        version_gap: Math.max(0, versions.findIndex((version) => version.id === selectedVersion.id)),
-        version_count: versions.length,
-        result,
-        ...(errorCode ? { error_code: errorCode } : {}),
-        restore_duration_ms: Math.round(performance.now() - restoreStarted),
-      });
+      
     };
     try {
       const result = await restoreProjectFileVersion(
@@ -4506,14 +4421,14 @@ export function CommentSidePanel({
   t: TranslateFn;
   composer?: ReactNode;
 }) {
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const [newCommentDraft, setNewCommentDraft] = useState('');
   const [dragState, setDragState] = useState<CommentSideDragState | null>(null);
   // Collab-cloud member directory: turns a comment's authorMemberId into a
   // display name + role for the author line + avatar. The viewer's own identity
   // resolves through `currentUser` even when the directory is empty; an unknown
   // OTHER member still renders without an author line, exactly as before.
-  const { resolve: resolveCommentAuthor } = useTeamMembers(currentUser);
+  const { resolve: resolveCommentAuthor } = ({ resolve: (_id: string) => null });
   const sorted = comments;
   // recvq5BVsolIxi: the inline "N." prefix must match the canvas pin number
   // (comment.pinSeq) so the two surfaces always agree, even when this panel
@@ -4710,7 +4625,7 @@ export function CommentSidePanel({
           const selected = visibleSelectedIds.has(comment.id);
           const active = comment.id === activeCommentId;
           const sendable = canSend(comment);
-          const author = resolveCommentAuthor(comment.authorMemberId);
+          const author = resolveCommentAuthor(comment.authorMemberId ?? '');
           const isDragging = dragState?.draggingId === comment.id;
           const dropClass = dragState?.overId === comment.id &&
             dragState.draggingId !== comment.id &&
@@ -4753,19 +4668,19 @@ export function CommentSidePanel({
                   {author ? (
                     <span
                       className="comment-side-avatar"
-                      style={{ background: commentAuthorAvatarColor(comment.authorMemberId ?? author.memberId) }}
+                      style={{ background: commentAuthorAvatarColor(comment.authorMemberId ?? '') }}
                       aria-hidden="true"
                     >
-                      {commentAuthorInitials(author.displayName)}
+                      {commentAuthorInitials('')}
                     </span>
                   ) : null}
                   <span className="comment-side-author-copy">
                     <strong>{`${displayCommentNumber(comment, index)}. ${commentDisplayLabel(comment, t)}`}</strong>
                     {author ? (
                       <small>
-                        {author.displayName}
+                        {''}
                         {' · '}
-                        {commentAuthorRoleLabel(author.role)}
+                        {commentAuthorRoleLabel('member')}
                       </small>
                     ) : null}
                   </span>
@@ -6413,14 +6328,13 @@ function ReactComponentViewer({
   workspaceActive?: boolean;
 }) {
   const t = useT();
-  const analytics = useAnalytics();
   // `FileWorkspace` keeps a non-active viewer mounted, so an in-flight publish
   // can settle after the user has switched away. The ref carries the LIVE value
   // into those continuations; the captured prop would still read the
   // render-time `true`.
   const workspaceActiveRef = useRef(workspaceActive);
   workspaceActiveRef.current = workspaceActive;
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const [mode, setMode] = useState<'preview' | 'source'>('preview');
   const [source, setSource] = useState<string | null>(null);
   const [srcDoc, setSrcDoc] = useState('');
@@ -6438,10 +6352,10 @@ function ReactComponentViewer({
   // Why a publish/unpublish attempt failed, as a message key. `publishLinkFeedback`
   // only renders inside the already-published branch, so a failed FIRST publish
   // used to leave no trace on screen at all — the button simply returned to idle.
-  const [publishFailureKey, setPublishFailureKey] = useState<PublicFilePublishFailureKey | null>(null);
+  const [publishFailureKey, setPublishFailureKey] = useState<keyof Dict | null>(null);
   const filePublished = publishedFileUrl.length > 0;
   // Public links need a signed-in workspace (any type); see canPublishPublicFile.
-  const canPublishPublic = canPublishPublicFile(workspaceContext);
+  const canPublishPublic = false;
   const publicFileRequestSeqRef = useRef(0);
   const publicFileIdentityRef = useRef({ projectId, fileName: file.name });
   const shareRef = useRef<HTMLDivElement | null>(null);
@@ -6524,14 +6438,8 @@ function ReactComponentViewer({
 
   useEffect(() => {
     let cancelled = false;
-    const refreshShareAccess = () => void projectIsSharedWithWorkspace(projectId, workspaceContext).then((shared) => {
-      if (!cancelled) setShareAccess(shared ? 'workspace' : 'private');
-    });
-    refreshShareAccess();
-    window.addEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
     return () => {
       cancelled = true;
-      window.removeEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
     };
   }, [projectId, shareMenuOpen, workspaceContext]);
 
@@ -6610,12 +6518,7 @@ function ReactComponentViewer({
   // publish/unpublish calls themselves stay unconditional.
   const firePublishFlowClick = (element: 'publish_file' | 'copy_publish_link') => {
     if (!workspaceActive) return;
-    trackShareOptionPopoverClick(analytics.track, {
-      page_name: 'artifact',
-      area: 'share_option_popover',
-      element,
-      ...publishTrackingIdentity(),
-    });
+    
   };
 
   const firePublishResult = (
@@ -6627,12 +6530,7 @@ function ReactComponentViewer({
     // Read the live ref, not the captured prop: a request can start while this
     // viewer is active and settle after the user switches tabs.
     if (!workspaceActiveRef.current) return;
-    trackArtifactPublishResult(analytics.track, {
-      page_name: 'artifact',
-      area: 'share_option_popover',
-      ...outcome,
-      ...publishTrackingIdentity(),
-    });
+    
   };
 
   async function publishCurrentFilePublic() {
@@ -6664,23 +6562,15 @@ function ReactComponentViewer({
       setPublishedFileSlug(response.slug);
     } catch (error) {
       console.warn('[FileViewer] failed to publish public file', error);
-      const recoveryPublication = publicFileManualRevokePublication(error);
       firePublishResult({
         action: 'publish',
         result: 'failed',
-        error_code: publishErrorCode(error),
+        error_code: 'publish_failed',
         publish_duration_ms: Math.round(performance.now() - publishStarted),
       });
       if (publicFileRequestSeqRef.current === requestSeq) {
-        if (recoveryPublication) {
-          setPublishedFileUrl(recoveryPublication.url);
-          setPublishedFileSlug(recoveryPublication.slug);
-          setPublishLinkFeedback(null);
-          setPublishFailureKey(null);
-        } else {
-          setPublishLinkFeedback('failed');
-          setPublishFailureKey(publicFilePublishFailureKey(error));
-        }
+        setPublishLinkFeedback('failed');
+        setPublishFailureKey(null);
       }
     } finally {
       if (publicFileRequestSeqRef.current === requestSeq) setPublishingPublicFile(false);
@@ -6719,12 +6609,12 @@ function ReactComponentViewer({
       firePublishResult({
         action: 'unpublish',
         result: 'failed',
-        error_code: publishErrorCode(error),
+        error_code: 'publish_failed',
         publish_duration_ms: Math.round(performance.now() - unpublishStarted),
       });
       if (publicFileRequestSeqRef.current === requestSeq) {
         setPublishLinkFeedback('failed');
-        setPublishFailureKey(publicFilePublishFailureKey(error));
+        setPublishFailureKey(null);
       }
     } finally {
       if (publicFileRequestSeqRef.current === requestSeq) setPublishingPublicFile(false);
@@ -6771,7 +6661,7 @@ function ReactComponentViewer({
         workspaceContext,
       });
       setShareAccess(nextAccess);
-      notifyTeamProjectsChanged();
+      void 0;
     } catch (error) {
       console.warn('[FileViewer] failed to update workspace project sharing', error);
     } finally {
@@ -7216,7 +7106,7 @@ function DocumentPreviewViewer({
   file: ProjectFile;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const [preview, setPreview] = useState<ProjectFilePreview | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -7277,7 +7167,7 @@ export function fileViewerSourceAuthorizationScopeKey(
     ?? (workspaceContextLoading ? 'pending' : workspaceContext ? 'workspace' : 'local');
   if (authority === 'local') return 'local';
   if (authority === 'workspace' && workspaceContext) {
-    return `workspace:${workspaceIdentityCacheKey(workspaceContext)}`;
+    return `workspace:${'none'}`;
   }
   return null;
 }
@@ -7383,15 +7273,13 @@ function HtmlViewer({
   // the live metadata here is what lets an agent edit finish loading before
   // the user switches back; activation itself must not promote a stale
   // snapshot and start a visible navigation.
-  const {
-    workspaceContext: observedWorkspaceContext,
-    workspaceContextLoading,
-    projectResourceAuthority,
-  } = useProjectCollabContext();
+  const observedWorkspaceContext = null;
+  const workspaceContextLoading = false;
+  const projectResourceAuthority: ProjectResourceAuthority | null = null;
   const observedSourceAuthorizationScopeKey = fileViewerSourceAuthorizationScopeKey(
     workspaceContextLoading,
     observedWorkspaceContext,
-    projectResourceAuthority,
+    projectResourceAuthority ?? undefined,
   );
   // Project context providers may re-materialize an equivalent object while
   // ambient focus/presence settles. Requests are scoped by the fields encoded
@@ -7430,12 +7318,20 @@ function HtmlViewer({
   workspaceActiveRef.current = workspaceActive;
   const filesRefreshPending = filesRefreshKey !== 0
     && appliedFilesRefreshKeyRef.current !== filesRefreshKey;
-  const analytics = useAnalytics();
   // Team collaboration: resolve comment anchors through the drift ladder when
   // the viewer is a team member of a shared project. Off (exact-match, single
   // user) otherwise. From the ProjectView-provided collab context — no props to
   // thread, no second collab client.
-  const collab = useProjectCollabContext();
+  const collab = {
+  workspaceContext: null,
+  workspaceContextLoading: false,
+  projectResourceAuthority: null as ProjectResourceAuthority | null,
+  member: null as { memberId: string } | null,
+  isOwner: true,
+  enabled: false,
+  publishedVersion: null,
+  onLostAnchors: undefined,
+};
   // Latest per-slide capture progress for the programmatic exporters, read by
   // the loading-toast ticker in fireShareExport to render elapsed time + ETA.
   const exportProgressRef = useRef<{ done: number; total: number } | null>(null);
@@ -7491,49 +7387,20 @@ function HtmlViewer({
     context?: HtmlVersionExportContext | null,
   ) => {
     if (!workspaceActive) return;
-    const requestId = analytics.newRequestId();
+    const requestId = crypto.randomUUID();
     const artifactId = anonymizeArtifactId({ projectId, fileName: file.name });
     const artifactKind = artifactKindToTracking({ fileKind: file.kind ?? null });
     const trackingFormat = format;
-    trackShareOptionPopoverClick(
-      analytics.track,
-      {
-        page_name: 'artifact',
-        area: 'share_option_popover',
-        artifact_id: artifactId,
-        artifact_kind: artifactKind,
-        element: trackingFormat,
-        project_id: projectId,
-        project_kind: projectKind,
-      },
-      { requestId },
-    );
+    
     const started = performance.now();
     const originPromise = resolveArtifactExportOrigin(context)
       .catch(() => unknownExportOrigin());
     const finish = async (result: 'success' | 'failed' | 'cancelled', errorCode?: string) => {
       const originProps = await originPromise;
-      trackArtifactExportResult(
-        analytics.track,
-        {
-          page_name: 'artifact',
-          area: 'share_option_popover',
-          artifact_id: artifactId,
-          artifact_kind: artifactKind,
-          project_id: projectId,
-          project_kind: projectKind,
-          export_format: trackingFormat,
-          result,
-          ...originProps,
-          ...(errorCode ? { error_code: errorCode } : {}),
-          export_duration_ms: Math.round(performance.now() - started),
-        },
-        { requestId },
-      );
+      
       // Onboarding first-loop 交付 step (spec §8.3): only a SUCCESSFUL export
       // closes the loop. Project-scoped — a no-op unless the project was
       // started from the Home recommendation.
-      if (result === 'success') recordFirstLoopStep(analytics.track, 'delivered', projectId);
     };
     const toastFormats = new Set(['pdf', 'pptx', 'zip', 'html', 'image', 'markdown']);
     // Programmatic exports compute in-browser and can take a while (one render
@@ -7642,32 +7509,14 @@ function HtmlViewer({
     entryFrom?: 'toolbar' | 'more_menu',
   ) => {
     if (!workspaceActive) return;
-    trackArtifactToolbarClick(analytics.track, {
-      page_name: 'artifact',
-      area: 'artifact_toolbar',
-      element,
-      artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-      artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-      project_id: projectId,
-      project_kind: projectKind,
-      ...(entryFrom ? { entry_from: entryFrom } : {}),
-    });
+    
   };
   const fireDrawToolbarClick = (
     element: DrawToolbarElement,
     submitAction?: 'draft' | 'queue' | 'send',
   ) => {
     if (!workspaceActive) return;
-    trackDrawToolbarClick(analytics.track, {
-      page_name: 'artifact',
-      area: 'draw_toolbar',
-      element,
-      ...(submitAction ? { submit_action: submitAction } : {}),
-      artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-      artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-      project_id: projectId,
-      project_kind: projectKind,
-    });
+    
   };
   const fireArtifactHeaderClick = (
     element:
@@ -7679,27 +7528,13 @@ function HtmlViewer({
       | 'settings',
   ) => {
     if (!workspaceActive) return;
-    trackArtifactHeaderClick(analytics.track, {
-      page_name: 'artifact',
-      area: 'artifact_header',
-      element,
-      artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-      artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-      project_id: projectId,
-      project_kind: projectKind,
-    });
+    
   };
   const firePresentPopoverClick = (
     element: 'in_this_tab' | 'fullscreen' | 'new_tab',
   ) => {
     if (!workspaceActive) return;
-    trackPresentPopoverClick(analytics.track, {
-      page_name: 'artifact',
-      area: 'present_popover',
-      element,
-      artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-      artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-    });
+    
   };
   const fireDeckViewerClick = (
     element:
@@ -7716,36 +7551,13 @@ function HtmlViewer({
     },
   ) => {
     if (!workspaceActive) return;
-    trackDeckViewerClick(analytics.track, {
-      page_name: 'artifact',
-      area: 'deck_viewer',
-      element,
-      artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-      artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-      project_id: projectId,
-      project_kind: projectKind,
-      ...(extra?.action ? { action: extra.action } : {}),
-      ...(typeof extra?.slide_index === 'number'
-        ? { slide_index: extra.slide_index }
-        : {}),
-      ...(typeof extra?.slide_count === 'number'
-        ? { slide_count: extra.slide_count }
-        : {}),
-    });
+    
   };
   const fireCommentPopoverClick = (
     element: 'save_comment' | 'send_to_chat' | 'add_note',
   ) => {
     if (!workspaceActive) return;
-    trackCommentPopoverClick(analytics.track, {
-      page_name: 'artifact',
-      area: 'comment_popover',
-      element,
-      artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-      artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-      project_id: projectId,
-      project_kind: projectKind,
-    });
+    
   };
   const fireArtifactEditResult = (
     action: ArtifactEditResultProps['action'],
@@ -7758,19 +7570,7 @@ function HtmlViewer({
     // Read the live ref so the async continuation does not emit from the
     // background tab after it settles.
     if (!workspaceActiveRef.current) return;
-    trackArtifactEditResult(analytics.track, {
-      page_name: 'artifact',
-      area: 'manual_edit',
-      action,
-      edit_kind: manualEditPatchKindToTracking(patch),
-      artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-      artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-      project_id: projectId,
-      project_kind: projectKind,
-      result,
-      ...(errorCode ? { error_code: errorCode } : {}),
-      duration_ms: Math.max(0, Math.round(performance.now() - startedAt)),
-    });
+    
   };
   const [mode, setMode] = useState<'preview' | 'source'>('preview');
   const sourceSnapshotRefreshKey = htmlSourceSnapshotRefreshKey(file, filesRefreshKey);
@@ -7862,10 +7662,10 @@ function HtmlViewer({
   // Why a publish/unpublish attempt failed, as a message key. `publishLinkFeedback`
   // only renders inside the already-published branch, so a failed FIRST publish
   // used to leave no trace on screen at all — the button simply returned to idle.
-  const [publishFailureKey, setPublishFailureKey] = useState<PublicFilePublishFailureKey | null>(null);
+  const [publishFailureKey, setPublishFailureKey] = useState<keyof Dict | null>(null);
   const filePublished = publishedFileUrl.length > 0;
   // Public links need a signed-in workspace (any type); see canPublishPublicFile.
-  const canPublishPublic = canPublishPublicFile(workspaceContext);
+  const canPublishPublic = false;
   const publicFileRequestSeqRef = useRef(0);
   const publicFileIdentityRef = useRef({ projectId, fileName: file.name });
   // False when closed; otherwise records which entry opened the modal so the
@@ -7951,14 +7751,8 @@ function HtmlViewer({
   useEffect(() => {
     if (!workspaceActive) return;
     let cancelled = false;
-    const refreshShareAccess = () => void projectIsSharedWithWorkspace(projectId, workspaceContext).then((shared) => {
-      if (!cancelled) setShareAccess(shared ? 'workspace' : 'private');
-    });
-    refreshShareAccess();
-    window.addEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
     return () => {
       cancelled = true;
-      window.removeEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
     };
   }, [projectId, deployMenuOpen, workspaceActive, workspaceContext]);
 
@@ -8039,12 +7833,7 @@ function HtmlViewer({
   // gated — the publish/unpublish calls themselves stay unconditional.
   const firePublishFlowClick = (element: 'publish_file' | 'copy_publish_link') => {
     if (!workspaceActive) return;
-    trackShareOptionPopoverClick(analytics.track, {
-      page_name: 'artifact',
-      area: 'share_option_popover',
-      element,
-      ...publishTrackingIdentity(),
-    });
+    
   };
 
   const firePublishResult = (
@@ -8057,12 +7846,7 @@ function HtmlViewer({
     // start while this viewer is active and settle after the user switches tabs,
     // and the in-flight continuation still holds the render-time `true`.
     if (!workspaceActiveRef.current) return;
-    trackArtifactPublishResult(analytics.track, {
-      page_name: 'artifact',
-      area: 'share_option_popover',
-      ...outcome,
-      ...publishTrackingIdentity(),
-    });
+    
   };
 
   async function publishCurrentFilePublic() {
@@ -8094,23 +7878,15 @@ function HtmlViewer({
       setPublishedFileSlug(response.slug);
     } catch (error) {
       console.warn('[FileViewer] failed to publish public file', error);
-      const recoveryPublication = publicFileManualRevokePublication(error);
       firePublishResult({
         action: 'publish',
         result: 'failed',
-        error_code: publishErrorCode(error),
+        error_code: 'publish_failed',
         publish_duration_ms: Math.round(performance.now() - publishStarted),
       });
       if (publicFileRequestSeqRef.current === requestSeq) {
-        if (recoveryPublication) {
-          setPublishedFileUrl(recoveryPublication.url);
-          setPublishedFileSlug(recoveryPublication.slug);
-          setPublishLinkFeedback(null);
-          setPublishFailureKey(null);
-        } else {
-          setPublishLinkFeedback('failed');
-          setPublishFailureKey(publicFilePublishFailureKey(error));
-        }
+        setPublishLinkFeedback('failed');
+        setPublishFailureKey(null);
       }
     } finally {
       if (publicFileRequestSeqRef.current === requestSeq) setPublishingPublicFile(false);
@@ -8149,12 +7925,12 @@ function HtmlViewer({
       firePublishResult({
         action: 'unpublish',
         result: 'failed',
-        error_code: publishErrorCode(error),
+        error_code: 'publish_failed',
         publish_duration_ms: Math.round(performance.now() - unpublishStarted),
       });
       if (publicFileRequestSeqRef.current === requestSeq) {
         setPublishLinkFeedback('failed');
-        setPublishFailureKey(publicFilePublishFailureKey(error));
+        setPublishFailureKey(null);
       }
     } finally {
       if (publicFileRequestSeqRef.current === requestSeq) setPublishingPublicFile(false);
@@ -8199,7 +7975,7 @@ function HtmlViewer({
         workspaceContext,
       });
       setShareAccess(nextAccess);
-      notifyTeamProjectsChanged();
+      void 0;
       setShareGuideToast(
         nextAccess === 'workspace'
           ? t('fileViewer.workspaceShareSuccess')
@@ -9851,19 +9627,11 @@ function HtmlViewer({
     const key = `${projectId}::${file.name}`;
     if (deckSurfaceSeenRef.current === key) return;
     deckSurfaceSeenRef.current = key;
-    trackDeckViewerSurfaceView(analytics.track, {
-      page_name: 'artifact',
-      area: 'deck_viewer',
-      artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-      artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-      project_id: projectId,
-      project_kind: projectKind,
-      slide_count: deckSlideTotal,
-    });
+    
     // deckSlideTotal intentionally omitted from deps: we snapshot it at first
     // recognition and don't want later count updates to refire the view.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [analytics.track, effectiveDeck, source, projectId, projectKind, file.name, file.kind]);
+  }, [ effectiveDeck, source, projectId, projectKind, file.name, file.kind]);
   useEffect(() => {
     setSpeakerNotesDraft(activeSpeakerNote);
     setSpeakerNotesEditMode(false);
@@ -10078,12 +9846,9 @@ function HtmlViewer({
         if (cancelled) return;
         try {
           const resp = await fetch(
-            appendResourceQuery(
-              projectRawUrl(projectId, assetPath, workspaceContext),
-              `previewAssetCheck=${encodeURIComponent(cacheBust)}`,
-            ),
+            (projectRawUrl(projectId, assetPath, workspaceContext) + (projectRawUrl(projectId, assetPath, workspaceContext).includes('?') ? '&' : '?') + `previewAssetCheck=${encodeURIComponent(cacheBust)}`.replace(/^[?&]+/, '')),
             workspaceContext
-              ? { headers: workspaceProjectHeaders(workspaceContext) }
+              ? { headers: {} }
               : undefined,
           );
           if (cancelled) return;
@@ -10377,10 +10142,7 @@ function HtmlViewer({
     workspaceActive,
   ]);
   const basePreviewSrcUrl = useMemo(
-    () => appendResourceQuery(
-      projectRawUrl(projectId, file.name, workspaceContext),
-      `v=${Math.round(file.mtime)}&r=${reloadKey}&${previewBridgeQuery}`,
-    ),
+    () => (projectRawUrl(projectId, file.name, workspaceContext) + (projectRawUrl(projectId, file.name, workspaceContext).includes('?') ? '&' : '?') + `v=${Math.round(file.mtime)}&r=${reloadKey}&${previewBridgeQuery}`.replace(/^[?&]+/, '')),
     [projectId, file.name, file.mtime, previewBridgeQuery, reloadKey, workspaceContext],
   );
   const [previewSrcUrl, setPreviewSrcUrl] = useState(basePreviewSrcUrl);
@@ -10641,11 +10403,8 @@ function HtmlViewer({
     const refreshBasePreviewSrcUrl = usePoweredPreview && powered.url
       ? powered.url
       : effectiveBasePreviewSrcUrl;
-    const refreshPreviewSrcUrl = appendResourceQuery(
-      refreshBasePreviewSrcUrl,
-      `odPreviewEpoch=${encodeURIComponent(transportPreviewMeasurementDocumentEpoch)}`,
-    );
-    const nextSrc = appendResourceQuery(refreshPreviewSrcUrl, `fr=${filesRefreshKey}`);
+    const refreshPreviewSrcUrl = (refreshBasePreviewSrcUrl + (refreshBasePreviewSrcUrl.includes('?') ? '&' : '?') + `odPreviewEpoch=${encodeURIComponent(transportPreviewMeasurementDocumentEpoch)}`.replace(/^[?&]+/, ''));
+    const nextSrc = (refreshPreviewSrcUrl + (refreshPreviewSrcUrl.includes('?') ? '&' : '?') + `fr=${filesRefreshKey}`.replace(/^[?&]+/, ''));
     const timeout = window.setTimeout(() => {
       appliedFilesRefreshKeyRef.current = filesRefreshKey;
       if (usePoweredPreview) {
@@ -10661,7 +10420,7 @@ function HtmlViewer({
       } else {
         // The final URL transport layer appends the document epoch. Keep the
         // base state epoch-free so React does not emit duplicate query keys.
-        setPreviewSrcUrl(appendResourceQuery(refreshBasePreviewSrcUrl, `fr=${filesRefreshKey}`));
+        setPreviewSrcUrl((refreshBasePreviewSrcUrl + (refreshBasePreviewSrcUrl.includes('?') ? '&' : '?') + `fr=${filesRefreshKey}`.replace(/^[?&]+/, '')));
       }
     }, 180);
     return () => window.clearTimeout(timeout);
@@ -11669,15 +11428,12 @@ function HtmlViewer({
       : urlTransportSrc;
   const computedUrlFrameSrc = urlFrameBaseSrc === 'about:blank'
     ? urlFrameBaseSrc
-    : appendResourceQuery(
-        urlFrameBaseSrc,
-        [
+    : (urlFrameBaseSrc + (urlFrameBaseSrc.includes('?') ? '&' : '?') + [
           `odPreviewEpoch=${encodeURIComponent(transportPreviewMeasurementDocumentEpoch)}`,
           manualEditUrlStandbyRevision > 0
             ? `odEditStandby=${manualEditUrlStandbyRevision}`
             : '',
-        ].filter(Boolean).join('&'),
-      );
+        ].filter(Boolean).join('&').replace(/^[?&]+/, ''));
   const lastRenderedUrlFrameSrcRef = useRef(computedUrlFrameSrc);
   const lastRenderedStandbyRevision = Number(new URL(
     lastRenderedUrlFrameSrcRef.current,
@@ -13606,19 +13362,7 @@ function HtmlViewer({
     hasContent: boolean,
     errorCode?: string,
   ) {
-    trackSpeakerNotesSaveResult(analytics.track, {
-      page_name: 'artifact',
-      area: 'deck_viewer',
-      edit_surface: editSurface,
-      artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-      artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-      project_id: projectId,
-      project_kind: projectKind,
-      slide_count: deckSlideTotal,
-      has_content: hasContent,
-      result,
-      ...(errorCode ? { error_code: errorCode } : {}),
-    });
+    
   }
 
   async function saveSpeakerNotes(
@@ -14134,25 +13878,13 @@ function HtmlViewer({
     setDeployMenuOpen(false);
     // Start the template click→result correlation; the result fires later from
     // handleSaveAsTemplate once the save actually resolves.
-    const requestId = analytics.newRequestId();
+    const requestId = crypto.randomUUID();
     templateExportRequestIdRef.current = requestId;
     templateExportStartedRef.current = performance.now();
     templateExportOriginPromiseRef.current = resolveArtifactExportOrigin()
       .catch(() => unknownExportOrigin());
     templateExportResolvedRef.current = false;
-    trackShareOptionPopoverClick(
-      analytics.track,
-      {
-        page_name: 'artifact',
-        area: 'share_option_popover',
-        artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-        artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-        element: 'template',
-        project_id: projectId,
-        project_kind: projectKind,
-      },
-      { requestId },
-    );
+    
     const defaultName =
       file.name.replace(/\.html?$/i, '') || t('fileViewer.templateNameDefault');
     setTemplateName(defaultName);
@@ -14169,32 +13901,15 @@ function HtmlViewer({
   ) => {
     if (templateExportResolvedRef.current) return;
     templateExportResolvedRef.current = true;
-    const requestId = templateExportRequestIdRef.current ?? analytics.newRequestId();
+    const requestId = templateExportRequestIdRef.current ?? crypto.randomUUID();
     const started = templateExportStartedRef.current || performance.now();
     const originPromise = templateExportOriginPromiseRef.current
       ?? resolveArtifactExportOrigin().catch(() => unknownExportOrigin());
     void originPromise.then((originProps) => {
-      trackArtifactExportResult(
-        analytics.track,
-        {
-          page_name: 'artifact',
-          area: 'share_option_popover',
-          artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-          artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-          export_format: 'template',
-          result,
-          ...originProps,
-          ...(errorCode ? { error_code: errorCode } : {}),
-          export_duration_ms: Math.round(performance.now() - started),
-          project_id: projectId,
-          project_kind: projectKind,
-        },
-        { requestId },
-      );
+      
     });
     // Onboarding first-loop 交付 step (spec §8.3): only a SUCCESSFUL template
     // export closes the loop. Project-scoped no-op unless started from Home.
-    if (result === 'success') recordFirstLoopStep(analytics.track, 'delivered', projectId);
   };
 
   async function handleSaveAsTemplate() {
@@ -14328,20 +14043,7 @@ function HtmlViewer({
       result: 'success' | 'failed' | 'cancelled',
       errorCode?: string,
     ) => {
-      trackArtifactDeployResult(analytics.track, {
-        page_name: 'artifact',
-        area: 'deploy_modal',
-        artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-        artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-        provider: providerForTracking,
-        result,
-        saved_new_token: savedNewToken,
-        first_configure: firstConfigure,
-        ...(errorCode ? { error_code: errorCode } : {}),
-        deploy_duration_ms: Math.round(performance.now() - deployStarted),
-        project_id: projectId,
-        project_kind: projectKind,
-      });
+      
     };
     try {
       const cloudflarePagesSelection = buildCloudflarePagesDeploySelection();
@@ -15436,25 +15138,13 @@ function HtmlViewer({
     });
     // Start the image export's own click→result correlation (separate modal
     // flow, so it can't ride fireShareExport).
-    const requestId = analytics.newRequestId();
+    const requestId = crypto.randomUUID();
     imageExportRequestIdRef.current = requestId;
     imageExportStartedRef.current = performance.now();
     imageExportOriginPromiseRef.current = resolveArtifactExportOrigin(context)
       .catch(() => unknownExportOrigin());
     imageExportResolvedRef.current = false;
-    trackShareOptionPopoverClick(
-      analytics.track,
-      {
-        page_name: 'artifact',
-        area: 'share_option_popover',
-        artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-        artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-        element: 'image',
-        project_id: projectId,
-        project_kind: projectKind,
-      },
-      { requestId },
-    );
+    
     setImageExportError(null);
     imageExportSnapshotDataUrlRef.current = null;
     setImageExportContext(context ?? null);
@@ -15557,32 +15247,15 @@ function HtmlViewer({
   ) => {
     if (imageExportResolvedRef.current) return;
     imageExportResolvedRef.current = true;
-    const requestId = imageExportRequestIdRef.current ?? analytics.newRequestId();
+    const requestId = imageExportRequestIdRef.current ?? crypto.randomUUID();
     const started = imageExportStartedRef.current || performance.now();
     const originPromise = imageExportOriginPromiseRef.current
       ?? resolveArtifactExportOrigin().catch(() => unknownExportOrigin());
     void originPromise.then((originProps) => {
-      trackArtifactExportResult(
-        analytics.track,
-        {
-          page_name: 'artifact',
-          area: 'share_option_popover',
-          artifact_id: anonymizeArtifactId({ projectId, fileName: file.name }),
-          artifact_kind: artifactKindToTracking({ fileKind: file.kind ?? null }),
-          export_format: 'image',
-          result,
-          ...originProps,
-          ...(errorCode ? { error_code: errorCode } : {}),
-          export_duration_ms: Math.round(performance.now() - started),
-          project_id: projectId,
-          project_kind: projectKind,
-        },
-        { requestId },
-      );
+      
     });
     // Onboarding first-loop 交付 step (spec §8.3): only a SUCCESSFUL image
     // export closes the loop. Project-scoped no-op unless started from Home.
-    if (result === 'success') recordFirstLoopStep(analytics.track, 'delivered', projectId);
   };
 
   async function handleImageExportSave() {
@@ -16101,9 +15774,7 @@ function HtmlViewer({
   // on a personal workspace and on an unshared project, i.e. exactly the cases
   // where a comment lost its avatar and name.
   const commentAuthorSelf = useMemo(
-    () => currentUserDirectoryEntry(
-      projectResourceReadBlocked ? null : workspaceContext,
-    ),
+    () => null,
     [workspaceContext, projectResourceReadBlocked],
   );
   const commentComposerPortalMetrics = (() => {
@@ -18744,7 +18415,7 @@ async function fetchProjectRelativeText(
     const resp = await fetch(
       projectRawUrl(projectId, filePath, workspaceContext),
       workspaceContext
-        ? { headers: workspaceProjectHeaders(workspaceContext) }
+        ? { headers: {} }
         : undefined,
     );
     if (!resp.ok) return null;
@@ -18790,11 +18461,8 @@ function ImageViewer({
   file: ProjectFile;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
-  const url = appendResourceQuery(
-    projectFileUrl(projectId, file.name, workspaceContext),
-    `v=${Math.round(file.mtime)}`,
-  );
+  const workspaceContext = null;
+  const url = (projectFileUrl(projectId, file.name, workspaceContext) + (projectFileUrl(projectId, file.name, workspaceContext).includes('?') ? '&' : '?') + `v=${Math.round(file.mtime)}`.replace(/^[?&]+/, ''));
   return (
     <div className="viewer image-viewer">
       <div className="viewer-toolbar">
@@ -18838,7 +18506,7 @@ function SketchViewer({
   file: ProjectFile;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   return (
     <div className="viewer image-viewer sketch-viewer">
       <div className="viewer-toolbar">
@@ -18869,11 +18537,8 @@ function VideoViewer({
   file: ProjectFile;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
-  const url = appendResourceQuery(
-    projectFileUrl(projectId, file.name, workspaceContext),
-    `v=${Math.round(file.mtime)}`,
-  );
+  const workspaceContext = null;
+  const url = (projectFileUrl(projectId, file.name, workspaceContext) + (projectFileUrl(projectId, file.name, workspaceContext).includes('?') ? '&' : '?') + `v=${Math.round(file.mtime)}`.replace(/^[?&]+/, ''));
   return (
     <div className="viewer video-viewer">
       <div className="viewer-toolbar">
@@ -18899,11 +18564,8 @@ function AudioViewer({
   file: ProjectFile;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
-  const url = appendResourceQuery(
-    projectFileUrl(projectId, file.name, workspaceContext),
-    `v=${Math.round(file.mtime)}`,
-  );
+  const workspaceContext = null;
+  const url = (projectFileUrl(projectId, file.name, workspaceContext) + (projectFileUrl(projectId, file.name, workspaceContext).includes('?') ? '&' : '?') + `v=${Math.round(file.mtime)}`.replace(/^[?&]+/, ''));
   return (
     <div className="viewer audio-viewer">
       <div className="viewer-toolbar">
@@ -18941,16 +18603,13 @@ export function SvgViewer({
   initialSource,
 }: SvgViewerProps) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const [mode, setMode] = useState<SvgViewerMode>(initialMode);
   const [source, setSource] = useState<string | null>(initialSource ?? null);
   const [loadingSource, setLoadingSource] = useState(false);
   const [sourceError, setSourceError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
-  const url = appendResourceQuery(
-    projectFileUrl(projectId, file.name, workspaceContext),
-    `v=${Math.round(file.mtime)}&r=${reloadKey}`,
-  );
+  const url = (projectFileUrl(projectId, file.name, workspaceContext) + (projectFileUrl(projectId, file.name, workspaceContext).includes('?') ? '&' : '?') + `v=${Math.round(file.mtime)}&r=${reloadKey}`.replace(/^[?&]+/, ''));
 
   useEffect(() => {
     if (mode !== 'source') return;
@@ -19070,7 +18729,7 @@ function TextViewer({
   file: ProjectFile;
 }) {
   const t = useT();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const [text, setText] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -19297,7 +18956,7 @@ function MarkdownViewer({
   viewerOnly?: boolean;
 }) {
   const { t, locale } = useI18n();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const [text, setText] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false);

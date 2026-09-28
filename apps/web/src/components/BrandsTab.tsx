@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@capydesign/components';
-import type { BrandSummary, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { BrandSummary } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { useT } from '../i18n';
 import { navigate, useRoute } from '../router';
 import {
@@ -14,12 +15,6 @@ import { BrandLogo, BrandPreviewCard, hostnameOf } from './BrandPreviewCard';
 import { BrandReferencePicker } from './BrandReferencePicker';
 import { NewBrandModal } from './NewBrandModal';
 import styles from './BrandsTab.module.css';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import {
-  resolveWorkspaceResourceReadIdentity,
-  workspaceResourceReadIdentityKey,
-} from '../collab/workspace-identity';
-
 export interface BrandsTabProps {
   /**
    * Apply a brand's registered design system as the global default through the
@@ -35,11 +30,10 @@ export interface BrandsTabProps {
 
 export function BrandsTab({ onApplyDesignSystem, onOpenProject, onDesignSystemsRefresh }: BrandsTabProps = {}) {
   const t = useT();
-  const workspaceState = useWorkspaceContext();
-  const mutationWorkspaceContext = workspaceState.context;
-  const resourceReadIdentity = resolveWorkspaceResourceReadIdentity(workspaceState);
-  const workspaceContext = resourceReadIdentity?.context ?? null;
-  const workspaceReadGeneration = workspaceResourceReadIdentityKey(resourceReadIdentity);
+  // CapyDesign has no workspace identity layer; brand surfaces are local-only.
+  const workspaceContext = null;
+  const mutationWorkspaceContext = null;
+  const workspaceReadGeneration = 'none';
   const route = useRoute();
   // A `/brands/:id` deep-link (from the rail, a chat link, or a shared URL)
   // preselects which brand the inline preview renders. Undefined on `/brands`.

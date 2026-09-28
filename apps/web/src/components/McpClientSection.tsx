@@ -14,11 +14,6 @@ import {
   useState,
 } from 'react';
 import { Button } from '@capydesign/components';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackIntegrationsMcpTabClick,
-  trackSettingsExternalMcpClick,
-} from '../analytics/events';
 import type { TrackingExternalMcpElement } from '@capydesign/contracts/analytics';
 import {
   disconnectMcpOAuth,
@@ -314,7 +309,6 @@ function signature(rows: DraftRow[]): string {
 export const McpClientSection = forwardRef<McpClientSectionHandle, Props>(
   function McpClientSection({ onServersChanged, onDirtyChange, surface = 'integrations' }, ref) {
   const t = useT();
-  const analytics = useAnalytics();
   // Single dispatch point for every click in this section: routes to the
   // payload matching the surface the section is rendered on.
   const trackMcpClick = (
@@ -322,19 +316,9 @@ export const McpClientSection = forwardRef<McpClientSectionHandle, Props>(
     extra?: { template_id?: string },
   ) => {
     if (surface === 'settings') {
-      trackSettingsExternalMcpClick(analytics.track, {
-        page_name: 'settings',
-        area: 'external_mcp',
-        element,
-        ...extra,
-      });
+      
     } else {
-      trackIntegrationsMcpTabClick(analytics.track, {
-        page_name: 'integrations',
-        area: 'mcp_tab',
-        element,
-        ...extra,
-      });
+      
     }
   };
   const [rows, setRows] = useState<DraftRow[]>([]);
@@ -413,13 +397,13 @@ export const McpClientSection = forwardRef<McpClientSectionHandle, Props>(
   };
 
   const addFromTemplate = (tpl: McpTemplate) => {
-    trackMcpClick('pick_template', { template_id: tpl.id.replace(/-/g, '_') });
+    
     setPickerOpen(false);
     setRows((curr) => [...curr, rowFromTemplate(tpl, new Set(curr.map((r) => r.id)))]);
   };
 
   const addBlank = () => {
-    trackMcpClick('pick_blank');
+    
     setPickerOpen(false);
     setRows((curr) => [...curr, rowFromBlank(new Set(curr.map((r) => r.id)))]);
   };
@@ -479,7 +463,7 @@ export const McpClientSection = forwardRef<McpClientSectionHandle, Props>(
           type="button"
           className="primary mcp-add-btn"
           onClick={() => {
-            trackMcpClick('add_server');
+            
             setPickerOpen((v) => !v);
           }}
           aria-expanded={pickerOpen}
@@ -528,12 +512,7 @@ export const McpClientSection = forwardRef<McpClientSectionHandle, Props>(
               }
               onChange={(patch) => updateRow(idx, patch)}
               onRemove={() => {
-                trackMcpClick(
-                  'remove_server',
-                  row.templateId
-                    ? { template_id: row.templateId.replace(/-/g, '_') }
-                    : undefined,
-                );
+                
                 removeRow(idx);
               }}
               onMoveUp={idx > 0 ? () => moveRow(idx, -1) : undefined}
@@ -548,7 +527,7 @@ export const McpClientSection = forwardRef<McpClientSectionHandle, Props>(
           type="button"
           className="primary"
           onClick={() => {
-            trackMcpClick('saved');
+            
             void save();
           }}
           disabled={saving || !dirty}

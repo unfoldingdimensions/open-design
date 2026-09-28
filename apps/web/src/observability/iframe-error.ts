@@ -15,8 +15,6 @@ import {
   parsePreviewObservabilityMessage,
   type PreviewObservabilityMessage,
 } from '@capydesign/contracts/runtime/preview-observability';
-import { reportSafetyEvent } from '../analytics/error-tracking';
-import { scrubFilePath } from '../analytics/scrub';
 
 const LOAD_TIMEOUT_MS = 15000;
 
@@ -200,19 +198,7 @@ export function reportPreviewIframeMessage(
   };
 
   if (message.event === 'white_screen') {
-    reportSafetyEvent('client_preview_white_screen', {
-      ...common,
-      monitoring_kind: 'no_visible_paint_after_timeout',
-      reason: 'no_visible_paint_after_timeout',
-      ready_state: boundedText(message.ready_state, 32),
-      visibility_state: boundedText(message.visibility_state, 32),
-      body_child_count: boundedNumber(message.body_child_count),
-      visible_element_count: boundedNumber(message.visible_element_count),
-      viewport_width: boundedNumber(message.viewport_width),
-      viewport_height: boundedNumber(message.viewport_height),
-      blank_observation_count: boundedNumber(message.blank_observation_count),
-      sample_interval_ms: boundedNumber(message.sample_interval_ms),
-    });
+    
     return true;
   }
 
@@ -239,32 +225,17 @@ export function reportPreviewIframeMessage(
       visibility_state: boundedText(message.visibility_state, 32),
       elapsed_ms: boundedNumber(message.elapsed_ms),
     };
-    reportSafetyEvent('client_preview_deck_stage_unscaled', measurement);
+    
     logDeckStageMeasurement(measurement);
     return true;
   }
 
   if (message.event === 'resource_error') {
-    reportSafetyEvent('client_preview_resource_error', {
-      ...common,
-      monitoring_kind: previewResourceMonitoringKind(message.resource_tag),
-      resource_tag: boundedText(message.resource_tag, 32),
-      resource_url: sanitizedResourceUrl,
-    });
+    
     return true;
   }
 
-  reportSafetyEvent('client_preview_runtime_error', {
-    ...common,
-    monitoring_kind: message.event,
-    error_origin: message.event,
-    error_name: boundedText(message.name, 120),
-    error_message: sanitizedMessage,
-    error_source_url: sanitizedSourceUrl,
-    error_stack: sanitizedStack,
-    line: boundedNumber(message.line),
-    column: boundedNumber(message.column),
-  });
+  
   return true;
 }
 
@@ -299,32 +270,7 @@ export function reportPreviewTransportRecovery(
         : 'no_head_bridge_ack';
       break;
   }
-  reportSafetyEvent('client_preview_white_screen', {
-    surface: options.surface,
-    render_mode: options.renderMode,
-    artifact_id: options.artifactId,
-    artifact_kind: options.artifactKind,
-    project_id: options.projectId,
-    monitoring_kind: 'srcdoc_transport_unverified',
-    reason: 'srcdoc_transport_unverified',
-    transport_signal: options.signal,
-    transport_stage: transportStage,
-    activation_acknowledged: options.activationAcknowledged,
-    body_complete: options.signal === 'body_incomplete' ? false : undefined,
-    frame_ready_state: boundedText(options.documentState?.readyState, 32),
-    frame_body_present: options.documentState?.bodyPresent,
-    frame_body_child_count: boundedNumber(options.documentState?.bodyChildCount),
-    frame_document_element_child_count: boundedNumber(
-      options.documentState?.documentElementChildCount,
-    ),
-    recovery_attempted: true,
-    recovery_path: 'lazy_shell_remount',
-    host_visibility_state:
-      typeof document === 'undefined' ? undefined : document.visibilityState,
-    viewport_width: boundedNumber(options.viewportWidth),
-    viewport_height: boundedNumber(options.viewportHeight),
-    timeout_ms: boundedNumber(options.timeoutMs),
-  });
+  
 }
 
 function previewResourceMonitoringKind(value: unknown): string {
@@ -357,7 +303,7 @@ function boundedNumber(value: unknown): number | undefined {
 function sanitizePreviewText(value: unknown, limit: number): string | undefined {
   const bounded = boundedText(value, limit);
   if (!bounded) return undefined;
-  const pathScrubbed = scrubFilePath(bounded);
+  const pathScrubbed = (bounded);
   if (typeof pathScrubbed !== 'string') return undefined;
   return pathScrubbed
     .replace(/\b(?:data|blob):[^\s)]+/gi, '[inline-url]')
@@ -373,7 +319,7 @@ function sanitizePreviewUrl(value: unknown): string | undefined {
     const parsed = new URL(raw, typeof window !== 'undefined' ? window.location.href : 'http://localhost');
     return `${parsed.origin}${parsed.pathname}`.slice(0, 500);
   } catch {
-    const scrubbed = scrubFilePath(raw);
+    const scrubbed = (raw);
     return typeof scrubbed === 'string' ? scrubbed.slice(0, 500) : undefined;
   }
 }
@@ -387,14 +333,7 @@ export function trackIframeLoad(options: TrackIframeOptions): () => void {
     if (settled) return;
     settled = true;
     clearTimeout(timer);
-    reportSafetyEvent(event, {
-      surface,
-      duration_ms: Math.round(performance.now() - startedAt),
-      artifact_id: options.artifactId,
-      project_id: options.projectId,
-      conversation_id: options.conversationId,
-      ...extras,
-    });
+    
   };
 
   const onLoad = (): void => {

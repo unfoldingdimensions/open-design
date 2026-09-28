@@ -50,16 +50,6 @@ vi.mock('../../../src/components/ChatComposer', () => ({
   ChatComposer: forwardRef((_props, _ref) => <div data-testid="composer" />),
 }));
 
-vi.mock('../../../src/analytics/events', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../../src/analytics/events')>();
-  return {
-    ...actual,
-    trackChatPanelClick: vi.fn(),
-    trackRunFailedToastSurfaceView: vi.fn(),
-    trackRunRecoveryActionClick: vi.fn(),
-    trackRunRecoveryActionSurfaceView: vi.fn(),
-  };
-});
 
 /**
  * jsdom 不做排版,`offsetTop` 恒为 0 —— 那样每条消息与 `scrollTop` 的距离都相等,

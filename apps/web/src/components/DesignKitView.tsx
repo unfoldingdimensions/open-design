@@ -27,7 +27,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Textarea } from '@capydesign/components';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import type { DesignSystemEditClickProps } from '@capydesign/contracts/analytics';
 import { useT } from '../i18n';
 import {
@@ -35,10 +35,6 @@ import {
   openExternalUrl,
   projectRawUrl,
 } from '../providers/registry';
-import {
-  workspaceIdentityCacheKey,
-  workspaceResourceUrl,
-} from '../collab/workspace-identity';
 import { buildSrcdoc } from '../runtime/srcdoc';
 import {
   fontStack,
@@ -106,7 +102,7 @@ export function BrandLogo({
 }: KitLogoProps) {
   const bid = brandId ?? id;
   const first: LogoStage = bid ? 'brand' : logoSrc ? 'custom' : host ? 'favicon' : 'letter';
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+  const workspaceIdentity = 'none';
   const [stage, setStage] = useState<LogoStage>(first);
   useEffect(() => {
     setStage(first);
@@ -114,7 +110,7 @@ export function BrandLogo({
 
   const src =
     stage === 'brand' && bid
-      ? workspaceResourceUrl(`/api/brands/${encodeURIComponent(bid)}/logo`, workspaceContext)
+      ? `/api/brands/${encodeURIComponent(bid)}/logo`
       : stage === 'custom' && logoSrc
         ? logoSrc
         : stage === 'favicon' && host

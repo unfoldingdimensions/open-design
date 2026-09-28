@@ -4,7 +4,7 @@ import type {
   TrackingRunTerminalIntegrity,
   TrackingRunTerminalTrigger,
 } from '@capydesign/contracts/analytics';
-import type { AnalyticsCaptureResult } from '../analytics.js';
+import type { AnalyticsCaptureResult } from '../local/telemetry-sink.js';
 
 export const RUN_TERMINAL_LIFECYCLE_VERSION =
   1 satisfies RunTerminalLifecycleStatus['version'];

@@ -8,40 +8,24 @@
 // textarea can live centered in the hero.
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import type { SharedProjectPredicate } from '../runtime/legacy-scope-types';
+
+/**
+ * Workspace-context chips used to carry the directories they linked into the
+ * shared workspace. There is no workspace identity layer any more, so a chip
+ * never links a directory.
+ */
+function workspaceContextLinkedDirs(_items: readonly { id: string }[]): string[] {
+  return [];
+}
 import { Dialog, DialogFooter, DialogTitle } from '@capydesign/components';
-import type {
-  ApplyResult,
-  ChatSessionMode,
-  ConnectorDetail,
-  CreateProjectExampleReference,
-  InputFieldSpec,
-  McpServerConfig,
-  InstalledPluginRecord,
-  LocalCatalogScope,
-  ProjectKind,
-  WorkspaceCollabContext,
-  WorkspaceProjectSummary,
-  AudioVoiceOption,
-  WorkspaceContextItem,
-} from '@capydesign/contracts';
+import type { ApplyResult, ChatSessionMode, ConnectorDetail, CreateProjectExampleReference, InputFieldSpec, McpServerConfig, InstalledPluginRecord, LocalCatalogScope, ProjectKind, ProjectListEntry, AudioVoiceOption, RunContextItem } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import {
   automaticStrategyTaskProfileForRouteId,
   DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID,
 } from '@capydesign/contracts';
 import { projectKindFromMetadataToTracking } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackCommunityGalleryClick,
-  trackHomeChatComposerClick,
-  trackPageView,
-  trackPluginDetailModalClick,
-  trackPluginDetailModalSharePopoverClick,
-  trackPluginDetailModalSurfaceView,
-  trackPluginReplacementModalClick,
-  trackPluginReplacementModalSurfaceView,
-  trackPluginReplacementResult,
-  trackRecentProjectsClick,
-} from '../analytics/events';
 import {
   applyPlugin,
   createProject,
@@ -60,10 +44,6 @@ import { FigmaImportModal } from './FigmaImportModal';
 import { fetchMcpServers } from '../state/mcp';
 import { takeHomeComposerAssetSeed } from '../state/libraryHandoff';
 import { useI18n, useT } from '../i18n';
-import {
-  formatModelWindowRetryAt,
-  modelWindowLimitCopy,
-} from '../runtime/amr-guidance';
 import {
   localizeSkillName,
   localizeSkillPrompt,
@@ -110,15 +90,6 @@ import type { PlaceholderScenario } from './home-hero/placeholderScenarios';
 import { consumePendingHomeChip, HOME_CHIP_INTENT_EVENT } from '../runtime/home-intent';
 import { navigate } from '../router';
 import { setPendingDesignSystemCreateEntry } from '../analytics/ds-create-entry';
-import { workspaceContextLinkedDirs } from './workspace-context';
-import {
-  currentWorkspaceAccountGeneration,
-  useTeamProjects,
-  useWorkspaceContext,
-  workspaceResourceReadContext,
-} from '../collab/useWorkspaceContext';
-import { useWorkspaceInvalidation } from '../collab/workspace-events';
-import { useWorkspaceSnapshotActivation } from '../collab/workspace-snapshot-activation';
 import {
   buildHomeMediaComposer,
   homeMediaSurfaceForChipId,
@@ -146,7 +117,6 @@ import { localizePluginTitle } from './plugins-home/localization';
 import type { PluginUseAction } from './plugins-home/useActions';
 import { examplePresetSeedPrompt } from './plugins-home/presetSeedPrompt';
 import { localizePluginDescription } from './plugins-home/localization';
-import type { SharedProjectPredicate } from '../collab/all-projects-list';
 import { RecentProjectsStrip } from './RecentProjectsStrip';
 import type { Recommendation } from '../onboarding/recommendation';
 import type { OnboardingEntry } from '../onboarding/onboarding-entry';
@@ -297,7 +267,7 @@ interface Props {
    *  because the SAME answer partitions its 全部项目 / 草稿 grids — a home share
    *  must move the project between those grids too, without a refetch. */
   isSharedProject?: SharedProjectPredicate;
-  onProjectShared?: (project: WorkspaceProjectSummary) => void;
+  onProjectShared?: (project: ProjectListEntry) => void;
   onProjectShareFailed?: (projectId: string) => void;
   onProjectUnshared?: (projectId: string) => void;
   /** Authoritative catalog owners plus any exact successful-move witness. */
@@ -529,10 +499,9 @@ export function HomeView({
   deepSeekV4FlashCampaignInstallationId = null,
 }: Props) {
   const { locale, t } = useI18n();
-  const analytics = useAnalytics();
-  const workspaceContextState = useWorkspaceContext();
+  const workspaceContextState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const { context: workspaceContext } = workspaceContextState;
-  const pluginCatalogWorkspaceContext = workspaceResourceReadContext(workspaceContextState);
+  const pluginCatalogWorkspaceContext = null;
   const lastSettledLocalCatalogScopeRef = useRef<LocalCatalogScope | null>(
     localCatalogScopeFromWorkspaceContext(workspaceContext),
   );
@@ -540,7 +509,7 @@ export function HomeView({
     lastSettledLocalCatalogScopeRef.current =
       localCatalogScopeFromWorkspaceContext(workspaceContext);
   }
-  const pluginAccountGeneration = currentWorkspaceAccountGeneration();
+  const pluginAccountGeneration = 0;
   const pluginCatalogOptions = {
     workspaceContext: pluginCatalogWorkspaceContext,
     accountGeneration: pluginAccountGeneration,
@@ -557,18 +526,13 @@ export function HomeView({
   // the hub is unconfigured. Only the creator attribution is derived here — the
   // shared/not-shared answer arrives as `isSharedProject` from EntryShell, which
   // owns the optimistic layer the 全部项目 / 草稿 grids read from too.
-  const homeTeamProjects = useTeamProjects();
+  const homeTeamProjects = null;
   // projectId → sharing member id, so the strip can resolve "{creator}创建" for a
   // teammate's shared project (a project absent here is the member's own local
   // project → "我创建").
   const homeProjectOwnerMemberIds = useMemo(
-    () => projectOwnerMemberIds ?? new Map(
-      homeTeamProjects.projects.map((teamProject) => [
-        teamProject.projectId,
-        teamProject.ownerMemberId,
-      ]),
-    ),
-    [homeTeamProjects.projects, projectOwnerMemberIds],
+    () => projectOwnerMemberIds ?? new Map<string, string>(),
+    [projectOwnerMemberIds],
   );
   // P0 page_view page_name=home — fire once on mount. ref-keyed to survive
   // re-renders that flip parent state without remounting HomeView.
@@ -576,8 +540,8 @@ export function HomeView({
   useEffect(() => {
     if (homePageViewFiredRef.current) return;
     homePageViewFiredRef.current = true;
-    trackPageView(analytics.track, { page_name: 'home' });
-  }, [analytics.track]);
+    
+  }, []);
   // A project route fully unmounts HomeView. Restore the last successful
   // catalog synchronously when Home mounts again so known creation actions do
   // not become disabled merely because the 10-second refresh TTL elapsed while
@@ -643,7 +607,7 @@ export function HomeView({
   const [selectedPluginContexts, setSelectedPluginContexts] = useState<SelectedPluginContext[]>([]);
   const [selectedMcpContexts, setSelectedMcpContexts] = useState<SelectedMcpContext[]>([]);
   const [selectedConnectorContexts, setSelectedConnectorContexts] = useState<SelectedConnectorContext[]>([]);
-  const [contextWorkspaceItems, setContextWorkspaceItems] = useState<WorkspaceContextItem[]>([]);
+  const [contextWorkspaceItems, setContextWorkspaceItems] = useState<RunContextItem[]>([]);
   const [stagedFiles, setStagedFiles] = useState<File[]>([]);
   const [workingDir, setWorkingDir] = useState<string | null>(null);
   // Token paired with `workingDir` when picked through the desktop host's
@@ -850,11 +814,8 @@ export function HomeView({
     const key = `${pendingReplacement.pluginBefore ?? ''}->${pendingReplacement.pluginAfter}`;
     if (lastPluginReplacementViewRef.current === key) return;
     lastPluginReplacementViewRef.current = key;
-    trackPluginReplacementModalSurfaceView(analytics.track, {
-      page_name: 'home',
-      area: 'plugin_replacement_modal',
-    });
-  }, [pendingReplacement, analytics.track]);
+    
+  }, [pendingReplacement]);
   // Community gallery analytics. Opening a tile fires both a ui_click on
   // the card (the funnel's denominator) and a surface_view on the detail
   // modal it reveals (the numerator); the ↗ that jumps straight to the
@@ -865,22 +826,11 @@ export function HomeView({
     (record: InstalledPluginRecord) => {
       const pluginId = record.sourceMarketplaceEntryName ?? record.id;
       const pluginType = record.marketplaceTrust ?? 'official';
-      trackCommunityGalleryClick(analytics.track, {
-        page_name: 'home',
-        area: 'community_gallery',
-        element: 'card',
-        plugin_id: pluginId,
-        plugin_type: pluginType,
-      });
-      trackPluginDetailModalSurfaceView(analytics.track, {
-        page_name: 'home',
-        area: 'plugin_detail_modal',
-        plugin_id: pluginId,
-        plugin_type: pluginType,
-      });
+      
+      
       setDetailsRecord(record);
     },
-    [analytics.track],
+    [],
   );
   const inputRef = useRef<HomeHeroHandle | null>(null);
   const homeViewRef = useRef<HTMLDivElement | null>(null);
@@ -942,7 +892,7 @@ export function HomeView({
       return promise;
     };
     pluginCatalogReloadRef.current = load;
-    if (homeActiveRef.current && pluginCatalogWorkspaceContext?.workspaceType !== 'team') load();
+    if (homeActiveRef.current) load();
     else pluginCatalogStaleRef.current = true;
     const onChanged = () => {
       // A mutation event is newer than any pending snapshot and must supersede
@@ -968,34 +918,17 @@ export function HomeView({
       }
       window.removeEventListener('open-design:plugins-changed', onChanged);
     };
-  }, [desiredPluginCatalogKey, pluginCatalogWorkspaceContext?.workspaceType]);
+  }, [desiredPluginCatalogKey]);
 
   useEffect(() => {
     if (!isActive || !desiredPluginCatalogKey || !pluginCatalogStaleRef.current) return;
-    if (pluginCatalogWorkspaceContext?.workspaceType === 'team') return;
     pluginCatalogStaleRef.current = false;
     pluginCatalogReloadRef.current(true);
-  }, [desiredPluginCatalogKey, isActive, pluginCatalogWorkspaceContext?.workspaceType]);
+  }, [desiredPluginCatalogKey, isActive]);
 
-  const handlePluginStreamActive = useWorkspaceSnapshotActivation({
-    enabled: isActive && pluginCatalogWorkspaceContext?.workspaceType === 'team',
-    identity: desiredPluginCatalogKey ?? 'no-plugin-catalog',
-    refresh: () => { void pluginCatalogReloadRef.current(true, true); },
-  });
+  const handlePluginStreamActive = (() => {});
 
-  useWorkspaceInvalidation({}, {
-    workspaceContext:
-      isActive && pluginCatalogWorkspaceContext?.workspaceType === 'team'
-        ? pluginCatalogWorkspaceContext
-        : null,
-    enabled: isActive && pluginCatalogWorkspaceContext?.workspaceType === 'team',
-    // App owns the global Skill/Design System catch-up. Home only refreshes
-    // its plugin projection.
-    onActive: () => {
-      pluginCatalogStaleRef.current = false;
-      handlePluginStreamActive();
-    },
-  });
+  void 0;
 
   useEffect(() => {
     let cancelled = false;
@@ -1350,7 +1283,7 @@ export function HomeView({
   // writes Vela/daemon account-level active-workspace state. That model cannot
   // represent two clients of one account open in different Workspaces.
   useEffect(() => {
-    const nextWorkspaceName = workspaceContext?.workspaceName?.trim() || null;
+    const nextWorkspaceName = null;
     const previousWorkspaceName = previousWorkspaceNameRef.current;
     previousWorkspaceNameRef.current = nextWorkspaceName;
 
@@ -1386,7 +1319,7 @@ export function HomeView({
         result: null,
       };
     });
-  }, [workspaceContext?.workspaceName]);
+  }, []);
 
   function focusPromptAtEnd() {
     requestAnimationFrame(() => {
@@ -1449,7 +1382,7 @@ export function HomeView({
         options?.inputs,
         inputFields,
         selectedDesignSystemTitle,
-        workspaceContext?.workspaceName,
+        undefined,
       ),
     );
     const inputsValid = pluginInputsAreValid(inputFields, optimisticInputs);
@@ -1622,10 +1555,7 @@ export function HomeView({
     // During an identity transition, omit attribution instead of blocking Send.
     const writeWorkspaceContext = workspaceContextState.identityChangePending
       ? null
-      : resolvedWorkspaceContextForWrite(
-          workspaceContextState,
-          { unavailablePolicy: 'unscoped' },
-        );
+      : resolvedWorkspaceContextForWrite(workspaceContextState);
     const result = await applyPlugin(record.id, {
       locale,
       inputs,
@@ -1666,7 +1596,7 @@ export function HomeView({
         options?.inputs,
         inputFields,
         selectedDesignSystemTitle,
-        workspaceContext?.workspaceName,
+        undefined,
       ),
       inputFields: options?.inputFields,
       queryTemplate: options?.queryTemplate,
@@ -1702,14 +1632,7 @@ export function HomeView({
     inputs?: Record<string, unknown>,
     homeType?: { chipId?: string; projectKind?: ProjectKind },
   ) {
-    trackCommunityGalleryClick(analytics.track, {
-      page_name: 'home',
-      area: 'community_gallery',
-      element: 'use_plugin',
-      plugin_id: record.sourceMarketplaceEntryName ?? record.id,
-      plugin_type: record.marketplaceTrust ?? 'official',
-      action: action === 'use-with-query' ? 'use_with_query' : 'use',
-    });
+    
     if (action === 'use-with-query') {
       // Prompt-loading "Use" seeds the composer with the SAME human-friendly
       // text the Home example-prompt cards use (examplePresetSeedPrompt), NOT the
@@ -1977,14 +1900,7 @@ export function HomeView({
     // Website-clone rail uses plain text prompt cards instead — those fire the
     // same event from HomeHero's usePromptExample.) Raw seed text is never sent
     // (free-text / PII rule).
-    trackHomeChatComposerClick(analytics.track, {
-      page_name: 'home',
-      area: 'chat_composer',
-      element: 'example_prompt',
-      chip_id: chipId,
-      plugin_id: record.sourceMarketplaceEntryName ?? record.id,
-      plugin_type: record.marketplaceTrust ?? 'official',
-    });
+    
     // Picking a preset card *binds* the plugin (not just a textarea fill):
     // active switches to this exact preset so submit resolves its snapshot and
     // injects the plugin's SKILL.md + example.html as generation context — the
@@ -2023,14 +1939,7 @@ export function HomeView({
     // (The Home preset rail's own hover Use/Remix overlay was removed in
     // 2026-07 — this is the surviving Remix entry point, unrelated to that
     // card.)
-    trackHomeChatComposerClick(analytics.track, {
-      page_name: 'home',
-      area: 'chat_composer',
-      element: 'example_open_project',
-      chip_id: active?.chipId ?? undefined,
-      plugin_id: record.sourceMarketplaceEntryName ?? record.id,
-      plugin_type: record.marketplaceTrust ?? 'official',
-    });
+    
     try {
       const result = await duplicatePluginAsProject(record.id, {
         name: localizePluginTitle(locale, record),
@@ -2063,10 +1972,7 @@ export function HomeView({
         // omit stale attribution instead of blocking on Workspace discovery.
         workspaceContext: workspaceContextState.identityChangePending
           ? null
-          : resolvedWorkspaceContextForWrite(
-              workspaceContextState,
-              { unavailablePolicy: 'unscoped' },
-            ),
+          : resolvedWorkspaceContextForWrite(workspaceContextState),
       });
       onOpenProject(project.id);
     } catch {
@@ -2126,7 +2032,7 @@ export function HomeView({
     setStagedFiles((current) => current.filter((_, i) => i !== index));
   }
 
-  function addWorkspaceContext(item: WorkspaceContextItem) {
+  function addWorkspaceContext(item: RunContextItem) {
     setContextWorkspaceItems((current) =>
       current.some((candidate) => candidate.id === item.id)
         ? current
@@ -2526,12 +2432,7 @@ export function HomeView({
       chip.action.kind === 'apply-scenario' || chip.action.kind === 'apply-figma-migration'
         ? 'plugin_chip'
         : 'action_chip';
-    trackHomeChatComposerClick(analytics.track, {
-      page_name: 'home',
-      area: 'chat_composer',
-      element: chipElement,
-      chip_id: chip.id,
-    });
+    
     switch (chip.action.kind) {
       case 'apply-scenario':
       case 'apply-figma-migration': {
@@ -2769,11 +2670,7 @@ export function HomeView({
     // async plugin-apply roundtrip so the click count reflects user intent
     // even when the run is rejected (missing inputs, apply failure). The
     // subsequent run_created/run_finished events carry the result detail.
-    trackHomeChatComposerClick(analytics.track, {
-      page_name: 'home',
-      area: 'chat_composer',
-      element: 'send_button',
-    });
+    
     let submittedActive = active;
     // The OD Next automatic route is owned by the first-level task type, and
     // `chipId` IS that task type: a second-level scene refines the brief it
@@ -3043,21 +2940,9 @@ export function HomeView({
         // callers, and read literally it sounds like a charged failure rather
         // than a wait. Everything else keeps the verbatim path, where the
         // daemon's message IS the specific thing to say.
-        const windowLimit = modelWindowLimitCopy(
-          err instanceof Error ? err.message : null,
-        );
-        if (windowLimit) {
-          setError(t(
-            windowLimit.messageKey,
-            windowLimit.retryAt
-              ? { retryAt: formatModelWindowRetryAt(windowLimit.retryAt, locale) }
-              : undefined,
-          ));
-        } else {
-          setError(err instanceof Error && err.message.trim()
-            ? err.message
-            : t('home.createFailed'));
-        }
+        setError(err instanceof Error && err.message.trim()
+          ? err.message
+          : t('home.createFailed'));
       }
     } finally {
       setSending(false);
@@ -3241,21 +3126,11 @@ export function HomeView({
           // re-renders into the project view.
           const project = projects.find((p) => p.id === id);
           const projectKind = projectKindFromMetadataToTracking(project?.metadata);
-          trackRecentProjectsClick(analytics.track, {
-            page_name: 'home',
-            area: 'recent_projects',
-            element: 'project_card',
-            project_id: id,
-            ...(projectKind ? { project_kind: projectKind } : {}),
-          });
+          
           onOpenProject(id);
         }}
         onViewAll={() => {
-          trackRecentProjectsClick(analytics.track, {
-            page_name: 'home',
-            area: 'recent_projects',
-            element: 'view_all',
-          });
+          
           onViewAllProjects();
         }}
         {...(onDeleteProject ? { onDelete: onDeleteProject } : {})}
@@ -3271,13 +3146,7 @@ export function HomeView({
             onClose={() => {
               // Same dismissal funnel as the full modal below — close button,
               // Esc-less backdrop mousedown — so the analytics area stays one.
-              trackPluginDetailModalClick(analytics.track, {
-                page_name: 'home',
-                area: 'plugin_detail_modal',
-                element: 'close',
-                plugin_id: detailsRecord.sourceMarketplaceEntryName ?? detailsRecord.id,
-                plugin_type: detailsRecord.marketplaceTrust ?? 'official',
-              });
+              
               setDetailsRecord(null);
             }}
             onUse={() => {
@@ -3307,26 +3176,14 @@ export function HomeView({
             onClose={() => {
               // Covers the close button, Esc and the backdrop — every
               // variant funnels dismissal through this single onClose.
-              trackPluginDetailModalClick(analytics.track, {
-                page_name: 'home',
-                area: 'plugin_detail_modal',
-                element: 'close',
-                plugin_id: detailsRecord.sourceMarketplaceEntryName ?? detailsRecord.id,
-                plugin_type: detailsRecord.marketplaceTrust ?? 'official',
-              });
+              
               setDetailsRecord(null);
             }}
             onUse={(record, action) => {
               // Track here (not inside routePluginUse) so the gallery's
               // own onUse keeps its community_gallery attribution; the
               // kebab 'use-with-query' action maps to the dropdown face.
-              trackPluginDetailModalClick(analytics.track, {
-                page_name: 'home',
-                area: 'plugin_detail_modal',
-                element: action === 'use-with-query' ? 'use_plugin_dropdown' : 'use_plugin',
-                plugin_id: record.sourceMarketplaceEntryName ?? record.id,
-                plugin_type: record.marketplaceTrust ?? 'official',
-              });
+              
               void routePluginUse(record, action);
             }}
             onDuplicate={(record) => {
@@ -3334,14 +3191,7 @@ export function HomeView({
               void duplicateExamplePlugin(record);
             }}
             isApplying={pendingApplyId === detailsRecord.id}
-            onSharePopoverItemClick={(item) =>
-              trackPluginDetailModalSharePopoverClick(analytics.track, {
-                page_name: 'home',
-                area: 'plugin_detail_share_popover',
-                element: item,
-                plugin_id: detailsRecord.sourceMarketplaceEntryName ?? detailsRecord.id,
-                plugin_type: detailsRecord.marketplaceTrust ?? 'official',
-              })}
+            onSharePopoverItemClick={(item) => {}}
           />
         ) : null}
         {detailsSkill ? (
@@ -3415,11 +3265,7 @@ export function HomeView({
                 type="button"
                 className="home-hero-confirm__secondary"
                 onClick={() => {
-                  trackPluginReplacementModalClick(analytics.track, {
-                    page_name: 'home',
-                    area: 'plugin_replacement_modal',
-                    element: 'cancel',
-                  });
+                  
                   setPendingReplacement(null);
                 }}
               >
@@ -3429,11 +3275,7 @@ export function HomeView({
                 type="button"
                 className="home-hero-confirm__primary"
                 onClick={() => {
-                  trackPluginReplacementModalClick(analytics.track, {
-                    page_name: 'home',
-                    area: 'plugin_replacement_modal',
-                    element: 'replace',
-                  });
+                  
                   const pluginBefore = pendingReplacement.pluginBefore;
                   const pluginAfter = pendingReplacement.pluginAfter;
                   const action = pendingReplacement.confirm;
@@ -3448,23 +3290,9 @@ export function HomeView({
                   void (async () => {
                     try {
                       await action();
-                      trackPluginReplacementResult(analytics.track, {
-                        page_name: 'home',
-                        area: 'plugin_replacement',
-                        plugin_before: pluginBefore ?? '',
-                        plugin_after: pluginAfter,
-                        result: 'success',
-                      });
+                      
                     } catch (err) {
-                      trackPluginReplacementResult(analytics.track, {
-                        page_name: 'home',
-                        area: 'plugin_replacement',
-                        plugin_before: pluginBefore ?? '',
-                        plugin_after: pluginAfter,
-                        result: 'failed',
-                        error_code:
-                          err instanceof Error ? err.message : String(err),
-                      });
+                      
                     }
                   })();
                 }}

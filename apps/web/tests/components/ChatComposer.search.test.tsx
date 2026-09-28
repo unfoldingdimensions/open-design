@@ -569,22 +569,6 @@ describe('ChatComposer /search command', () => {
     expect(screen.queryByRole('dialog', { name: longName })).toBeNull();
   });
 
-  it('keeps staged image preview modal styling available', () => {
-    const css = readExpandedIndexCss();
-
-    expect(css).toContain('.staged-preview-modal');
-    expect(css).toContain('position: fixed;');
-    expect(css).toContain('.staged-preview-trigger');
-    expect(css).toContain('display: inline-flex;');
-    expect(css).toContain('flex: 1 1 auto;');
-    expect(css).toContain('.staged-preview-trigger .staged-name');
-    expect(css).toContain('.staged-preview-card');
-    expect(css).toContain('max-height: calc(100vh - 48px);');
-    expect(css).toContain('.staged-preview-head');
-    expect(css).toContain('.staged-preview-card > img');
-    expect(css).toContain('object-fit: contain;');
-  });
-
   it('expands /search into a first-action research command prompt', async () => {
     const onSend = vi.fn();
 

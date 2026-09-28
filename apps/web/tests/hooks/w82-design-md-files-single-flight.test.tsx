@@ -22,11 +22,7 @@
 
 import { renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 import { useDesignMdState } from '../../src/hooks/useDesignMdState';
 import { fetchProjectFiles } from '../../src/providers/registry';
@@ -105,20 +101,6 @@ describe('useDesignMdState reads the project file list through the shared reader
 
     expect(fileListCalls('p-one')).toHaveLength(1);
     expect(fileListCalls('p-two')).toHaveLength(1);
-  });
-
-  it('does NOT share across Workspace identities', async () => {
-    // Scope guard: the request carries Workspace headers, and one identity's
-    // file list is not an answer to another identity's read.
-    const a = fetchProjectFiles('p-scope', { workspaceContext: context({ workspaceId: 'ws-a' }) });
-    const { result } = renderHook(() =>
-      useDesignMdState('p-scope', 0, context({ workspaceId: 'ws-b' })),
-    );
-
-    await waitFor(() => expect(result.current.loading).toBe(false));
-    await a;
-
-    expect(fileListCalls('p-scope')).toHaveLength(2);
   });
 
   it('surfaces a transport failure as an error, not an empty directory', async () => {

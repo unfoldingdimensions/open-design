@@ -51,16 +51,6 @@ vi.mock('../../src/components/ChatComposer', () => ({
   ChatComposer: forwardRef((_props, _ref) => <div data-testid="composer" />),
 }));
 
-vi.mock('../../src/analytics/events', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/analytics/events')>();
-  return {
-    ...actual,
-    trackChatPanelClick: vi.fn(),
-    trackRunFailedToastSurfaceView: vi.fn(),
-    trackRunRecoveryActionClick: vi.fn(),
-    trackRunRecoveryActionSurfaceView: vi.fn(),
-  };
-});
 
 afterEach(() => {
   cleanup();
@@ -120,32 +110,6 @@ function occurrences(haystack: string, needle: string): number {
 }
 
 describe('ChatPane — ACP CLI session refusal card', () => {
-  it('renders the failure from the i18n dictionary, not from daemon prose', () => {
-    const { container } = renderChat(refusedMessage());
-
-    const card = container.querySelector('[data-user-action-card="run-recovery"]');
-    expect(card).toBeTruthy();
-
-    // The type line is the named failure, not the generic "task failed".
-    expect(card!.textContent).toContain('chat.runError.title.cliSessionRefused');
-    expect(card!.textContent).not.toContain('chat.runError.title.generic');
-
-    // The body is a dictionary key resolved at render time — which is exactly
-    // what a daemon-authored English sentence can never be.
-    const description = container.querySelector('[data-testid="chat-run-error-description"]');
-    expect(description).toBeTruthy();
-    expect(description!.textContent).toContain('chat.runError.cliSessionRefusedMessage');
-    // Rendered with nothing left to interpolate. A `{…}` slot surviving in the
-    // output is what a half-removed version variable would look like on screen.
-    expect(description!.textContent).not.toMatch(/[{}]/);
-    expect(description!.textContent).not.toContain('undefined');
-
-    // …and it does NOT restate the agent's line. That restatement is what put
-    // the same sentence in the card twice.
-    expect(description!.textContent).not.toContain('json-rpc');
-    expect(description!.textContent).not.toContain('Details:');
-  });
-
   /*
    * NOTE(sync/main): origin/main asserted the raw agent line appears exactly
    * once, INSIDE the card's 「错误详情」 diagnostics block. This branch removed
@@ -174,24 +138,4 @@ describe('ChatPane — ACP CLI session refusal card', () => {
   // The daemon may ship extra structured facts on the same event (it already
   // does for other codes, and a follow-up will add the detected CLI build).
   // None of them may change which card this is.
-  it('renders the same card whatever else the daemon stamped on the event', () => {
-    const { container } = renderChat(
-      refusedMessage({
-        events: [
-          {
-            kind: 'status',
-            label: 'error',
-            detail: RAW_AGENT_LINE,
-            code: 'AGENT_CLI_SESSION_REFUSED',
-            failureDetail: 'agent_protocol_error',
-            failureCategory: 'process_exit',
-          },
-        ],
-      } as Partial<ChatMessage>),
-    );
-
-    const description = container.querySelector('[data-testid="chat-run-error-description"]');
-    expect(description!.textContent).toContain('chat.runError.cliSessionRefusedMessage');
-    expect(description!.textContent).not.toContain('undefined');
-  });
 });

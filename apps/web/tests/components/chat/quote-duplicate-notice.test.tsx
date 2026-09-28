@@ -31,7 +31,7 @@ import type { ChatMessage, Conversation, ProjectMetadata } from '../../../src/ty
 const quoteSpy = vi.hoisted(() => ({ appendQuoteOutcome: vi.fn() }));
 
 vi.mock('../../../src/runtime/chat/quote-selection', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../../src/runtime/chat/quote-selection')>();
+  const actual = await importOriginal<any>();
   return {
     ...actual,
     appendQuoteOutcome: (

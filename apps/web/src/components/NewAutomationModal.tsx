@@ -23,9 +23,6 @@ import { useI18n, useT } from '../i18n';
 import type { Dict } from '../i18n/types';
 import { localizePluginDescription, localizePluginTitle } from './plugins-home/localization';
 import { describeRoutineSchedule, describeRoutineScheduleParts } from './routineScheduleLabels';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
-import { workspaceProjectHeaders } from '../collab/workspace-identity';
-
 type ProjectSummary = { id: string; name: string };
 type ScheduleKind = RoutineSchedule['kind'];
 type CapabilityKind = 'skills' | 'plugins' | 'mcp' | 'connectors';
@@ -249,7 +246,7 @@ export function NewAutomationModal({
 }: Props) {
   const t = useT();
   const { locale } = useI18n();
-  const { context: workspaceContext } = useWorkspaceContext();
+  const workspaceContext = null;
   const editingId = initial?.routine?.id ?? null;
   const [form, setForm] = useState<FormState>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
@@ -470,14 +467,8 @@ export function NewAutomationModal({
           ...(selectedPluginIds.length > 0 ? { pluginIds: selectedPluginIds } : {}),
           ...(selectedMcpIds.length > 0 ? { mcpServerIds: selectedMcpIds } : {}),
           ...(selectedConnectorIds.length > 0 ? { connectorIds: selectedConnectorIds } : {}),
-          ...(target.mode === 'create_each_run' && workspaceContext
-            ? {
-                workspaceScope: {
-                  workspaceId: workspaceContext.workspaceId,
-                  workspaceMemberId: workspaceContext.workspaceMemberId,
-                },
-              }
-            : {}),
+          // No workspace identity layer: a new automation is always local, so
+          // there is no workspace scope to persist.
         },
         enabled: true,
       };
@@ -497,7 +488,7 @@ export function NewAutomationModal({
         method: isEdit ? 'PATCH' : 'POST',
         headers: {
           'content-type': 'application/json',
-          ...(workspaceContext ? workspaceProjectHeaders(workspaceContext) : {}),
+          ...(workspaceContext ? {} : {}),
         },
         body: JSON.stringify(payload),
       });

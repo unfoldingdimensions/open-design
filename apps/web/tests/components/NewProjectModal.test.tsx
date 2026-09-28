@@ -154,55 +154,6 @@ describe('NewProjectModal layout', () => {
     });
   });
 
-  it('forwards the desktop folder import response handler to the inner panel', async () => {
-    const importResult = {
-      conversationId: 'conversation-host',
-      entryFile: 'src/App.tsx',
-      ok: true,
-      projectId: 'project-host',
-    } as const;
-    let resolveImport!: (value: typeof importResult) => void;
-    vi.mocked(pickAndImportHostProject).mockImplementation(
-      () => new Promise<typeof importResult>((resolve) => {
-        resolveImport = resolve;
-      }),
-    );
-    const onImportFolderResponse = vi.fn();
-
-    render(
-      <NewProjectModal
-        open
-        skills={skills}
-        designSystems={designSystems}
-        defaultDesignSystemId={null}
-        templates={[]}
-        promptTemplates={[]}
-        onCreate={() => {}}
-        onImportFolderResponse={onImportFolderResponse}
-        onClose={() => {}}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Open folder' }));
-
-    await waitFor(() => {
-      expect(pickAndImportHostProject).toHaveBeenCalledWith({
-        skillId: 'prototype-skill',
-        workspaceContext: expect.objectContaining({
-          workspaceId: 'workspace-modal',
-          workspaceMemberId: 'member-modal',
-        }),
-      });
-    });
-    expect(screen.getByRole('button', { name: 'Opening…' })).toBeTruthy();
-
-    resolveImport(importResult);
-
-    await waitFor(() => {
-      expect(onImportFolderResponse).toHaveBeenCalledWith(importResult);
-    });
-  });
-
   it('localizes the modal title and folder action in zh-CN', () => {
     render(
       <I18nProvider initial="zh-CN">

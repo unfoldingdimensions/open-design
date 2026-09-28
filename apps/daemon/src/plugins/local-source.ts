@@ -3,7 +3,7 @@ import type { InstalledPluginRecord } from '@capydesign/contracts';
 import {
   readTeamResourceMaterialization,
   teamResourceMaterializationDir,
-} from '../collab/team-resource-materialization.js';
+} from '../local/team-resource-materialization.js';
 import { isSafePluginId } from './installer.js';
 import {
   getInstalledPlugin,

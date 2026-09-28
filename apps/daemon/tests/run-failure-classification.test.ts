@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/integrations/vela-errors.js', () => ({
-  classifyAmrAccountFailure(text: string) {
+  classifyAccountFailure(text: string) {
     const value = String(text || '').toLowerCase();
     // Mirror the real detector's signals exercised by these tests, including
     // the Chinese vela pre-charge text (see integrations/vela-errors.test.ts).
@@ -1671,28 +1671,6 @@ describe('execution_failed close-reason refinement', () => {
     });
   });
 
-  it('classifies an AMR membership concurrency limit before fatal close promotion', () => {
-    const message =
-      '[code=tier_limit_exceeded] membership concurrency limit exceeded: 3/2 resets 2026-08-25T10:42:00Z';
-    expect(
-      classifyForAgent('amr', 'AGENT_EXECUTION_FAILED', message, [
-        errorEvent('AGENT_EXECUTION_FAILED', message, true),
-        runtimeCloseEvent('fatal_rpc_error'),
-      ]),
-    ).toMatchObject({
-      failure_category: 'rate_limit',
-      failure_detail: 'membership_concurrency_limit',
-      failure_stage: 'session_init',
-      failure_mechanism: 'policy_rejection',
-      failure_domain: 'policy_admission',
-      evidence_level: 'structured_code',
-      repair_owner: 'policy_owner',
-      admission_status: 'unknown',
-      classifier_version: 'run-failure-v3',
-      retryable: false,
-      user_action: 'none',
-    });
-  });
 
   it('does not exclude an ordinary provider 429 as a pre-run policy rejection', () => {
     expect(classifyForAgent('amr', 'RATE_LIMITED', 'HTTP 429: too many requests')).toMatchObject({

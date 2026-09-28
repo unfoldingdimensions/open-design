@@ -1,7 +1,7 @@
 import type http from 'node:http';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { openDatabase } from '../src/db.js';
-import { startAmrTerminalReportDeliveryAfterBind, startServer } from '../src/server.js';
+import { startTerminalReportDeliveryAfterBind, startServer } from '../src/server.js';
 
 describe('/api/version', () => {
   let server: http.Server;
@@ -20,10 +20,10 @@ describe('/api/version', () => {
 
   it('starts terminal delivery only after a valid listener bind', () => {
     const start = vi.fn();
-    expect(startAmrTerminalReportDeliveryAfterBind({ start }, null)).toBe(false);
+    expect(startTerminalReportDeliveryAfterBind({ start }, null)).toBe(false);
     expect(start).not.toHaveBeenCalled();
 
-    expect(startAmrTerminalReportDeliveryAfterBind({ start }, 7456)).toBe(true);
+    expect(startTerminalReportDeliveryAfterBind({ start }, 7456)).toBe(true);
     expect(start).toHaveBeenCalledOnce();
   });
 

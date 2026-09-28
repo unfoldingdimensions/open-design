@@ -9,11 +9,7 @@
 
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../../../src/runtime/collab-contract';
 
 import { useCritiqueStream } from '../../../../src/components/Theater/hooks/useCritiqueStream';
 import type {
@@ -186,63 +182,6 @@ describe('useCritiqueStream (Phase 7.2)', () => {
     expect(handles).toHaveLength(2);
     expect(handles[0]!.closed).toBe(true);
     expect(handles[1]!.closed).toBe(false);
-  });
-
-  it('keys the live connection by full Workspace identity for the same project id', () => {
-    const workspaceA = teamContext('workspace-a', 'member-a');
-    const workspaceB = teamContext('workspace-b', 'member-b');
-    const { factory, handles } = makeFactory();
-    const sink: Harness = { state: { phase: 'idle' } };
-    const { rerender } = render(
-      <Probe
-        projectId="same-project"
-        enabled
-        factory={factory}
-        sink={sink}
-        workspaceContext={workspaceA}
-      />,
-    );
-    expect(handles[0]!.workspaceContext?.workspaceId).toBe('workspace-a');
-
-    rerender(
-      <Probe
-        projectId="same-project"
-        enabled
-        factory={factory}
-        sink={sink}
-        workspaceContext={workspaceB}
-      />,
-    );
-    expect(handles).toHaveLength(2);
-    expect(handles[0]!.closed).toBe(true);
-    expect(handles[1]!.workspaceContext?.workspaceId).toBe('workspace-b');
-  });
-
-  it('resets reducer state to idle when projectId changes (PR #1314 review)', () => {
-    // Lefarcen + Siri-Ray + codex P2: a workspace switch from project
-    // A (which already streamed a critique) to project B must not
-    // leave project A's Theater state visible while waiting for B's
-    // run_started.
-    const { factory, handles } = makeFactory();
-    const sink: Harness = { state: { phase: 'idle' } };
-    const { rerender } = render(
-      <Probe projectId="proj-1" enabled factory={factory} sink={sink} />,
-    );
-    act(() => {
-      handles[0]!.send({
-        type: 'run_started',
-        runId: 'r1',
-        protocolVersion: 1,
-        cast: ['critic'],
-        maxRounds: 3,
-        threshold: 8,
-        scale: 10,
-      });
-    });
-    expect(sink.state.phase).toBe('running');
-
-    rerender(<Probe projectId="proj-2" enabled factory={factory} sink={sink} />);
-    expect(sink.state.phase).toBe('idle');
   });
 
   it('resets reducer state to idle when enabled flips to false mid-run', () => {

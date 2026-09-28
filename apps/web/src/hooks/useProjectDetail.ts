@@ -6,11 +6,8 @@
 // emit `null` otherwise so callers can degrade their UI gracefully.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type {
-  Project,
-  ProjectDetailResponse,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { Project, ProjectDetailResponse } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 
 export interface ProjectDetailState {
   project: Project | null;

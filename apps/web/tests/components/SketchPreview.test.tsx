@@ -2,11 +2,7 @@
 
 import { cleanup, render, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 import { SketchPreview } from '../../src/components/SketchPreview';
 import { fetchProjectFileText } from '../../src/providers/registry';
@@ -134,47 +130,4 @@ describe('SketchPreview', () => {
     expect(fetchProjectFileText).toHaveBeenCalledTimes(1);
   });
 
-  it('partitions previews by the complete Workspace identity', async () => {
-    const workspaceA = teamContext('workspace-a', 'member-a');
-    const workspaceB = teamContext('workspace-b', 'member-b');
-    mockedFetchProjectFileText.mockResolvedValue(JSON.stringify({
-      type: 'excalidraw',
-      version: 2,
-      elements: [
-        { id: 'box', type: 'rectangle', isDeleted: false, x: 0, y: 0, width: 10, height: 10 },
-      ],
-      appState: { viewBackgroundColor: '#ffffff' },
-      files: {},
-    }));
-
-    const file = {
-      name: 'identity.sketch.json',
-      kind: 'sketch' as const,
-      mtime: 1700000000,
-    };
-    const { container, rerender } = render(
-      <SketchPreview projectId="same-project" file={file} workspaceContext={workspaceA} />,
-    );
-    await waitFor(() => {
-      expect(container.querySelector('[data-preview="excalidraw"]')).toBeTruthy();
-    });
-
-    rerender(
-      <SketchPreview projectId="same-project" file={file} workspaceContext={workspaceB} />,
-    );
-    await waitFor(() => expect(mockedFetchProjectFileText).toHaveBeenCalledTimes(2));
-
-    expect(mockedFetchProjectFileText).toHaveBeenNthCalledWith(
-      1,
-      'same-project',
-      file.name,
-      { cache: 'no-store', workspaceContext: workspaceA },
-    );
-    expect(mockedFetchProjectFileText).toHaveBeenNthCalledWith(
-      2,
-      'same-project',
-      file.name,
-      { cache: 'no-store', workspaceContext: workspaceB },
-    );
-  });
 });

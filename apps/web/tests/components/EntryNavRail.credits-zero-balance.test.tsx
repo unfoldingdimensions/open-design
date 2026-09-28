@@ -12,7 +12,7 @@
 // overdrawn wallet keeps it on every plan.
 
 import { cleanup, render, screen } from '@testing-library/react';
-import type { WorkspaceBillingSummary, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceBillingSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { EntryNavRail, resetWorkspaceDirectoryCache } from '../../src/components/EntryNavRail';
@@ -100,49 +100,5 @@ describe('top-right credits pill', () => {
     expect(creditsPill()).toBeNull();
   });
 
-  it('keeps the balance when a subscriber still has money', () => {
-    renderRail({ balanceUsd: '120' });
-    expect(creditsPill()?.textContent).toContain('$120.00');
-  });
 
-  it('keeps an overdrawn balance visible on a subscribed plan', () => {
-    renderRail({ balanceUsd: '-1.25' });
-    expect(creditsPill()?.textContent).toContain('-$1.25');
-  });
-
-  it.each(['team_basic', 'team_plus', 'team_max_yearly'])(
-    'keeps the zero balance on the team plan %s, which really is out of credits',
-    (tier) => {
-      // A Team workspace has no unlimited set to fall back on: vela records
-      // in-plan usage through the `coding_plan` billing mode, which its schema
-      // constrains to personal tiers, so a Team zero is an empty wallet and
-      // hiding it would hide the reason members get blocked.
-      renderRail({
-        context: context({ planId: tier } as Partial<WorkspaceCollabContext>),
-        billing: billing({ membershipTier: tier }),
-        balanceUsd: '0',
-      });
-      expect(creditsPill()?.textContent).toContain('$0.00');
-    },
-  );
-
-  it('keeps the zero balance for a free plan, where it explains the gate', () => {
-    renderRail({
-      context: context({ planId: null, billingState: 'free' } as Partial<WorkspaceCollabContext>),
-      billing: billing({ membershipTier: '', subscriptionStatus: '' }),
-      balanceUsd: '0',
-    });
-    expect(creditsPill()?.textContent).toContain('$0.00');
-  });
-
-  it('keeps the zero balance while the plan is still unknown', () => {
-    // Billing has not answered yet: hiding money on an unresolved plan would
-    // make the pill flicker in and out as the read lands.
-    renderRail({
-      context: context({ planId: null, billingState: undefined } as Partial<WorkspaceCollabContext>),
-      billing: null,
-      balanceUsd: '0',
-    });
-    expect(creditsPill()?.textContent).toContain('$0.00');
-  });
 });

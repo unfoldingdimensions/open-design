@@ -7,7 +7,8 @@
 // daemon endpoint is required.
 
 import { useCallback, useState } from 'react';
-import type { Brand, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { Brand } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from './collab-contract';
 import {
   fetchProjectFileText,
   uploadProjectFile,

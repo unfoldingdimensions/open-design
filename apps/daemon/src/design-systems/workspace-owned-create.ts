@@ -1,4 +1,4 @@
-import type { WorkspaceResourceContext } from '../collab/workspace-resource-mutation.js';
+import type { WorkspaceResourceContext } from '../local/workspace-resource-mutation.js';
 import {
   createUserDesignSystem,
   deleteUserDesignSystem,

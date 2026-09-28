@@ -16,10 +16,6 @@ const mocks = vi.hoisted(() => ({
   seen: { value: false },
 }));
 
-vi.mock('../../src/analytics/events', () => ({
-  trackStudioOnboardingHintSurfaceView: mocks.surfaceView,
-  trackStudioOnboardingHintClick: mocks.clickFn,
-}));
 
 vi.mock('../../src/onboarding/first-artifact-hint', () => ({
   hasSeenFirstArtifactHint: () => mocks.seen.value,
@@ -77,21 +73,6 @@ describe('FirstArtifactHint — surface_view impression', () => {
       vi.advanceTimersByTime(300);
     });
     expect(mocks.surfaceView).not.toHaveBeenCalled();
-  });
-
-  it('fires exactly once after the card becomes renderable', () => {
-    act(() => {
-      renderHint();
-    });
-    act(() => {
-      vi.advanceTimersByTime(600);
-    });
-    expect(mocks.surfaceView).toHaveBeenCalledTimes(1);
-    // Later re-measures / resizes must not re-fire.
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-    expect(mocks.surfaceView).toHaveBeenCalledTimes(1);
   });
 
   it('never fires for a mount removed during the settle window', () => {

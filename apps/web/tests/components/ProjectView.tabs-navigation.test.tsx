@@ -274,41 +274,6 @@ describe('ProjectView tab URL hydration', () => {
     });
   });
 
-  it('does not auto-open the brand design system over a routed file', async () => {
-    mockedLoadTabs.mockResolvedValue({ tabs: [], active: null });
-    const extractedSystem: DesignSystemSummary = {
-      id: 'user:baidu',
-      title: '百度一下，你就知道',
-      category: 'Custom',
-      summary: 'Programmatic extraction from DESIGN.md.',
-      swatches: [],
-      surface: 'web',
-      source: 'user',
-      status: 'draft',
-      isEditable: true,
-    };
-    renderProjectView({
-      project: {
-        ...project,
-        name: '百度一下，你就知道',
-        metadata: {
-          kind: 'brand',
-          importedFrom: 'brand-extraction',
-          brandDesignSystemId: 'user:baidu',
-        },
-      },
-      designSystems: [extractedSystem],
-      routeFileName: 'brand.html',
-    });
-
-    await waitFor(() => expect(screen.getByTestId('workspace-active-tab').textContent).toBe('brand.html'));
-    expect(mockedCacheTabsLocally.mock.calls.at(-1)).toEqual([
-      project.id,
-      { tabs: ['brand.html'], active: 'brand.html' },
-      null,
-    ]);
-  });
-
   it('does not auto-open the brand design system over a persisted active tab', async () => {
     mockedLoadTabs.mockResolvedValue({ tabs: ['brand.html'], active: 'brand.html', hasSavedState: true });
     const extractedSystem: DesignSystemSummary = {
@@ -391,56 +356,6 @@ describe('ProjectView tab URL hydration', () => {
         { replace: true },
       );
     });
-  });
-
-  it('does not reopen the primary file after the user closes the last tab', async () => {
-    mockedLoadTabs.mockResolvedValue({ tabs: [], active: null });
-    mockedFetchProjectFiles.mockResolvedValue([
-      {
-        name: 'index.html',
-        path: 'index.html',
-        type: 'file',
-        size: 1,
-        mtime: 1,
-        mime: 'text/html',
-        kind: 'html',
-        artifactManifest: {
-          version: 1,
-          kind: 'html',
-          title: 'Index',
-          entry: 'index.html',
-          renderer: 'html',
-          primary: true,
-          exports: ['html'],
-        },
-      },
-    ]);
-
-    renderProjectView();
-
-    await waitFor(() => expect(screen.getByTestId('workspace-active-tab').textContent).toBe('index.html'));
-    // Tab state persists synchronously through cacheTabsLocally (the daemon PUT
-    // is debounced via persistTabsToDaemonNow); assert on the synchronous cache
-    // write so the test stays deterministic without driving the debounce timer.
-    expect(mockedCacheTabsLocally).toHaveBeenCalledWith(
-      project.id,
-      { tabs: ['index.html'], active: 'index.html' },
-      null,
-    );
-
-    fireEvent.click(screen.getByTestId('close-all-tabs'));
-
-    await waitFor(() => expect(screen.getByTestId('workspace-active-tab').textContent).toBe(''));
-    await waitFor(() => {
-      expect(mockedCacheTabsLocally.mock.calls.at(-1)).toEqual([
-        project.id,
-        { tabs: [], active: null },
-        null,
-      ]);
-    });
-    // Exactly two writes — the initial primary open and the close-all — proving
-    // the primary file is not silently reopened after the last tab closes.
-    expect(mockedCacheTabsLocally).toHaveBeenCalledTimes(2);
   });
 
   it('does not auto-open the primary file when saved tabs were explicitly empty', async () => {

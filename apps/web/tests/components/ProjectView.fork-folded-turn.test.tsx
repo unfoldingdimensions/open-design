@@ -72,15 +72,6 @@ vi.mock('../../src/providers/anthropic', () => ({
   streamMessage: vi.fn(),
 }));
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({
-    newRequestId: analyticsMocks.newRequestId,
-    setConfigureGlobals: vi.fn(),
-    setConsent: vi.fn(),
-    setIdentity: vi.fn(),
-    track: analyticsMocks.track,
-  }),
-}));
 
 vi.mock('../../src/providers/daemon', () => ({
   fetchChatRunStatus: (...args: unknown[]) => fetchChatRunStatus(...args),
@@ -130,7 +121,7 @@ vi.mock('../../src/state/projects', () => ({
  * `foldStrategyTaskTurns` 得是产品里那一份,不然这条测试断言的就是一个仿制的折叠结果。
  */
 vi.mock('../../src/components/ChatPane', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/components/ChatPane')>();
+  const actual = await importOriginal<any>();
   return {
     ...actual,
     ChatPane: (props: {

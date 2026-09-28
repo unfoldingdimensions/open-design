@@ -1,115 +1,115 @@
 import type { Dict } from '../types';
 
 export const th: Dict = {
-  'invite.header.eyebrow': "Team invitation",
-  'invite.loading': "Loading invitation…",
-  'invite.landing.title': "Join the team",
-  'invite.landing.subtitle': "You’ve been invited to collaborate in CapyDesign.",
-  'invite.landing.roleLabel': "Role",
-  'invite.landing.invitedEmail': "Invited email",
-  'invite.landing.expires': "Expires",
-  'invite.role.admin': "Admin",
-  'invite.role.member': "Member",
-  'invite.role.admin.desc': "Can manage members, seats, and all project settings.",
-  'invite.role.member.desc': "Can create your own projects, and view and comment on shared team projects.",
-  'invite.accept.cta': "Accept invitation",
-  'invite.accountMismatch.title': "You’re signed in as a different account",
-  'invite.accountMismatch.body': "This invitation was sent to a different email address. You can continue with your current account, or switch accounts.",
-  'invite.accountMismatch.continue': "Continue with current account",
-  'invite.accountMismatch.switch': "Switch account",
-  'invite.accepting.title': "Joining the team…",
-  'invite.accepting.body': "Setting up your membership.",
-  'invite.success.title': "You’re in",
-  'invite.success.body': "Opening CapyDesign so you can start collaborating.",
-  'invite.success.roleReceipt': "Joined as",
-  'invite.success.enter': "Enter workspace",
-  'invite.open.cta': "Open CapyDesign",
-  'invite.open.opening': "Opening CapyDesign…",
-  'invite.open.retry': "Already installed? Try opening again",
-  'invite.notInstalled.title': "Didn’t open automatically?",
-  'invite.notInstalled.body': "You may not have CapyDesign installed yet. Install it, then reopen this link to finish joining.",
-  'invite.notInstalled.download': "Download CapyDesign",
-  'invite.error.title': "Can’t accept this invitation",
-  'invite.error.invite_expired': "This invitation has expired. Ask an admin to send a new one.",
-  'invite.error.invite_consumed': "This invitation has already been used.",
-  'invite.error.workspace_seat_limit_reached': "The team has no seats left. Ask an admin to free up a seat or add more.",
-  'invite.error.workspace_subscription_locked': "The team’s subscription is inactive, so new members can’t join right now.",
-  'invite.error.workspace_not_found': "This workspace no longer exists.",
-  'invite.error.workspace_forbidden': "Your account isn’t allowed to accept this invitation.",
-  'invite.error.invite_unavailable': "This invitation is no longer available.",
-  'invite.error.generic': "Something went wrong. Please try again.",
-  'invite.error.retry': "Try again",
-  "workspaceInvite.dialogAria": "Invite members",
-  "workspaceInvite.title": "Invite members to your team",
-  "workspaceInvite.freePlanBody": "The free plan includes 1 seat. Inviting teammates will guide you to upgrade to Teams.",
-  "workspaceInvite.teamPlanBody": "Invite teammates to share projects, design systems, and plugins together.",
-  "workspaceInvite.seatsExhaustedBody": "เวิร์กสเปซนี้ไม่มีที่นั่งเหลือแล้ว เพิ่มที่นั่งเพื่อเชิญเพื่อนร่วมทีม",
-  "workspaceInvite.seatsExhaustedAction": "ดูที่นั่งและแพ็กเกจ",
-  "workspaceInvite.emailLabel": "Invite members by email",
-  "workspaceInvite.roleLabel": "Assign role",
-  "workspaceInvite.defaultRoleLabel": "Default role",
-  "workspaceInvite.emailPlaceholder": "Enter email address…",
-  "workspaceInvite.removeRow": "Remove",
-  "workspaceInvite.addMember": "Add member",
-  "workspaceInvite.visibilityQuestion": "Will team members see my designs?",
-  "workspaceInvite.visibilityAnswer": "Team members can see designs you share to the team space. Private designs kept in Personal projects are not visible to others.",
-  "workspaceInvite.sent": "Invitation sent",
-  "workspaceInvite.sending": "Inviting…",
-  "workspaceInvite.confirm": "Confirm and invite",
-  "workspaceInvite.submitFailed": "Failed to send invitation. Try again later.",
-  "workspaceInvite.errorAlreadyMember": "อีเมลนี้เป็นสมาชิกทีมอยู่แล้ว",
-  "workspaceInvite.errorPendingInvite": "อีเมลนี้มีคำเชิญที่รอดำเนินการอยู่แล้ว",
-  "workspaceInvite.errorNoSession": "ลงชื่อเข้าใช้บัญชี Vela ของคุณก่อนเชิญสมาชิก",
-  "workspaceInvite.errorNoWorkspace": "ยังไม่มีพื้นที่ทีมสำหรับเชิญสมาชิก",
-  "workspaceInvite.errorUnreachable": "ไม่สามารถส่งคำเชิญได้ โปรดลองอีกครั้งในภายหลัง",
-  'chat.amrCard.switchTitle': 'เรียกใช้โมเดลล้มเหลว — งานนี้ถูกหยุดชั่วคราว',
-  'chat.amrCard.switchBody': 'สลับไปยังบริการโมเดล CapyDesign Cloud อย่างเป็นทางการของ CapyDesign Cloud — ไม่ต้องตั้งค่า API Key หลังจากเข้าสู่ระบบ ให้สิทธิ์ และเติมเงินแล้ว งานนี้จะถูกลองใหม่โดยอัตโนมัติ',
-  'chat.amrCard.chipOfficial': 'โฮสติ้งอย่างเป็นทางการ',
-  'chat.amrCard.chipNoKey': 'ไม่ต้องใช้ API Key',
-  'chat.amrCard.chipAutoRetry': 'ลองใหม่อัตโนมัติหลังเข้าสู่ระบบ',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrCard.switchCta': 'สลับไปยัง Cloud',
-  'chat.amrError.authMessage': 'บัญชี CapyDesign Cloud ของคุณยังไม่ได้รับอนุญาต ให้สิทธิ์แล้วงานนี้จะถูกลองใหม่โดยอัตโนมัติ',
-  'chat.amrError.balanceMessage': 'ยอดเงิน CapyDesign Cloud ของคุณหมดแล้ว เติมเงินเพื่อดำเนินงานนี้ต่อ',
+  
+  
   'chat.amrError.authorizeCta': 'ให้สิทธิ์และลองใหม่',
   'chat.amrError.rechargeCta': 'เติมเงิน',
-  'chat.amrBalanceGate.title': 'อัปเกรดแล้วสร้างสรรค์ต่อ',
-  'chat.amrBalanceGate.message': 'เครดิตไม่พอ (คงเหลือ {balance}) อัปเกรดแพ็กเกจหรือเติมเงินแล้วงานจะเริ่มได้ทันที',
-  'chat.amrBalanceGate.benefitsTitle': 'สิ่งที่คุณได้รับจาก CapyDesign Cloud',
-  'chat.amrBalanceGate.benefit1': 'ไม่ต้องใช้ API Key เลือกใช้ได้หลายโมเดล',
-  'chat.amrBalanceGate.benefit2': 'มี Design Agent ระดับ SOTA ในตัว ไม่ต้องตั้งค่า',
-  'chat.amrBalanceGate.benefit3': 'บริการทางการ มั่นใจได้',
-  'chat.amrBalanceGate.benefit4': 'พัฒนาต่อเนื่อง: ดีพลอยคลิกเดียว มัลติโมดัล ทีม และอื่น ๆ',
-  'chat.amrBalanceGate.laterCta': 'ไว้ทีหลัง',
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrBalanceGate.plansCta': 'อัปเกรดแพ็กเกจ',
-  'chat.amrBalanceGate.signedOutTitle': 'ลงชื่อเข้าใช้เพื่อเริ่มสร้างสรรค์',
-  'chat.amrBalanceGate.signedOutMessage': 'คุณกำลังใช้เอเจนต์ CapyDesign Cloud — ลงชื่อเข้าใช้แล้วงานนี้จะเริ่มได้ทันที',
-  'chat.amrBalanceGate.signInCta': 'ลงชื่อเข้าใช้',
-  'chat.amrBalanceGate.watchingWallet': 'เมื่อยอดเงินอัปเดตแล้วจะดำเนินการต่อโดยอัตโนมัติ',
-  'chat.amrArtifactUpgrade.title': 'ปรับแต่งงานต่อด้วยโมเดลที่ทรงพลังยิ่งขึ้น',
-  'chat.amrArtifactUpgrade.message': 'ปลดล็อกโมเดลขั้นสูง งานแบบขนานที่มากขึ้น และเครดิตรายเดือนที่สูงขึ้น',
-  'chat.amrArtifactUpgrade.benefit1': 'เข้าถึงโมเดลขั้นสูงได้มากขึ้น เช่น Fable 5 และ GPT-5.6',
-  'chat.amrArtifactUpgrade.benefit2': 'ประมวลผลงานพร้อมกันได้มากขึ้นสูงสุด 10 เท่า',
-  'chat.amrArtifactUpgrade.benefit3': 'เครดิตรายเดือนมากขึ้นสูงสุด 300 เท่า',
-  'chat.amrArtifactUpgrade.benefit4': 'คิวลำดับความสำคัญในช่วงพีค เพื่อสร้างผลงานได้เร็วขึ้น',
-  'chat.amrArtifactUpgrade.promoBanner': 'ข้อเสนอจำกัดเวลา: ประหยัดสูงสุด 67% สำหรับแพ็กเกจสมาชิก',
-  'chat.amrArtifactUpgrade.countdownLabel': 'สิ้นสุดใน',
-  'chat.amrArtifactUpgrade.plansCta': 'อัปเกรดตอนนี้ ลดสูงสุด 67%',
-  'chat.amrArtifactUpgrade.homePlansCta': 'ประหยัด 67%',
-  'chat.amrArtifactUpgrade.laterCta': 'ใช้ Free ต่อและส่ง',
-  'chat.amrArtifactUpgrade.homeTitle': 'ผลงานพร้อมแล้ว พาไอเดียถัดไปให้ไปได้ไกลกว่าเดิม',
-  'chat.amrArtifactUpgrade.homeMessage': 'อัปเกรดเพื่อใช้โมเดลที่ทรงพลังขึ้น งานขนานมากขึ้น และเครดิตรายเดือนมากขึ้น',
-  'chat.amrArtifactUpgrade.homeArtifactCta': 'ดูผลงาน',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.antigravityError.launchTerminalCta': 'ลงชื่อเข้าใช้ผ่านเทอร์มินัล',
   'chat.antigravityError.launchSwitchModelCta': 'สลับโมเดลในเทอร์มินัล',
   'chat.connectionDropped': 'โปรดตรวจสอบว่าการเชื่อมต่อเครือข่ายเป็นปกติ แล้วลองอีกครั้ง',
   'chat.runError.title.authRequired': 'ต้องมีการอนุญาต',
-  'chat.runError.title.balance': 'ยอดคงเหลือไม่เพียงพอ',
+  
   'chat.runError.title.connectionDropped': 'การเชื่อมต่อเครือข่ายขาดหาย',
-  'chat.runError.title.signInRequired.other': 'ยังไม่ได้ลงชื่อเข้าใช้ {agent}',
-  'chat.runError.title.signInRequired.amr': 'ยังไม่ได้ลงชื่อเข้าใช้ CapyDesign',
+  
+  
   'chat.runError.title.rateLimited': 'บริการโมเดลมีคำขอจำนวนมาก',
   'chat.runError.title.modelWindowLimit': 'มีผู้ใช้งานจำนวนมาก',
-  'chat.runError.title.membershipConcurrencyLimit': 'ถึงขีดจำกัดงานพร้อมกันแล้ว',
+  
   'chat.runError.title.strategyTaskHalted': "งานถูกหยุดโดยด่านตรวจคุณภาพ",
   'chat.runError.title.agentReplyIncomplete': "ได้รับคำตอบแล้ว แต่บันทึกไม่สำเร็จ",
   'chat.runError.title.clarificationRepeated': "เอเจนต์ถามคำถามอีกครั้ง",
@@ -117,8 +117,8 @@ export const th: Dict = {
   'chat.runError.title.generic': 'งานล้มเหลว',
   'chat.runError.title.artifactMissing': "ไม่มีไฟล์ให้ดูตัวอย่าง",
   'chat.runError.artifactMissingMessage': "งานนี้ไม่ได้สร้างไฟล์ให้ดูตัวอย่าง โปรดระบุเนื้อหาที่ต้องการให้สร้างเพิ่มแล้วลองอีกครั้ง",
-  'chat.runError.signInMessage.amr': 'โปรดเข้าสู่ระบบ เพื่อดูโปรเจกต์และสนทนาต่อ',
-  'chat.runError.signInMessage.other': 'โปรดเข้าสู่ระบบ {agent} ก่อน แล้วลองอีกครั้ง',
+  
+  
   'chat.runError.agentFallback': 'เอเจนต์',
   'chat.runError.sourceLabel': 'รายละเอียดข้อผิดพลาด',
   'chat.runError.sourceExpandAria': 'ขยายแหล่งที่มาของข้อผิดพลาด',
@@ -139,8 +139,8 @@ export const th: Dict = {
   'chat.runError.rateLimitedMessage': 'ขณะนี้มีคำขอไปยังบริการโมเดลนี้จำนวนมาก และถึงขีดจำกัดความถี่คำขอของผู้ให้บริการแล้ว โปรดลองใหม่ในภายหลัง หรือลองสลับไปใช้โมเดลอื่น',
   'chat.runError.modelWindowLimitMessage': 'ขณะนี้มีผู้ใช้งานจำนวนมาก โปรดลองอีกครั้งหลัง {retryAt} คำขอนี้ไม่มีการเรียกเก็บเงิน',
   'chat.runError.modelWindowLimitMessageNoTime': 'ขณะนี้มีผู้ใช้งานจำนวนมาก โปรดลองอีกครั้งในภายหลัง คำขอนี้ไม่มีการเรียกเก็บเงิน',
-  'chat.runError.membershipConcurrencyLimitMessage': 'สมาชิกของคุณใช้งานถึงขีดจำกัดงานพร้อมกันแล้ว โปรดรอจนถึง {retryAt} แล้วลองใหม่ หรือเปลี่ยนเอเจนต์ การลองซ้ำทันทีจะไม่ช่วย',
-  'chat.runError.membershipConcurrencyLimitMessageNoTime': 'สมาชิกของคุณใช้งานถึงขีดจำกัดงานพร้อมกันแล้ว โปรดรอให้งานอื่นเสร็จแล้วลองใหม่ หรือเปลี่ยนเอเจนต์',
+  
+  
   'chat.runError.upstreamUnavailableMessage': 'โมเดลปัจจุบันไม่พร้อมใช้งานชั่วคราว โปรดลองใหม่ในภายหลัง หรือเปลี่ยนโมเดล',
   'chat.runError.toolLoopMessage': '{agent} ทำงานเดิมซ้ำโดยไม่มีความคืบหน้าและถูกหยุดแล้ว โปรดตรวจสอบไฟล์หรือคำสั่งเป้าหมายแล้วลองอีกครั้ง',
   'chat.runError.outputInvalidMessage': 'โปรดลองสร้างใหม่ หรือเปลี่ยนโมเดลแล้วลองอีกครั้ง หากยังเกิดปัญหาต่อเนื่อง โปรดติดต่อฝ่ายสนับสนุน',
@@ -154,7 +154,7 @@ export const th: Dict = {
   'chat.runError.title.cpuUnsupported': "โปรเซสเซอร์ไม่รองรับ",
   'chat.runError.title.cliSessionRefused': "เวอร์ชันเอเจนต์ไม่รองรับ",
   'chat.runError.quotaExhaustedMessage': "โควตาหรือวงเงินเรียกเก็บของบริการโมเดลที่คุณใช้หมดแล้ว การลองใหม่จึงไม่ช่วย โปรดเติมเงินกับผู้ให้บริการ หรือสลับไปใช้โมเดลหรือบริการอื่น",
-  'chat.runError.workspaceCreditsMessage': "เครดิตของพื้นที่ทำงานของคุณหมดแล้ว โปรดเพิ่มเครดิต (หรือขอให้เจ้าของพื้นที่ทำงานเติม) หรือสลับไปใช้โมเดลหรือบริการอื่น",
+  
   'chat.runError.timedOutMessage': "ไม่ได้รับการตอบกลับใหม่จาก AI เป็นเวลานาน การรันนี้จึงหยุดลง โปรดลองใหม่ในภายหลัง",
   'chat.runError.inactivityTimeoutMessage': "ไม่ได้รับการตอบกลับใหม่จาก AI เป็นเวลานาน การรันนี้จึงหยุดลง โปรดลองใหม่ในภายหลัง",
   'chat.runError.emptyOutputMessage': "เอเจนต์ทำงานจบโดยไม่มีผลลัพธ์ใด ๆ มักเป็นเพียงชั่วคราว โปรดลองใหม่",
@@ -163,8 +163,8 @@ export const th: Dict = {
   'chat.runError.cpuUnsupportedMessage': "รันไทม์ของเอเจนต์นี้ต้องการชุดคำสั่ง CPU (AVX2) ที่อุปกรณ์นี้ไม่มี จึงไม่สามารถเริ่มทำงานได้ โปรดอัปเดต CapyDesign เป็นเวอร์ชันล่าสุดซึ่งมาพร้อมรันไทม์ที่เข้ากันได้",
   'chat.runError.title.agentCrashed': 'งานถูกขัดจังหวะโดยไม่คาดคิด',
   'chat.runError.agentCrashedMessage': 'โปรดลองสร้างใหม่ หรือเปลี่ยนโมเดลแล้วลองอีกครั้ง หากยังเกิดปัญหาต่อเนื่อง โปรดติดต่อฝ่ายสนับสนุน',
-  'chat.runError.title.accountSuspended': 'บัญชีถูกระงับ',
-  'chat.runError.accountSuspendedMessage': 'หากต้องการทราบสาเหตุหรือขอเปิดใช้งานอีกครั้ง โปรดติดต่อฝ่ายสนับสนุน',
+  
+  
   'chat.runError.fallbackMessage': 'ครั้งนี้ยังไม่สำเร็จ หากเกิดซ้ำ ๆ ให้ส่งบันทึกมาให้เรา',
   'chat.runError.cliSessionRefusedMessage':
     "{agent} ปฏิเสธการเริ่มเซสชัน โดยทั่วไปเวอร์ชันที่ติดตั้งอยู่ไม่รองรับ CapyDesign โปรดเปลี่ยนเป็นเวอร์ชันอื่นแล้วลองอีกครั้ง",
@@ -340,17 +340,17 @@ export const th: Dict = {
   'settings.onboardingSystemsBody': 'เลือกหรือสร้างระบบแบรนด์ เพื่อให้งานที่สร้างขึ้นใช้สี ตัวอักษร และภาษาของผลิตภัณฑ์ตามจริง',
   'settings.onboardingExecutionTitle': 'เลือกแหล่งที่มาของโมเดล',
   'settings.onboardingExecutionBody': 'ใช้ CapyDesign Hosted เชื่อมต่อเอเจนต์ในเครื่อง หรือใช้คีย์โมเดลของคุณเอง',
-  'settings.onboardingAmrCloudBenefitOfficial': 'แนะนำอย่างเป็นทางการ',
-  'settings.onboardingAmrCloudBenefitReady': 'ไม่ต้องดีพลอย',
+  
+  
   'settings.onboardingAmrCloudBenefitModels': 'ใช้ Claude, GPT, Fable 5 และ 5.6 sol พร้อมส่วนลดระยะเวลาจำกัดและการทำงานพร้อมกันสูง',
-  'settings.onboardingAmrCloudBenefitPricing': 'SOTA Harness',
-  'settings.onboardingAmrCloudUpcomingLabel': 'เร็ว ๆ นี้',
-  'settings.onboardingAmrCloudUpcomingImageVideo': 'รูปภาพ/วิดีโอ',
-  'settings.onboardingAmrCloudUpcomingSkills': 'Skills จำนวนมาก',
-  'settings.onboardingAmrCloudUpcomingRouting': 'การกำหนดเส้นทางอัจฉริยะ',
+  
+  
+  
+  
+  
   'settings.onboardingAmrModelSourceLabel': 'CapyDesign Hosted',
-  'settings.onboardingAmrCloudAuthorizeAction': 'อนุญาต CapyDesign Cloud',
-  'settings.onboardingAmrCloudAuthorizedAction': 'อนุญาตแล้ว',
+  
+  
   'settings.onboardingStepConnect': 'Connect',
   'settings.onboardingStepDesignSystem': 'สร้างดีไซน์ซิสเต็ม',
   'settings.onboardingStepProfile': 'About you',
@@ -363,15 +363,15 @@ export const th: Dict = {
   'settings.onboardingCloudBody': 'ลงชื่อเข้าใช้แล้วเริ่มออกแบบด้วย AI บนคลาวด์ได้ทันที โดยไม่ต้องตั้งค่าที่ซับซ้อน',
   'settings.onboardingCloudSignIn': 'ลงชื่อเข้าใช้ CapyDesign',
   'settings.onboardingCloudContinue': 'ดำเนินการต่อ (เข้าสู่ระบบแล้ว)',
-  'settings.onboardingCloudAlternative': 'ใช้ CLI ในเครื่องหรือคีย์ API ของคุณเอง',
+  
   'settings.onboardingCloudRights': 'สงวนลิขสิทธิ์ทั้งหมด',
   'settings.onboardingCloudOr': 'หรือ',
   'settings.onboardingGateTooltipNoRuntime': 'ขั้นตอนต่อไปทำงานด้วย AI — เลือกวิธีรันเพื่อดำเนินการต่อ',
-  'settings.onboardingGateTooltipAmr': 'ขั้นตอนต่อไปทำงานด้วย AI — ลงชื่อเข้าใช้ CapyDesign Cloud เพื่อดำเนินการต่อ',
+  
   'settings.onboardingGateTooltipLocal': 'ขั้นตอนต่อไปทำงานด้วย AI — เลือก CLI ในเครื่องที่พร้อมใช้งานเพื่อดำเนินการต่อ',
   'settings.onboardingGateTooltipByok': 'ขั้นตอนต่อไปทำงานด้วย AI — เพิ่มและทดสอบคีย์โมเดลของคุณเพื่อดำเนินการต่อ',
   'settings.onboardingRecommended': 'แนะนำ',
-  'settings.onboardingAmrCloudOfficialBadge': 'อย่างเป็นทางการ',
+  
   'settings.onboardingLocalTitle': 'เอเจนต์ในเครื่อง',
   'settings.onboardingLocalBody': 'ใช้ Claude Code, Codex, Cursor, OpenCode, Kimi, Qwen, Hermes, Kiro และอื่น ๆ',
   'settings.onboardingLocalAction': 'Open CLI settings',
@@ -417,7 +417,7 @@ export const th: Dict = {
   'settings.onboardingSelectPlaceholder': 'เลือกหนึ่งรายการ',
   'settings.onboardingSelectMultiplePlaceholder': 'เลือกหนึ่งรายการหรือมากกว่า',
   'settings.onboardingOrgSolo': 'ส่วนตัว / คนเดียว (1)',
-  'settings.onboardingOrgTeam': 'ทีมเล็ก (2-10)',
+  
   'settings.onboardingOrgStartup': 'สตาร์ทอัพ / SMB (11-50)',
   'settings.onboardingOrgGrowth': 'บริษัทกำลังเติบโต (51-200)',
   'settings.onboardingOrgMidMarket': 'ธุรกิจขนาดกลาง (201-1000)',
@@ -460,7 +460,7 @@ export const th: Dict = {
   'settings.modeApi': 'ผู้ให้บริการ API',
   'settings.cloudCalloutTitle': 'Use CapyDesign Cloud',
   'settings.cloudCalloutBody': 'Sign in to the cloud version to enable team spaces, shared projects, member permissions, and the audit dashboard.',
-  'settings.cloudCalloutButton': 'Sign in / Register',
+  
   'settings.modeApiMeta': 'ผู้ให้บริการ API',
   'settings.byokNoFileToolsNotice': 'BYOK ไม่สามารถอ่าน เขียน หรือแก้ไขไฟล์โปรเจกต์ได้ ใช้ Local CLI เมื่อคุณต้องการเปลี่ยนแปลงโค้ด',
   'settings.byokDraftNotice': 'กรอกช่องที่จำเป็นเพื่อบันทึกผู้ให้บริการนี้ การตั้งค่าปัจจุบันจะยังคงใช้งานอยู่',
@@ -507,29 +507,29 @@ export const th: Dict = {
   'settings.agentInstallGroup': 'พร้อมให้ติดตั้ง ({count})',
   'settings.agentAuthRequired': 'ต้องยืนยันตัวตน',
   'settings.agentAuthUnknown': 'ไม่ทราบสถานะการยืนยันตัวตน',
-  'settings.amrCloud': 'CapyDesign Cloud',
-  'settings.amrAuthorize': 'อนุญาต',
+  
+  
   'settings.amrBenefitOfficial': 'ทางการ',
-  'settings.amrBenefitLowerPrice': 'ต้นทุนต่ำกว่า',
+  
   'settings.amrBenefitManyModels': 'โมเดลจำนวนมาก',
-  'settings.amrPromoBonus': 'โบนัสจำกัด: +100%',
-  'settings.amrSignInToContinue': 'ลงชื่อเข้าใช้เพื่อดำเนินการต่อ',
+  
+  
   'settings.amrSignIn': 'ลงชื่อเข้าใช้',
   'settings.amrSignedIn': 'ลงชื่อเข้าใช้แล้ว',
-  'settings.amrWalletBalance': 'Wallet balance',
+  
   'settings.amrWalletUnavailable': 'Balance temporarily unavailable',
-  'settings.amrWalletUpdatedAt': 'Updated {time}',
-  'settings.amrWalletCached': 'cached',
-  'settings.amrWalletRefresh': 'Refresh',
-  'settings.amrWalletRefreshTitle': 'Refresh CapyDesign Cloud wallet balance',
-  'settings.amrNotSignedIn': 'ยังไม่ได้ลงชื่อเข้าใช้',
+  
+  
+  
+  
+  
   'settings.amrSigningIn': 'กำลังลงชื่อเข้าใช้…',
   'settings.amrActivationHint': 'หน้าลงชื่อเข้าใช้ไม่เปิดใช่ไหม แตะปุ่มด้านล่างเพื่อเปิดอีกครั้ง',
   'settings.amrActivationBrowserFailed': 'ไม่สามารถเปิดเบราว์เซอร์โดยอัตโนมัติ เปิดหน้าเข้าสู่ระบบด้านล่างเพื่อดำเนินการต่อ',
   'settings.amrActivationOpen': 'เปิดหน้าเข้าสู่ระบบ',
   'settings.amrCancelSignIn': 'ยกเลิกการลงชื่อเข้าใช้',
-  'settings.amrAccountStatus': 'สถานะบัญชี CapyDesign Cloud',
-  'settings.amrConsole': 'จัดการ',
+  
+  
   'settings.amrBalance': 'โควตา',
   'settings.amrPlan': 'แพ็กเกจ',
   'settings.amrUpgrade': 'อัปเกรด',
@@ -537,13 +537,13 @@ export const th: Dict = {
   'settings.amrLoginErrorCompact': 'การลงชื่อเข้าใช้ CapyDesign Cloud ล้มเหลว',
   'settings.advanced': 'ขั้นสูง',
   'settings.amrLogin': 'ลงชื่อเข้าใช้',
-  'settings.amrLogout': 'ออกจากระบบ',
-  'settings.amrLoggingIn': 'กำลังลงชื่อเข้าใช้…',
-  'settings.amrLoggingOut': 'กำลังลงชื่อออก…',
-  'settings.amrLoggedInAs': 'ลงชื่อเข้าใช้ในชื่อ {email}',
-  'settings.amrLoggedInWithPlan': 'ลงชื่อเข้าใช้ในชื่อ {email} · {plan}',
-  'settings.amrLoggedInPill': 'ลงชื่อเข้าใช้แล้ว',
-  'settings.amrNotLoggedIn': 'ยังไม่ได้ลงชื่อเข้าใช้',
+  
+  
+  
+  
+  
+  
+  
   'settings.apiSection': 'Anthropic API',
   'settings.quickFillProvider': 'เลือกผู้ให้บริการอย่างรวดเร็ว',
   'settings.providerPreset': 'พรีเซ็ตผู้ให้บริการ',
@@ -625,7 +625,7 @@ export const th: Dict = {
   'settings.modelUsesCliDefault': 'ค่าเริ่มต้น CLI',
   'settings.modelSourceFallback': 'รายการในตัว',
   'settings.reasoningPicker': 'ความพยายามในการให้เหตุผล',
-  'settings.serviceTierPicker': 'ระดับบริการ',
+  
   'settings.modelPickerHint': 'ดึงข้อมูลจาก CLI เมื่อมีคำสั่ง `models`',
   'settings.modelPickerLiveHint': 'รีเฟรชโมเดลจาก CLI ที่ติดตั้งแล้ว ค่าเริ่มต้นยังใช้การตั้งค่าของ CLI',
   'settings.modelPickerLiveCatalogOnlyHint': 'รีเฟรชโมเดลจาก CLI ที่ติดตั้งแล้ว',
@@ -766,21 +766,21 @@ export const th: Dict = {
   'entry.mailAria': 'มีคำถาม? ส่งอีเมลถึงเรา',
   'entry.accountSettings': 'การตั้งค่า',
   'chat.collapsePane': 'ย่อแผงสนทนา',
-  'collabPresence.ariaOne': '1 collaborator online',
-  'collabPresence.aria': '{count} collaborators online',
-  'collabPresence.ariaWithSelfOne': '1 collaborator online, including you',
-  'collabPresence.ariaWithSelf': '{count} collaborators online, including you',
-  'collabPresence.moreOnline': '{count} more online',
-  'collabPresence.dialogTitle': 'Online collaborators',
-  'collabPresence.onlineCount': '{count} online',
-  'collabPresence.selfBadge': 'You',
-  'collabPresence.roleOwner': 'Owner',
-  'collabPresence.roleAdmin': 'Admin',
-  'collabPresence.roleMember': 'Member',
-  'collabPresence.viewingFileSelf': 'You are viewing {file}',
-  'collabPresence.viewingFileOther': 'Viewing {file}',
-  'collabPresence.viewingProjectSelf': 'You are viewing this project',
-  'collabPresence.viewingProjectOther': 'Viewing this project',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'entry.followXLabel': 'ติดตาม @OpenDesignHQ บน X',
   'entry.followThreadsLabel': 'Follow CapyDesign on Threads',
   'entry.youtubeLabel': 'CapyDesign on YouTube',
@@ -800,7 +800,7 @@ export const th: Dict = {
   "entry.billingTierTeam": "Teams",
   "entry.billingTierFree": "Free",
   "entry.billingTierPro": "Pro",
-  "entry.billingFamilyCreator": "Creator",
+  
   "entry.creditsAria": "{tier} · credits remaining",
   "entry.creditsAriaWithBalance": "{tier} · {balance} credits remaining",
   "entry.creditsGrantTip": "Teams credits are granted by subscription allowance. Usage is available in billing.",
@@ -812,12 +812,12 @@ export const th: Dict = {
   "entry.creditsMemberNoticeTitle": "Need more credits?",
   "entry.creditsMemberNoticeBody": "You are currently a Member and cannot add credits yourself. Ask a team Admin to increase the allowance when you need more.",
   "entry.creditsMemberNoticeAction": "Ask Admin to increase allowance",
-  "entry.accountToggleTheme": "Toggle theme",
-  "entry.accountSwitchLanguage": "Switch language",
-  "entry.accountLanguageMeta": "中文 / English",
+  
+  
+  
   "entry.accountGithubHelp": "Get help on GitHub",
   "entry.accountFeatureRequest": "Submit feature request",
-  "entry.accountAddAccount": "Add account",
+  
   "entry.accountSignOut": "Sign out",
   "signOut.confirmTitle": "ออกจากระบบ",
   "signOut.confirmMessage": "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?",
@@ -829,8 +829,8 @@ export const th: Dict = {
   "entry.blankAllProjectsTitle": "No team projects yet",
   "entry.blankAllProjectsDescription": "Projects shared to the team will appear here for everyone in the workspace.",
   "entry.blankCreate": "New project",
-  'entry.workspaceTeamsTitle': 'Workspace สำหรับทีม — บอกเราว่าทีมของคุณต้องการอะไร',
-  'entry.workspaceTeamsAria': 'เปิดหน้า Workspace สำหรับทีม',
+  
+  
   'entry.navExpand': 'ขยายแถบด้านข้าง',
   'entry.navCollapse': 'ย่อแถบด้านข้าง',
   'entry.navNewProject': 'โปรเจกต์ใหม่',
@@ -848,18 +848,18 @@ export const th: Dict = {
   'entry.draftsDescription': 'Projects you created, visible only to you',
   'entry.allProjectsDescription': 'Projects owned by everyone on the team',
   'entry.navBoard': 'Board',
-  'entry.navTeamSection': 'Team',
+  
   'entry.teamSlotNote': 'This space is provided by the team service. Integration is in progress.',
-  "entry.cloudCalloutTitle": "CapyDesign Cloud",
-  'entry.cloudRecovering': 'Account connection interrupted. Recovering automatically…',
+  
+  
   'entry.authExpiredBody': 'Your sign-in has expired. Sign in to continue using CapyDesign Cloud.',
   'home.createFailed': 'Failed to start the run. Try again.',
   'home.daemonRecovering': 'Local service connection interrupted. Recovering automatically…',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
-  "entry.cloudCalloutBody": "ลงชื่อเข้าใช้เพื่อใช้ CapyDesign Cloud และทำงานร่วมกันบนคลาวด์",
-  "entry.cloudCalloutDismissAria": "ปิดข้อความ CapyDesign Cloud",
-  'entry.workspaceLockedNote': 'This workspace is locked. Restore billing to resume editing shared projects.',
-  'entry.workspaceLockedRecover': 'Restore access',
+  
+  
+  
+  
   'messageCenter.openAria': 'Open message center',
   'messageCenter.unreadCount': '{count} unread',
   'messageCenter.title': 'Message center',
@@ -889,8 +889,8 @@ export const th: Dict = {
   'goPlanSunset.confirming': 'Confirming…',
   'goPlanSunset.acknowledge': 'Got it',
   'workspaceTabs.project': 'โปรเจกต์',
-  'workspaceTabs.pluginDetails': 'รายละเอียดปลั๊กอิน',
-  'workspaceTabs.marketplace': 'Marketplace',
+  
+  
   'homeHero.title': 'วันนี้คุณจะออกแบบอะไรกับเอเจนต์ของคุณ?',
   'homeHero.startWithTemplate': 'เริ่มต้นด้วยเทมเพลต…',
   'homeHero.startBlankProject': 'เริ่มโปรเจกต์เปล่า',
@@ -1057,7 +1057,7 @@ export const th: Dict = {
   'handoff.frameworkPrompt.solid': 'SolidJS',
   'handoff.frameworkPrompt.next': 'Next.js / React',
   'handoff.frameworkPrompt.vanilla': 'vanilla JavaScript, HTML และ CSS',
-  'handoff.amrWebsite': 'เปิดเว็บไซต์ CapyDesign Cloud',
+  
   'handoff.copyPrompt': 'คัดลอกพรอมป์ต์',
   'handoff.copyPromptForTarget': 'คัดลอกพรอมป์ต์สำหรับ {target}',
   'handoff.copied': 'คัดลอกแล้ว',
@@ -1111,7 +1111,7 @@ export const th: Dict = {
   'recentProjects.sortName': 'Name',
   'recentProjects.viewList': 'List view',
   'recentProjects.sharedBadge': 'Shared',
-  'recentProjects.sharedProjectFallbackName': 'Shared project',
+  
   'recentProjects.creatorLine': 'Created by {name}',
   'recentProjects.selfCreator': 'Me',
   'recentProjects.teamMemberCreator': 'Team member',
@@ -1670,7 +1670,7 @@ export const th: Dict = {
   'connectors.title': 'ตัวเชื่อมต่อ',
   'connectors.subtitle': 'แหล่งข้อมูลที่สามารถใช้ใน live artifacts',
   'connectors.account': 'บัญชี',
-  'connectors.noAccount': 'ไม่ได้เชื่อมต่อ',
+  
   'connectors.tools': 'เครื่องมือ',
   'connectors.connect': 'เชื่อมต่อ',
   'connectors.disconnect': 'ตัดการเชื่อมต่อ',
@@ -2016,8 +2016,8 @@ export const th: Dict = {
   'avatar.useApi': 'ใช้ API · BYOK',
   'avatar.codeAgent': 'เอเจนต์โค้ด',
   'avatar.rescan': 'สแกนหาใหม่',
-  'avatar.amrConsole': 'บัญชี CapyDesign Cloud',
-  'avatar.amrConsoleMeta': 'ยอดคงเหลือและการเติมเงิน',
+  
+  
   'avatar.settings': 'การตั้งค่า',
   'avatar.backToProjects': 'กลับไปยังโปรเจกต์',
   'avatar.metaActive': 'เปิดใช้งาน',
@@ -2775,7 +2775,7 @@ export const th: Dict = {
   'misc.primary': 'หลัก',
   'misc.designSystem': 'ระบบการออกแบบ',
   'workspace.designFiles': 'ไฟล์งานดีไซน์',
-  'workspace.focusMode': 'โหมดโฟกัส',
+  
   'workspace.showChat': 'เปิดแชท',
   'workspace.closeTab': 'ปิดแท็บ',
   'workspace.fileSyncDownloading': 'กำลังดาวน์โหลดจากทีม…',
@@ -2786,13 +2786,13 @@ export const th: Dict = {
   'workspace.deleteSelectedFilesConfirm': 'ลบไฟล์ {n} รายการที่เลือกออกจากโปรเจกต์?',
   'workspace.deleteSelectedFilesPartial': 'ลบ {n} รายการไม่ผ่าน',
   'workspace.openFromDesignFiles': 'เปิดไฟล์จาก',
-  'workspace.designFilesLink': 'หน้าไฟล์งาน',
+  
   'workspace.loadingSketch': 'กำลังโหลดกระดานวาด…',
   'workspace.newTab': 'แท็บใหม่',
   'workspace.searchFilesPlaceholder': 'Search files…',
   'workspace.openTabs': 'แท็บที่เปิดอยู่',
-  'workspace.searchTabs': 'Search tabs',
-  'workspace.noTabsFound': 'No tabs found',
+  
+  
   'workspace.openFile': 'Open a file',
   'workspace.noFilesMatch': 'No files match',
   'workspace.allFiles': 'All',
@@ -3203,14 +3203,14 @@ export const th: Dict = {
   'fileViewer.presenterMode': 'โหมดผู้นำเสนอ',
   'fileViewer.exitPresentation': 'หนีออกโหมดคนโชว์',
   'fileViewer.shareLabel': 'แชร์',
-  'fileViewer.shareMenuShareLink': 'แชร์',
+  
   'fileViewer.shareMenuPublishOnline': 'แชร์บนโฮสติ้งของคุณ',
-  'fileViewer.shareMenuDownload': 'ดาวน์โหลด',
-  'fileViewer.shareMenuPresentation': 'งานนำเสนอ',
-  'fileViewer.shareMenuSourceFiles': 'ไฟล์ต้นฉบับ',
-  'fileViewer.shareMenuSave': 'บันทึก',
+  
+  
+  
+  
   'fileViewer.shareMenuPublishViaOd': 'แชร์อย่างรวดเร็ว · CapyDesign',
-  'fileViewer.unifiedShareAria': 'Share and export actions',
+  
   'fileViewer.unifiedShareTab': 'Share',
   'fileViewer.unifiedExportTab': 'Export',
   'fileViewer.unifiedSendTab': 'Send to...',
@@ -3226,13 +3226,13 @@ export const th: Dict = {
   'fileViewer.publishFile': 'Publish file',
   'fileViewer.publishingFile': 'กำลังสร้างลิงก์…',
   'fileViewer.unpublishFile': 'หยุดแชร์',
-  'fileViewer.shareEmptyStateTitle': 'ยังไม่มีอะไรให้แชร์',
-  'fileViewer.shareEmptyStateDescription': 'สร้างหรือเข้าร่วมทีมเพื่อแชร์ไฟล์นี้กับเพื่อนร่วมทีม',
-  'fileViewer.shareEmptyStateCreateTeam': 'สร้างทีม',
-  'fileViewer.shareTeamMissingTitle': 'ยังไม่มีทีมให้แชร์ด้วย',
+  
+  
+  
+  
 
-  'fileViewer.publishFileRequiresTeam': 'การเผยแพร่ลิงก์สาธารณะต้องใช้พื้นที่ทำงานแบบทีม สลับไปยังพื้นที่ทำงานแบบทีม หรือใช้ Deploy เพื่อเผยแพร่ไฟล์นี้',
-  'fileViewer.publishFileRequiresWorkspace': 'การสร้างลิงก์แชร์ต้องเข้าสู่ระบบเวิร์กสเปซ เข้าสู่ระบบ CapyDesign Cloud หรือแชร์ไฟล์นี้ผ่านการดีพลอย',
+  
+  
   'fileViewer.publishFileFailed': 'สร้างลิงก์แชร์ไม่สำเร็จ ลองอีกครั้งหรือใช้ตัวเลือกดีพลอยด้านล่าง',
   'fileViewer.workspaceShareSuccess': 'Shared with workspace members',
   'fileViewer.workspaceShareFailed': 'Could not share with workspace',
@@ -3242,10 +3242,10 @@ export const th: Dict = {
   'fileViewer.copyShareLink': 'คัดลอกลิงก์แชร์',
   'fileViewer.openSharePage': 'เปิดหน้าแชร์',
   'fileViewer.shareLinkRequiresDeploy': 'เผยแพร่ออนไลน์ก่อนเพื่อรับลิงก์',
-  'fileViewer.shareLinkPublishGuide': 'เผยแพร่ออนไลน์ด้านบนเพื่อเปิดใช้การแชร์ ↑',
+  
   'fileViewer.shareAfterGenerationComplete': 'แชร์ได้หลังจากสร้างเสร็จ',
   'fileViewer.copyProviderLink': 'คัดลอกลิงก์ {provider}',
-  'fileViewer.copyCloudflareLink': 'คัดลอกลิงก์ Cloudflare',
+  
   'fileViewer.screenshotCopying': 'กำลังคัดลอกภาพหน้าจอ...',
   'fileViewer.screenshotCopied': 'คัดลอกภาพหน้าจอไปยังคลิปบอร์ดแล้ว',
   'fileViewer.screenshotClipboardDenied': 'เบราว์เซอร์บล็อกการเข้าถึงคลิปบอร์ด',
@@ -3404,12 +3404,12 @@ export const th: Dict = {
   'fileViewer.cloudflareDomainPrefixPlaceholder': 'เดโม่ (demo)',
   'fileViewer.cloudflareDomainPrefixInvalid': 'คำโดเมนรองนี้ให้ใช้อักษรพิเศษอย่างยัติภังค์ (ขีด) กับตัวเลขและพิมพ์เล็กได้ ไม่ให้ใช้อย่างอื่นที่ผิดแปลกไปเลย',
   'fileViewer.cloudflareHostnamePreview': 'ความพร้อมตัวโฮสต์รอง: {hostname}',
-  'fileViewer.cloudflareCustomDomainHint': 'ไม่บังคับ: ผูกโดเมนแบบกำหนดเอง หากเว้นว่างไว้จะยังสร้างลิงก์ pages.dev',
+  
   'fileViewer.cloudflarePagesDevLinkLabel': 'ลิ้งก์จากช่องทางฟรี pages.dev URL',
   'fileViewer.cloudflareCustomDomainLinkLabel': 'ตัวลิ้งก์ Custom แบบมีโดเมนเสริม',
   'fileViewer.optional': 'ตัวเลือกเสริม',
   'fileViewer.vercelPreviewOnly': 'ปัจจุบันการโชว์ Deploy มีเปิดให้แต่พรีวิวการใช้งานเท่านั้น',
-  'fileViewer.cloudflarePagesPreviewHint': 'สามารถส่งข้อมูลโฮสต์ผ่านแบบ Direct Upload ตรงเข้าสู่ของ Cloudflare ไปเลย',
+  
   'fileViewer.savingConfig': 'คอยจัดระเบียบให้…',
   'fileViewer.deployConfigSaveFailed': 'จำคำสั่งเชื่อมระบบฝั่ง Vercel เข้ามาไม่ได้',
   'fileViewer.deployFailed': 'เกิดความล้มเหลวกับการเรียกตัว Deployment ขอไปปรับเครื่องมือ Vercel ใหม่แล้วลองซ้ำนะ',
@@ -3461,8 +3461,8 @@ export const th: Dict = {
   'assistant.forkConversation': 'สนทนาใหม่',
   'assistant.forkingConversation': 'กำลังเริ่มสนทนาใหม่…',
   'assistant.forkNote': 'ต่อจากการสนทนาก่อนหน้า',
-  'assistant.shareToOpenDesign': 'แชร์ไปยัง CapyDesign',
-  'assistant.shareToOpenDesignBusy': 'กำลังเตรียมแพ็กเกจ…',
+  
+  
   'assistant.feedbackPrompt': 'ข้อเสนอแนะ',
   'assistant.feedbackPositive': 'มีประโยชน์',
   'assistant.feedbackNegative': 'ไม่มีประโยชน์',
@@ -3502,10 +3502,10 @@ export const th: Dict = {
   'chat.runError.actionBlocked.busy': "บทสนทนานี้ยังมีงานที่กำลังทำงานอยู่ ลองใหม่ได้เมื่องานเสร็จ",
   'chat.support.channel.feishu': "ชุมชน Feishu",
   'chat.support.channel.discord': "Discord",
-  'chat.amrBalanceOwner.title': "กรุณาติดต่อเจ้าของทีมให้เติมเครดิต",
-  'chat.amrBalanceOwner.message': "เฉพาะเจ้าของทีมเท่านั้นที่เติมเครดิตให้ทีมได้ กรุณาติดต่อ “{name}” ให้เติมเครดิตก่อนใช้งานต่อ",
-  'chat.amrBalanceOwner.messageNoOwnerName': "เฉพาะเจ้าของทีมเท่านั้นที่เติมเครดิตให้ทีมได้ กรุณาติดต่อเจ้าของทีมให้เติมเครดิตก่อนใช้งานต่อ",
-  'chat.amrBalanceOwner.dismissCta': "รับทราบ",
+  
+  
+  
+  
   'assistant.outTokens': 'หมดการจ่ายใน {n} โทเคน',
   'assistant.producedFiles': 'ดึงงานมาจากระบบไฟล์',
   'assistant.openFile': 'เรียก',
@@ -4717,16 +4717,16 @@ export const th: Dict = {
   // other-lane workspace destinations (members / billing / team space).
   'settings.workspace': 'Workspace',
   'settings.workspaceHint': 'Members, billing, and team spaces',
-  'settings.workspaceLede': 'Team-level settings for this workspace. These areas are managed by the team service — open one to continue.',
-  'settings.workspaceBack': 'Back to workspace',
-  'settings.workspaceMembers': 'Members & invites',
-  'settings.workspaceMembersHint': 'Manage who can access this workspace and send invitations.',
-  'settings.workspaceBilling': 'Subscription & seats',
-  'settings.workspaceBillingHint': 'Plan, seats, and payment for this workspace.',
-  'settings.workspaceAutoRecharge': 'Auto-recharge',
-  'settings.workspaceAutoRechargeHint': 'Automatically top up credits when the balance runs low.',
-  'settings.workspaceTeamSpace': 'Team space',
-  'settings.workspaceTeamSpaceHint': 'Shared projects and visibility for your team.',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   // Full-page Settings (`/settings`): sidebar nav head above the section list.
   'settings.pageBackToHome': 'Back to home',
   'settings.pageNavGroupPersonal': 'Personal',
@@ -4734,9 +4734,9 @@ export const th: Dict = {
   'newproj.startBlank': 'ว่างเปล่า',
   'newproj.startBlankHint': 'เริ่มจากศูนย์',
   'workspace.pages': 'หน้า',
-  'workspace.allProjectFiles': 'ไฟล์โปรเจกต์ทั้งหมด',
+  
   'workspace.newBlankPage': 'หน้าเปล่าใหม่',
-  'workspace.noPagesYet': 'ยังไม่มีหน้า',
+  
   'workspace.pageCreateFailed': 'ไม่สามารถสร้างหน้าได้',
   'workspace.pageCreatorTitle': 'สร้างหน้า',
   'workspace.pageCreatorSearch': 'ค้นหาเทมเพลต',

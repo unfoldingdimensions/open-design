@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 
 import { buildStructuredMainRunObservationV1 } from '../../src/observability/main-run-observation.js';
-import { buildSafeRunQualityProjectionV1 } from '../../src/langfuse-trace.js';
+import { buildSafeRunQualityProjectionV1 } from '../../src/local/legacy-bridge.js';
 import {
   bindOdNextExactSendPromptEvidence,
   buildPromptStackTelemetry,

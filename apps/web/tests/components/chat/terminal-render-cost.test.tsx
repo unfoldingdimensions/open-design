@@ -45,7 +45,7 @@ import type { ToolRow as ToolRowData } from '../../../src/runtime/chat/contract'
 const probe = vi.hoisted(() => ({ renders: [] as string[] }));
 
 vi.mock('../../../src/components/chat/primitives/TerminalOutput', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../../src/components/chat/primitives/TerminalOutput')>();
+  const actual = await importOriginal<any>();
   return {
     ...actual,
     /*

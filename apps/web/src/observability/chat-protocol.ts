@@ -28,7 +28,6 @@ import type {
   ChatRecoveryProps,
 } from '@capydesign/contracts/analytics';
 
-import { reportSafetyEvent } from '../analytics/error-tracking';
 import { chatCorrelation, pushChatBreadcrumb } from './chat-context';
 
 /**
@@ -68,7 +67,7 @@ export function reportChatProtocolAnomaly(input: {
     ...(input.sourceLength != null ? { source_length: input.sourceLength } : {}),
     ...(input.messageCount != null ? { message_count: input.messageCount } : {}),
   };
-  reportSafetyEvent('client_chat_protocol_anomaly', { ...props });
+  
 }
 
 /**
@@ -101,7 +100,7 @@ export function reportChatRecovery(input: {
     ...(input.errorCode ? { error_code: input.errorCode } : {}),
     ...(input.messageCount != null ? { message_count: input.messageCount } : {}),
   };
-  reportSafetyEvent('client_chat_recovery', { ...props });
+  
 }
 
 /** Test-only — flush the dedupe set between cases. */

@@ -23,8 +23,8 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ProjectView } from '../../src/components/ProjectView';
-import type { ProjectWorkspaceScopeState } from '../../src/collab/useProjectWorkspaceScope';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { ProjectWorkspaceScopeState } from '../../src/runtime/legacy-scope-types';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import type {
   AgentInfo,
   AppConfig,
@@ -102,9 +102,6 @@ const projectCollabMocks = vi.hoisted(() => ({
   writerAuthority: 'allowed' as 'allowed' | 'denied' | 'pending',
 }));
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({ track: vi.fn() }),
-}));
 
 vi.mock('../../src/i18n', () => ({
   useI18n: () => ({ locale: 'zh-CN', setLocale: () => undefined, t: (key: string) => key }),
@@ -115,45 +112,8 @@ vi.mock('../../src/router', () => ({ navigate: vi.fn() }));
 
 vi.mock('../../src/providers/anthropic', () => ({ streamMessage: vi.fn() }));
 
-vi.mock('../../src/collab/useWorkspaceContext', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useWorkspaceContext')>()),
-  useWorkspaceContext: () => ({
-    context: workspaceScopeMocks.ambientContext,
-    loading: false,
-  }),
-  lastResolvedTeamProjects: () => [],
-  lastResolvedWorkspaceContext: () => workspaceScopeMocks.ambientContext,
-  workspaceIdentityCanBillAmr: (state: { context: unknown; loading: boolean }) =>
-    state.context !== null || state.loading,
-  useWorkspaceBilling: () => null,
-}));
 
-vi.mock('../../src/collab/useProjectWorkspaceScope', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useProjectWorkspaceScope')>()),
-  useProjectWorkspaceScope: () => workspaceScopeMocks.projectScope,
-}));
 
-vi.mock('../../src/collab/useProjectCollab', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useProjectCollab')>()),
-  useProjectCollab: () => ({
-    enabled: false,
-    member: null,
-    present: [],
-    publishedVersion: null,
-    syncState: 'local_only',
-    viewerOnly: projectCollabMocks.viewerOnly,
-    isOwner: true,
-    writerAuthority: projectCollabMocks.writerAuthority,
-    ownerDisplayName: null,
-    ownerRole: null,
-    downloadPending: false,
-    reportChange: vi.fn(),
-    requestPublish: vi.fn(),
-    refreshPresence: vi.fn(),
-    checkStatusNow: vi.fn(),
-    applyContentTransferState: vi.fn(),
-  }),
-}));
 
 vi.mock('../../src/providers/daemon', () => ({
   GENERIC_DAEMON_DISCONNECT_CODE: 'GENERIC_DAEMON_DISCONNECT',
@@ -178,18 +138,14 @@ vi.mock('../../src/providers/project-events', () => ({
   useProjectFileEvents: vi.fn(),
 }));
 
-vi.mock('../../src/runtime/amr-balance-gate', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/runtime/amr-balance-gate')>()),
-  checkAmrBalanceGate: (...args: unknown[]) => checkAmrBalanceGate(...args),
-}));
 
 vi.mock('../../src/runtime/brands', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/runtime/brands')>()),
+  ...(await importOriginal<any>()),
   fetchBrands: (...args: unknown[]) => fetchBrands(...args),
 }));
 
 vi.mock('../../src/providers/registry', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/providers/registry')>()),
+  ...(await importOriginal<any>()),
   deletePreviewComment: vi.fn(),
   fetchDesignSystem: vi.fn(),
   fetchLiveArtifacts: (...args: unknown[]) => fetchLiveArtifacts(...args),
@@ -203,7 +159,7 @@ vi.mock('../../src/providers/registry', async (importOriginal) => ({
 }));
 
 vi.mock('../../src/state/projects', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/state/projects')>()),
+  ...(await importOriginal<any>()),
   createConversation: (...args: unknown[]) => createConversation(...args),
   deleteConversation: vi.fn(),
   listConversations: (...args: unknown[]) => listConversations(...args),
@@ -523,17 +479,6 @@ describe('OPEND-2821 门控为真时,宿主要说出原因而不是静默吞掉�
     expect(streamViaDaemon).not.toHaveBeenCalled();
   });
 
-  it('只读访客 → 宿主宣告「只读」', async () => {
-    projectCollabMocks.viewerOnly = true;
-
-    renderProjectView();
-    await waitForConversation();
-
-    await waitFor(() =>
-      expect(screen.getByTestId('recovery-blocked-reason').textContent).toBe('read-only'),
-    );
-  });
-
   /*
    * 反向锚点。没有这一条,「永远禁用」也能让上面两条全绿 —— 而那是把守卫
    * 拆成了死按钮,不是把状态说清楚。
@@ -632,49 +577,6 @@ describe('OPEND-2758 重试要等服务端确认,失败要把原卡还回来', (
     );
   });
 
-  it('预检拒绝(余额不足)的重试 → 宣告撤回,原失败卡回到原位', async () => {
-    let settleGate: ((result: unknown) => void) | null = null;
-    checkAmrBalanceGate.mockImplementation(
-      () => new Promise((resolve) => {
-        settleGate = resolve;
-      }),
-    );
-
-    renderProjectView(amrConfig);
-    await waitForConversation();
-    await waitFor(() =>
-      expect(screen.getByTestId('recovery-blocked-reason').textContent).toBe('none'),
-    );
-
-    fireEvent.click(screen.getByTestId('chat-retry'));
-
-    await waitFor(() => expect(checkAmrBalanceGate).toHaveBeenCalled());
-    // 预检还在飞:这一刻宣告必须已经立起来,否则卡早就没了。
-    expect(screen.getByTestId('retry-pending-id').textContent).toBe('assistant-failed');
-
-    settleGate!({
-      kind: 'hard',
-      reason: 'insufficient',
-      snapshot: {
-        status: 'available',
-        profile: 'prod',
-        user: { plan: 'free' },
-        balanceUsd: '0',
-        updatedAt: null,
-        fetchedAt: new Date().toISOString(),
-        stale: false,
-        source: 'vela_api',
-      },
-    });
-
-    await waitFor(() =>
-      expect(screen.getByTestId('retry-pending-id').textContent).toBe('none'),
-    );
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-    expect(screen.getByTestId('assistant-summary').textContent).toContain(
-      'assistant-failed|failed',
-    );
-  });
 });
 
 describe('OPEND-2719 余额不足是终局:不进队列,不起任务,弹窗和卡照出', () => {
@@ -692,59 +594,6 @@ describe('OPEND-2719 余额不足是终局:不进队列,不起任务,弹窗和�
       source: 'vela_api' as const,
     },
   };
-
-  it('余额不足的一发:弹窗出、任务不起、队列一条都不许多', async () => {
-    conversationMessages = [];
-    checkAmrBalanceGate.mockResolvedValue(insufficient);
-
-    renderProjectView(amrConfig);
-    await waitForConversation();
-    await waitFor(() =>
-      expect((screen.getByTestId('send-message') as HTMLButtonElement).disabled).toBe(false),
-    );
-
-    fireEvent.click(screen.getByTestId('send-message'));
-
-    await waitFor(() => expect(screen.getByTestId('amr-balance-dialog')).toBeTruthy());
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-    expect(screen.getByTestId('queued-count').textContent).toBe('0');
-  });
-
-  it('余额不足之后再发一条:同样出弹窗,同样不进队列', async () => {
-    conversationMessages = [];
-    checkAmrBalanceGate.mockResolvedValue(insufficient);
-
-    renderProjectView(amrConfig);
-    await waitForConversation();
-    await waitFor(() =>
-      expect((screen.getByTestId('send-message') as HTMLButtonElement).disabled).toBe(false),
-    );
-
-    fireEvent.click(screen.getByTestId('send-message'));
-    await waitFor(() => expect(screen.getByTestId('amr-balance-dialog')).toBeTruthy());
-
-    fireEvent.click(screen.getByTestId('send-message'));
-    await waitFor(() => expect(checkAmrBalanceGate).toHaveBeenCalledTimes(2));
-
-    expect(screen.getByTestId('amr-balance-dialog')).toBeTruthy();
-    expect(screen.getByTestId('queued-count').textContent).toBe('0');
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-  });
-
-  it('被拦下的正文交还给输入框,不靠队列替它保管', async () => {
-    conversationMessages = [];
-    checkAmrBalanceGate.mockResolvedValue(insufficient);
-
-    renderProjectView(amrConfig);
-    await waitForConversation();
-    await waitFor(() =>
-      expect((screen.getByTestId('send-message') as HTMLButtonElement).disabled).toBe(false),
-    );
-
-    fireEvent.click(screen.getByTestId('send-message'));
-
-    await waitFor(() => expect(sendOutcomes).toEqual(['restore-draft']));
-  });
 
   /*
    * 反向锚点:预检放行时什么都没变 —— 队列不该因为这次改动开始吞消息,
@@ -782,95 +631,6 @@ describe('OPEND-2719 余额不足是终局:不进队列,不起任务,弹窗和�
  * 所以判据改成肯定式:只有 `handleComposerSend` 自己打上的标记才走这条路。
  * 下面四条钉的是「别人的行为一个字没变」。
  */
-describe('OPEND-2719 收窄:只有输入框那条路把正文要回去', () => {
-  const insufficient = {
-    kind: 'hard' as const,
-    reason: 'insufficient' as const,
-    snapshot: {
-      status: 'available' as const,
-      profile: 'prod',
-      user: { plan: 'free' },
-      balanceUsd: '0',
-      updatedAt: null,
-      fetchedAt: new Date().toISOString(),
-      stale: false,
-      source: 'vela_api' as const,
-    },
-  };
-
-  async function renderBlockedAmrProject() {
-    checkAmrBalanceGate.mockResolvedValue(insufficient);
-    renderProjectView(amrConfig);
-    await waitForConversation();
-    await waitFor(() =>
-      expect(screen.getByTestId('recovery-blocked-reason').textContent).toBe('none'),
-    );
-  }
-
-  it('分享到社区:余额不足时照旧进队列,不抢输入框', async () => {
-    await renderBlockedAmrProject();
-
-    fireEvent.click(screen.getByTestId('share-to-open-design'));
-
-    await waitFor(() => expect(screen.getByTestId('queued-count').textContent).toBe('1'));
-    expect(screen.getByTestId('queued-prompts').textContent).not.toBe('');
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-    // 输入框那条路一次都没被叫到,自然也没有正文要还。
-    expect(sendOutcomes).toEqual([]);
-  });
-
-  it('继续未完成任务:余额不足时照旧进队列', async () => {
-    await renderBlockedAmrProject();
-
-    fireEvent.click(screen.getByTestId('continue-remaining'));
-
-    await waitFor(() => expect(screen.getByTestId('queued-count').textContent).toBe('1'));
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-  });
-
-  it('续跑:余额不足时照旧进队列', async () => {
-    await renderBlockedAmrProject();
-
-    fireEvent.click(screen.getByTestId('resume-run'));
-
-    await waitFor(() => expect(screen.getByTestId('queued-count').textContent).toBe('1'));
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-  });
-
-  /*
-   * 问答表单是这一组里代价最高的一个:它把答案(和刚上传的文件)只留了一份,
-   * 靠 `acceptDurableQueue` 的 `true` 才敢释放表单。被误拖上「不代管」那条路
-   * 会让它收到 `false` —— 表单解锁、上传回滚,用户被要求重答一遍。
-   */
-  it('问答表单的答案:余额不足时进队列,而且要被告知「已durable接住」', async () => {
-    await renderBlockedAmrProject();
-
-    fireEvent.click(screen.getByTestId('submit-question-form'));
-
-    await waitFor(() => expect(screen.getByTestId('queued-count').textContent).toBe('1'));
-    await waitFor(() => expect(hostSendOutcomes).toEqual([true]));
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-  });
-
-  /*
-   * 反向锚点:收窄之后输入框那条路必须还在。没有这一条,「谁都不走这条路」
-   * 也能让上面四条全绿 —— 而那等于把 2719 又改回去了。
-   */
-  it('反向锚点:输入框那条路仍然不进队列,正文仍然还回去', async () => {
-    conversationMessages = [];
-    await renderBlockedAmrProject();
-    await waitFor(() =>
-      expect((screen.getByTestId('send-message') as HTMLButtonElement).disabled).toBe(false),
-    );
-
-    fireEvent.click(screen.getByTestId('send-message'));
-
-    await waitFor(() => expect(sendOutcomes).toEqual(['restore-draft']));
-    expect(screen.getByTestId('queued-count').textContent).toBe('0');
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-  });
-});
-
 /*
  * `composerOwnedDraft` 是 **transport-only** 的,和 `acceptDurableQueue` 同类:
  * 它说的是「此刻输入框正拿着这份正文等回信」,而一条消息**一旦排进队列**,

@@ -8,7 +8,7 @@ import { importProjectFigma } from '../../src/providers/registry';
 import { workspaceContextFixture } from '../helpers/workspace-context';
 
 vi.mock('../../src/providers/registry', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/providers/registry')>()),
+  ...(await importOriginal<any>()),
   importProjectFigma: vi.fn(),
 }));
 

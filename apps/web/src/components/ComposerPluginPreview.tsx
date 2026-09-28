@@ -12,10 +12,8 @@
 // and the localization helpers so the copy follows the active locale.
 
 import { useMemo } from 'react';
-import type {
-  InstalledPluginRecord,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { InstalledPluginRecord } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { useT } from '../i18n';
 import { PreviewSurface } from './plugins-home/cards/PreviewSurface';
 import { extractCategories } from './plugins-home/facets';

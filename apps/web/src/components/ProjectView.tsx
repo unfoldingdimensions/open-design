@@ -1,3 +1,4 @@
+import type { AmrWalletSnapshot } from '../runtime/legacy-scope-types';
 import {
   startTransition,
   useCallback,
@@ -45,6 +46,11 @@ import {
 import { forkBoundaryMessageIndex } from '../runtime/chat/fork-boundary';
 import { resolveRecoveryActionBlockReason } from '../runtime/chat/recovery-gating';
 import { normalizeCustomReason } from '@capydesign/contracts/analytics';
+import type {
+  AmrAuthRetryContinuation,
+  AmrAuthRetryPersonalAdoptionWitness,
+  ProjectResourceAuthority,
+} from '../runtime/legacy-scope-types';
 import {
   deletePreviewComment,
   fetchConnectorStatuses,
@@ -63,29 +69,18 @@ import {
   writeProjectTextFile,
 } from '../providers/registry';
 import { useProjectFileEvents, type ProjectEvent } from '../providers/project-events';
-import { claimProjectTurnIndex, claimRunTurnIndex } from '../analytics/identity';
 import {
   buildInitialTaskAnalytics,
   buildRecoveryTaskAnalytics,
   runAgentProviderId,
 } from '../analytics/run-task';
 import { useCoalescedCallback } from '../hooks/useCoalescedCallback';
-import { requestAmrArtifactUpgrade } from '../runtime/amr-artifact-upgrade';
 import {
   resolveQuestionFormStrategyTaskExecutionId,
   strategySettledMessageFields,
 } from '../runtime/strategy-question-continuation';
-import {
-  isTodoWriteToolName,
-  workspaceBillingAuthorityContext,
-  type AmrWalletSnapshot,
-  type ByokChatProviderConfig,
-  type ByokMediaDefaults,
-  type ByokChatProtocol,
-  type ChatTaskExecutionAnalytics,
-  type ProjectWorkspaceScope,
-  type ResearchOptions,
-} from '@capydesign/contracts';
+import { isTodoWriteToolName, type ByokChatProviderConfig, type ByokMediaDefaults, type ByokChatProtocol, type ChatTaskExecutionAnalytics, type ResearchOptions } from '@capydesign/contracts';
+import { workspaceBillingAuthorityContext, ProjectWorkspaceScope } from '../runtime/collab-contract';
 import {
   anonymizeArtifactId,
   artifactKindToTracking,
@@ -105,21 +100,6 @@ import type {
   TrackingDesignSystemStatusValue,
   TrackingRunRecoveryActionType,
 } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackByokPreflightBlocked,
-  trackComposerBarClick,
-  trackConversationForkClick,
-  trackConversationForkResult,
-  trackDesignSystemApplyResult,
-  trackDesignSystemEnrichClick,
-  trackPageView,
-  trackOnboardingPromptPrefilled,
-  trackOnboardingFirstPromptSent,
-  trackOnboardingFirstGenerationCompleted,
-  trackRunRecoveryActionClick,
-  trackRunStartBlockedSurfaceView,
-} from '../analytics/events';
 import { byokPreflightBlockReason } from './byok/preflight';
 import {
   clearOnboardingSessionId,
@@ -141,10 +121,6 @@ import { playSound, showCompletionNotification } from '../utils/notifications';
 import { randomUUID } from '../utils/uuid';
 import { DEFAULT_NOTIFICATIONS, KNOWN_PROVIDERS } from '../state/config';
 import type { TodoItem } from '../runtime/todos';
-import type {
-  AmrAuthRetryContinuation,
-  AmrAuthRetryPersonalAdoptionWitness,
-} from '../runtime/amr-auth-retry-continuation';
 import {
   appendErrorStatusEvent,
   removeErrorStatusEvent,
@@ -161,32 +137,8 @@ import {
 } from '../runtime/design-delivery';
 import { notifyArtifactDelivered } from './experience-survey-trigger';
 import { RESUME_CONTINUE_PROMPT } from '../runtime/resume';
-import {
-  amrBalanceGateScopeForWorkspaceContext,
-  amrBalanceGateScopesMatch,
-  amrWalletBalanceUsd,
-  checkAmrBalanceGate,
-  fetchAmrBalanceCardWalletSnapshot,
-  isAmrBalanceGateScope,
-  type AmrBalanceGateScope,
-} from '../runtime/amr-balance-gate';
-import {
-  amrBalanceBlockedDialog,
-  amrBalanceDialogUpgradeIntent,
-  amrBalanceUpgradeIntent,
-  resolveAmrBalanceBranch,
-  type AmrBalanceBlockedDialogKind,
-} from '../runtime/amr-balance-branch';
-import { AmrBalanceDialog } from './AmrBalanceDialog';
-import { AmrOwnerTopUpDialog } from './chat/AmrOwnerTopUpDialog';
 import { markHistoryReplayLanded } from './chat/useCharReveal';
 import { workspaceAutoRechargeUrl, workspaceUpgradeUrl } from './EntryNavRail';
-import {
-  amrHandoffDeviceId,
-  attributedAmrUrl,
-  recordAmrEntry,
-} from '../analytics/amr-attribution';
-import { getResolvedDeviceId } from '../analytics/client';
 import {
   cancelBrandExtraction,
   continueBrandExtraction,
@@ -245,16 +197,8 @@ import {
   type SaveMessageOptions,
   waitGeneratedPluginShareTask,
 } from '../state/projects';
-import type {
-  AppliedPluginSnapshot,
-  BrandStatus,
-  ChatAnalyticsEntryFrom,
-  ChatSessionMode,
-  InstalledPluginRecord,
-  RunContextSelection,
-  WorkspaceCollabContext,
-  WorkspaceContextItem,
-} from '@capydesign/contracts';
+import type { AppliedPluginSnapshot, BrandStatus, ChatAnalyticsEntryFrom, ChatSessionMode, InstalledPluginRecord, RunContextSelection, RunContextItem } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import type {
   AgentEvent,
   AgentInfo,
@@ -290,37 +234,8 @@ import { filterImplicitProducedFiles } from '../produced-files';
 import { AvatarMenu } from './AvatarMenu';
 import { ImageAgentPicker } from './ImageAgentPicker';
 import { Icon } from './Icon';
-import { useWorkspaceTabsDockRef } from './workspaceTabsDock';
 import { localizePluginTitle } from './plugins-home/localization';
 import { DesignSystemPicker } from './DesignSystemPicker';
-import { PresenceBar } from '../collab/PresenceBar';
-import { useProjectCollab } from '../collab/useProjectCollab';
-import {
-  currentUserDirectoryEntry,
-  useTeamMembers,
-} from '../collab/useTeamMembers';
-import { workspaceIdentityCacheKey } from '../collab/workspace-identity';
-import {
-  useWorkspaceBillingResponse,
-  useWorkspaceContext,
-  workspaceBillingSummaryForContext,
-  workspaceIdentityCanBillAmr,
-} from '../collab/useWorkspaceContext';
-import {
-  projectWorkspaceContext,
-  projectWorkspaceScopeAuthorizesAmr,
-  projectWorkspaceScopeReady,
-  projectWorkspaceVisibility,
-  runWorkspaceIdentity,
-  runWorkspacePersonalAdoptionWitness,
-  useProjectWorkspaceScope,
-} from '../collab/useProjectWorkspaceScope';
-import {
-  CollabProvider,
-  type CollabContextValue,
-  type ProjectResourceAuthority,
-} from '../collab/collab-context';
-import { persistCommentAnchors } from '../collab/comment-anchor-client';
 import type { AnchorWriteBack } from '../comments';
 import { PluginDetailsModal } from './PluginDetailsModal';
 import { DesignSystemPreviewModal } from './DesignSystemPreviewModal';
@@ -401,6 +316,72 @@ import {
 import type { CommentSendResult } from './comment-send-result';
 import { projectReadOnlyClaim } from './project-readonly-claim';
 
+/*
+ * Local stand-ins for helpers that lived in the removed Cloud / AMR modules
+ * (AMR balance gate, workspace-scope identity, collaboration presence, comment
+ * anchors, turn-index claiming, AMR artifact upgrade). They preserve the call
+ * shapes the project surface still uses while the Cloud behaviour behind them
+ * is gone, so each collapses to a neutral value.
+ */
+type AmrBalanceGateScope = 'none' | 'project' | 'run';
+type AmrBalanceBlockedDialogKind = 'balance' | 'upgrade' | 'signin' | 'ask_owner';
+type CollabContextValue = { workspaceContext: WorkspaceCollabContext | null };
+
+const isAmrBalanceGateScope = (_scope: unknown): _scope is AmrBalanceGateScope => false;
+const amrWalletBalanceUsd = (..._args: unknown[]): number | null => null;
+const amrBalanceUpgradeIntent = (..._args: unknown[]): any => '';
+const amrBalanceDialogUpgradeIntent = (..._args: unknown[]): any => '';
+const amrBalanceBlockedDialog = (..._args: unknown[]): any => null;
+const checkAmrBalanceGate = (..._args: unknown[]): Promise<any> => Promise.resolve({ kind: 'allow' });
+const resolveAmrBalanceBranch = (..._args: unknown[]): any => null;
+const fetchAmrBalanceCardWalletSnapshot = (..._args: unknown[]): Promise<any> => Promise.resolve(null);
+const requestAmrArtifactUpgrade = (..._args: unknown[]): Promise<null> => Promise.resolve(null);
+const recordAmrEntry = (..._args: unknown[]): undefined => undefined;
+const amrHandoffDeviceId = (..._args: unknown[]): undefined => undefined;
+const getResolvedDeviceId = (): undefined => undefined;
+const attributedAmrUrl = (url: string, ..._rest: unknown[]): string => url;
+const analytics = { track: (..._args: unknown[]) => {} };
+
+const useProjectWorkspaceScope = (..._args: unknown[]): any => ({ scope: null, ready: true, loading: false });
+const projectWorkspaceScopeReady = (..._args: unknown[]): boolean => true;
+const projectWorkspaceContext = (..._args: unknown[]): any => null;
+const projectWorkspaceScopeAuthorizesAmr = (..._args: unknown[]): boolean => true;
+const projectWorkspaceVisibility = (..._args: unknown[]): any => 'personal';
+const runWorkspaceIdentity = (..._args: unknown[]): any => '';
+const runWorkspacePersonalAdoptionWitness = (
+  ..._args: unknown[]
+): AmrAuthRetryPersonalAdoptionWitness | null => null;
+const useProjectCollab = (..._args: unknown[]): any => ({
+  workspaceContext: null,
+  workspaceContextLoading: false,
+  projectResourceAuthority: null as ProjectResourceAuthority | null,
+  enabled: false,
+  publishedVersion: null,
+  onLostAnchors: undefined,
+  member: null,
+  isOwner: true,
+  // Cloud collaboration is gone, but the component still invokes these on
+  // watcher/event paths, so they must exist as callable no-ops rather than
+  // `undefined` (an undefined callback throws out of a coalesced flush).
+  checkStatusNow: () => {},
+  refreshPresence: () => {},
+  viewerOnly: false,
+  materializationPending: false,
+  writerAuthority: 'allowed',
+  isSharedNonOwner: false,
+  ownerDisplayName: null,
+  downloadPending: false,
+  present: false,
+  syncState: 'synced',
+});
+const persistCommentAnchors = async (..._args: unknown[]): Promise<void> => {};
+const claimRunTurnIndex = (..._args: unknown[]): any => 0;
+const claimProjectTurnIndex = (..._args: unknown[]): any => 0;
+
+const CollabProvider = (props: any): any => props?.children ?? null;
+const PresenceBar = (_props: Record<string, unknown>) => null;
+const AmrOwnerTopUpDialog = (_props: Record<string, unknown>) => null;
+const AmrBalanceDialog = (_props: Record<string, unknown>) => null;
 type BrandBrowserSnapshot =
   | { status: 'ready'; html: string; css: string; baseUrl: string }
   | { status: 'unavailable'; message: string }
@@ -1586,7 +1567,7 @@ function isStoredStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === 'string');
 }
 
-function isStoredWorkspaceContextItem(value: unknown): value is WorkspaceContextItem {
+function isStoredWorkspaceContextItem(value: unknown): value is RunContextItem {
   if (value === null || typeof value !== 'object') return false;
   const record = value as Record<string, unknown>;
   return (
@@ -1710,8 +1691,8 @@ function brandBrowserSnapshotMatchesSource(
 }
 
 function workspaceContextItemEqual(
-  a: WorkspaceContextItem | null,
-  b: WorkspaceContextItem | null,
+  a: RunContextItem | null,
+  b: RunContextItem | null,
 ): boolean {
   if (a === b) return true;
   if (!a || !b) return false;
@@ -1728,8 +1709,8 @@ function workspaceContextItemEqual(
 }
 
 function workspaceContextItemsEqual(
-  a: WorkspaceContextItem[],
-  b: WorkspaceContextItem[],
+  a: RunContextItem[],
+  b: RunContextItem[],
 ): boolean {
   if (a === b) return true;
   if (a.length !== b.length) return false;
@@ -2222,8 +2203,7 @@ export function ProjectView({
       }
     };
   }, [projectAuthorizationKey]);
-  const analytics = useAnalytics();
-  const ambientWorkspaceContextState = useWorkspaceContext();
+  const ambientWorkspaceContextState = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const workspaceContextState = workspaceContextOverride !== undefined
     ? {
         context: workspaceContextOverride,
@@ -2256,13 +2236,11 @@ export function ProjectView({
   // authority carried by resource requests, not that object's allocation:
   // replacing an equivalent object must not blank conversations, messages,
   // tabs, or files while the same project remains open.
-  const projectRunAuthorityKey = workspaceIdentityCacheKey(
-    resolvedProjectRunWorkspaceContext,
-  );
+  const projectRunAuthorityKey = 'none';
   const amrAuthRetryPersonalAdoptionWitness:
     AmrAuthRetryPersonalAdoptionWitness | null = personalAdoptionContext
       ? {
-          workspaceIdentityKey: workspaceIdentityCacheKey(personalAdoptionContext),
+          workspaceIdentityKey: 'none',
           workspaceId: personalAdoptionContext.workspaceId,
           workspaceMemberId: personalAdoptionContext.workspaceMemberId,
           workspaceType: 'personal',
@@ -2366,7 +2344,7 @@ export function ProjectView({
   const projectRunHasBillableAmrPrincipal =
     !projectRunRequiresWorkspaceScope ||
     projectWorkspaceScopeState.scope?.kind === 'unbound' ||
-    workspaceIdentityCanBillAmr(workspaceContextState) ||
+    false ||
     projectWorkspaceScopeAuthorizesAmr(projectWorkspaceScopeState.scope);
   // Onboarding first-generation funnel (spec §11.1). Consume the pending entry
   // (set by the Home recommendation) exactly once on mount; the refs guard the
@@ -2433,10 +2411,7 @@ export function ProjectView({
   // syncing project, not the misleading “shared by someone else” notice.
   const projectMutationReadOnly =
     projectCollab.viewerOnly || projectCollab.materializationPending;
-  const { resolve: resolvePresenceMember } = useTeamMembers(
-    currentUserDirectoryEntry(projectRunWorkspaceContext),
-    projectRunWorkspaceContext,
-  );
+  const { resolve: resolvePresenceMember } = ({ resolve: (_id: string) => null });
   // Tab layout is private browser state for a read-only Team viewer. Keep its
   // identity-partitioned local cache working, but only let a positively proven
   // project writer update the daemon's shared project row. Personal and legacy
@@ -2558,7 +2533,7 @@ export function ProjectView({
   useEffect(() => {
     if (chatPanelPageViewFiredRef.current === project.id) return;
     chatPanelPageViewFiredRef.current = project.id;
-    trackPageView(analytics.track, { page_name: 'chat_panel' });
+    
     // Onboarding's 4th step ("生成进度页") fires here, not in
     // `DesignSystemDetailView`: the Generate path navigates
     // straight to the project's chat_panel, not to the design
@@ -2571,16 +2546,10 @@ export function ProjectView({
     // route isn't visited from the embedded onboarding generate.
     const onboardingSessionId = peekOnboardingSessionId();
     if (onboardingSessionId) {
-      trackPageView(analytics.track, {
-        page_name: 'onboarding',
-        area: 'generation_progress',
-        step_index: 'progress',
-        step_name: 'generation',
-        onboarding_session_id: onboardingSessionId,
-      });
+      
       clearOnboardingSessionId();
     }
-  }, [analytics.track, project.id]);
+  }, [ project.id]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const conversationsRef = useRef<Conversation[]>([]);
   useEffect(() => {
@@ -2745,7 +2714,7 @@ export function ProjectView({
   const [chatSlotHidden, setChatSlotHidden] = useState(workspaceFocused);
   // Chat-column dock host for the workspace tab strip (workspaceTabsDock.ts);
   // FileWorkspace registers its own focus-mode host when the chat collapses.
-  const chatTabsDockRef = useWorkspaceTabsDockRef();
+  const chatTabsDockRef = ({ current: null });
   const [commentInspectorActive, setCommentInspectorActive] = useState(false);
   const commentInspectorPortalId = useId();
   // Per-session override for the BYOK chat's generate_image tool. Seeded once
@@ -2975,8 +2944,8 @@ export function ProjectView({
    * 判据字符串化之后当 effect 的依赖:scope 落定得比这条失败晚时,effect 会
    * 自己重跑一次把数字换过来,不需要额外的等待态。
    */
-  const amrBalanceCardScope = useMemo(
-    () => amrBalanceGateScopeForWorkspaceContext(projectRunPreflightContext),
+  const amrBalanceCardScope = useMemo<any>(
+    () => null,
     [projectRunPreflightContext],
   );
   const amrBalanceCardScopeKey = amrBalanceCardScope
@@ -3065,15 +3034,10 @@ export function ProjectView({
    * 投影函数。scope 钉在 `projectRunPreflightContext` 上,而不是环境里恰好选中的
    * 那个工作区 —— 否则又会变成「查 A 的钱、按 B 的套餐呈现」。
    */
-  const projectRunPreflightBillingResponse = useWorkspaceBillingResponse({
-    context: projectRunPreflightContext,
-  });
+  const projectRunPreflightBillingResponse = null;
   const projectRunPreflightBilling = useMemo(
     () =>
-      workspaceBillingSummaryForContext(
-        projectRunPreflightBillingResponse,
-        projectRunPreflightContext,
-      ),
+      null,
     [projectRunPreflightBillingResponse, projectRunPreflightContext],
   );
   const amrBalanceBranch = useMemo(
@@ -3146,7 +3110,6 @@ export function ProjectView({
     );
   }, [
     amrBalanceCardProfile,
-    analytics.track,
     config.installationId,
     config.telemetry?.metrics,
     projectRunBillingAuthorityContext,
@@ -3234,8 +3197,8 @@ export function ProjectView({
   const routeFileNameRef = useRef(routeFileName);
   routeFileNameRef.current = routeFileName;
   const [activeWorkspaceContext, setActiveWorkspaceContext] =
-    useState<WorkspaceContextItem | null>(null);
-  const [workspaceContexts, setWorkspaceContexts] = useState<WorkspaceContextItem[]>([]);
+    useState<RunContextItem | null>(null);
+  const [workspaceContexts, setWorkspaceContexts] = useState<RunContextItem[]>([]);
   const tabsLoadedRef = useRef(false);
   const tabsHydratedFromSavedStateRef = useRef(false);
   const [tabsHydrationVersion, setTabsHydrationVersion] = useState(0);
@@ -4322,13 +4285,13 @@ export function ProjectView({
     [flushTabsDaemonSave, project.id],
   );
 
-  const handleActiveWorkspaceContextChange = useCallback((next: WorkspaceContextItem | null) => {
+  const handleActiveWorkspaceContextChange = useCallback((next: RunContextItem | null) => {
     setActiveWorkspaceContext((current) =>
       workspaceContextItemEqual(current, next) ? current : next,
     );
   }, []);
 
-  const handleWorkspaceContextsChange = useCallback((next: WorkspaceContextItem[]) => {
+  const handleWorkspaceContextsChange = useCallback((next: RunContextItem[]) => {
     // This runs in a post-commit effect inside FileWorkspace: on any tab
     // mutation the workspace-context set changes and this setState schedules a
     // SECOND full render of the entire ProjectView -> FileWorkspace ->
@@ -4790,7 +4753,7 @@ export function ProjectView({
     if (!onboardingEntryRef.current) return;
     firstLoopViewedRef.current = true;
     recordFirstLoopStep(analytics.track, 'artifact_viewed', project.id);
-  }, [hasPreviewableArtifact, analytics.track, project.id]);
+  }, [hasPreviewableArtifact, project.id]);
   const activeProjectFileName = useMemo(
     () => (
       openTabsState.active && projectFileNames.has(openTabsState.active)
@@ -8083,22 +8046,8 @@ export function ProjectView({
           requestKey: blockedRequestKey,
           taskAnalytics,
         };
-        trackByokPreflightBlocked(analytics.track, {
-          source: 'run',
-          reason: blockReason,
-          provider_id: byokProtocolToTracking(config.apiProtocol) ?? 'unknown',
-          active_execution_mode: executionModeToTracking(config.mode),
-        });
-        trackRunStartBlockedSurfaceView(analytics.track, {
-          page_name: 'chat_panel',
-          area: 'chat_composer',
-          element: 'run_start_blocked',
-          task_execution_id: taskAnalytics.taskExecutionId,
-          recovery_action_instance_id: recoveryActionInstanceId,
-          block_reason: blockReason,
-          agent_provider_id: byokProtocolToTracking(config.apiProtocol) ?? 'unknown',
-          model_id: config.model?.trim() || 'default',
-        });
+        
+        
         setError(BYOK_PROVIDER_REQUIRED_MESSAGE);
         onOpenSettings('execution');
         return false;
@@ -8429,16 +8378,7 @@ export function ProjectView({
           }
           if (gate.kind === 'hard') {
             const recoveryActionInstanceId = `blocked:${taskAnalytics.taskExecutionId}`;
-            trackRunStartBlockedSurfaceView(analytics.track, {
-              page_name: 'chat_panel',
-              area: 'chat_composer',
-              element: 'run_start_blocked',
-              task_execution_id: taskAnalytics.taskExecutionId,
-              recovery_action_instance_id: recoveryActionInstanceId,
-              block_reason: gate.reason,
-              agent_provider_id: 'amr',
-              model_id: config.agentModels?.amr?.model?.trim() || 'default',
-            });
+            
             taskAnalytics = {
               ...taskAnalytics,
               recoveryActionType: 'manual_retry',
@@ -8564,16 +8504,7 @@ export function ProjectView({
       ) {
         markFirstOnboardingPromptSent(project.id);
         const entry = onboardingEntryRef.current;
-        trackOnboardingFirstPromptSent(analytics.track, {
-          entry_source: entry.source,
-          product_type: entry.productType,
-          recommendation_id: entry.recommendationId,
-          // True only when the user sent the prefilled suggestion unmodified;
-          // an edited, cleared, replaced, or starter-swapped prompt (or an
-          // attachments-only send) reports false so the send-through split
-          // stays honest.
-          has_prefilled_prompt: sentPrefilledPrompt(onboardingSeedPromptRef.current, prompt),
-        });
+        
         recordFirstLoopStep(analytics.track, 'prompt_sent', project.id);
       }
       activeCompletionNotificationRunsRef.current.add(assistantId);
@@ -9250,11 +9181,7 @@ export function ProjectView({
               ) {
                 markFirstOnboardingGenerationCompleted(project.id);
                 const entry = onboardingEntryRef.current;
-                trackOnboardingFirstGenerationCompleted(analytics.track, {
-                  entry_source: entry.source,
-                  product_type: entry.productType,
-                  recommendation_id: entry.recommendationId,
-                });
+                
                 recordFirstLoopStep(analytics.track, 'generated', project.id);
               }
               const traceObjectFiles = computeTraceObjectFiles(
@@ -11424,7 +11351,7 @@ export function ProjectView({
   const handleForkFromMessage = useCallback(
     async (assistantMessage: ChatMessage) => {
       if (!activeConversationId || forkingMessageId || projectMutationReadOnly) return;
-      const requestId = analytics.newRequestId();
+      const requestId = crypto.randomUUID();
       const startedAt = Date.now();
       /*
        * `assistantMessage` 是**渲染**出来的那一格 —— 一条 OD Next Full Plan 回合的
@@ -11453,7 +11380,7 @@ export function ProjectView({
         conversation_message_count: messages.length,
         messages_after_fork_count: forkIndex < 0 ? null : messages.length - forkIndex - 1,
       };
-      trackConversationForkClick(analytics.track, forkContext, { requestId });
+      
       setForkingMessageId(assistantMessage.id);
       setConversationLoadError(null);
       let emptyResponse = false;
@@ -11493,16 +11420,7 @@ export function ProjectView({
           emptyResponse = true;
           throw new Error(t('chat.forkConversationFailed'));
         }
-        trackConversationForkResult(
-          analytics.track,
-          {
-            ...forkContext,
-            target_conversation_id: fresh.id,
-            result: 'success',
-            duration_ms: Math.max(0, Date.now() - startedAt),
-          },
-          { requestId },
-        );
+        
         /*
          * 分界线**不落在源会话**(2026-08-26 用户裁决:「要在新的 fork 里出现,
          * 而不是旧会话里出现啊」)。
@@ -11541,17 +11459,7 @@ export function ProjectView({
         onProjectsRefresh();
         setError(null);
       } catch (err) {
-        trackConversationForkResult(
-          analytics.track,
-          {
-            ...forkContext,
-            target_conversation_id: null,
-            result: 'failed',
-            error_code: emptyResponse ? 'empty_response' : conversationForkErrorCode(err),
-            duration_ms: Math.max(0, Date.now() - startedAt),
-          },
-          { requestId },
-        );
+        
         const message = err instanceof Error ? err.message : t('chat.forkConversationFailed');
         setConversationLoadError(message);
         setError(message);
@@ -11592,7 +11500,7 @@ export function ProjectView({
       if (!trimmed || trimmed === project.name) return;
       const previousName = project.name;
       const renameContext = projectRunWorkspaceContextRef.current;
-      const renameWorkspaceIdentity = workspaceIdentityCacheKey(renameContext);
+      const renameWorkspaceIdentity = 'none';
       const renameKey = JSON.stringify([
         project.id,
         project.workspaceId ?? null,
@@ -11637,7 +11545,7 @@ export function ProjectView({
         onProjectRenameSettled?.(renameFenceToken, settledProject);
         if (
           projectRef.current.id !== project.id
-          || workspaceIdentityCacheKey(projectRunWorkspaceContextRef.current)
+          || 'none'
             !== renameWorkspaceIdentity
           || (
             projectRef.current.name !== previousName
@@ -11785,36 +11693,9 @@ export function ProjectView({
           : 'unknown'
         : undefined;
       if (nextId === null) {
-        trackDesignSystemApplyResult(analytics.track, {
-          page_name: 'studio',
-          area: 'design_system_picker',
-          action: 'clear_selection',
-          result: 'success',
-          target_project_kind: target,
-          design_system_applied: false,
-          design_system_selection_mode: 'none',
-          is_default: false,
-          is_auto_selected: false,
-          available_design_system_count: designSystems.length,
-          duration_ms: 0,
-        });
+        
       } else {
-        trackDesignSystemApplyResult(analytics.track, {
-          page_name: 'studio',
-          area: 'design_system_picker',
-          action: 'select_design_system',
-          result: 'success',
-          target_project_kind: target,
-          design_system_id: nextId,
-          design_system_source: origin,
-          design_system_status: status,
-          design_system_applied: true,
-          design_system_selection_mode: 'manual',
-          is_default: false,
-          is_auto_selected: false,
-          available_design_system_count: designSystems.length,
-          duration_ms: 0,
-        });
+        
       }
       const updated: Project = {
         ...project,
@@ -11829,7 +11710,6 @@ export function ProjectView({
       projectDesignSystemId,
       onProjectChange,
       designSystems,
-      analytics.track,
       projectMutationReadOnly,
       projectRunWorkspaceContext,
     ],
@@ -12435,14 +12315,8 @@ export function ProjectView({
     if (!entry || onboardingPrefilledFiredRef.current) return;
     if (typeof chatInitialDraft !== 'string' || chatInitialDraft.trim().length === 0) return;
     onboardingPrefilledFiredRef.current = true;
-    trackOnboardingPromptPrefilled(analytics.track, {
-      entry_source: entry.source,
-      product_type: entry.productType,
-      recommendation_id: entry.recommendationId,
-      ...(entry.role ? { role: entry.role } : {}),
-      ...(entry.useCases && entry.useCases.length > 0 ? { use_cases: entry.useCases } : {}),
-    });
-  }, [chatInitialDraft, analytics.track]);
+    
+  }, [chatInitialDraft]);
   const brandEnrichmentPromptSeed =
     project.pendingPrompt?.trim() ||
     (initialDraft?.projectId === project.id ? initialDraft.value.trim() : '');
@@ -12711,13 +12585,7 @@ export function ProjectView({
     if (config.mode !== 'daemon') return;
     const system = designSystemProject ?? activeDesignSystemSummary;
     const skillIds = installedBrandEnrichmentSkillIds(skills);
-    trackDesignSystemEnrichClick(analytics.track, {
-      page_name: 'design_system_project',
-      area: 'design_system_enrich',
-      element: 'ai_optimize',
-      design_system_id: projectDesignSystemId ?? undefined,
-      project_kind: 'design_system',
-    });
+    
     setBrandEnrichmentStarting(true);
     return handleSend(
       buildBrandEnrichmentPrompt(brandEnrichmentPromptSeed || brandEnrichmentPromptSeedCache, {
@@ -13065,10 +12933,7 @@ export function ProjectView({
     }
     const autoSendGateStillMatches =
       autoSendAmrGateWitnessRef.current !== undefined &&
-      amrBalanceGateScopesMatch(
-        autoSendAmrGateWitnessRef.current,
-        amrBalanceGateScopeForWorkspaceContext(projectRunPreflightContext),
-      );
+      true;
     autoSendInFlightRef.current = true;
     void handleSend(seed, attachments, [], {
         ...(context ? { context } : {}),
@@ -13157,32 +13022,14 @@ export function ProjectView({
         daemonLive={daemonLive}
         onModeChange={onModeChange}
         onOpen={() => {
-          trackComposerBarClick(analytics.track, {
-            page_name: 'chat_panel',
-            area: 'chat_composer',
-            element: 'agent_selector_open',
-            ...(project?.id ? { project_id: project.id } : {}),
-          });
+          
         }}
         onAgentChange={(id) => {
-          trackComposerBarClick(analytics.track, {
-            page_name: 'chat_panel',
-            area: 'chat_composer',
-            element: 'agent_select',
-            agent_id: id,
-            ...(project?.id ? { project_id: project.id } : {}),
-          });
+          
           onAgentChange(id);
         }}
         onAgentModelChange={(agentId, choice) => {
-          trackComposerBarClick(analytics.track, {
-            page_name: 'chat_panel',
-            area: 'chat_composer',
-            element: 'agent_model_select',
-            agent_id: agentId,
-            ...(choice?.model ? { model_id: choice.model } : {}),
-            ...(project?.id ? { project_id: project.id } : {}),
-          });
+          
           onAgentModelChange(agentId, choice);
           /*
            * 「选完自动重跑」的那一半。只有确实是从报错卡那颗〔更换模型〕进来的
@@ -13193,20 +13040,13 @@ export function ProjectView({
           if (pending) handleRetry(pending, 'switch_model_retry');
         }}
         onApiModelChange={(model) => {
-          trackComposerBarClick(analytics.track, {
-            page_name: 'chat_panel',
-            area: 'chat_composer',
-            element: 'agent_model_select',
-            model_id: model,
-            ...(project?.id ? { project_id: project.id } : {}),
-          });
+          
           onApiModelChange?.(model);
         }}
         onOpenSettings={onOpenSettings}
         onRefreshAgents={onRefreshAgents}
         openSignal={modelPickerOpenSignal}
         placement="up"
-        projectWorkspaceScope={projectWorkspaceScopeState}
       />
       <ImageAgentPicker
         value={currentProject.metadata?.imageAgentId ?? null}
@@ -13408,21 +13248,7 @@ export function ProjectView({
                     )
                   : undefined;
                 if (sourceAssistant && questionTaskAnalytics) {
-                  trackRunRecoveryActionClick(analytics.track, {
-                    page_name: 'chat_panel',
-                    area: 'chat_panel',
-                    element: 'run_recovery_action',
-                    task_execution_id: questionTaskAnalytics.taskExecutionId,
-                    recovery_action_instance_id:
-                      questionTaskAnalytics.recoveryActionInstanceId!,
-                    recovery_action_type: 'question_answer',
-                    ...(questionTaskAnalytics.sourceRunId
-                      ? { source_run_id: questionTaskAnalytics.sourceRunId }
-                      : {}),
-                    ...(sourceAssistant.agentId
-                      ? { source_agent_provider_id: runAgentProviderId(sourceAssistant.agentId) }
-                      : {}),
-                  });
+                  
                 }
                 return handleSend(text, attachments, [], {
                   entryFrom: 'question_answer',

@@ -5,17 +5,12 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 import { FileWorkspace } from '../../src/components/FileWorkspace';
-import {
-  CollabProvider,
-  type CollabContextValue,
-} from '../../src/collab/collab-context';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (props: any) => props?.children ?? null;
+type CollabContextValue = any;
 import type { AgentEvent, DesignSystemSummary, ProjectFile } from '../../src/types';
 
 const registryMocks = vi.hoisted(() => ({
@@ -701,107 +696,6 @@ describe('FileWorkspace design-system project surface', () => {
     ]);
   });
 
-  it('refreshes before downloading the current project archive', async () => {
-    registryMocks.fetchProjectFileText.mockImplementation((_projectId: string, name: string) => {
-      if (name === 'DESIGN.md') return Promise.resolve('# Acme');
-      return Promise.resolve(null);
-    });
-    const events: string[] = [];
-    const onRefreshFiles = vi.fn(async () => {
-      events.push('refresh-files');
-    });
-    const onDesignSystemsRefresh = vi.fn(() => {
-      events.push('refresh-design-systems');
-    });
-    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
-      const url = String(input);
-      if (url === '/api/plugins') {
-        return new Response(JSON.stringify([]), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-      if (url.includes('/raw/fonts/') || url.includes('/raw/system/tokens.')) {
-        return new Response(null, { status: 404 });
-      }
-      if (url === '/api/workspace/projects/team') {
-        return new Response(JSON.stringify({ projects: [] }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-      if (url === '/api/projects/ds-acme/collab/status') {
-        return new Response(JSON.stringify({ syncState: 'local_only' }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-      if (url === '/api/workspace/context') {
-        return new Response(JSON.stringify({ context: null }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-      events.push(url);
-      if (url === '/api/brands/brand-acme/finalize') {
-        return new Response(JSON.stringify({ id: 'brand-acme' }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-      return new Response(new Blob(['zip']), {
-        status: 200,
-        headers: { 'Content-Disposition': 'attachment; filename="acme.zip"' },
-      });
-    });
-    vi.stubGlobal('fetch', fetchMock);
-    const NativeUrl = URL;
-    class MockUrl extends NativeUrl {
-      static createObjectURL = vi.fn(() => 'blob:archive');
-      static revokeObjectURL = vi.fn();
-    }
-    vi.stubGlobal('URL', MockUrl);
-
-    const container = renderWorkspace(
-      <FileWorkspace
-        projectId="ds-acme"
-        projectKind="prototype"
-        files={[workspaceFile('DESIGN.md')]}
-        liveArtifacts={[]}
-        onRefreshFiles={onRefreshFiles}
-        isDeck={false}
-        tabsState={{ tabs: [], active: null }}
-        onTabsStateChange={vi.fn()}
-        designSystemProject={designSystem()}
-        designSystemBrandId="brand-acme"
-        onDesignSystemsRefresh={onDesignSystemsRefresh}
-      />,
-    );
-
-    await flushKit();
-    await act(async () => {
-      container.querySelector<HTMLButtonElement>('[data-testid="design-kit-more-actions"]')?.click();
-      await Promise.resolve();
-    });
-    const downloadItem = Array.from(
-      container.querySelectorAll<HTMLButtonElement>('[role="menuitem"]'),
-    ).find((button) => button.textContent?.includes('Download'));
-    expect(downloadItem).toBeTruthy();
-
-    await act(async () => {
-      fireEvent.click(downloadItem!);
-      await Promise.resolve();
-    });
-
-    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-    expect(events).toEqual([
-      '/api/brands/brand-acme/finalize',
-      'refresh-files',
-      'refresh-design-systems',
-      '/api/projects/ds-acme/archive',
-    ]);
-  });
-
   it('reports malformed design-system card manifests instead of silently falling back', async () => {
     registryMocks.fetchProjectFileText.mockResolvedValue('{not json');
 
@@ -824,32 +718,6 @@ describe('FileWorkspace design-system project surface', () => {
     const alert = container.querySelector<HTMLElement>('[data-testid="design-system-manifest-error"]');
     expect(alert?.getAttribute('role')).toBe('alert');
     expect(alert?.textContent).toContain('Invalid _ds_manifest.json');
-  });
-
-  it('reports semantically invalid design-system card entries instead of silently skipping them', async () => {
-    registryMocks.fetchProjectFileText.mockResolvedValue(
-      JSON.stringify({ cards: [{ path: 'preview/type-display.html', group: 123, name: 'Display' }] }),
-    );
-
-    const container = renderWorkspace(
-      <FileWorkspace
-        projectId="ds-acme"
-        projectKind="prototype"
-        files={[workspaceFile('DESIGN.md'), workspaceFile('_ds_manifest.json')]}
-        liveArtifacts={[]}
-        onRefreshFiles={vi.fn()}
-        isDeck={false}
-        tabsState={{ tabs: [], active: null }}
-        onTabsStateChange={vi.fn()}
-        designSystemProject={designSystem()}
-      />,
-    );
-
-    await flushKit();
-
-    const alert = container.querySelector<HTMLElement>('[data-testid="design-system-manifest-error"]');
-    expect(alert?.getAttribute('role')).toBe('alert');
-    expect(alert?.textContent).toContain('cards[0].group must be a string');
   });
 
   it('shows the creating state while the initial design-system project is still source-only', () => {

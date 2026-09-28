@@ -14,7 +14,7 @@ import type {
   ProjectMetadata as ContractProjectMetadata,
   StrategyTaskProjectionV2,
 } from '@capydesign/contracts';
-import type { AnalyticsContext } from '../analytics.js';
+import type { AnalyticsContext } from '../local/telemetry-sink.js';
 import type { RunArtifactBaseline } from '../run-artifact-fs.js';
 import type {
   RunEventForAnalyticsObservability,

@@ -13,16 +13,6 @@ import {
 import { Button } from '@capydesign/components';
 import { createPortal } from 'react-dom';
 import type { DesignSystemEditClickProps, TrackingArtifactKind, TrackingProjectKind } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackFileManagerClick,
-  trackDesignSystemEditClick,
-  trackFileUploadResult,
-  trackPageView,
-  trackTabLauncherClick,
-  trackSketchSaveResult,
-  trackSketchExportResult,
-} from '../analytics/events';
 import { deriveUploadCohort } from '../analytics/upload-tracking';
 import { useI18n, useT, type Locale } from '../i18n';
 import { useStableHandler } from '../lib/use-stable-handler';
@@ -70,10 +60,6 @@ import { removeSpeakerNotesFromHtml } from '../runtime/speaker-notes';
 import { useDesignKit, hostnameOf, type KitColor } from '../runtime/design-kit';
 import { useKitModuleUpload } from '../runtime/kit-upload';
 import {
-  appendResourceQuery,
-  workspaceIdentityCacheKey,
-} from '../collab/workspace-identity';
-import {
   DesignKitView,
   type DesignKitActionFeedbackTone,
   type DesignKitEditFocusRequest,
@@ -95,7 +81,7 @@ import {
   type LiveArtifactEventItem,
   type LiveArtifactWorkspaceEntry,
   type OpenTabsState,
-  type ProjectBrowserWorkspaceTab,
+  type ProjectBrowserTab,
   type PreviewComment,
   type PreviewCommentTarget,
   type DesignSystemSummary,
@@ -103,19 +89,8 @@ import {
   type ProjectFile,
   type ProjectFolder,
 } from '../types';
-import {
-  resolveLocalizedText,
-  type ChatSessionMode,
-  type InstalledPluginRecord,
-  type LocalizedText,
-  type WorkspaceCollabContext,
-  type WorkspaceContextItem,
-} from '@capydesign/contracts';
-import {
-  notifyTeamProjectsChanged,
-  TEAM_PROJECTS_CHANGED_EVENT,
-} from '../collab/useWorkspaceContext';
-import { useProjectCollabContext } from '../collab/collab-context';
+import { resolveLocalizedText, type ChatSessionMode, type InstalledPluginRecord, type LocalizedText, type RunContextItem } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { createTerminal, killTerminal, listPlugins, moveWorkspaceProject } from '../state/projects';
 import { MoveToTeamConfirmDialog, moveConfirmSkipped } from './MoveToTeamConfirmDialog';
 import { DesignFilesPanel, type DesignFilesNavState } from './DesignFilesPanel';
@@ -132,8 +107,6 @@ import { APP_CHROME_FILE_ACTIONS_ID } from './AppChromeHeader';
 import { FileViewer, LiveArtifactViewer } from './FileViewer';
 import { useIframeKeepAlivePool } from './IframeKeepAlivePool';
 import { Icon, type IconName } from './Icon';
-import { projectIsSharedWithWorkspace } from '../collab/project-shared-status';
-import { FileSyncBadge, type FileSyncBadgeState } from '../collab/FileSyncBadge';
 import { Toast } from './Toast';
 import { TabLauncherMenu } from './workspace/TabLauncherMenu';
 import { buildLauncherActions, type LauncherContext } from './workspace/tab-launcher';
@@ -158,7 +131,6 @@ import { LibraryPicker } from './LibraryPicker';
 import { QuickSwitcher } from './QuickSwitcher';
 import { SketchEditor } from './SketchEditor';
 import { SketchEnginePrewarm } from './SketchEnginePrewarm';
-import { useWorkspaceTabsDockRef } from './workspaceTabsDock';
 import {
   emptySketchScene,
   isSketchJsonFileName,
@@ -337,8 +309,8 @@ interface Props {
   onConversationSessionModeChange?: (id: string, mode: ChatSessionMode) => void;
   onNewConversation?: () => void;
   activeConversationChat?: ActiveConversationChatState;
-  onActiveContextChange?: (context: WorkspaceContextItem | null) => void;
-  onWorkspaceContextsChange?: (contexts: WorkspaceContextItem[]) => void;
+  onActiveContextChange?: (context: RunContextItem | null) => void;
+  onWorkspaceContextsChange?: (contexts: RunContextItem[]) => void;
   messages?: ChatMessage[];
   artifactHtml?: string | null;
   conversationError?: string | null;
@@ -377,6 +349,15 @@ interface Props {
    */
   fileSyncBadge?: FileSyncBadgeState | null;
 }
+
+/**
+ * Team-share sync state for a file tab.
+ *
+ * The Cloud share layer that produced these states is gone, so this is only
+ * ever null now. The type and the props that carry it are retained because
+ * callers still pass them through.
+ */
+type FileSyncBadgeState = 'downloading' | 'uploading';
 
 function noop(): void {}
 
@@ -1123,7 +1104,7 @@ const PAGE_KIND_TO_FACET_SLUG: Partial<Record<ProjectPageKind, string>> = {
   video: 'video',
 };
 type TabDropEdge = 'before' | 'after';
-type BrowserWorkspaceTab = ProjectBrowserWorkspaceTab;
+type BrowserWorkspaceTab = ProjectBrowserTab;
 export interface BrowserOpenRequest {
   tabId?: string;
   url: string;
@@ -1385,9 +1366,8 @@ export function FileWorkspace({
     await onRefreshFiles();
   }, [onRefreshFiles]);
   const { locale, t } = useI18n();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const iframeKeepAlivePool = useIframeKeepAlivePool();
-  const analytics = useAnalytics();
   // P1 page_view page_name=file_manager — once per project the user lands
   // inside the workspace. Re-fire when the projectId changes so a
   // project-switch session shows up as a fresh view rather than reusing
@@ -1396,8 +1376,8 @@ export function FileWorkspace({
   useEffect(() => {
     if (fileManagerViewedProjectRef.current === projectId) return;
     fileManagerViewedProjectRef.current = projectId;
-    trackPageView(analytics.track, { page_name: 'file_manager' });
-  }, [projectId, analytics.track]);
+    
+  }, [projectId]);
   const defaultRootTab = designSystemProject ? DESIGN_SYSTEM_TAB : DESIGN_FILES_TAB;
   // Persisted tabs come from the parent. Active tab can transiently point
   // at a pending sketch — pending sketches are not in tabsState.tabs.
@@ -1513,7 +1493,7 @@ export function FileWorkspace({
   const projectShareRef = useRef<HTMLDivElement | null>(null);
   const tabsBarRef = useRef<HTMLDivElement | null>(null);
   // Focus-mode dock host for the workspace tab strip (workspaceTabsDock.ts).
-  const focusTabsDockRef = useWorkspaceTabsDockRef();
+  const focusTabsDockRef = ({ current: null });
   const draggedTabNameRef = useRef<string | null>(null);
   const browserTabSequenceRef = useRef(0);
   const openFileRef = useRef<(name: string) => void>(() => {});
@@ -2394,14 +2374,7 @@ export function FileWorkspace({
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       setUploadError(`Upload failed for ${picked.length} file(s) (${detail}).`);
-      trackFileUploadResult(analytics.track, {
-        page_name: 'file_manager',
-        area: 'file_manager',
-        project_id: projectId,
-        ...cohort,
-        result: 'failed',
-        error_code: detail,
-      });
+      
       return;
     }
     if (result.uploaded.length > 0) {
@@ -2420,22 +2393,9 @@ export function FileWorkspace({
           : `Upload failed for ${failedCount} file(s)${detail}.`,
       );
       console.warn('Project upload had failures', result.failed);
-      trackFileUploadResult(analytics.track, {
-        page_name: 'file_manager',
-        area: 'file_manager',
-        project_id: projectId,
-        ...cohort,
-        result: 'failed',
-        ...(result.error ? { error_code: result.error } : {}),
-      });
+      
     } else if (result.uploaded.length > 0) {
-      trackFileUploadResult(analytics.track, {
-        page_name: 'file_manager',
-        area: 'file_manager',
-        project_id: projectId,
-        ...cohort,
-        result: 'success',
-      });
+      
     }
   }
 
@@ -3445,7 +3405,7 @@ export function FileWorkspace({
     />
   );
 
-  const activeWorkspaceContext = useMemo<WorkspaceContextItem | null>(() => {
+  const activeWorkspaceContext = useMemo<RunContextItem | null>(() => {
     if (activeTab === DESIGN_SYSTEM_TAB && designSystemProject) {
       return {
         id: 'workspace:design-system',
@@ -3660,10 +3620,10 @@ export function FileWorkspace({
     }
   }, [workspaceTabIds]);
 
-  const workspaceContexts = useMemo<WorkspaceContextItem[]>(() => {
-    const out: WorkspaceContextItem[] = [];
+  const workspaceContexts = useMemo<RunContextItem[]>(() => {
+    const out: RunContextItem[] = [];
     const seen = new Set<string>();
-    const push = (item: WorkspaceContextItem | null | undefined) => {
+    const push = (item: RunContextItem | null | undefined) => {
       if (!item) return;
       const key = `${item.kind}:${item.id}`;
       if (seen.has(key)) return;
@@ -3828,19 +3788,6 @@ export function FileWorkspace({
   }, [projectShareMenuOpen]);
 
   useEffect(() => {
-    let cancelled = false;
-    const refreshShareAccess = () => void projectIsSharedWithWorkspace(projectId, workspaceContext).then((shared) => {
-      if (!cancelled) setProjectShareAccess(shared ? 'workspace' : 'private');
-    });
-    refreshShareAccess();
-    window.addEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
-    return () => {
-      cancelled = true;
-      window.removeEventListener(TEAM_PROJECTS_CHANGED_EVENT, refreshShareAccess);
-    };
-  }, [projectId, projectShareMenuOpen, workspaceContext]);
-
-  useEffect(() => {
     if (!projectShareMenuOpen) setProjectShareAccessMenuOpen(false);
   }, [projectShareMenuOpen]);
 
@@ -3906,7 +3853,7 @@ export function FileWorkspace({
         workspaceContext,
       });
       setProjectShareAccess(nextAccess);
-      notifyTeamProjectsChanged();
+      void 0;
       setLauncherToast({
         message:
           nextAccess === 'workspace'
@@ -4029,11 +3976,7 @@ export function FileWorkspace({
             title={designFilesTabTitle}
           >
             <span className="tab-icon" aria-hidden>
-              {fileSyncBadge ? (
-                <FileSyncBadge state={fileSyncBadge} size={14} />
-              ) : (
-                <Icon name="grid" size={14} />
-              )}
+              <Icon name="grid" size={14} />
             </span>
             <span className="ws-tab-label">{designFilesTabLabel}</span>
           </button>
@@ -4174,14 +4117,7 @@ export function FileWorkspace({
           launcherContext={launcherContext}
           onOpenFile={openFile}
           onOpenTab={focusWorkspaceTab}
-          onTrack={(input) =>
-            trackTabLauncherClick(analytics.track, {
-              page_name: 'file_manager',
-              area: 'tab_launcher',
-              ...(projectId ? { project_id: projectId } : {}),
-              ...input,
-            })
-          }
+          onTrack={(input) => {}}
           onClose={() => setLauncherOpen(false)}
         />
       ) : null}
@@ -4352,87 +4288,39 @@ export function FileWorkspace({
               // Re-engagement entry: opening an existing sketch from the file
               // list (new_sketch already covers fresh creation).
               if (isSketchName(name)) {
-                trackFileManagerClick(analytics.track, {
-                  page_name: 'file_manager',
-                  area: 'file_manager',
-                  element: 'open_sketch',
-                  project_id: projectId,
-                  project_kind: projectKind,
-                });
+                
               }
               openFile(name);
             }}
             onOpenLiveArtifact={(tabId) => openFile(tabId)}
             onRenameFile={handleRename}
             onDeleteFile={(name) => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'delete',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               void handleDelete(name);
             }}
             onDeleteFiles={(names) => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'delete',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               return handleDeleteMany(names);
             }}
             onUpload={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'upload',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               fileInputRef.current?.click();
             }}
             onUploadFiles={(picked) => void uploadFiles(picked)}
             onPaste={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'paste',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               void createMarkdownDocument();
             }}
             onNewSketch={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'new_sketch',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               void startNewSketch();
             }}
             onOpenBrowser={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'new_browser',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               openBrowserTab();
             }}
             onCreateDesignSystem={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'create_design_system',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               setPendingDesignSystemCreateEntry('project_canvas');
               navigate({ kind: 'design-system-create' });
             }}
@@ -4441,13 +4329,7 @@ export function FileWorkspace({
             onDuplicateProject={onDuplicateProject}
             duplicateProjectBusy={duplicateProjectBusy}
             onSelectFromLibrary={() => {
-              trackFileManagerClick(analytics.track, {
-                page_name: 'file_manager',
-                area: 'file_manager',
-                element: 'library',
-                project_id: projectId,
-                project_kind: projectKind,
-              });
+              
               setShowLibraryPicker(true);
             }}
             uploadError={uploadError}
@@ -4473,24 +4355,12 @@ export function FileWorkspace({
                 // Fires only on the explicit "Save" button — background
                 // autosave calls saveSketch() directly and is not tracked.
                 const result = await saveSketch(activeFile.name, scene);
-                trackSketchSaveResult(analytics.track, {
-                  page_name: 'file_manager',
-                  area: 'sketch_editor',
-                  result: result === false ? 'failed' : 'success',
-                  project_id: projectId,
-                  project_kind: projectKind,
-                });
+                
                 return result;
               }}
               onExportImage={async (base64, fileName) => {
                 const result = await exportSketchImage(activeFile.name, base64, fileName);
-                trackSketchExportResult(analytics.track, {
-                  page_name: 'file_manager',
-                  area: 'sketch_editor',
-                  result: result === false ? 'failed' : 'success',
-                  project_id: projectId,
-                  project_kind: projectKind,
-                });
+                
                 return result;
               }}
               onOpenExportedImage={openFile}
@@ -4735,12 +4605,11 @@ function DesignSystemProjectPanel({
   githubConnected?: boolean;
 }) {
   const t = useT();
-  const analytics = useAnalytics();
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   // Match the exact fields sent by workspaceProjectHeaders. Billing-only
   // refreshes must not blank and reload the kit, while a role, membership, or
   // permission change must discard every prior identity's source snapshot.
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
+  const workspaceIdentity = 'none';
   const [reviewDecisions, setReviewDecisions] = useState<Record<string, DesignSystemReviewDecision>>({});
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const [feedbackSection, setFeedbackSection] = useState<string | null>(null);
@@ -4791,16 +4660,7 @@ function DesignSystemProjectPanel({
     element: DesignSystemEditClickProps['element'],
     module: DesignSystemEditClickProps['module'],
   ) {
-    trackDesignSystemEditClick(analytics.track, {
-      page_name: 'design_system_project',
-      area: 'design_system_edit',
-      element,
-      module,
-      edit_surface: 'direct_module',
-      artifact_kind: 'design_system',
-      design_system_id: system.id,
-      project_id: projectId,
-    });
+    
   }
 
   const refreshKitDependencies = useCallback(async (options?: { finalizeBrand?: boolean }) => {
@@ -7522,7 +7382,7 @@ function DesignSystemInlinePreview({
   projectId: string;
   file: ProjectFile;
 }) {
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const url = projectFileUrl(projectId, file.name, workspaceContext);
   const [srcDoc, setSrcDoc] = useState<string | null>(null);
   const [srcDocReady, setSrcDocReady] = useState(false);
@@ -7573,7 +7433,7 @@ function DesignSystemInlinePreview({
       />
     );
   }
-  return <img src={appendResourceQuery(url, `v=${Math.round(file.mtime)}`)} alt={file.name} />;
+  return <img src={(url + (url.includes('?') ? '&' : '?') + `v=${Math.round(file.mtime)}`.replace(/^[?&]+/, ''))} alt={file.name} />;
 }
 
 async function inlineDesignSystemPreviewRelativeAssets(
@@ -7718,7 +7578,7 @@ function designSystemPreviewAssetUrl(
   const query = (hashIndex >= 0 ? assetPath.suffix.slice(0, hashIndex) : assetPath.suffix)
     .replace(/^\?/, '');
   const hash = hashIndex >= 0 ? assetPath.suffix.slice(hashIndex) : '';
-  return `${query ? appendResourceQuery(baseUrl, query) : baseUrl}${hash}`;
+  return `${query ? (baseUrl + (baseUrl.includes('?') ? '&' : '?') + query.replace(/^[?&]+/, '')) : baseUrl}${hash}`;
 }
 
 function rewriteDesignSystemPreviewCssUrls(
@@ -8491,11 +8351,7 @@ const Tab = memo(function Tab({
       onDrop={draggable ? onDrop : undefined}
       onDragEnd={draggable ? onDragEnd : undefined}
     >
-      {syncBadge ? (
-        <span className="tab-icon">
-          <FileSyncBadge state={syncBadge} size={13} />
-        </span>
-      ) : iconName ? (
+      {iconName ? (
         <span className="tab-icon" aria-hidden>
           <Icon name={iconName} size={13} />
         </span>

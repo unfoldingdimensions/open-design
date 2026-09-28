@@ -304,10 +304,6 @@ export type TrackingRunFailureDetail =
   // succeeds once the window rolls over — so it stays retryable and must not
   // be counted as a quota exhaustion in reliability reporting.
   | 'model_window_limit'
-  // Vela membership policy concurrency is temporarily full. The upstream
-  // reset instant makes this waitable, but it is deliberately non-retryable
-  // for automation so the daemon cannot create an immediate retry storm.
-  | 'membership_concurrency_limit'
   | 'workspace_credits_exhausted'
   | 'rate_limit_429'
   | 'amr_insufficient_balance'
@@ -434,7 +430,6 @@ export type TrackingRunAdmissionPhase = 'before_execution' | 'during_execution' 
 /** `none` means no affirmative policy evidence, not proof that no policy applied. */
 export type TrackingRunPolicyReason =
   | 'model_window_limit'
-  | 'membership_concurrency_limit'
   | 'hard_quota'
   | 'workspace_credits_exhausted'
   | 'amr_insufficient_balance'

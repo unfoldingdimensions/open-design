@@ -112,7 +112,7 @@ const ROWS: Row[] = [
   // This row used to read `auth / auth_required / login`, and that verdict was
   // a substring collision rather than a reading of the failure: the daemon's own
   // `invalid session/new response: …` line contains `invalid session`, which
-  // `classifyAmrAccountFailure` accepted as "the AMR sign-in session is
+  // `classifyAccountFailure` accepted as "the AMR sign-in session is
   // invalid". The agent answering `session/new` with an unparseable frame is a
   // defect in the agent's build, and no sign-in changes it — so the card told
   // the user to log in for something logging in cannot fix. The classifier now
@@ -162,7 +162,7 @@ const ROWS: Row[] = [
   // way: vela's link gateway rewrites an upstream 401/403 into an HTTP 500
   // carrying its OWN code (`services/link/internal/handlers/openai.go:2074`,
   // `normalizeUpstreamAuthFailure`), and three separate classifiers each read
-  // it as the caller being signed out — `classifyAmrAccountFailure` off
+  // it as the caller being signed out — `classifyAccountFailure` off
   // `unauthenticated`, `classifyAgentServiceFailure` and `isAuthDetailText`
   // off "credentials are missing". The user was shown "Sign-in required" for a
   // credential they do not hold and cannot fix.

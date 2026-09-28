@@ -10,12 +10,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useT } from '../i18n';
-import type {
-  GenUISurfaceSpec,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
-import { workspaceResourceUrl } from '../collab/workspace-identity';
-
+import type { GenUISurfaceSpec } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 export interface PendingSurface {
   // The surface descriptor as declared in `od.genui.surfaces[]`.
   surface: GenUISurfaceSpec;
@@ -208,13 +204,10 @@ export function GenUISurfaceRenderer(props: Props) {
         </div>
       );
     }
-    const src = workspaceResourceUrl(
-      `/api/plugins/${encodeURIComponent(pluginId)}/asset/${sanitizedPath
+    const src = `/api/plugins/${encodeURIComponent(pluginId)}/asset/${sanitizedPath
         .split('/')
         .map(encodeURIComponent)
-        .join('/')}`,
-      props.workspaceContext,
-    );
+        .join('/')}`;
     return (
       <SandboxedComponentSurface
         runId={props.pending.runId}

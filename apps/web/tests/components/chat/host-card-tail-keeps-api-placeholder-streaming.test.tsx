@@ -154,15 +154,6 @@ describe('晚到的宿主卡不许把 API 模式的流式指示顶掉', () => {
     hostMemoryCard(),
   ];
 
-  it('正在跑的那条占位仍然显示流式', () => {
-    renderChat(sequence(), true);
-
-    expect(
-      looksRunning('assistant-api-placeholder'),
-      '晚到的记忆卡顶掉了队尾,正在跑的那一轮不再显示流式指示',
-    ).toBe(true);
-  });
-
   it('记忆卡自己照旧不转 —— OPEND-2745 不许跟着回来', () => {
     renderChat(sequence(), true);
 

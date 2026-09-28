@@ -1,11 +1,11 @@
 import type { Express } from 'express';
 import { type ChatSessionMode } from '@capydesign/contracts';
-import { readAnalyticsContext } from '../../analytics.js';
+import { readAnalyticsContext } from '../../local/telemetry-sink.js';
 import { nextForkedConversationTitle } from '../../conversation-fork-title.js';
 import { backfillBrandExtractionTranscriptForProject } from '../../brands/index.js';
 import type { RouteDeps } from '../../server-context.js';
-import type { BoundWorkspaceResourceMutationGate } from '../../collab/workspace-resource-mutation.js';
-import type { AuthorizeProjectRequest } from '../../collab/project-request-authority.js';
+import type { BoundWorkspaceResourceMutationGate } from '../../local/workspace-resource-mutation.js';
+import type { AuthorizeProjectRequest } from '../../local/project-request-authority.js';
 import { TERMINAL_RUN_STATUSES } from '../../runtimes/runs.js';
 import { strategyTaskTurnsForRunIds } from '../../strategies/task-store.js';
 

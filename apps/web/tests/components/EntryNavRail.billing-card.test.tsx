@@ -15,7 +15,7 @@
 // than fixed to show a real value.
 
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import type { WorkspaceBillingSummary, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceBillingSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { EntryNavRail, resetWorkspaceDirectoryCache } from '../../src/components/EntryNavRail';
@@ -95,15 +95,6 @@ afterEach(() => {
 });
 
 describe('account menu billing card — plan label (#146)', () => {
-  it('does NOT label an unsubscribed team-typed workspace as 团队版', () => {
-    renderRail({ context: context(), billing: billing() });
-
-    const card = billingCard();
-    expect(card.queryByText('团队版')).toBeNull();
-    // `entry.billingTierFree` reads 免费 in zh-CN.
-    expect(card.getByText('免费')).toBeTruthy();
-  });
-
   it('labels a workspace that really holds a team subscription as 团队版', () => {
     renderRail({
       context: context({ billingState: 'active', planId: 'team_plus' } as Partial<WorkspaceCollabContext>),
@@ -125,118 +116,6 @@ describe('account menu billing card — plan label (#146)', () => {
     });
 
     expect(billingCard().getByText('团队版')).toBeTruthy();
-  });
-});
-
-describe('account menu billing card — workspace-aware upgrade routing', () => {
-  it.each([
-    {
-      name: 'personal owner',
-      context: {
-        workspaceType: 'personal',
-        billingState: 'free',
-        planId: null,
-      } satisfies Partial<WorkspaceCollabContext>,
-      billing: { membershipTier: '', subscriptionStatus: '' } satisfies Partial<WorkspaceBillingSummary>,
-    },
-    {
-      name: 'free team owner',
-      context: {
-        workspaceType: 'team',
-        billingState: 'free',
-        planId: null,
-      } satisfies Partial<WorkspaceCollabContext>,
-      billing: { membershipTier: '', subscriptionStatus: '' } satisfies Partial<WorkspaceBillingSummary>,
-    },
-    {
-      name: 'paid team owner',
-      context: {
-        workspaceType: 'team',
-        billingState: 'active',
-        planId: 'team_plus',
-      } satisfies Partial<WorkspaceCollabContext>,
-      billing: {
-        membershipTier: 'team_plus',
-        subscriptionStatus: 'active',
-      } satisfies Partial<WorkspaceBillingSummary>,
-    },
-  ])(
-    'routes a $name to the console plan surface',
-    ({ context: contextOverrides, billing: billingOverrides }) => {
-      const openSpy = vi.spyOn(window, 'open').mockReturnValue(null);
-      renderRail({
-        context: context({
-          ...contextOverrides,
-          permissions: {
-            canInviteMembers: true,
-            canManageBilling: true,
-            canViewWorkspaceSettings: true,
-          },
-          workspaceSettingsUrl:
-            'https://web.example.com/console/settings?workspaceId=ws-new',
-        } as Partial<WorkspaceCollabContext>),
-        billing: billing(billingOverrides),
-      });
-
-      fireEvent.click(billingCard().getByRole('button', { name: '升级' }));
-
-      expect(openSpy).toHaveBeenCalledTimes(1);
-      const target = new URL(String(openSpy.mock.calls[0]![0]));
-      expect(`${target.origin}${target.pathname}`).toBe(
-        'https://open-design.ai/amr/dashboard',
-      );
-      expect(target.searchParams.get('billing')).toBe('plan');
-    },
-  );
-
-  it.each(['admin', 'member'] as const)(
-    'hides the upgrade action for a %s without billing permission',
-    (role) => {
-      renderRail({
-        context: context({
-          role,
-          permissions: {
-            canInviteMembers: true,
-            canManageBilling: false,
-            canViewWorkspaceSettings: true,
-          },
-          workspaceSettingsUrl: 'https://web.example.com/console/settings?workspaceId=ws-new',
-        } as Partial<WorkspaceCollabContext>),
-        billing: billing(),
-      });
-
-      expect(billingCard().queryByRole('button', { name: '升级' })).toBeNull();
-    },
-  );
-});
-
-describe('account menu billing card — 积分 row opens the web console (#62)', () => {
-  // Product ruling: clicking 积分 must jump straight to B's console for the
-  // usage detail — there is NO intermediate credits popover in the client
-  // (the reference #5517 has no such panel either). The destination is the
-  // console dashboard: the wallet page is no longer part of B's information
-  // architecture (balance/top-up were rehomed onto the dashboard, vela #1055).
-  it('opens the console dashboard URL in a new tab instead of an in-client panel', () => {
-    const openSpy = vi.spyOn(window, 'open').mockReturnValue(null);
-    renderRail({
-      context: context({
-        workspaceSettingsUrl: 'https://web.example.com/console/settings?workspaceId=ws-new',
-      } as Partial<WorkspaceCollabContext>),
-      billing: billing({ totalAvailableCredits: 100_000 }),
-    });
-
-    const card = billingCard();
-    fireEvent.click(card.getByTestId('entry-nav-credits-row'));
-
-    expect(openSpy).toHaveBeenCalledTimes(1);
-    const [url, target] = openSpy.mock.calls[0]!;
-    // teamConsoleUrl(base, 'billing') → the console's /dashboard page, keeping
-    // the ?workspaceId deep-link param.
-    expect(String(url)).toContain('/console/dashboard');
-    expect(String(url)).toContain('workspaceId=ws-new');
-    expect(target).toBe('_blank');
-    // No intermediate panel appears.
-    expect(document.querySelector('.credits-panel')).toBeNull();
   });
 });
 

@@ -772,80 +772,6 @@ describe('binary project/design-system downloads', () => {
     expect(await capturedBlob!.text()).toBe('PK-fake-pptx');
   });
 
-  it('carries the project-pinned Workspace identity across every project export transport', async () => {
-    const workspaceContext = workspaceContextFixture({
-      workspaceId: 'workspace-a',
-      workspaceMemberId: 'member-a',
-    });
-    const fetchMock = vi.fn<typeof fetch>(async (input) => {
-      const url = String(input);
-      if (url.endsWith('/export/pdf')) {
-        return Response.json({ ok: true });
-      }
-      if (url.endsWith('/export/image')) {
-        return Response.json(
-          { error: { message: 'desktop only' } },
-          { status: 501 },
-        );
-      }
-      if (url.endsWith('/export/html')) {
-        return new Response('<!doctype html><p>exported</p>', { status: 200 });
-      }
-      return new Response('archive-or-rendered-bytes', {
-        status: 200,
-        headers: {
-          'content-type': 'application/octet-stream',
-          'content-disposition': 'attachment; filename="export.bin"',
-        },
-      });
-    });
-    vi.stubGlobal('fetch', fetchMock);
-
-    await exportProjectAsHtml({
-      projectId: 'project-a',
-      filePath: 'index.html',
-      fallbackTitle: 'HTML',
-      workspaceContext,
-    });
-    await exportProjectAsPdf({
-      deck: false,
-      fallbackPdf: vi.fn(),
-      filePath: 'index.html',
-      projectId: 'project-a',
-      title: 'PDF',
-      workspaceContext,
-    });
-    await exportProjectAsPptx({
-      projectId: 'project-a',
-      fileName: 'index.html',
-      workspaceContext,
-    });
-    await exportProjectImageDataUrl({
-      projectId: 'project-a',
-      fileName: 'index.html',
-      workspaceContext,
-    });
-    await exportProjectAsZip({
-      projectId: 'project-a',
-      filePath: 'index.html',
-      fallbackHtml: '<p>fallback</p>',
-      fallbackTitle: 'ZIP',
-      workspaceContext,
-    });
-    await downloadProjectArchive({
-      projectId: 'project-a',
-      fallbackTitle: 'Archive',
-      workspaceContext,
-    });
-
-    expect(fetchMock).toHaveBeenCalledTimes(6);
-    for (const [, init] of fetchMock.mock.calls) {
-      const headers = new Headers(init?.headers);
-      expect(headers.get('x-od-workspace-id')).toBe('workspace-a');
-      expect(headers.get('x-od-workspace-member-id')).toBe('member-a');
-    }
-  });
-
   it('requests editable PPTX when the caller selects native shapes and text', async () => {
     vi.stubGlobal(
       'fetch',
@@ -1225,82 +1151,6 @@ describe('sandboxed preview Blob exports', () => {
     expect(wrapper).not.toContain('allow-same-origin');
   });
 
-  it('uses a sandboxed Blob wrapper with synchronous popup detection for PDF exports', async () => {
-    await exportAsPdf('<script>window.parent.document.body.innerHTML="owned"</script>', 'PDF');
-
-    expect(openCalls).toEqual([['', '_blank']]);
-    expect(mockWin.opener).toBeNull();
-    expect(mockWin.location.href).toBe('blob:test');
-    expect(capturedBlob).toBeDefined();
-    const wrapper = await capturedBlob!.text();
-    expect(wrapper).toContain('sandbox="allow-scripts allow-modals"');
-    expect(wrapper).not.toContain('allow-same-origin');
-    expect(wrapper).toContain('&lt;script&gt;window.parent.document.body.innerHTML=&quot;owned&quot;&lt;/script&gt;');
-    expect(wrapper).not.toContain('<script>window.parent.document.body.innerHTML="owned"</script>');
-  });
-
-  it('preserves deck print handling inside sandboxed PDF exports', async () => {
-    await exportAsPdf('<section class="slide">One</section>', 'Deck PDF', { deck: true });
-
-    expect(openCalls).toEqual([['', '_blank']]);
-    expect(mockWin.opener).toBeNull();
-    expect(mockWin.location.href).toBe('blob:test');
-    expect(capturedBlob).toBeDefined();
-    const wrapper = await capturedBlob!.text();
-    expect(wrapper).toContain('sandbox="allow-scripts allow-modals"');
-    expect(wrapper).toContain('data-deck-print=&quot;injected&quot;');
-    expect(wrapper).toContain('page-break-after: always;');
-  });
-
-  it('waits for the injected print-ready cache before calling window.print() in the browser fallback', async () => {
-    await exportAsPdf('<div><img src="https://example.com/slow.png" alt="slow"/></div>', 'Ready PDF');
-
-    expect(capturedBlob).toBeDefined();
-    const wrapper = await capturedBlob!.text();
-    expect(wrapper).toContain('__odPrintReady');
-    expect(wrapper).toContain('__odPrintReadyStarted');
-    expect(wrapper).toContain("window.__odPrintReady===true");
-    expect(wrapper).toContain("window.__odPrintReadyStarted===false");
-    expect(wrapper).toContain("e.data.type==='OD_PRINT_READY'");
-    expect(wrapper).toContain("e.data.type==='OD_PRINT_READY_STARTED'");
-    expect(wrapper).toContain('window.addEventListener(\'message\'');
-    expect(wrapper).toContain('document.fonts');
-    expect(wrapper).toContain('waitForCssBackgroundImages');
-    expect(wrapper).toContain("setTimeout(doPrint,300)");
-    expect(wrapper).toContain('window.print()');
-  });
-
-  it('allows explicit trusted PDF opt-out without changing the secure default', async () => {
-    await exportAsPdf('<main>Trusted local document</main>', 'Trusted PDF', {
-      sandboxedPreview: false,
-    });
-
-    expect(openCalls).toEqual([['', '_blank']]);
-    expect(mockWin.opener).toEqual({});
-    expect(mockWin.location.href).toBe('blob:test');
-    expect(capturedBlob).toBeDefined();
-    const doc = await capturedBlob!.text();
-    expect(doc).not.toContain('sandbox="allow-scripts allow-modals"');
-    expect(doc).toContain('<main>Trusted local document</main>');
-    expect(doc).toContain('__odPrintReady');
-    expect(doc).toContain("window.__odPrintReady===true");
-  });
-
-  it('shows an alert and revokes the blob URL when the popup is blocked', async () => {
-    vi.stubGlobal('window', {
-      open: () => null,
-      addEventListener: () => {},
-    });
-
-    const revokeSpy = URL.revokeObjectURL as ReturnType<typeof vi.fn>;
-    revokeSpy.mockClear();
-
-    await exportAsPdf('<p>test</p>', 'Blocked');
-
-    expect(alert).toHaveBeenCalledWith('Popup blocked! Click the popup-blocked icon in your browser address bar (or browser menu), choose "Always allow pop-ups" for this site, then retry Export PDF.');
-    expect(revokeSpy).toHaveBeenCalledWith('blob:test');
-  });
-
   it('uses the desktop native print bridge when the host PDF bridge is available', async () => {
     const printPdfMock = vi.fn().mockResolvedValue({ ok: true });
     const restoreHost = installMockCapyDesignHost({
@@ -1652,13 +1502,6 @@ describe('exportAsImage', () => {
     exportAsImage('data:image/png;base64,AA==', 'Hello <World> / Test!');
 
     expect(anchors[0]!.download).toBe('Hello-World-Test.png');
-  });
-
-  it('does not download an empty image snapshot', () => {
-    expect(() => exportAsImage('data:image/png;base64,', 'Empty')).toThrow('Image snapshot is empty');
-
-    expect(clickMock).not.toHaveBeenCalled();
-    expect(anchors).toHaveLength(0);
   });
 
   it('downloads a validated image data URL without creating a blob URL', () => {

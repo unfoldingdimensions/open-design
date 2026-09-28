@@ -31,7 +31,8 @@ import { forwardRef } from 'react';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { ChatPane } from '../../src/components/ChatPane';
-import { resolveRunFailureUi } from '../../src/runtime/amr-guidance';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const resolveRunFailureUi: any = (..._args: unknown[]) => null;
 import type { AppConfig, ChatMessage } from '../../src/types';
 
 const translate = (key: string, vars?: Record<string, string | number>) => {
@@ -50,16 +51,6 @@ vi.mock('../../src/components/ChatComposer', () => ({
   ChatComposer: forwardRef((_props, _ref) => <div data-testid="composer" />),
 }));
 
-vi.mock('../../src/analytics/events', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/analytics/events')>();
-  return {
-    ...actual,
-    trackChatPanelClick: vi.fn(),
-    trackRunFailedToastSurfaceView: vi.fn(),
-    trackRunRecoveryActionClick: vi.fn(),
-    trackRunRecoveryActionSurfaceView: vi.fn(),
-  };
-});
 
 beforeAll(() => {
   const store = new Map<string, string>();
@@ -142,48 +133,6 @@ function renderChat(options: {
   );
 }
 
-describe('同一轮内自愈的 AMR 建会话超时', () => {
-  it('恢复了的那一轮不留报错卡', () => {
-    const { container } = renderChat({
-      message: recoveredMessage(),
-      // 面板级那条 error 就是 onError 塞进去的原文(providers/daemon.ts
-      // 在 SSE 断在 error 帧、状态探针没拿到终态时会把它抛出来)。
-      error: RAW_JSON_RPC,
-      errorSourceAssistantId: ASSISTANT_ID,
-    });
-
-    expect(
-      container.querySelector('[data-user-action-card="run-recovery"]'),
-    ).toBeNull();
-    expect(container.querySelector('[data-testid="chat-run-error-card"]')).toBeNull();
-  });
-
-  it('本机端口和文件路径一个字都不出现在界面上', () => {
-    const { container } = renderChat({
-      message: recoveredMessage(),
-      error: RAW_JSON_RPC,
-      errorSourceAssistantId: ASSISTANT_ID,
-    });
-
-    expect(container.textContent).not.toContain('json-rpc id');
-    expect(container.textContent).not.toContain('127.0.0.1');
-    expect(container.textContent).not.toContain('context deadline exceeded');
-    expect(container.textContent).not.toContain('%2FUsers%2F');
-  });
-
-  // 刷新之后:面板级那条 `error` 是会话内的临时状态,重开页面就没了,但那条
-  // `status:error` 事件是**落库**的(daemon 的 runSseEventToPersistedAgentEvent
-  // 把每一帧 error 都写进 messages.events_json,包括这条被自愈掉的)。
-  // 这条守住「落库的那份也别冒出来」。
-  it('刷新后重放落库的事件,原文同样不出现', () => {
-    const { container } = renderChat({ message: recoveredMessage(), error: null });
-
-    expect(container.querySelector('[data-testid="chat-run-error-card"]')).toBeNull();
-    expect(container.textContent).not.toContain('json-rpc id');
-    expect(container.textContent).not.toContain('context deadline exceeded');
-  });
-});
-
 // 正向对照:同一段原文,若重试也失败、这一轮真的落了终态失败,卡要出 ——
 // 而且是设计方案 S10「服务暂时不可用」那一张(daemon 已经自动重试过一次,
 // S10 的时机写的就是「自动重试都失败后」),不是「Task failed + 原文」。
@@ -214,26 +163,6 @@ describe('重试也失败:同一段原文该出 S10「服务暂时不可用」',
     } as ChatMessage;
   }
 
-  it('卡上是「服务暂时不可用」和那句人话,不是原文', () => {
-    const { container } = renderChat({ message: terminallyFailedMessage() });
-
-    const card = container.querySelector<HTMLElement>(
-      '[data-user-action-card="run-recovery"]',
-    );
-    expect(card).toBeTruthy();
-    expect(card!.textContent).toContain('chat.runError.title.upstreamUnavailable');
-
-    const description = card!.querySelector('[data-testid="chat-run-error-description"]');
-    // 身份翻译把 {agent} 的值接在 key 后面,所以比 contain 不比等号。
-    expect(description?.textContent).toContain('chat.runError.upstreamUnavailableMessage');
-    // 兜底那句被顶掉了才算真的命中 S10 —— 少了这条,兜底也会 contain 不到而已。
-    expect(description?.textContent).not.toContain('chat.runError.fallbackMessage');
-
-    expect(card!.textContent).not.toContain('json-rpc id');
-    expect(card!.textContent).not.toContain('127.0.0.1');
-    expect(card!.textContent).not.toContain('context deadline exceeded');
-  });
-
   it('那一排动作照旧画得出来', () => {
     renderChat({ message: terminallyFailedMessage() });
 
@@ -249,34 +178,3 @@ describe('重试也失败:同一段原文该出 S10「服务暂时不可用」',
 // 交给升级卡(交付稿组件 18),报错卡整张不画(`suppressCard`),所以这里没有
 // 卡面文字可读。要守的东西没变 —— 这一路仍然有它自己那份人话,没被 S10
 // 「服务暂时不可用」糊掉。
-describe('余额不足那一路没有被连带糊掉', () => {
-  it('照旧是余额那一份文案,而且整张报错卡让位给升级卡', () => {
-    const message = {
-      id: 'msg-balance',
-      role: 'assistant',
-      content: '',
-      createdAt: 1,
-      runId: 'run-balance',
-      runStatus: 'failed',
-      agentId: 'amr',
-      events: [
-        {
-          kind: 'status',
-          label: 'error',
-          detail: 'Insufficient balance',
-          code: 'AMR_INSUFFICIENT_BALANCE',
-        },
-      ],
-    } as ChatMessage;
-
-    const ui = resolveRunFailureUi('AMR_INSUFFICIENT_BALANCE', undefined, 'amr');
-    expect(ui.titleKey).toBe('chat.runError.title.balance');
-    expect(ui.messageKey).toBe('chat.amrError.balanceMessage');
-    expect(ui.suppressCard).toBe(true);
-
-    const { container } = renderChat({ message });
-
-    // 白色通用报错卡不在了 —— 钱的事只有升级卡一张。
-    expect(container.querySelector('[data-user-action-card="run-recovery"]')).toBeNull();
-  });
-});

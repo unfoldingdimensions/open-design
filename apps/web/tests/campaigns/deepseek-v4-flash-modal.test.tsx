@@ -23,22 +23,8 @@ import { I18nProvider } from '../../src/i18n';
 
 const trackSpy = vi.fn();
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({ track: trackSpy }),
-}));
 
-vi.mock('../../src/collab/useWorkspaceContext', () => ({
-  useWorkspaceContext: () => ({
-    context: null,
-    resourceReadIdentity: null,
-    loading: false,
-    identityChangePending: false,
-  }),
-}));
 
-vi.mock('../../src/analytics/client', () => ({
-  getResolvedDeviceId: () => null,
-}));
 
 const DIALOG = 'deepseek-v4-flash-campaign-dialog';
 
@@ -73,48 +59,6 @@ describe('paid 立即使用 switches the workbench onto the campaign model', () 
     expect(screen.getByText('DS', { exact: true })).toBeVisible();
   });
 
-  it('applies agent amr + model deepseek-v4-flash and pulses the chip without opening the picker', () => {
-    vi.useFakeTimers();
-    const onUseCampaignModel = vi.fn();
-    // Stand in for the home composer's model-switcher chip.
-    const chip = document.createElement('button');
-    chip.setAttribute('data-testid', 'inline-model-switcher-chip');
-    const chipClick = vi.fn();
-    chip.addEventListener('click', chipClick);
-    document.body.appendChild(chip);
-    try {
-      render(
-        <DeepSeekV4FlashCampaign
-          audience="paid"
-          active
-          onUseCampaignModel={onUseCampaignModel}
-        />,
-      );
-      fireEvent.click(screen.getByRole('button', { name: 'Use now' }));
-
-      // 产品拍板 D5: the CTA performs the real switch, not a picker tour.
-      expect(onUseCampaignModel).toHaveBeenCalledWith(
-        'amr',
-        'deepseek-v4-pro',
-      );
-      // The analytics element stays `use_now`.
-      expect(trackSpy).toHaveBeenCalledWith(
-        'ui_click',
-        expect.objectContaining({ element: 'use_now' }),
-        undefined,
-      );
-
-      vi.advanceTimersByTime(1);
-      // Visual feedback survives as the highlight pulse alone — no
-      // chip.click(), so the model popover stays closed.
-      expect(chipClick).not.toHaveBeenCalled();
-      expect(chip.getAttribute('data-campaign-highlight')).toBe('true');
-      vi.advanceTimersByTime(1_600);
-      expect(chip.hasAttribute('data-campaign-highlight')).toBe(false);
-    } finally {
-      chip.remove();
-    }
-  });
 });
 
 describe('the modal never re-opens for a seen campaign (no URL override left)', () => {
@@ -175,50 +119,6 @@ describe('unpaid DeepSeek path opens public Pricing', () => {
 
     expect(screen.getByRole('img', { name: 'DeepSeek' })).toBeVisible();
     expect(screen.getByText('DS', { exact: true })).toBeVisible();
-  });
-
-  it('opens the locale-neutral comparison page', () => {
-    const open = vi.fn();
-    vi.stubGlobal('open', open);
-    render(
-      <DeepSeekV4FlashCampaign
-        audience="unpaid"
-        active
-        metricsConsent
-        installationId="install-abc123"
-      />,
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Upgrade and use' }));
-
-    expect(open).toHaveBeenCalledTimes(1);
-    const url = new URL(String(open.mock.calls[0]?.[0]));
-    expect(url.origin + url.pathname).toBe('https://open-design.ai/pricing/');
-    expect(url.searchParams.get('od_locale')).toBe('en');
-    expect(url.searchParams.get('od_entry_source')).toBe('deepseek_unpaid_modal');
-    expect(url.searchParams.get('od_campaign_id')).toBe('deepseek_v4_pro');
-    expect(url.searchParams.get('od_conversion_source')).toBe('deepseek_unpaid_modal');
-    expect(url.searchParams.get('od_device_id')).toBe('install-abc123');
-  });
-
-  it('keeps the same target without metrics consent', () => {
-    const open = vi.fn();
-    vi.stubGlobal('open', open);
-    render(
-      <DeepSeekV4FlashCampaign
-        audience="unpaid"
-        active
-        metricsConsent={false}
-        installationId="install-abc123"
-      />,
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Upgrade and use' }));
-
-    expect(open).toHaveBeenCalledTimes(1);
-    const url = new URL(String(open.mock.calls[0]?.[0]));
-    expect(url.searchParams.get('od_device_id')).toBeNull();
-    expect(url.origin + url.pathname).toBe('https://open-design.ai/pricing/');
   });
 
   it('shares the DeepSeek frequency key with the paid campaign', () => {

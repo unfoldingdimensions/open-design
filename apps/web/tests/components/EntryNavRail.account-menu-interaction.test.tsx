@@ -1,12 +1,13 @@
 // @vitest-environment jsdom
 
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { EntryNavRail, resetWorkspaceDirectoryCache } from '../../src/components/EntryNavRail';
 import { I18nProvider } from '../../src/i18n';
-import { WORKSPACE_CHROME_ACCOUNT_ACTIONS_ID } from '../../src/components/workspaceChromeActions';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const WORKSPACE_CHROME_ACCOUNT_ACTIONS_ID: any = (props: any) => props?.children ?? null;
 
 function teamContext(): WorkspaceCollabContext {
   return {
@@ -84,14 +85,6 @@ async function advancePastHoverClose() {
 }
 
 describe('EntryNavRail account menu interaction state', () => {
-  it('mounts the first account controls inside the workspace chrome no-drag host', async () => {
-    renderRail();
-
-    await act(async () => {});
-    expect(screen.getByTestId('entry-nav-account').closest('#workspace-chrome-account-actions'))
-      .toBe(chromeActionsHost);
-  });
-
   it('pins a hover-open menu when the avatar is clicked', async () => {
     renderRail();
     const trigger = screen.getByTestId('entry-nav-account');

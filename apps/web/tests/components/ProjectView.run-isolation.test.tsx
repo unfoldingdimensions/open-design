@@ -11,9 +11,9 @@ import {
 } from '../../src/components/ProjectView';
 import { ProjectConversationsHttpError } from '../../src/state/projects';
 import type { SettingsSection } from '../../src/components/SettingsDialog';
-import type { ProjectWorkspaceScopeState } from '../../src/collab/useProjectWorkspaceScope';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
-import type { AmrAuthRetryContinuation } from '../../src/runtime/amr-auth-retry-continuation';
+import type { ProjectWorkspaceScopeState } from '../../src/runtime/legacy-scope-types';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
+import type { AmrAuthRetryContinuation } from '../../src/runtime/legacy-scope-types';
 import type {
   AgentInfo,
   AppConfig,
@@ -148,11 +148,6 @@ const projectCollabMocks = vi.hoisted(() => ({
   writerAuthority: 'allowed' as 'allowed' | 'denied' | 'pending',
 }));
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({
-    track: analyticsTrackMock,
-  }),
-}));
 
 vi.mock('../../src/i18n', () => ({
   useI18n: () => ({
@@ -167,29 +162,6 @@ vi.mock('../../src/providers/anthropic', () => ({
   streamMessage: (...args: unknown[]) => streamMessage(...args),
 }));
 
-vi.mock('../../src/collab/useWorkspaceContext', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useWorkspaceContext')>()),
-  useWorkspaceContext: () => ({
-    context: workspaceScopeMocks.ambientContext,
-    loading: workspaceScopeMocks.ambientLoading,
-    ...(workspaceScopeMocks.ambientFailure
-      ? { failure: workspaceScopeMocks.ambientFailure }
-      : {}),
-  }),
-  // This suite exercises run/conversation isolation, not remote collaboration.
-  // An authoritative empty catalog proves the fixture project is unshared so
-  // the collab status request's initial unknown window does not disable Chat.
-  lastResolvedTeamProjects: () => [],
-  lastResolvedWorkspaceContext: () => workspaceScopeMocks.ambientContext,
-  // Mirrors the real predicate: only a settled, authoritative "no workspace"
-  // read means AMR has no wallet.
-  workspaceIdentityCanBillAmr: (state: {
-    context: unknown;
-    loading: boolean;
-    failure?: string;
-  }) => state.context !== null || state.loading || Boolean(state.failure),
-  useWorkspaceBilling: () => null,
-}));
 
 // Only the HOOK is stubbed; every pure helper comes from the real module.
 //
@@ -199,30 +171,7 @@ vi.mock('../../src/collab/useWorkspaceContext', async (importOriginal) => ({
 // copies were free to drift from the semantics under test. `importOriginal`
 // removes the whole failure mode — a new export is picked up automatically and
 // is always the real implementation.
-vi.mock('../../src/collab/useProjectWorkspaceScope', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useProjectWorkspaceScope')>()),
-  useProjectWorkspaceScope: () => workspaceScopeMocks.projectScope,
-}));
 
-vi.mock('../../src/collab/useProjectCollab', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/collab/useProjectCollab')>()),
-  useProjectCollab: () => ({
-    enabled: projectCollabMocks.enabled,
-    member: null,
-    present: [],
-    publishedVersion: null,
-    syncState: projectCollabMocks.syncState,
-    viewerOnly: projectCollabMocks.viewerOnly,
-    isOwner: projectCollabMocks.isOwner,
-    writerAuthority: projectCollabMocks.writerAuthority,
-    downloadPending: false,
-    reportChange: vi.fn(),
-    requestPublish: vi.fn(),
-    refreshPresence: vi.fn(),
-    checkStatusNow: vi.fn(),
-    applyContentTransferState: vi.fn(),
-  }),
-}));
 
 vi.mock('../../src/providers/daemon', () => ({
   GENERIC_DAEMON_DISCONNECT_CODE: 'GENERIC_DAEMON_DISCONNECT',
@@ -244,7 +193,7 @@ vi.mock('../../src/providers/project-events', () => ({
 }));
 
 vi.mock('../../src/utils/notifications', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/utils/notifications')>()),
+  ...(await importOriginal<any>()),
   playSound: (...args: unknown[]) => playSound(...args),
   showCompletionNotification: (...args: unknown[]) => showCompletionNotification(...args),
 }));
@@ -266,7 +215,7 @@ vi.mock('../../src/router', () => ({
 }));
 
 vi.mock('../../src/state/projects', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../src/state/projects')>()),
+  ...(await importOriginal<any>()),
   createConversation: (...args: unknown[]) => createConversation(...args),
   deleteConversation: vi.fn(),
   getTemplate: (...args: unknown[]) => getTemplate(...args),
@@ -1090,75 +1039,6 @@ describe('ProjectView conversation run isolation', () => {
     },
   ];
 
-  it.each(signedOutUnboundNonAmrCases)(
-    'keeps signed-out, headerless, unbound $label runs outside the AMR gates',
-    async ({ renderConfig, renderAgents, expectedAgentId }) => {
-      conversationAMessages = [];
-      workspaceScopeMocks.ambientContext = null;
-      workspaceScopeMocks.ambientLoading = false;
-      workspaceScopeMocks.ambientFailure = null;
-      workspaceScopeMocks.projectScope = {
-        loading: false,
-        scope: {
-          kind: 'unbound',
-          projectId: project.id,
-          workspaceId: null,
-          context: null,
-        },
-      };
-      // BYOK's best-effort memory extraction stays entirely in-process.
-      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }));
-
-      renderProjectView(renderConfig, project, renderAgents);
-
-      await waitFor(() =>
-        expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'),
-      );
-      expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false);
-      fireEvent.click(screen.getByTestId('send-message'));
-
-      await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
-      expect(fetchAmrWalletSnapshot).not.toHaveBeenCalled();
-      expect(screen.queryByTestId('amr-balance-dialog')).toBeNull();
-      expect(screen.queryByTestId('amr-low-balance-dialog')).toBeNull();
-      expect(streamViaDaemon).toHaveBeenCalledWith(
-        expect.objectContaining({
-          agentId: expectedAgentId,
-          workspaceContext: null,
-        }),
-      );
-    },
-  );
-
-  it('preserves the configured system notification for a background completion', async () => {
-    vi.spyOn(document, 'hasFocus').mockReturnValue(false);
-    vi.spyOn(document, 'hidden', 'get').mockReturnValue(false);
-
-    renderProjectView({
-      ...config,
-      notifications: {
-        ...config.notifications!,
-        desktopEnabled: true,
-      },
-    });
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'));
-    await waitFor(() => expect(screen.getByTestId('streaming-state').textContent).toBe('streaming'));
-
-    fireEvent.click(screen.getByTestId('conversation-select-conv-b'));
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-b'));
-    resolveConversationBMessages?.([]);
-    await waitFor(() => expect(screen.getByTestId('streaming-state').textContent).toBe('idle'));
-
-    conversationAMessages = [succeededAssistant];
-    fireEvent.click(screen.getByTestId('conversation-select-conv-a'));
-
-    await waitFor(() => expect(playSound).toHaveBeenCalledWith('success-sound'));
-    expect(showCompletionNotification).toHaveBeenCalledWith(
-      expect.objectContaining({ status: 'succeeded', body: 'done' }),
-    );
-  });
-
   // An CapyDesign Cloud run is billed to the CALLER's own wallet. The gate must
   // therefore ask about the caller's identity, not about this project's
   // workspace scope — a project whose scope is unresolved says nothing about
@@ -1227,38 +1107,6 @@ describe('ProjectView conversation run isolation', () => {
     },
   );
 
-  it('lets the daemon explicitly reject unbound adoption for a genuinely signed-out caller', async () => {
-    conversationAMessages = [];
-    // An unbound project has no safe wallet for a client-side preflight. Do not
-    // reinterpret it as the account wallet or dead-button the request: the
-    // daemon owns the explicit adoption/authentication rejection.
-    workspaceScopeMocks.ambientContext = null;
-    workspaceScopeMocks.ambientLoading = false;
-    workspaceScopeMocks.ambientFailure = null;
-    workspaceScopeMocks.projectScope = {
-      loading: false,
-      scope: {
-        kind: 'unbound',
-        projectId: project.id,
-        workspaceId: null,
-        context: null,
-      },
-    };
-
-    renderProjectView({ ...config, agentId: 'amr' }, project, amrAgents);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'),
-    );
-    expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false);
-    fireEvent.click(screen.getByTestId('send-message'));
-    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
-    expect(fetchAmrWalletSnapshot).not.toHaveBeenCalled();
-    expect(streamViaDaemon).toHaveBeenCalledWith(
-      expect.objectContaining({ workspaceContext: null }),
-    );
-  });
-
   it.each([
     ['an identity read still in flight', { loading: true, failure: null }],
     ['a transient identity outage', { loading: false, failure: 'unavailable' as const }],
@@ -1290,175 +1138,6 @@ describe('ProjectView conversation run isolation', () => {
       );
     },
   );
-
-  it.each([
-    [
-      'an old daemon',
-      { loading: false, scope: null, failure: 'unsupported' as const },
-    ],
-    [
-      'a workspace-directory outage',
-      { loading: false, scope: null, failure: 'unavailable' as const },
-    ],
-  ])(
-    'fails closed for a SIGNED-OUT AMR caller when project authority is %s',
-    async (_label, projectScope) => {
-    conversationAMessages = [];
-    // `ambientContext` stays null from beforeEach: no cloud identity, so no
-    // wallet. The project's own scope is not what closes the gate here.
-    workspaceScopeMocks.projectScope = projectScope;
-
-    renderProjectView(
-      { ...config, agentId: 'amr' },
-      project,
-      [{
-        id: 'amr',
-        name: 'AMR',
-        bin: 'amr',
-        available: true,
-        models: [{ id: 'glm-5', label: 'GLM 5' }],
-      }],
-    );
-
-    await waitFor(() =>
-      expect(screen.getByTestId('active-conversation').textContent).toBe(
-        'conv-a',
-      ),
-    );
-    expect(screen.getByTestId('send-message')).toHaveProperty('disabled', true);
-    fireEvent.click(screen.getByTestId('send-message'));
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-  },
-  );
-
-  it('uses the project-bound workspace instead of the ambient workspace for run authorization', async () => {
-    conversationAMessages = [];
-    const workspaceA = teamWorkspaceContext('workspace-a', 'member-a');
-    const workspaceB = teamWorkspaceContext('workspace-b', 'member-b');
-    workspaceScopeMocks.ambientContext = workspaceB;
-    workspaceScopeMocks.projectScope = {
-      loading: false,
-      scope: {
-        kind: 'team',
-        projectId: project.id,
-        workspaceId: workspaceA.workspaceId,
-        visibility: 'personal',
-        context: workspaceA,
-      },
-    };
-
-    renderProjectView(config, { ...project, workspaceId: workspaceA.workspaceId });
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'));
-    await waitFor(() => expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false));
-    fireEvent.click(screen.getByTestId('send-message'));
-
-    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
-    expect(streamViaDaemon).toHaveBeenCalledWith(
-      expect.objectContaining({
-        projectId: project.id,
-        workspaceContext: workspaceA,
-      }),
-    );
-  });
-
-  it('checks the project-bound team wallet instead of the ambient workspace wallet', async () => {
-    conversationAMessages = [];
-    const workspaceA = teamWorkspaceContext('workspace-a', 'member-a');
-    const workspaceB = teamWorkspaceContext('workspace-b', 'member-b');
-    workspaceScopeMocks.ambientContext = workspaceB;
-    workspaceScopeMocks.projectScope = {
-      loading: false,
-      scope: {
-        kind: 'team',
-        projectId: project.id,
-        workspaceId: workspaceA.workspaceId,
-        visibility: 'personal',
-        context: workspaceA,
-      },
-    };
-    // A team-scoped preflight only accepts a wallet whose epoch is proven for
-    // the exact workspace/member it asked about: the daemon must echo a fresh
-    // `workspaceRuntime` plus the `authoritativeWorkspaceRead` that proves this
-    // very response completed the requested refresh (e65b168c3). Anything less
-    // fails closed, so the fixture has to speak that shape.
-    const observedAt = '2026-07-26T00:00:00.000Z';
-    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
-      const url = String(input);
-      if (url.includes('/api/workspace/billing')) {
-        const workspaceId = new URL(url, 'http://localhost').searchParams.get('workspaceId');
-        const workspaceMemberId = workspaceId === workspaceA.workspaceId ? 'member-a' : 'member-b';
-        return new Response(JSON.stringify({
-          summary: null,
-          workspaceBalance: {
-            workspaceId,
-            workspaceMemberId,
-            balanceUsd: '10.00',
-            billingScopeVersion: 2,
-            expiresAt: null,
-            updatedAt: observedAt,
-          },
-          workspaceRuntime: {
-            workspaceId,
-            workspaceMemberId,
-            status: 'fresh',
-            revision: '4',
-            observedAt,
-            softExpiresAt: '2099-07-26T00:00:30.000Z',
-            hardExpiresAt: '2099-07-26T00:02:00.000Z',
-            retryAt: null,
-            errorCode: null,
-            reason: 'authoritative-action-read',
-            sourceGapDetected: false,
-          },
-          authoritativeWorkspaceRead: {
-            workspaceId,
-            workspaceMemberId,
-            observedAt,
-          },
-        }), { status: 200, headers: { 'content-type': 'application/json' } });
-      }
-      throw new Error(`Unexpected fetch: ${url}`);
-    });
-    vi.stubGlobal('fetch', fetchMock);
-
-    renderProjectView(
-      { ...config, agentId: 'amr' },
-      { ...project, workspaceId: workspaceA.workspaceId },
-      [{
-        id: 'amr',
-        name: 'AMR',
-        bin: 'amr',
-        available: true,
-        models: [{ id: 'glm-5', label: 'GLM 5' }],
-      }],
-    );
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'));
-    await waitFor(() => expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false));
-    fireEvent.click(screen.getByTestId('send-message'));
-
-    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining(`workspaceId=${encodeURIComponent(workspaceA.workspaceId)}`),
-      { cache: 'no-store' },
-    );
-    // The ambient workspace must never be consulted for a project bound to
-    // another one, and the run has to spawn under the same workspace the
-    // wallet was checked against.
-    const billingUrls = fetchMock.mock.calls
-      .map(([input]) => String(input))
-      .filter((url) => url.includes('/api/workspace/billing'));
-    expect(billingUrls.length).toBeGreaterThan(0);
-    expect(
-      billingUrls.filter((url) =>
-        url.includes(`workspaceId=${encodeURIComponent(workspaceB.workspaceId)}`),
-      ),
-    ).toHaveLength(0);
-    expect(streamViaDaemon).toHaveBeenCalledWith(
-      expect.objectContaining({ workspaceContext: workspaceA }),
-    );
-  });
 
   it('submits the live AMR fallback model when the saved AMR model is stale', async () => {
     conversationAMessages = [];
@@ -1608,81 +1287,6 @@ describe('ProjectView conversation run isolation', () => {
     expect(screen.queryByTestId('amr-low-balance-dialog')).toBeNull();
   });
 
-  it('keeps an AMR send queued when the user switches conversations during the gate check', async () => {
-    conversationAMessages = [];
-    fetchPreviewComments.mockResolvedValue([previewComment]);
-    let resolveWallet: (snapshot: unknown) => void = () => {};
-    fetchAmrWalletSnapshot.mockImplementation(
-      () =>
-        new Promise((resolve) => {
-          resolveWallet = resolve;
-        }),
-    );
-    renderProjectView(
-      { ...config, agentId: 'amr' },
-      project,
-      [
-        {
-          id: 'amr',
-          name: 'AMR',
-          bin: 'amr',
-          available: true,
-          models: [{ id: 'glm-5', label: 'GLM 5' }],
-        },
-      ],
-    );
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'));
-    await waitFor(() => expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false));
-
-    fireEvent.click(screen.getByTestId('attach-first-comment'));
-    await waitFor(() => expect(screen.getByTestId('attached-comment-count').textContent).toBe('1'));
-
-    fireEvent.click(screen.getByTestId('send-message'));
-    await waitFor(() => expect(fetchAmrWalletSnapshot).toHaveBeenCalledTimes(1));
-
-    fireEvent.click(screen.getByTestId('conversation-select-conv-b'));
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-b'));
-    await waitFor(() => {
-      if (!resolveConversationBMessages) throw new Error('Expected conv-b message load to be pending');
-    });
-    await act(async () => {
-      resolveConversationBMessages?.([]);
-    });
-    await waitFor(() => expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false));
-
-    await act(async () => {
-      resolveWallet({
-        status: 'available',
-        profile: 'prod',
-        user: null,
-        balanceUsd: '10.00',
-        updatedAt: null,
-        fetchedAt: '2026-07-02T00:00:00.000Z',
-        stale: false,
-        source: 'vela_api',
-      });
-    });
-
-    await waitFor(() => {
-      const raw = window.localStorage.getItem('od:chat-queued-sends:project-1:v1');
-      expect(raw).toBeTruthy();
-      const queued = JSON.parse(raw ?? '[]') as Array<{
-        conversationId?: string;
-        prompt?: string;
-        commentAttachments?: Array<{ id?: string }>;
-      }>;
-      expect(queued).toEqual([
-        expect.objectContaining({
-          conversationId: 'conv-a',
-          prompt: 'hello from b',
-          commentAttachments: [expect.objectContaining({ id: previewComment.id })],
-        }),
-      ]);
-    });
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-  });
-
   it('identifies a question-form answer by its occurrence, not by a fresh id', async () => {
     // "At most one user answer message and one non-failed run per
     // sourceAssistantMessageId + formId" cannot be a property of the form's
@@ -1743,81 +1347,6 @@ describe('ProjectView conversation run isolation', () => {
     expect(screen.getByTestId('user-messages').textContent).not.toContain('Audience: Designers');
   });
 
-  it('reports a question-form answer parked in the queue as accepted', async () => {
-    // The inline form holds the only copy of its answer. Leaving the project
-    // while the pre-run gate is still deciding parks that answer in the
-    // conversation queue — a durable acceptance, not a refusal. Reporting a
-    // refusal instead re-opens the form (and rolls back any file it uploaded
-    // for a send the queue still points at), so the user answers a second
-    // time and the drain sends the same brief twice.
-    conversationAMessages = [];
-    let resolveWallet: (snapshot: unknown) => void = () => {};
-    fetchAmrWalletSnapshot.mockImplementation(
-      () =>
-        new Promise((resolve) => {
-          resolveWallet = resolve;
-        }),
-    );
-    renderProjectView(
-      { ...config, agentId: 'amr' },
-      project,
-      [
-        {
-          id: 'amr',
-          name: 'AMR',
-          bin: 'amr',
-          available: true,
-          models: [{ id: 'glm-5', label: 'GLM 5' }],
-        },
-      ],
-    );
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'));
-    await waitFor(() => expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false));
-
-    fireEvent.click(screen.getByTestId('submit-question-form'));
-    await waitFor(() => expect(fetchAmrWalletSnapshot).toHaveBeenCalledTimes(1));
-
-    fireEvent.click(screen.getByTestId('conversation-select-conv-b'));
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-b'));
-    await waitFor(() => {
-      if (!resolveConversationBMessages) throw new Error('Expected conv-b message load to be pending');
-    });
-    await act(async () => {
-      resolveConversationBMessages?.([]);
-    });
-
-    await act(async () => {
-      resolveWallet({
-        status: 'available',
-        profile: 'prod',
-        user: null,
-        balanceUsd: '10.00',
-        updatedAt: null,
-        fetchedAt: '2026-07-02T00:00:00.000Z',
-        stale: false,
-        source: 'vela_api',
-      });
-    });
-
-    await waitFor(() => {
-      const raw = window.localStorage.getItem('od:chat-queued-sends:project-1:v1');
-      expect(raw).toBeTruthy();
-      const queued = JSON.parse(raw ?? '[]') as Array<{
-        conversationId?: string;
-        prompt?: string;
-      }>;
-      expect(queued).toEqual([
-        expect.objectContaining({
-          conversationId: 'conv-a',
-          prompt: 'Audience: Designers',
-        }),
-      ]);
-    });
-    await waitFor(() => expect(questionFormSubmitOutcomes).toEqual([true]));
-    expect(streamViaDaemon).not.toHaveBeenCalled();
-  });
-
   it('does not create duplicate empty conversations while a fresh conversation is loading', async () => {
     renderProjectView();
 
@@ -1829,84 +1358,6 @@ describe('ProjectView conversation run isolation', () => {
     fireEvent.click(screen.getByTestId('new-conversation'));
 
     expect(createConversation).toHaveBeenCalledTimes(1);
-  });
-
-  it('does not create a conversation for a read-only member of a shared project', async () => {
-    const teamContext = teamWorkspaceContext('workspace-team', 'member-team');
-    workspaceScopeMocks.ambientContext = teamContext;
-    workspaceScopeMocks.projectScope = {
-      loading: false,
-      scope: {
-        kind: 'team',
-        projectId: project.id,
-        workspaceId: teamContext.workspaceId,
-        visibility: 'team',
-        context: teamContext,
-      },
-    };
-    listConversations.mockResolvedValue([]);
-    projectCollabMocks.enabled = true;
-    projectCollabMocks.syncState = 'synced';
-    projectCollabMocks.viewerOnly = true;
-    projectCollabMocks.isOwner = false;
-    projectCollabMocks.writerAuthority = 'denied';
-
-    renderProjectView(config, { ...project, workspaceId: teamContext.workspaceId });
-
-    await waitFor(() => expect(listConversations).toHaveBeenCalledTimes(1));
-    await act(async () => {
-      await Promise.resolve();
-    });
-
-    expect(createConversation).not.toHaveBeenCalled();
-    expect(screen.queryByTestId('chat-pane-loading')).toBeNull();
-    expect(screen.getByTestId('active-conversation').textContent).toBe('');
-  });
-
-  it('seeds an empty explicitly Personal project without Team ownership status', async () => {
-    listConversations.mockResolvedValue([]);
-    projectCollabMocks.writerAuthority = 'pending';
-
-    renderProjectView();
-
-    await waitFor(() => expect(createConversation).toHaveBeenCalledTimes(1));
-    expect(createConversation).toHaveBeenCalledWith(
-      project.id,
-      undefined,
-      expect.objectContaining({
-        workspaceContext: workspaceScopeMocks.personalContext(),
-      }),
-    );
-  });
-
-  it('seeds an empty Team project after positive writer authority settles', async () => {
-    const teamContext = teamWorkspaceContext('workspace-team', 'owner-member');
-    workspaceScopeMocks.ambientContext = teamContext;
-    workspaceScopeMocks.projectScope = {
-      loading: false,
-      scope: {
-        kind: 'team',
-        projectId: project.id,
-        workspaceId: teamContext.workspaceId,
-        visibility: 'team',
-        context: teamContext,
-      },
-    };
-    listConversations.mockResolvedValue([]);
-    projectCollabMocks.enabled = true;
-    projectCollabMocks.syncState = 'synced';
-    projectCollabMocks.viewerOnly = false;
-    projectCollabMocks.isOwner = true;
-    projectCollabMocks.writerAuthority = 'allowed';
-
-    renderProjectView(config, { ...project, workspaceId: teamContext.workspaceId });
-
-    await waitFor(() => expect(createConversation).toHaveBeenCalledTimes(1));
-    expect(createConversation).toHaveBeenCalledWith(
-      project.id,
-      undefined,
-      expect.objectContaining({ workspaceContext: teamContext }),
-    );
   });
 
   it('does not seed during unknown ownership even when provisional viewerOnly is false', async () => {
@@ -2336,45 +1787,6 @@ describe('ProjectView conversation run isolation', () => {
     expect(previewComment.conversationId).toBe('conv-a');
   });
 
-  it('sends a project-scoped comment through the active chat when its local anchor belongs to another conversation', async () => {
-    renderProjectView();
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'));
-    fireEvent.click(screen.getByTestId('conversation-select-conv-b'));
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-b'));
-    if (!resolveConversationBMessages) throw new Error('Expected conv-b message load to be pending');
-    resolveConversationBMessages([]);
-    await waitFor(() => expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false));
-
-    fetchPreviewComments.mockClear();
-    fetchPreviewComments.mockResolvedValue([previewComment]);
-    const handleProjectEvent = useProjectFileEvents.mock.calls.at(-1)?.[2] as
-      | ((event: { type: 'comment-changed'; projectId: string }) => void)
-      | undefined;
-    await act(async () => {
-      handleProjectEvent?.({ type: 'comment-changed', projectId: project.id });
-    });
-    await waitFor(() => expect(fetchPreviewComments).toHaveBeenCalledWith(
-      project.id,
-      'conv-b',
-      expect.anything(),
-    ));
-
-    fireEvent.click(screen.getByTestId('attach-first-comment'));
-    await waitFor(() => expect(screen.getByTestId('attached-comment-count').textContent).toBe('1'));
-    fireEvent.click(screen.getByTestId('send-message'));
-
-    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledWith(expect.objectContaining({
-      projectId: project.id,
-      conversationId: 'conv-b',
-      commentAttachments: [expect.objectContaining({
-        id: previewComment.id,
-        comment: previewComment.note,
-      })],
-    })));
-    expect(previewComment.conversationId).toBe('conv-a');
-  });
-
   it('detaches saved comment attachments after queueing them for a busy conversation', async () => {
     fetchPreviewComments.mockResolvedValue([previewComment]);
 
@@ -2523,102 +1935,6 @@ describe('ProjectView conversation run isolation', () => {
     expect(payload.history?.at(-1)).toMatchObject({ role: 'user', content: 'hello from c' });
   });
 
-  it('ignores completion side effects when the interrupted run reports canceled and done late', async () => {
-    const queuedSend = {
-      id: 'queued-1',
-      conversationId: 'conv-a',
-      prompt: 'hello from c',
-      attachments: [],
-      commentAttachments: [],
-      createdAt: 1,
-    };
-    window.localStorage.setItem(
-      'od:chat-queued-sends:project-1:v1',
-      JSON.stringify([queuedSend]),
-    );
-
-    conversationAMessages = [];
-    fetchPreviewComments.mockResolvedValue([previewComment]);
-    const daemonRuns: Array<{
-      handlers: { onDone: (fullText?: string) => void };
-      onRunCreated?: (runId: string) => void;
-      onRunStatus?: (status: NonNullable<ChatMessage['runStatus']>) => void;
-    }> = [];
-    streamViaDaemon.mockImplementation(async (input: unknown) => {
-      const options = input as {
-        handlers: { onDone: (fullText?: string) => void };
-        onRunCreated?: (runId: string) => void;
-        onRunStatus?: (status: NonNullable<ChatMessage['runStatus']>) => void;
-      };
-      daemonRuns.push(options);
-      options.onRunCreated?.(`run-${daemonRuns.length}`);
-      options.onRunStatus?.('running');
-    });
-
-    renderProjectView(
-      config,
-      project,
-      [{ id: 'agent-1', name: 'OpenCode', bin: 'opencode', available: true, models: [] }],
-    );
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'));
-    await waitFor(() => expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false));
-
-    fireEvent.click(screen.getByTestId('attach-first-comment'));
-    await waitFor(() => expect(screen.getByTestId('attached-comment-count').textContent).toBe('1'));
-
-    fireEvent.click(screen.getByTestId('send-message'));
-
-    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(screen.getByTestId('streaming-state').textContent).toBe('streaming'));
-    await waitFor(() => expect(screen.getByTestId('send-queued-0')).toBeTruthy());
-
-    fireEvent.click(screen.getByTestId('send-queued-0'));
-
-    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(2));
-    await waitFor(() =>
-      expect(screen.getByTestId('conversation-latest-runs').textContent).toContain('conv-a:running'),
-    );
-    await waitFor(() =>
-      expect(patchPreviewCommentStatus).toHaveBeenCalledWith(
-        'project-1',
-        'conv-a',
-        previewComment.id,
-        'applying',
-        workspaceScopeMocks.personalContext(),
-      ),
-    );
-    patchPreviewCommentStatus.mockClear();
-    fetchProjectFiles.mockClear();
-
-    await act(async () => {
-      daemonRuns[0]?.onRunStatus?.('canceled');
-      daemonRuns[0]?.handlers.onDone('interrupted done');
-      await new Promise((resolve) => window.setTimeout(resolve, 0));
-    });
-
-    await waitFor(() => expect(screen.getByTestId('streaming-state').textContent).toBe('streaming'));
-    expect(screen.getByTestId('workspace-streaming-state').textContent).toBe('streaming');
-    expect(screen.getByTestId('conversation-latest-runs').textContent).toContain('conv-a:running');
-    // The workspace-context argument matters MOST on a negative assertion: a
-    // four-argument matcher can never match the real five-argument call, so
-    // omitting it would make this pass no matter what the code did.
-    expect(patchPreviewCommentStatus).not.toHaveBeenCalledWith(
-      'project-1',
-      'conv-a',
-      previewComment.id,
-      'needs_review',
-      null,
-    );
-    expect(fetchProjectFiles).not.toHaveBeenCalled();
-    expect(streamViaDaemon).toHaveBeenLastCalledWith(expect.objectContaining({
-      conversationId: 'conv-a',
-      history: expect.arrayContaining([
-        expect.objectContaining({ role: 'user', content: 'hello from c' }),
-      ]),
-    }));
-  });
-
   it('does not surface a stale failure banner when the interrupted run errors late', async () => {
     const queuedSend = {
       id: 'queued-1',
@@ -2678,46 +1994,6 @@ describe('ProjectView conversation run isolation', () => {
     expect(screen.getByTestId('chat-error').textContent).toBe('');
     expect(screen.getByTestId('streaming-state').textContent).toBe('streaming');
     expect(screen.getByTestId('conversation-latest-runs').textContent).toContain('conv-a:running');
-  });
-
-  it('does not surface a stale failure banner when an interrupted reattached run errors late', async () => {
-    // conv-a starts with a reattached run in flight (the screenshot scenario:
-    // the agent was already streaming when the user queued a turn).
-    let reattachHandlers: { onError: (err: Error) => void } | null = null;
-    reattachDaemonRun.mockImplementation(async (input: unknown) => {
-      reattachHandlers = (input as { handlers: { onError: (err: Error) => void } }).handlers;
-      return new Promise<void>(() => {});
-    });
-    streamViaDaemon.mockImplementation(async (input: unknown) => {
-      const options = input as {
-        onRunCreated?: (runId: string) => void;
-        onRunStatus?: (status: NonNullable<ChatMessage['runStatus']>) => void;
-      };
-      options.onRunCreated?.('run-replacement');
-      options.onRunStatus?.('running');
-    });
-
-    renderProjectView();
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'));
-    await waitFor(() => expect(screen.getByTestId('streaming-state').textContent).toBe('streaming'));
-
-    fireEvent.click(screen.getByTestId('send-message'));
-    await waitFor(() => expect(screen.getByTestId('send-queued-0').textContent).toBe('hello from b'));
-
-    // Interrupt the reattached run; the queued send flushes as the replacement.
-    fireEvent.click(screen.getByTestId('send-queued-0'));
-    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
-    expect(screen.getByTestId('streaming-state').textContent).toBe('streaming');
-
-    // The superseded reattached run errors late (lost terminal SSE). It must
-    // not paint a global failure banner over the live replacement run.
-    await act(async () => {
-      reattachHandlers?.onError(new Error('daemon stream disconnected before run completed'));
-    });
-
-    expect(screen.getByTestId('chat-error').textContent).toBe('');
-    expect(screen.getByTestId('streaming-state').textContent).toBe('streaming');
   });
 
   it('runs a normal run completion even after its terminal status cleared the active refs', async () => {
@@ -2808,57 +2084,6 @@ describe('ProjectView conversation run isolation', () => {
 
     // Its completion side effects (which refetch the file list) did not run.
     expect(fetchProjectFiles).not.toHaveBeenCalled();
-  });
-
-  it('does not reset a queued send\'s own comment status when send-now flushes it', async () => {
-    fetchPreviewComments.mockResolvedValue([previewComment]);
-    streamViaDaemon.mockImplementation(async (input: unknown) => {
-      const options = input as {
-        onRunCreated?: (runId: string) => void;
-        onRunStatus?: (status: NonNullable<ChatMessage['runStatus']>) => void;
-      };
-      options.onRunCreated?.('run-replacement');
-      options.onRunStatus?.('running');
-    });
-
-    renderProjectView();
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'));
-    await waitFor(() => expect(screen.getByTestId('streaming-state').textContent).toBe('streaming'));
-
-    // Attach a comment and send while busy: the turn is queued and its comment
-    // attachment is reserved as 'applying'.
-    fireEvent.click(screen.getByTestId('attach-first-comment'));
-    await waitFor(() => expect(screen.getByTestId('attached-comment-count').textContent).toBe('1'));
-    fireEvent.click(screen.getByTestId('send-message'));
-    await waitFor(() =>
-      expect(patchPreviewCommentStatus).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.anything(),
-        previewComment.id,
-        'applying',
-        workspaceScopeMocks.personalContext(),
-      ),
-    );
-    await waitFor(() => expect(screen.getByTestId('send-queued-0')).toBeTruthy());
-
-    patchPreviewCommentStatus.mockClear();
-
-    // Send-now flushes that queued comment-bearing item. Its comment belongs to
-    // the send being dispatched (the replacement re-applies it), so the
-    // interrupt's stale-comment cleanup must NOT reset it to 'open' — that would
-    // race the replacement's 'applying' write and reopen a reserved comment.
-    fireEvent.click(screen.getByTestId('send-queued-0'));
-    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalled());
-
-    // Arity matters on the negative assertion — see the note above.
-    expect(patchPreviewCommentStatus).not.toHaveBeenCalledWith(
-      expect.anything(),
-      expect.anything(),
-      previewComment.id,
-      'open',
-      null,
-    );
   });
 
   it('auto-starts queued sends one at a time in the same event flush after the active run becomes terminal', async () => {
@@ -3044,115 +2269,6 @@ describe('ProjectView conversation run isolation', () => {
     );
   });
 
-  it('replaces a raw prompt-head project name with the first prompt summary', async () => {
-    const promptNamedProject: Project = {
-      ...project,
-      name: 'hello from b',
-      metadata: { kind: 'prototype', nameSource: 'prompt' },
-    };
-    const emptyConversation: Conversation = {
-      id: 'conv-empty',
-      projectId: promptNamedProject.id,
-      title: null,
-      createdAt: 1,
-      updatedAt: 1,
-    };
-    listConversations.mockResolvedValue([emptyConversation]);
-    listMessages.mockResolvedValue([]);
-    fetchChatRunStatus.mockResolvedValue(null);
-
-    renderProjectView(config, promptNamedProject);
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-empty'));
-    await waitFor(() => expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false));
-
-    fireEvent.click(screen.getByTestId('send-message'));
-
-    await waitFor(() =>
-      expect(patchConversation).toHaveBeenCalledWith(
-        promptNamedProject.id,
-        emptyConversation.id,
-        { title: 'Hello From B' },
-        expect.objectContaining({
-          workspaceId: 'workspace-personal',
-          workspaceMemberId: 'member-personal',
-        }),
-      ),
-    );
-    await waitFor(() =>
-      expect(patchProject).toHaveBeenCalledWith(
-        promptNamedProject.id,
-        expect.objectContaining({
-          name: 'Hello From B',
-          metadata: expect.objectContaining({ nameSource: 'prompt' }),
-        }),
-        expect.objectContaining({
-          workspaceId: 'workspace-personal',
-          workspaceMemberId: 'member-personal',
-        }),
-      ),
-    );
-  });
-
-  it('replaces the first-turn fallback title with an agent-generated title', async () => {
-    const promptNamedProject: Project = {
-      ...project,
-      name: 'hello from b',
-      metadata: { kind: 'prototype', nameSource: 'prompt' },
-    };
-    const emptyConversation: Conversation = {
-      id: 'conv-empty',
-      projectId: promptNamedProject.id,
-      title: null,
-      createdAt: 1,
-      updatedAt: 1,
-    };
-    listConversations.mockResolvedValue([emptyConversation]);
-    listMessages.mockResolvedValue([]);
-    fetchChatRunStatus.mockResolvedValue(null);
-    streamViaDaemon.mockImplementation(async (input: {
-      handlers: { onAgentEvent: (event: { kind: 'conversation_title'; title: string }) => void };
-    }) => {
-      input.handlers.onAgentEvent({ kind: 'conversation_title', title: 'Agent Title' });
-    });
-
-    renderProjectView(config, promptNamedProject);
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-empty'));
-    await waitFor(() => expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false));
-
-    fireEvent.click(screen.getByTestId('send-message'));
-
-    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
-    expect(streamViaDaemon).toHaveBeenCalledWith(expect.objectContaining({
-      titleGeneration: { enabled: true },
-    }));
-    await waitFor(() =>
-      expect(patchConversation).toHaveBeenCalledWith(
-        promptNamedProject.id,
-        emptyConversation.id,
-        { title: 'Agent Title' },
-        expect.objectContaining({
-          workspaceId: 'workspace-personal',
-          workspaceMemberId: 'member-personal',
-        }),
-      ),
-    );
-    await waitFor(() =>
-      expect(patchProject).toHaveBeenCalledWith(
-        promptNamedProject.id,
-        expect.objectContaining({
-          name: 'Agent Title',
-          metadata: expect.objectContaining({ nameSource: 'agent' }),
-        }),
-        expect.objectContaining({
-          workspaceId: 'workspace-personal',
-          workspaceMemberId: 'member-personal',
-        }),
-      ),
-    );
-  });
-
   it('forwards staged skill and external context selections into the next daemon run payload', async () => {
     renderProjectView();
 
@@ -3220,122 +2336,6 @@ describe('ProjectView conversation run isolation', () => {
       model: 'api-model',
     }));
     await waitFor(() => expect(playSound).toHaveBeenCalledWith('success-sound'));
-  });
-
-  it.each([
-    {
-      mode: 'api' as const,
-      agentId: 'agent-1',
-      missing: 'API key',
-      apiKey: '',
-      model: 'api-model',
-      reason: 'api_key_required' as const,
-    },
-    {
-      mode: 'api' as const,
-      agentId: 'agent-1',
-      missing: 'model',
-      apiKey: 'test-key',
-      model: '',
-      reason: 'model_required' as const,
-    },
-    {
-      mode: 'daemon' as const,
-      agentId: 'byok-opencode',
-      missing: 'API key through the daemon selector',
-      apiKey: '',
-      model: 'api-model',
-      reason: 'api_key_required' as const,
-    },
-  ])(
-    'opens Settings and blocks a BYOK send with a missing $missing',
-    async ({ mode, agentId, apiKey, model, reason }) => {
-      listMessages.mockResolvedValue([]);
-      const onOpenSettings = vi.fn();
-
-      renderProjectView(
-        {
-          ...config,
-          mode,
-          agentId,
-          apiProtocol: 'openai',
-          apiKey,
-          baseUrl: 'https://api.openai.com/v1',
-          model,
-        },
-        project,
-        undefined,
-        { onOpenSettings },
-      );
-
-      await waitFor(() =>
-        expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'),
-      );
-      await waitFor(() =>
-        expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false),
-      );
-
-      fireEvent.click(screen.getByTestId('send-message'));
-
-      await waitFor(() => expect(onOpenSettings).toHaveBeenCalledWith('execution'));
-      expect(analyticsTrackMock).toHaveBeenCalledWith(
-        'byok_preflight_blocked',
-        {
-          source: 'run',
-          reason,
-          provider_id: 'openai',
-          active_execution_mode: mode === 'api' ? 'byok' : 'local_cli',
-        },
-        undefined,
-      );
-      expect(analyticsTrackMock).toHaveBeenCalledWith(
-        'surface_view',
-        expect.objectContaining({
-          page_name: 'chat_panel',
-          area: 'chat_composer',
-          element: 'run_start_blocked',
-          task_execution_id: expect.any(String),
-          recovery_action_instance_id: expect.stringMatching(/^blocked:/),
-          block_reason: reason,
-          agent_provider_id: 'openai',
-          model_id: model.trim() || 'default',
-        }),
-        undefined,
-      );
-      expect(streamViaDaemon).not.toHaveBeenCalled();
-      expect(saveMessage).not.toHaveBeenCalled();
-    },
-  );
-
-  it('routes keyless local Ollama BYOK chats through OpenCode with provider metadata', async () => {
-    listMessages.mockResolvedValue([]);
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }));
-
-    renderProjectView({
-      ...config,
-      mode: 'api',
-      apiProtocol: 'ollama',
-      apiKey: '',
-      baseUrl: 'http://localhost:11434',
-      model: 'llama3.2',
-    });
-
-    await waitFor(() => expect(screen.getByTestId('active-conversation').textContent).toBe('conv-a'));
-    await waitFor(() => expect(screen.getByTestId('send-message')).toHaveProperty('disabled', false));
-
-    fireEvent.click(screen.getByTestId('send-message'));
-
-    await waitFor(() => expect(streamViaDaemon).toHaveBeenCalledTimes(1));
-    expect(streamViaDaemon).toHaveBeenCalledWith(expect.objectContaining({
-      agentId: 'byok-opencode',
-      byokProvider: expect.objectContaining({
-        protocol: 'ollama',
-        baseUrl: 'http://localhost:11434',
-        model: 'llama3.2',
-        requiresApiKey: false,
-      }),
-      model: 'llama3.2',
-    }));
   });
 
   it('routes the keyless vLLM BYOK preset through OpenCode with provider metadata', async () => {

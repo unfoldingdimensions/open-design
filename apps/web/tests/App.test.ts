@@ -15,10 +15,8 @@ import {
   shouldSyncMediaProvidersOnSave,
 } from '../src/App';
 import type { AppConfig, Project } from '../src/types';
-import type {
-  WorkspaceCollabContext,
-  WorkspaceProjectSummary,
-} from '@capydesign/contracts';
+import type { ProjectListEntry } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../src/runtime/collab-contract';
 
 describe('projectRouteSurfaceState', () => {
   it('only shows an unbounded loader while the initial project list is loading', () => {
@@ -124,7 +122,7 @@ describe('hydrateReadyTeamProject', () => {
     lifecycleState: 'active',
     teamId: 'team-1',
   } as WorkspaceCollabContext;
-  const summary: WorkspaceProjectSummary = {
+  const summary: ProjectListEntry = {
     id: project.id,
     name: project.name,
     workspaceId: 'ws-1',
@@ -184,8 +182,8 @@ describe('hydrateReadyTeamProject', () => {
   });
 
   it('drops a hydration result when the workspace changes while the scoped list is in flight', async () => {
-    let resolveProjects!: (value: WorkspaceProjectSummary[]) => void;
-    const pending = new Promise<WorkspaceProjectSummary[]>((resolve) => {
+    let resolveProjects!: (value: ProjectListEntry[]) => void;
+    const pending = new Promise<ProjectListEntry[]>((resolve) => {
       resolveProjects = resolve;
     });
     let context: WorkspaceCollabContext = teamContext;
@@ -216,48 +214,6 @@ describe('hydrateReadyTeamProject', () => {
       applyProject,
     })).resolves.toBeNull();
     expect(applyProject).not.toHaveBeenCalled();
-  });
-});
-
-describe('projectViewAuthorizationLifetimeKey', () => {
-  const projectId = 'same-project';
-  const baseContext = {
-    workspaceId: 'workspace-a',
-    workspaceType: 'team',
-    workspaceMemberId: 'member-a',
-    memberStatus: 'active',
-    lifecycleState: 'active',
-    teamId: 'team-a',
-  } as WorkspaceCollabContext;
-
-  it('changes when any Workspace authorization field changes', () => {
-    const initial = projectViewAuthorizationLifetimeKey(projectId, baseContext);
-
-    expect(projectViewAuthorizationLifetimeKey(projectId, {
-      ...baseContext,
-      workspaceId: 'workspace-b',
-    })).not.toBe(initial);
-    expect(projectViewAuthorizationLifetimeKey(projectId, {
-      ...baseContext,
-      workspaceMemberId: 'member-b',
-    })).not.toBe(initial);
-    expect(projectViewAuthorizationLifetimeKey(projectId, {
-      ...baseContext,
-      role: 'admin',
-    })).not.toBe(initial);
-    expect(projectViewAuthorizationLifetimeKey(projectId, {
-      ...baseContext,
-      lifecycleState: 'locked',
-    })).not.toBe(initial);
-    expect(projectViewAuthorizationLifetimeKey(projectId, {
-      ...baseContext,
-      permissions: {
-        ...baseContext.permissions,
-        canShareProjects: true,
-        canWriteSyncedFiles: false,
-      },
-    })).not.toBe(initial);
-    expect(projectViewAuthorizationLifetimeKey(projectId, null)).not.toBe(initial);
   });
 });
 

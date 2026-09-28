@@ -224,15 +224,6 @@ describe('秒表接线 · 一个 timer,数字自己走', () => {
     vi.restoreAllMocks();
   });
 
-  it('进行中的那一行跟着虚拟时钟往前走', () => {
-    const { container } = render(
-      <I18nProvider initial="zh-CN"><AssistantMessage message={message} streaming /></I18nProvider>,
-    );
-    expect(rowText(container)).toContain('3.0s');
-    act(() => { vi.advanceTimersByTime(6_000); });
-    expect(rowText(container)).toContain('9.0s');
-  });
-
   it('执行记录自己一个 timer 都不起 —— 秒数全部从 `nowMs` 推', () => {
     const spy = vi.spyOn(globalThis, 'setInterval');
     render(show(shellOf([

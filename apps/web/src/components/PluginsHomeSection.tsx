@@ -16,10 +16,8 @@
 
 import { Button, Input } from '@capydesign/components';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type {
-  InstalledPluginRecord,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { InstalledPluginRecord } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { useI18n, useT } from '../i18n';
 import type { PluginShareAction } from '../state/projects';
 import { Icon } from './Icon';

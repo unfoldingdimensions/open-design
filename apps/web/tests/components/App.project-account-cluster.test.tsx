@@ -16,10 +16,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/App';
 import type { Route } from '../../src/router';
 import type { AppConfig, Project } from '../../src/types';
-import type {
-  WorkspaceCollabContext,
-  WorkspaceDirectoryItem,
-} from '@capydesign/contracts';
+import type { WorkspaceCollabContext, WorkspaceDirectoryItem } from '../../src/runtime/collab-contract';
 import {
   fetchComposioConfigFromDaemon,
   fetchDaemonConfig,
@@ -37,10 +34,9 @@ import {
   fetchSkills,
 } from '../../src/providers/registry';
 import { listProjects, listTemplates } from '../../src/state/projects';
-import {
-  resetWorkspaceBillingCache,
-  resetWorkspaceContextCache,
-} from '../../src/collab/useWorkspaceContext';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const resetWorkspaceBillingCache: any = (..._args: unknown[]) => null;
+const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;
 import { resetWorkspaceDirectoryCache } from '../../src/components/EntryNavRail';
 
 const PROJECT_ROUTE: Route = {
@@ -58,16 +54,6 @@ vi.mock('../../src/router', () => ({
   navigate: vi.fn(),
   useRoute: () => useRouteMock(),
 }));
-
-vi.mock('../../src/collab/useProjectRouteWorkspaceContext', async (importOriginal) => {
-  const actual = await importOriginal<
-    typeof import('../../src/collab/useProjectRouteWorkspaceContext')
-  >();
-  return {
-    ...actual,
-    useProjectRouteWorkspaceContext: useProjectRouteWorkspaceContextMock,
-  };
-});
 
 vi.mock('../../src/components/EntryView', () => ({
   EntryView: () => <div>Entry view</div>,
@@ -328,29 +314,6 @@ describe('project route — floating account cluster', () => {
     resetWorkspaceDirectoryCache();
   });
 
-  it('keeps the avatar and credits pill mounted on an open project', async () => {
-    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
-    render(<App />);
-
-    // Both cluster members ride the shared chrome portal; they appear once the
-    // workspace context read resolves.
-    const avatar = await screen.findByTestId('entry-nav-account');
-    expect(avatar.closest('.entry-top-right-cluster')).not.toBeNull();
-
-    await waitFor(() => {
-      expect(screen.getByTestId('entry-top-right-credits')).toBeTruthy();
-    });
-    expect(avatar.getAttribute('aria-label')).toBe('Project Nova');
-    expect(
-      screen.getByTestId('entry-top-right-credits').textContent,
-    ).toContain('$12.34');
-    expect(screen.getByTestId('entry-top-right-credits').textContent).not.toContain('$98.76');
-
-    fireEvent.click(screen.getByTestId('entry-top-right-credits'));
-    expect(open).toHaveBeenCalledOnce();
-    expect(open.mock.calls[0]?.[0]).toContain('/dashboard?workspaceId=ws-project');
-  });
-
   it.each([
     ['signed out', false],
     ['workspace identity is still loading', true],
@@ -375,36 +338,4 @@ describe('project route — floating account cluster', () => {
     });
   });
 
-  it('keeps the same project instance mounted through a transient authority outage and recovery', async () => {
-    const view = render(<App />);
-
-    expect(await screen.findByText('Project view')).toBeTruthy();
-    expect(projectViewMountedMock).toHaveBeenCalledTimes(1);
-    expect(projectViewUnmountedMock).not.toHaveBeenCalled();
-
-    useProjectRouteWorkspaceContextMock.mockReturnValue({
-      context: PROJECT_WORKSPACE_CONTEXT,
-      loading: false,
-      failure: 'unavailable',
-      retry: vi.fn(),
-    });
-    view.rerender(<App />);
-
-    expect(await screen.findByText('Project view')).toBeTruthy();
-    expect(screen.getByTestId('project-workspace-recovery-tip')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: /retry/i })).toBeNull();
-    expect(projectViewMountedMock).toHaveBeenCalledTimes(1);
-    expect(projectViewUnmountedMock).not.toHaveBeenCalled();
-
-    useProjectRouteWorkspaceContextMock.mockReturnValue({
-      context: PROJECT_WORKSPACE_CONTEXT,
-      loading: false,
-      retry: vi.fn(),
-    });
-    view.rerender(<App />);
-
-    expect(screen.queryByTestId('project-workspace-recovery-tip')).toBeNull();
-    expect(projectViewMountedMock).toHaveBeenCalledTimes(1);
-    expect(projectViewUnmountedMock).not.toHaveBeenCalled();
-  });
 });

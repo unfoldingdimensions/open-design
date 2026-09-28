@@ -1,18 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { TrackingProjectKind } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
-import { trackFileManagerClick } from '../analytics/events';
 import { useT } from '../i18n';
 import { LIBRARY_UI_VISIBLE } from '../features/libraryUi';
 import type { Dict } from '../i18n/types';
 import { copyToClipboard } from '../lib/copy-to-clipboard';
 import { projectFileUrl, projectRawUrl } from '../providers/registry';
-import {
-  appendResourceQuery,
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-} from '../collab/workspace-identity';
-import { useProjectCollabContext } from '../collab/collab-context';
 import { buildSrcdoc } from '../runtime/srcdoc';
 import type { LiveArtifactWorkspaceEntry, ProjectFile, ProjectFileKind, ProjectFolder } from '../types';
 import {
@@ -23,7 +15,6 @@ import {
 import { isVisualStabilityMode } from '../utils/visualStability';
 import type { PluginFolderAgentAction } from './design-files/pluginFolderActions';
 import { getPluginFolderCandidates } from './design-files/pluginFolders';
-import { FileSyncBadge } from '../collab/FileSyncBadge';
 import { Icon } from './Icon';
 import { LiveArtifactBadges } from './LiveArtifactBadges';
 import { RemixIcon } from './RemixIcon';
@@ -489,9 +480,8 @@ export function DesignFilesPanel({
   navState,
   onNavStateChange,
 }: Props) {
-  const { workspaceContext } = useProjectCollabContext();
+  const workspaceContext = null;
   const t = useT();
-  const analytics = useAnalytics();
   const [draggingFiles, setDraggingFiles] = useState(false);
   const [dropReadError, setDropReadError] = useState<string | null>(null);
   const dragDepthRef = useRef(0);
@@ -1152,10 +1142,7 @@ export function DesignFilesPanel({
   function renderImageCard(f: ProjectFile, _category: FileCategory) {
     const isSelected = selected.has(f.name);
     const openLabel = `${t('designFiles.previewOpen')} ${f.name}`;
-    const src = appendResourceQuery(
-      projectRawUrl(projectId, f.name, workspaceContext),
-      `v=${Math.round(f.mtime)}`,
-    );
+    const src = (projectRawUrl(projectId, f.name, workspaceContext) + (projectRawUrl(projectId, f.name, workspaceContext).includes('?') ? '&' : '?') + `v=${Math.round(f.mtime)}`.replace(/^[?&]+/, ''));
     return (
       <div
         key={f.name}
@@ -1253,7 +1240,7 @@ export function DesignFilesPanel({
         headers: {
           'Content-Type': 'application/json',
           ...(workspaceContext
-            ? workspaceProjectHeaders(workspaceContext)
+            ? {}
             : {}),
         },
         body: JSON.stringify({ files: fileList }),
@@ -1365,13 +1352,7 @@ export function DesignFilesPanel({
                   role="menuitem"
                   disabled={createDesignSystemFromProjectBusy}
                   onClick={() => {
-                    trackFileManagerClick(analytics.track, {
-                      page_name: 'file_manager',
-                      area: 'file_manager',
-                      element: 'create_design_system_from_project',
-                      project_id: projectId,
-                      project_kind: projectKind,
-                    });
+                    
                     setProjectMenuOpen(false);
                     onCreateDesignSystemFromProject();
                   }}
@@ -1386,13 +1367,7 @@ export function DesignFilesPanel({
                   role="menuitem"
                   disabled={duplicateProjectBusy}
                   onClick={() => {
-                    trackFileManagerClick(analytics.track, {
-                      page_name: 'file_manager',
-                      area: 'file_manager',
-                      element: 'duplicate_project',
-                      project_id: projectId,
-                      project_kind: projectKind,
-                    });
+                    
                     setProjectMenuOpen(false);
                     onDuplicateProject();
                   }}
@@ -1513,13 +1488,7 @@ export function DesignFilesPanel({
                 <button
                   type="button"
                   onClick={() => {
-                    trackFileManagerClick(analytics.track, {
-                      page_name: 'file_manager',
-                      area: 'file_manager',
-                      element: 'download_as_zip',
-                      project_id: projectId,
-                      project_kind: projectKind,
-                    });
+                    
                     void handleBatchDownload();
                   }}
                   title={t('designFiles.downloadSelected', { n: selected.size })}
@@ -1550,7 +1519,6 @@ export function DesignFilesPanel({
             // "no designs yet" would be a guess. Say we are working instead.
             <div className="df-empty df-empty-syncing" data-testid="design-files-loading">
               <div className="df-empty-pill">
-                <FileSyncBadge state="downloading" size={20} />
                 <span className="df-empty-title">{t('common.loading')}</span>
               </div>
             </div>
@@ -1566,7 +1534,6 @@ export function DesignFilesPanel({
               // have real files. Swap them for a syncing notice instead.
               <div className="df-empty df-empty-syncing" data-testid="design-files-syncing">
                 <div className="df-empty-pill">
-                  <FileSyncBadge state="downloading" size={20} />
                   <span className="df-empty-title">
                     {t('designFiles.syncing')}
                   </span>
@@ -1969,16 +1936,14 @@ function HtmlCardThumbnail({
   file: ProjectFile;
   filesRefreshKey: number;
 }) {
-  const {
-    workspaceContext,
-    workspaceContextLoading,
-  } = useProjectCollabContext();
+  const workspaceContext = null;
+  const workspaceContextLoading = false;
   const tooLargeForThumbnail = file.size > HTML_THUMBNAIL_INLINE_MAX_BYTES;
   const url = projectFileUrl(projectId, file.name, workspaceContext);
   const authorizationScopeKey = workspaceContextLoading
     ? null
     : workspaceContext
-      ? `workspace:${workspaceIdentityCacheKey(workspaceContext)}`
+      ? `workspace:${'none'}`
       : 'local';
   const refreshKey = htmlSourceSnapshotRefreshKey(file, filesRefreshKey);
   const thumbnailIdentity = authorizationScopeKey
@@ -2064,7 +2029,7 @@ function HtmlCardThumbnail({
         thumbnailIdentity,
         async () => {
           const response = await fetch(
-            appendResourceQuery(url, `v=${Math.round(file.mtime)}`),
+            (url + (url.includes('?') ? '&' : '?') + `v=${Math.round(file.mtime)}`.replace(/^[?&]+/, '')),
             {},
           );
           return response?.ok ? response.text() : null;

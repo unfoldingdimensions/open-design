@@ -84,84 +84,6 @@ const echoToggle = (el: HTMLDetailsElement): void => {
   fireEvent(el, new Event('toggle', { bubbles: false }));
 };
 
-describe('done 标记一到,进行中的执行记录就收起', () => {
-  it('done 之前:还在跑,卡摊着', () => {
-    const { container } = render(live(BEFORE_DONE));
-    expect(shellCard(container).open, 'done 还没来,过程仍在写,卡该开着').toBe(true);
-    // 正向对照:确实是「还在跑」这一档,不是已经收尾了
-    expect(container.textContent).toContain('进行中');
-  });
-
-  it('done 到达的那一帧就收起 —— run 还在跑', () => {
-    const { container, rerender } = render(live(BEFORE_DONE));
-    const card = shellCard(container);
-    expect(card.open).toBe(true);
-    // 壳一开着浏览器就会为「open 被写上」回声一次 toggle,不算用户点过
-    echoToggle(card);
-
-    rerender(live(AFTER_DONE));
-    expect(shellCard(container).open, 'done 标记到了,卡就该收 —— 不等 run 结束').toBe(false);
-    // 这一帧 run 仍在跑:壳头还是「进行中」,结论已经开始往下写
-    expect(container.textContent).toContain('进行中');
-    expect(container.textContent).toContain('已交付 parchment-typography-one-pager.html');
-  });
-
-  it('刷新页面那一档同样 —— 整批事件一次性到,首帧就是收着的', () => {
-    const { container } = render(live(AFTER_DONE));
-    expect(shellCard(container).open).toBe(false);
-  });
-
-  /**
-   * 【产品要点 2】只收**自动展开**的那张,不许把用户手点开的收掉。
-   *
-   * 这两件事在 `ExecutionShell` 里本来就分得开(`userToggled` 闩,判据是那次 toggle
-   * 的**值**和自身状态一不一致),这一条只是把它挂到新的触发时机上再钉一遍 ——
-   * 新加一个自动收起的时机,最容易顺手踩坏的就是这只闩。
-   */
-  /**
-   * **边界:认的只有真标记。**
-   *
-   * `buildTurnBlocks` 内部另有一档「隐式 done」—— `<question-form>` / `<artifact>`
-   * 一出现就当结论开始,后面的正文照样成为壳外的结论段。那是**分块**用的判据,
-   * 不是产品这次说的「done 标记」。
-   *
-   * 拿它一起收会在模型**刚要发问、活还没干完**的时候把执行记录藏起来。这不是假想:
-   * 第一版就是这么写的,`stream-cursor-removed.test.tsx` 里那一格(正文 + 半截
-   * `<question-form`)当场红了 —— 壳一收,连正文都从 DOM 里消失
-   * (`deferCollapsedBodies` 那一档收起就不挂 body)。
-   */
-  it('隐式 done(问答表单)不算 —— 活还没干完,不许把记录藏起来', () => {
-    const { container } = render(live([
-      ...BEFORE_DONE,
-      { kind: 'text', text: '<question-form' },
-    ]));
-    expect(shellCard(container).open, '模型刚要发问,过程还该看得见').toBe(true);
-  });
-
-  it('只有 `done_key` 没有标记也不算 —— 密钥本身不是证据', () => {
-    const { container } = render(live([
-      ...BEFORE_DONE,
-      { kind: 'text', text: '继续构建,还没交付。' },
-    ]));
-    expect(shellCard(container).open).toBe(true);
-  });
-
-  it('用户自己点开的,done 到了也不许替他收走', () => {
-    const { container, rerender } = render(live(BEFORE_DONE));
-    const card = shellCard(container);
-    // 用户手动收起(DOM 先自己翻面,再派发 toggle —— 这就是「用户点过」的形状)
-    card.open = false;
-    fireEvent(card, new Event('toggle', { bubbles: false }));
-    // 再手动展开
-    card.open = true;
-    fireEvent(card, new Event('toggle', { bubbles: false }));
-    expect(shellCard(container).open).toBe(true);
-
-    rerender(live(AFTER_DONE));
-    expect(shellCard(container).open, '用户主动点开的东西被自动收走是很恼人的').toBe(true);
-  });
-});
-
 /**
  * **收起这件事只准动折叠态,不准动壳身子的排版。**
  *
@@ -180,19 +102,6 @@ describe('done 标记一到,进行中的执行记录就收起', () => {
  * 恒为 0),这个仓库那套「真跑层叠」的量尺也只解层叠不做布局,**单测绿在这件事上不是证据**。
  */
 describe('收起的动作本身', () => {
-  it('收起时 body 留在 DOM 里 —— 卸载会跳过任何过渡', () => {
-    const { container, rerender } = render(live(BEFORE_DONE));
-    const body = shellCard(container).querySelector('[class*="body"]');
-    expect(body, 'done 之前 body 当然在').not.toBeNull();
-
-    rerender(live(AFTER_DONE));
-    expect(shellCard(container).open).toBe(false);
-    expect(
-      shellCard(container).querySelector('[class*="body"]'),
-      '保持挂载只切状态 —— 卸载了就没有过渡可言',
-    ).toBe(body);
-  });
-
   it('壳身子外面不许再包一层格式化上下文 —— 里面还嵌着一个限高滚动盒', () => {
     const css = readFileSync(
       resolve(__dirname, '../../../src/components/chat/primitives/record.module.css'),

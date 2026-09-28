@@ -8,11 +8,11 @@ import type {
 import type { TelemetryPrefs } from '../app-config.js';
 import {
   HARD_BATCH_MAX_BYTES,
-  postLangfuseBatch,
-  type LangfuseConfig,
-  type LangfuseDeliveryState,
+  postTelemetryBatch,
+  type TelemetryEndpointConfig,
+  type TelemetryDeliveryState,
   type TelemetrySinkConfig,
-} from '../langfuse-trace.js';
+} from '../local/telemetry-sink.js';
 import {
   buildLegacyTaskObservationPayload,
   canonicalTaskObservationTraceTags,
@@ -39,7 +39,7 @@ export const LANGFUSE_OTLP_INGESTION_VERSION = '4';
 
 export type TaskObservationExporterMode = 'legacy' | 'dual' | 'otlp';
 
-export interface TaskObservationExporterConfig extends LangfuseConfig {
+export interface TaskObservationExporterConfig extends TelemetryEndpointConfig {
   mode: TaskObservationExporterMode;
 }
 
@@ -54,7 +54,7 @@ export interface TaskObservationExportOptions {
   retryDelayMs?: number;
 }
 
-export interface TaskObservationDeliveryState extends LangfuseDeliveryState {
+export interface TaskObservationDeliveryState extends TelemetryDeliveryState {
   exporter_mode: TaskObservationExporterMode;
   primary_protocol: 'legacy-v1' | 'otlp-v4' | 'none';
   /** Dual is a local mapping shadow, never a second production write. */
@@ -121,7 +121,7 @@ export function readTaskObservationExporterConfig(
 ): TaskObservationExporterConfig | null {
   // Consume the already-selected Task sink. Do not resolve again here: doing
   // so used to let Vela mask direct Langfuse after Task eligibility chose it.
-  if (!sink || sink.kind !== 'langfuse') return null;
+  if (!sink || sink.kind !== 'telemetry-endpoint') return null;
   return {
     authHeader: sink.authHeader,
     baseUrl: sink.baseUrl,
@@ -898,7 +898,7 @@ export function legacyAndOtlpTaskMappingsMatch(
 }
 
 function withDiagnostics(
-  state: LangfuseDeliveryState,
+  state: TelemetryDeliveryState,
   mode: TaskObservationExporterMode,
   primary: TaskObservationDeliveryState['primary_protocol'],
   idempotencyKey: string | undefined,
@@ -942,7 +942,7 @@ async function postOtlpTaskPayload(
   config: TaskObservationExporterConfig,
   payload: OtlpTraceExportRequestV1,
   opts: TaskObservationExportOptions,
-): Promise<LangfuseDeliveryState> {
+): Promise<TelemetryDeliveryState> {
   const serialized = JSON.stringify(payload);
   if (Buffer.byteLength(serialized, 'utf8') > HARD_BATCH_MAX_BYTES) {
     return {
@@ -1083,7 +1083,7 @@ export async function exportTaskObservationAggregate(
         )
       : true;
     let attemptCount = 0;
-    const state = await postLangfuseBatch(
+    const state = await postTelemetryBatch(
       config,
       legacyBatch,
       opts.fetchImpl ?? globalThis.fetch,

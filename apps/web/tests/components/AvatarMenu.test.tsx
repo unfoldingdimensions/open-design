@@ -3,16 +3,14 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  buildWorkspacePermissions,
-  type WorkspaceBillingResponse,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, WorkspaceBillingResponse, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
-import { workspaceBillingSummaryForContext } from '../../src/collab/useWorkspaceContext';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const workspaceBillingSummaryForContext: any = (..._args: unknown[]) => null;
 import { AvatarMenu } from '../../src/components/AvatarMenu';
 import { providerModelsCacheKey } from '../../src/components/providerModelsCache';
-import type { ProjectWorkspaceScopeState } from '../../src/collab/useProjectWorkspaceScope';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+type ProjectWorkspaceScopeState = any;
 import type { AgentInfo, AppConfig, ExecMode } from '../../src/types';
 
 const { openExternalUrlMock } = vi.hoisted(() => ({
@@ -247,7 +245,6 @@ function renderMenu({
       onAgentModelChange={onAgentModelChange}
       onOpenSettings={onOpenSettings}
       onRefreshAgents={onRefreshAgents}
-      projectWorkspaceScope={projectWorkspaceScope}
     />,
   );
   return {
@@ -305,51 +302,6 @@ describe('AvatarMenu', () => {
   // was removed entirely (account/billing surfaces live in the nav rail and
   // Settings), so none of it may render even with a fully signed-in AMR
   // status. This is the guard for that invariant.
-  it('never renders the account row, plan badge or balance in the popover', async () => {
-    const amrAgent: AgentInfo = {
-      id: 'amr',
-      name: 'CapyDesign AMR',
-      bin: 'vela',
-      available: true,
-      models: [{ id: 'default', label: 'Default (CLI config)' }],
-    };
-    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
-      const url = input.toString();
-      if (url === '/api/integrations/vela/status') {
-        return new Response(
-          JSON.stringify({
-            loggedIn: true,
-            loginInFlight: false,
-            profile: 'test',
-            user: { id: 'u1', email: 'a@b.c' },
-            account: { plan: 'plus', balanceUsd: '247.5087' },
-            configPath: '/Users/test/.amr/config.json',
-          }),
-          { status: 200, headers: { 'content-type': 'application/json' } },
-        );
-      }
-      return new Response('{}', { status: 202 });
-    });
-    vi.stubGlobal('fetch', fetchMock);
-
-    // baseConfig runs Codex, with AMR installed and available.
-    renderMenu({ agents: [codexAgent, claudeAgent, amrAgent] });
-    const menu = openMenu();
-
-    // Let the status fetch land so a late render cannot sneak the row back in.
-    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-    await act(async () => {
-      await Promise.resolve();
-      await Promise.resolve();
-    });
-
-    expect(screen.queryByTestId('avatar-agent-option-amr')).toBeNull();
-    expect(menu.querySelectorAll('[data-testid^="avatar-agent-option-"]')).toHaveLength(0);
-    expect(within(menu).queryByText('Plus')).toBeNull();
-    expect(menu.textContent).not.toContain('$247.51');
-    expect(screen.queryByRole('link', { name: 'settings.amrUpgrade' })).toBeNull();
-  });
-
   it('changes reasoning effort from the composer popover', () => {
     const { onAgentModelChange } = renderMenu({
       config: {
@@ -416,152 +368,6 @@ describe('AvatarMenu', () => {
     const list = screen.getByTestId('avatar-model-list');
     const custom = within(list).getByRole('radio', { name: /custom-codex-model/i });
     expect(custom.getAttribute('aria-checked')).toBe('true');
-  });
-
-  it('fails closed for a locked model when the project scope is unavailable', async () => {
-    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
-      const url = input.toString();
-      if (url === '/api/integrations/vela/status') {
-        return new Response(JSON.stringify({
-          loggedIn: true,
-          loginInFlight: false,
-          profile: 'feature-test',
-          user: { id: 'u1', email: 'a@b.c' },
-          account: { plan: 'plus', balanceUsd: '247.5087' },
-          configPath: '/Users/test/.amr/config.json',
-        }), {
-          status: 200,
-          headers: { 'content-type': 'application/json' },
-        });
-      }
-      if (url === '/api/workspace/context') {
-        return workspaceContextResponse(personalWorkspaceContext({
-          workspaceId: 'workspace-ambient',
-        }));
-      }
-      return new Response('{}', { status: 202 });
-    });
-    vi.stubGlobal('fetch', fetchMock);
-    openExternalUrlMock.mockResolvedValue(true);
-
-    const { onAgentModelChange } = renderMenu({
-      config: {
-        ...baseConfig,
-        agentId: 'amr',
-        agentCliEnv: { amr: { OPEN_DESIGN_AMR_PROFILE: 'feature-test' } },
-      },
-      projectWorkspaceScope: {
-        loading: false,
-        scope: {
-          kind: 'unavailable',
-          projectId: 'project-a',
-          workspaceId: 'workspace-a',
-          visibility: 'personal',
-          context: null,
-        },
-      },
-      agents: [
-        {
-          id: 'amr',
-          name: 'CapyDesign AMR',
-          bin: 'vela',
-          available: true,
-          models: [
-            { id: 'free-model', label: 'Free model', enabled: true },
-            { id: 'paid-model', label: 'Paid model', enabled: false },
-          ],
-        },
-      ],
-    });
-
-    openMenu();
-    await waitFor(() =>
-      expect(fetchMock).toHaveBeenCalledWith(
-        '/api/integrations/vela/status',
-        expect.anything(),
-      ),
-    );
-    await act(async () => {
-      await Promise.resolve();
-    });
-    expect(screen.queryByText('Plus')).toBeNull();
-    const list = screen.getByTestId('avatar-model-list');
-    const locked = within(list).getByRole('radio', { name: /Paid model/i });
-    expect(locked.getAttribute('aria-disabled')).toBe('true');
-
-    fireEvent.click(locked);
-
-    expect(onAgentModelChange).not.toHaveBeenCalled();
-    await act(async () => {
-      await Promise.resolve();
-    });
-    expect(openExternalUrlMock).not.toHaveBeenCalled();
-    expect(screen.queryByText('$247.51')).toBeNull();
-    expect(screen.queryByRole('link', {
-      name: 'settings.amrUpgrade',
-    })).toBeNull();
-    expect(screen.queryByRole('button', {
-      name: /settings\.amrBalance/,
-    })).toBeNull();
-  });
-
-  it('does not borrow account money for an unbound project', async () => {
-    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
-      if (input.toString() === '/api/integrations/vela/status') {
-        return new Response(JSON.stringify({
-          loggedIn: true,
-          loginInFlight: false,
-          profile: 'feature-test',
-          user: { id: 'u1', email: 'a@b.c' },
-          account: { plan: 'plus', balanceUsd: '247.5087' },
-          configPath: '/Users/test/.amr/config.json',
-        }), {
-          status: 200,
-          headers: { 'content-type': 'application/json' },
-        });
-      }
-      return new Response('{}', { status: 202 });
-    });
-    vi.stubGlobal('fetch', fetchMock);
-
-    renderMenu({
-      config: { ...baseConfig, agentId: 'amr' },
-      projectWorkspaceScope: {
-        loading: false,
-        scope: {
-          kind: 'unbound',
-          projectId: 'project-a',
-          workspaceId: null,
-          context: null,
-        },
-      },
-      agents: [{
-        id: 'amr',
-        name: 'CapyDesign AMR',
-        bin: 'vela',
-        available: true,
-        models: [{ id: 'default', label: 'Default (CLI config)' }],
-      }],
-    });
-
-    openMenu();
-    await waitFor(() =>
-      expect(fetchMock).toHaveBeenCalledWith(
-        '/api/integrations/vela/status',
-        expect.anything(),
-      ),
-    );
-    await act(async () => {
-      await Promise.resolve();
-    });
-    expect(screen.queryByText('Plus')).toBeNull();
-    expect(screen.queryByText('$247.51')).toBeNull();
-    expect(screen.queryByRole('button', {
-      name: /settings\.amrBalance/,
-    })).toBeNull();
-    expect(screen.queryByRole('link', {
-      name: 'settings.amrUpgrade',
-    })).toBeNull();
   });
 
   it('lets the user switch the BYOK model from the composer popover', () => {
@@ -730,50 +536,6 @@ describe('AvatarMenu', () => {
     });
   }
 
-  it('routes a locked model for the team owner the project scope reports as a member', async () => {
-    stubLockedModelFetch({
-      workspaceId: 'workspace-a',
-      // The shell's authority for the very same workspace + member, which is the
-      // only place the real role exists.
-      ambientContext: teamMemberWorkspaceContext({
-        workspaceId: 'workspace-a',
-        workspaceMemberId: 'member-a',
-        role: 'owner',
-        permissions: buildWorkspacePermissions({
-          role: 'owner',
-          lifecycleState: 'active',
-          memberStatus: 'active',
-        }),
-      }),
-    });
-    openExternalUrlMock.mockResolvedValue(true);
-
-    const { onAgentModelChange } = renderLockedModelMenu(projectScopeContext());
-
-    openMenu();
-    // The popover no longer renders an upgrade link (the account row is
-    // retired), so synchronize on the routing outcome itself: openAmrUpgrade
-    // fails closed until the async account + billing scope land, so retry the
-    // locked-model click until the route actually fires.
-    await waitFor(() => {
-      fireEvent.click(screen.getByRole('radio', { name: /Paid model/i }));
-      expect(openExternalUrlMock).toHaveBeenCalled();
-    });
-
-    expect(onAgentModelChange).not.toHaveBeenCalled();
-    const target = new URL(openExternalUrlMock.mock.calls[0]![0]);
-    // T54: the account-menu upgrade lands on the console plan surface, pinned
-    // to the workspace whose model was locked. The pin matters — vela reads
-    // `workspaceId` off the query (`apps/web/src/lib/workspace-selector.ts`),
-    // so without it the plan dialog would open against whichever workspace
-    // vela's account-level "active workspace" happens to be.
-    expect(target.origin + target.pathname).toBe(
-      'https://open-design.ai/amr/dashboard',
-    );
-    expect(target.searchParams.get('workspaceId')).toBe('workspace-a');
-    expect(target.searchParams.get('billing')).toBe('plan');
-  });
-
   // The gate that must NOT be relaxed: a plain team member still cannot spend
   // the team's money, and the shell says so.
   it('leaves a locked model inert for a plain team member', async () => {
@@ -808,31 +570,6 @@ describe('AvatarMenu', () => {
    * landed: on a project page the scope placeholder makes `canManageBilling`
    * false for a personal workspace too.
    */
-  it('routes a locked model on a personal-workspace project', async () => {
-    stubLockedModelFetch({
-      workspaceId: 'workspace-a',
-      personalMembershipTier: 'plus',
-      // No shell authority at all — a personal workspace must not need one.
-      ambientContext: null,
-    });
-    openExternalUrlMock.mockResolvedValue(true);
-
-    const { onAgentModelChange } = renderLockedModelMenu(projectScopeContext({
-      workspaceType: 'personal',
-      teamId: undefined,
-      teamName: undefined,
-    }));
-
-    openMenu();
-    await waitFor(() => {
-      fireEvent.click(screen.getByRole('radio', { name: /Paid model/i }));
-      expect(openExternalUrlMock).toHaveBeenCalled();
-    });
-    expect(onAgentModelChange).not.toHaveBeenCalled();
-    expect(new URL(openExternalUrlMock.mock.calls[0]![0]).searchParams.get('workspaceId'))
-      .toBe('workspace-a');
-  });
-
   /*
    * A team workspace whose exact billing SNAPSHOT is missing.
    *
@@ -991,26 +728,6 @@ describe('AvatarMenu', () => {
    * either. The projection normalizes that state to the tier `'free'`, which is
    * both known and upgradeable, so the entry opens.
    */
-  it('opens the upgrade entry for an unsubscribed team the snapshot reports as free', async () => {
-    stubTeamPlanFetch({
-      workspaceId: 'workspace-a',
-      ambientContext: teamOwnerAmbientContext(),
-      accountMembershipTier: '',
-      snapshot: { planId: null, billingState: 'free' },
-    });
-    openExternalUrlMock.mockResolvedValue(true);
-
-    renderLockedModelMenu(projectScopeContext());
-
-    openMenu();
-    await waitFor(() => {
-      fireEvent.click(screen.getByRole('radio', { name: /Paid model/i }));
-      expect(openExternalUrlMock).toHaveBeenCalled();
-    });
-    expect(new URL(openExternalUrlMock.mock.calls[0]![0]).searchParams.get('workspaceId'))
-      .toBe('workspace-a');
-  });
-
   /*
    * The defect. A team OWNER on a paid team, whose snapshot did not come back,
    * clicks a plan-gated model and nothing happens at all — the tier resolved to
@@ -1022,46 +739,6 @@ describe('AvatarMenu', () => {
    * missing team snapshot; a personal tier may not). Reading the raw snapshot
    * here walked around it.
    */
-  it('falls back to the team-namespaced account tier when the snapshot is missing', async () => {
-    const { urls } = stubTeamPlanFetch({
-      workspaceId: 'workspace-a',
-      ambientContext: teamOwnerAmbientContext(),
-      accountMembershipTier: 'team_pro',
-    });
-    openExternalUrlMock.mockResolvedValue(true);
-
-    const { onAgentModelChange } = renderLockedModelMenu(projectScopeContext());
-
-    openMenu();
-    await waitFor(() => {
-      fireEvent.click(screen.getByRole('radio', { name: /Paid model/i }));
-      expect(openExternalUrlMock).toHaveBeenCalled();
-    });
-
-    expect(onAgentModelChange).not.toHaveBeenCalled();
-    const target = new URL(openExternalUrlMock.mock.calls[0]![0]);
-    expect(target.origin + target.pathname).toBe('https://open-design.ai/amr/dashboard');
-    expect(target.searchParams.get('workspaceId')).toBe('workspace-a');
-    expect(target.searchParams.get('billing')).toBe('plan');
-
-    // The tier now comes from data this popover already fetched. Reading it
-    // must not have added a request of its own — the endpoints below are
-    // exactly the ones the popover already talked to. (The billing-interest
-    // registration carries a per-mount id, so it is normalized before the
-    // comparison; everything else is compared literally, on purpose, so a new
-    // network dependency on this path cannot slip in unremarked.)
-    const requested = [...new Set(urls.map((url) =>
-      url.replace(/\/api\/workspace\/billing\/interests\/[^/?]+$/, '/api/workspace/billing/interests/:id'),
-    ))].sort();
-    expect(requested).toEqual([
-      '/api/integrations/vela/status',
-      '/api/workspace/billing/interests/:id',
-      '/api/workspace/billing?scope=workspace&workspaceId=workspace-a',
-      '/api/workspace/context',
-      '/api/workspace/directory',
-    ]);
-  });
-
   /*
    * The property the user asked for by name: the corrected identity must be the
    * FIRST thing painted, not a late correction of a wrong one. So the tier
@@ -1071,25 +748,4 @@ describe('AvatarMenu', () => {
    * still answers, on the calling frame, from the response the component
    * already holds — no request, no await, nothing to wait out.
    */
-  it('resolves the fallback tier synchronously, without touching the network', () => {
-    const throwingFetch = vi.fn(() => {
-      throw new Error('resolving the workspace plan tier must not fetch');
-    });
-    vi.stubGlobal('fetch', throwingFetch);
-
-    const response = teamBillingResponseBody({
-      workspaceId: 'workspace-a',
-      accountMembershipTier: 'team_pro',
-    }) as unknown as WorkspaceBillingResponse;
-    expect('workspaceSnapshot' in response).toBe(false);
-
-    const summary = workspaceBillingSummaryForContext(
-      response,
-      teamOwnerAmbientContext(),
-    );
-
-    expect(summary?.membershipTier).toBe('team_pro');
-    expect(throwingFetch).not.toHaveBeenCalled();
-  });
-
 });

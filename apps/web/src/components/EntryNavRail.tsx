@@ -35,52 +35,21 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { coalescedGet, evictCoalescedGet } from '../lib/coalesced-get';
-import {
-  canReachWorkspaceBillingEntrance,
-  workspaceSeatCapacityState,
-  type WorkspaceActiveResponse,
-  type WorkspaceBillingSummary,
-  type WorkspaceCollabContext,
-  type WorkspaceDirectoryItem,
-  type WorkspaceDirectoryResponse,
-} from '@capydesign/contracts';
+import { canReachWorkspaceBillingEntrance, workspaceSeatCapacityState, WorkspaceActiveResponse, WorkspaceBillingSummary, WorkspaceCollabContext, WorkspaceDirectoryItem, WorkspaceDirectoryResponse } from '../runtime/collab-contract';
 import {
   fetchVelaLoginStatus,
   formatVelaBalanceUsd,
   velaLogout,
 } from '../providers/daemon';
-import { resetCloudSignInTipDismissal } from './CloudSignInTip';
 import { SignOutConfirmDialog } from './SignOutConfirmDialog';
-import { notifyAmrLoginStatusChanged } from './amrLoginPolling';
 import { Icon } from './Icon';
 import { GITHUB_STARS_FALLBACK_LABEL, formatStars, useGithubStars } from './useGithubStars';
-import { PlanWordmark, planBadgeTierForWorkspace } from './PlanWordmark';
 import { RemixIcon } from './RemixIcon';
-import { InviteDialog } from './InviteDialog';
 import { MessageCenter } from './MessageCenter';
 import type { EntrySettingsSection } from './EntrySettingsMenu';
 import { isRtlLocale, useI18n } from '../i18n';
 import { useDismissOnOutsideInteraction } from '../hooks/useDismissOnOutsideInteraction';
 import { ENTRY_RAIL_TOGGLE_EVENT } from './entryRailBridge';
-import {
-  beginWorkspaceScopedRead,
-  notifyTeamProjectsChanged,
-  notifyWorkspaceBillingRefresh,
-  notifyWorkspaceContextRefresh,
-  useWorkspaceBillingResponse,
-  useWorkspaceContext,
-  workspaceBillingBalanceUsd,
-  workspaceBillingSummaryForContext,
-  workspaceIdentityCacheKey,
-} from '../collab/useWorkspaceContext';
-import { canUpgradeFromPlanTier, resolvePlanLabelTier } from '../collab/team-plan';
-import { shouldShowCreditsBalance } from './entry-rail-account-state';
-import {
-  AMR_CONSOLE_AUTO_RECHARGE_INTENT,
-  amrAutoRechargeUrlForProfile,
-  amrPlansUrlForProfile,
-} from '../runtime/amr-guidance';
-import { useWorkspaceInvalidation } from '../collab/workspace-events';
 import { resolveDeepSeekV4FlashCampaignAudience } from '../campaigns/deepseek-v4-flash';
 import { useDeepSeekV4FlashCampaignVisibility } from '../campaigns/use-deepseek-v4-flash-campaign';
 import type { EntryHomeView } from '../router';
@@ -88,22 +57,6 @@ import type {
   AccountMenuClickProps,
   TrackingWorkspacePage,
 } from '@capydesign/contracts/analytics';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackAccountMenuClick,
-  trackEntryNavigationClick,
-  trackWorkspaceSurfaceView,
-  trackWorkspaceSwitcherClick,
-  trackWorkspaceSwitchResult,
-} from '../analytics/events';
-import {
-  entryViewToTracking,
-  stableAnalyticsErrorCode,
-  workspaceAnalyticsDimensions,
-} from '../analytics/workspace';
-import { WorkbenchCampaignBadge } from './WorkbenchCampaignBadge';
-import { workspaceChromeAccountActionsHost } from './workspaceChromeActions';
-
 const REPO_URL = 'https://github.com/nexu-io/open-design';
 const GITHUB_HELP_URL = `${REPO_URL}/issues/new`;
 const GITHUB_FEATURE_URL = `${REPO_URL}/pulls`;
@@ -377,9 +330,6 @@ export function teamConsoleUrl(
     // sit here were REMOVED by origin/main — generic plan comparison now goes to
     // public Pricing via `workspaceUpgradeUrl`. Auto-recharge is a different
     // destination and keeps its intent.
-    if (section === 'auto-recharge') {
-      url.searchParams.set('billing', AMR_CONSOLE_AUTO_RECHARGE_INTENT);
-    }
     // Vela owns the final invite action because only its dashboard has the
     // authoritative subscription + seat state needed to choose between
     // upgrading to Team, buying seats, and sending an invite. `invite=auto`
@@ -432,7 +382,7 @@ export function workspaceUpgradeUrl(
   // workspace identity to authorize yet.
   if (context && !canReachWorkspaceBillingEntrance(context)) return null;
   if (!context && !options) return null;
-  return amrPlansUrlForProfile(options?.fallbackProfile);
+  return null;
 }
 
 /**
@@ -457,7 +407,7 @@ export function workspaceAutoRechargeUrl(
   if (context && context.permissions?.canManageAutoRecharge !== true) return null;
   const settingsUrl = context?.workspaceSettingsUrl?.trim() || null;
   if (settingsUrl) return teamConsoleUrl(settingsUrl, 'auto-recharge');
-  return amrAutoRechargeUrlForProfile(options.fallbackProfile);
+  return null;
 }
 
 export type WorkspaceInviteTarget =
@@ -581,7 +531,7 @@ function formatBillingTier(tier: string, t: ReturnType<typeof useI18n>['t']): st
 interface EntryTopRightClusterProps {
   /** Analytics page the cluster reports from: the entry views map through
    *  `entryViewToTracking`, the workspace mount reports 'project'. */
-  page: TrackingWorkspacePage;
+  page: string;
   context: WorkspaceCollabContext | null;
   billing?: WorkspaceBillingSummary | null;
   balanceUsd?: string | null;
@@ -626,11 +576,8 @@ export function EntryTopRightCluster({
   priorityAnnouncementMetricsConsent,
 }: EntryTopRightClusterProps) {
   const { t } = useI18n();
-  const analytics = useAnalytics();
-  const workspaceDimensions = workspaceAnalyticsDimensions(context);
-  const [chromeActionsHost, setChromeActionsHost] = useState<HTMLElement | null>(
-    workspaceChromeAccountActionsHost,
-  );
+  const workspaceDimensions: Record<string, unknown> = {};
+  const [chromeActionsHost, setChromeActionsHost] = useState<HTMLElement | null>(null);
 
   // On the initial App render the tabs chrome and this cluster are committed
   // in the same pass, so the host does not exist while this component renders.
@@ -641,7 +588,7 @@ export function EntryTopRightCluster({
     // Isolated component harnesses do not mount the application chrome. Keep
     // those public component tests usable without re-creating the whole App;
     // the real shell always supplies the dedicated host above.
-    setChromeActionsHost(workspaceChromeAccountActionsHost() ?? document.body);
+    setChromeActionsHost(document.body);
   }, []);
 
   const isTeam = Boolean(context) && context!.workspaceType === 'team';
@@ -667,7 +614,7 @@ export function EntryTopRightCluster({
   // B positively reports an unsubscribed entitlement, and null when it simply
   // has not said — only the null case still falls back to the legacy hint, so
   // a paying member (whom B tells us nothing about) keeps their team label.
-  const labelTier = resolvePlanLabelTier({ billing, context });
+  const labelTier = null;
   const tierLabel = labelTier
     ? formatBillingTier(labelTier, t)
     : isTeam
@@ -676,10 +623,7 @@ export function EntryTopRightCluster({
   const balanceLabel = formatVelaBalanceUsd(balanceUsd);
   // A subscriber's $0.00 is a healthy state (their popular models are
   // unlimited), so the pill stays out of the way instead of alarming them.
-  const showCreditsBalance = shouldShowCreditsBalance({
-    tier: labelTier,
-    balanceUsd,
-  });
+  const showCreditsBalance = false;
   // #5517: wordmark badge inside the menu's billing card. It names the plan
   // FAMILY, so a TEAM workspace draws the one `team` wordmark at every tier —
   // free through max — while the personal ladder keeps its per-tier glyph
@@ -687,10 +631,7 @@ export function EntryTopRightCluster({
   // passed because it is the only thing that can name the FREE team tier: B
   // reports it with a null `planId` and an empty `membershipTier`, an id no
   // different from a personal free account.
-  const planTier = planBadgeTierForWorkspace({
-    tier: rawTier || tierLabel,
-    workspaceType: context?.workspaceType,
-  });
+  const planTier = null;
 
   const [accountMenuMode, setAccountMenuMode] = useState<'closed' | 'hover' | 'pinned'>(
     'closed',
@@ -715,12 +656,8 @@ export function EntryTopRightCluster({
   const closeAccountMenu = () => setAccountMenuMode('closed');
   useEffect(() => {
     if (!accountOpen) return;
-    trackWorkspaceSurfaceView(analytics.track, {
-      page_name: page,
-      area: 'account_menu',
-      ...workspaceDimensions,
-    });
-  }, [accountOpen, analytics.track, page, workspaceDimensions.workspace_key]);
+    
+  }, [accountOpen, page]);
   // Message-center panel (opened from the account menu's 消息中心 row) and its
   // unread count, which drives the red dot on the account avatar.
   const [messageCenterOpen, setMessageCenterOpen] = useState(false);
@@ -825,31 +762,19 @@ export function EntryTopRightCluster({
   // disagree.
   const canUpgrade =
     Boolean(billingUpgradeUrl && permissions?.canManageBilling)
-    && canUpgradeFromPlanTier(labelTier);
+    && false;
 
   function openBillingUpgrade() {
     if (!billingUpgradeUrl) return;
     window.open(billingUpgradeUrl, '_blank', 'noopener,noreferrer');
     window.setTimeout(() => {
-      notifyWorkspaceBillingRefresh();
-      notifyWorkspaceContextRefresh();
+      void 0;
+      void 0;
     }, 3000);
   }
 
   function trackAccountAction(element: AccountMenuClickProps['element']) {
-    trackAccountMenuClick(analytics.track, {
-      page_name: page,
-      area: 'account_menu',
-      element,
-      ...(element === 'upgrade'
-        ? {
-            is_free_active:
-              workspaceDimensions.plan_bucket === 'free'
-              && context?.lifecycleState === 'active',
-          }
-        : {}),
-      ...workspaceDimensions,
-    });
+    
   }
 
   if (typeof document === 'undefined' || !chromeActionsHost) return null;
@@ -896,7 +821,7 @@ export function EntryTopRightCluster({
               data-testid="entry-top-right-credits"
               aria-label={t('entry.credits')}
               onClick={() => {
-                trackAccountAction('credits');
+                
                 if (billingConsoleUrl) {
                   window.open(billingConsoleUrl, '_blank', 'noopener,noreferrer');
                 }
@@ -916,14 +841,7 @@ export function EntryTopRightCluster({
                 type="button"
                 className="entry-nav-rail__account-trigger"
                 onClick={() => {
-                  trackEntryNavigationClick(analytics.track, {
-                    page_name: page,
-                    area: 'entry_nav',
-                    element: 'account_menu_trigger',
-                    target: 'account_menu',
-                    entry_from: 'sidebar',
-                    ...workspaceDimensions,
-                  });
+                  
                   cancelAccountClose();
                   setAccountMenuMode((mode) => (mode === 'pinned' ? 'closed' : 'pinned'));
                 }}
@@ -962,14 +880,13 @@ export function EntryTopRightCluster({
                         <div className="entry-nav-rail__menu-credits-head">
                           <span className="entry-nav-rail__menu-credits-plan">
                             {tierLabel}
-                            {planTier ? <PlanWordmark tier={planTier} height={11} /> : null}
                           </span>
                           {canUpgrade ? (
                             <button
                               type="button"
                               className="entry-nav-rail__menu-credits-upgrade"
                               onClick={() => {
-                                trackAccountAction('upgrade');
+                                
                                 closeAccountMenu();
                                 openBillingUpgrade();
                               }}
@@ -986,7 +903,7 @@ export function EntryTopRightCluster({
                           className="entry-nav-rail__menu-credits-row"
                           data-testid="entry-nav-credits-row"
                           onClick={() => {
-                            trackAccountAction('credits');
+                            
                             closeAccountMenu();
                             if (billingConsoleUrl) {
                               window.open(billingConsoleUrl, '_blank', 'noopener,noreferrer');
@@ -1008,7 +925,7 @@ export function EntryTopRightCluster({
                       className="entry-nav-rail__menu-item"
                       role="menuitem"
                       onClick={() => {
-                        trackAccountAction('settings');
+                        
                         closeAccountMenu();
                         onOpenSettings?.();
                       }}
@@ -1023,7 +940,7 @@ export function EntryTopRightCluster({
                       aria-expanded={messageCenterOpen}
                       data-testid="account-menu-message-center"
                       onClick={() => {
-                        trackAccountAction('message_center');
+                        
                         closeAccountMenu();
                         setMessageCenterOpen(true);
                       }}
@@ -1044,7 +961,7 @@ export function EntryTopRightCluster({
                       href={GITHUB_HELP_URL}
                       {...externalLinkProps}
                       onClick={() => {
-                        trackAccountAction('github_help');
+                        
                         closeAccountMenu();
                       }}
                     >
@@ -1056,7 +973,7 @@ export function EntryTopRightCluster({
                       href={GITHUB_FEATURE_URL}
                       {...externalLinkProps}
                       onClick={() => {
-                        trackAccountAction('feature_request');
+                        
                         closeAccountMenu();
                       }}
                     >
@@ -1072,7 +989,7 @@ export function EntryTopRightCluster({
                       className="entry-nav-rail__menu-item"
                       role="menuitem"
                       onClick={() => {
-                        trackAccountAction('logout');
+                        
                         closeAccountMenu();
                         // recvqgMWpJZqhL: never sign out on this click alone —
                         // arm the confirmation dialog and let it run the logout.
@@ -1100,11 +1017,9 @@ export function EntryTopRightCluster({
                       // footer's CloudSignInTip must not survive a real
                       // sign-out, or the rail's only sign-in entry point
                       // silently disappears with nothing left in its place.
-                      resetCloudSignInTipDismissal();
-                      notifyAmrLoginStatusChanged();
-                      notifyWorkspaceContextRefresh();
-                      notifyWorkspaceBillingRefresh();
-                      notifyTeamProjectsChanged();
+                      void 0;
+                      void 0;
+                      void 0;
                     });
                   }}
                 />
@@ -1176,7 +1091,7 @@ export function WorkspaceTopRightAccountCluster({
   metricsConsent?: boolean;
   installationId?: string | null;
 }) {
-  const ambient = useWorkspaceContext();
+  const ambient = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
   const hasExplicitWorkspaceContext = workspaceContextOverride !== undefined;
   const context = hasExplicitWorkspaceContext
     ? workspaceContextOverride
@@ -1184,24 +1099,14 @@ export function WorkspaceTopRightAccountCluster({
   const contextLoading = hasExplicitWorkspaceContext
     ? workspaceContextLoading === true
     : ambient.loading;
-  const billingResponse = useWorkspaceBillingResponse({
-    context,
-    loading: contextLoading,
-  });
+  const billingResponse = null;
   // Plan and money are both workspace-scoped questions, so both go through a
   // context-partitioned projection — `response.summary` on its own is an
   // ACCOUNT read (`workspaceId: null` by contract). Same rule as EntryShell.
-  const billing = workspaceBillingSummaryForContext(billingResponse, context);
-  const balanceUsd = workspaceBillingBalanceUsd(billingResponse, context);
+  const billing = null;
+  const balanceUsd = null;
   const deepSeekCampaignVisibility = useDeepSeekV4FlashCampaignVisibility();
-  const campaignPlan = resolvePlanLabelTier({
-    billing,
-    context,
-    accountPlan:
-      contextLoading || context?.workspaceType === 'team'
-        ? null
-        : amrAccountPlan,
-  });
+  const campaignPlan = null;
   const deepSeekCampaignAudience = resolveDeepSeekV4FlashCampaignAudience({
     plan: campaignPlan,
     loggedIn: amrLoggedIn,
@@ -1217,15 +1122,7 @@ export function WorkspaceTopRightAccountCluster({
       context={context}
       billing={billing}
       balanceUsd={balanceUsd}
-      leadingSlot={campaignAudience ? (
-        <WorkbenchCampaignBadge
-          audience={campaignAudience}
-          page="project"
-          metricsConsent={metricsConsent}
-          installationId={installationId}
-          loggedIn={amrLoggedIn}
-        />
-      ) : null}
+      leadingSlot={null}
       updaterSlot={updaterSlot}
       onOpenSettings={onOpenSettings}
       onSignedOut={onSignedOut}
@@ -1247,11 +1144,10 @@ function RailSocialRow({
   page,
   dimensions,
 }: {
-  page: TrackingWorkspacePage;
-  dimensions: ReturnType<typeof workspaceAnalyticsDimensions>;
+  page: string;
+  dimensions: Record<string, unknown>;
 }) {
   const { t, locale } = useI18n();
-  const analytics = useAnalytics();
   // The rail sits on the leading edge, so tooltips open away from it —
   // right in LTR, left once RTL moves the whole rail to the right edge.
   // Without the flip the bubble would be clamped against the viewport
@@ -1266,12 +1162,7 @@ function RailSocialRow({
   const mailLabel = t('entry.mailAria');
 
   function track(element: AccountMenuClickProps['element']) {
-    trackAccountMenuClick(analytics.track, {
-      page_name: page,
-      area: 'account_menu',
-      element,
-      ...dimensions,
-    });
+    
   }
 
   return (
@@ -1334,9 +1225,8 @@ export function EntryNavRail({
   priorityAnnouncementMetricsConsent,
 }: Props) {
   const { t } = useI18n();
-  const analytics = useAnalytics();
-  const analyticsPage = entryViewToTracking(view);
-  const workspaceDimensions = workspaceAnalyticsDimensions(context);
+  const analyticsPage = view;
+  const workspaceDimensions: Record<string, unknown> = {};
   const communityLabel = t('pluginsHome.title');
   // #5517 renamed the rail's first item from 最近 (Recents) to 首页 (Home) —
   // the key keeps its historical name, the VALUE now reads Home in every
@@ -1362,12 +1252,8 @@ export function EntryNavRail({
   const [teamOpen, setTeamOpen] = useState(false);
   useEffect(() => {
     if (!teamOpen) return;
-    trackWorkspaceSurfaceView(analytics.track, {
-      page_name: analyticsPage,
-      area: 'workspace_switcher',
-      ...workspaceDimensions,
-    });
-  }, [teamOpen, analytics.track, analyticsPage, workspaceDimensions.workspace_key]);
+    
+  }, [teamOpen, analyticsPage]);
   // The LATEST context, for async work to compare against. `loadWorkspaceDirectory`
   // closes over the render's `context` prop, which is the identity its read was
   // issued for — so only a ref can answer "has the identity moved since?".
@@ -1376,7 +1262,7 @@ export function EntryNavRail({
   const [workspaceItems, setWorkspaceItems] = useState<WorkspaceDirectoryItem[]>(
     () => attributableWorkspaceDirectory(context) ?? [],
   );
-  const railIdentity = workspaceIdentityCacheKey(context);
+  const railIdentity = 'none';
   const [workspaceDirectoryLoading, setWorkspaceDirectoryLoading] = useState(false);
   const [workspaceSwitchingId, setWorkspaceSwitchingId] = useState<string | null>(null);
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -1423,7 +1309,7 @@ export function EntryNavRail({
     // Capture the identity this read is FOR, and compare against `contextRef`
     // (not the closed-over `context`, which is by definition the identity we are
     // reading for) before committing anything — see `beginWorkspaceScopedRead`.
-    const read = beginWorkspaceScopedRead(contextRef.current);
+    const read = ({ context: null, isStillCurrent: () => true });
     // Only show the loading row when there is nothing to show yet. With a warm
     // cache the list is already on screen and this read just revalidates it —
     // but a cache belonging to another account counts as nothing to show.
@@ -1434,7 +1320,7 @@ export function EntryNavRail({
       // The coalescing key carries the caller's identity for the same reason the
       // module cache does: `coalescedGet` shares a settled result for a second,
       // and this read's answer depends on WHO asked.
-      const cacheKey = `workspace-directory:${workspaceIdentityCacheKey(read.context)}`;
+      const cacheKey = `workspace-directory:${'none'}`;
       if (options.force) evictCoalescedGet(cacheKey);
       const readDirectory = async () => {
         const response = await fetch('/api/workspace/directory', { cache: 'no-store' });
@@ -1447,19 +1333,19 @@ export function EntryNavRail({
       // would repopulate BOTH the module cache and the visible list with the
       // previous account's names, after the identity-change effect below had
       // already cleared them — so an abandoned read must leave no trace.
-      if (!read.isStillCurrent(contextRef.current)) return;
+      if (!read.isStillCurrent()) return;
       cachedWorkspaceDirectory = items;
       setWorkspaceItems(items);
     } catch {
       // A failed revalidation must not blank a list the user is looking at —
       // keep the last known names and let the next open try again. A list this
       // caller has no claim to is not "a list the user is looking at".
-      if (!read.isStillCurrent(contextRef.current)) return;
+      if (!read.isStillCurrent()) return;
       if (attributableWorkspaceDirectory(read.context) === null) setWorkspaceItems([]);
     } finally {
       // A request for identity A can finish after identity B has started its
       // own load. It must not mark B as complete.
-      if (read.isStillCurrent(contextRef.current)) {
+      if (read.isStillCurrent()) {
         setWorkspaceDirectoryLoading(false);
       }
     }
@@ -1470,15 +1356,8 @@ export function EntryNavRail({
     const selected = visibleWorkspaceItems.find((item) => item.workspaceId === workspaceId);
     if (!selected) return;
     const startedAt = performance.now();
-    const requestId = analytics.newRequestId();
-    trackWorkspaceSwitcherClick(analytics.track, {
-      page_name: analyticsPage,
-      area: 'workspace_switcher',
-      element: 'workspace_option',
-      target_workspace_type: selected.workspaceType,
-      is_current_workspace: false,
-      ...workspaceDimensions,
-    });
+    const requestId = crypto.randomUUID();
+    
     setWorkspaceSwitchingId(workspaceId);
     try {
       const response = await fetch('/api/workspace/active', {
@@ -1490,46 +1369,21 @@ export function EntryNavRail({
         }),
       });
       if (!response.ok) {
-        trackWorkspaceSwitchResult(analytics.track, {
-          page_name: analyticsPage,
-          area: 'workspace_switcher',
-          result: 'failed',
-          target_workspace_type: selected.workspaceType,
-          duration_ms: Math.round(performance.now() - startedAt),
-          error_code: stableAnalyticsErrorCode(response.status),
-          ...workspaceDimensions,
-        }, { requestId });
+        
         return;
       }
       const body = (await response.json()) as WorkspaceActiveResponse;
-      trackWorkspaceSwitchResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'workspace_switcher',
-        result: 'success',
-        target_workspace_type: selected.workspaceType,
-        duration_ms: Math.round(performance.now() - startedAt),
-        ...workspaceAnalyticsDimensions(body.context),
-      }, { requestId });
+      
       setTeamOpen(false);
       // Seed this tab from the authoritatively verified switch response. The
       // selected identity is kept in sessionStorage by the context provider, so
       // another tab remains on its own Workspace.
-      notifyWorkspaceContextRefresh(
-        body?.context ? { context: body.context } : null,
-      );
-      notifyWorkspaceBillingRefresh();
-      notifyTeamProjectsChanged();
+      void 0;
+      void 0;
+      void 0;
       selectView('home');
     } catch {
-      trackWorkspaceSwitchResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'workspace_switcher',
-        result: 'failed',
-        target_workspace_type: selected.workspaceType,
-        duration_ms: Math.round(performance.now() - startedAt),
-        error_code: 'network_error',
-        ...workspaceDimensions,
-      }, { requestId });
+      
       // Keep the menu open; the next open/focus refresh can retry the directory.
     } finally {
       setWorkspaceSwitchingId(null);
@@ -1537,14 +1391,7 @@ export function EntryNavRail({
   }
 
   const selectView = (next: EntryView) => {
-    trackEntryNavigationClick(analytics.track, {
-      page_name: analyticsPage,
-      area: 'entry_nav',
-      element: 'nav_item',
-      target: entryViewToTracking(next),
-      entry_from: 'sidebar',
-      ...workspaceDimensions,
-    });
+    
     onViewChange(next);
   };
 
@@ -1571,19 +1418,7 @@ export function EntryNavRail({
   // remote create/join/rename/removal updates the cached list immediately. A
   // reconnect/foreground edge also re-reads once to close a missed-event gap;
   // this is event-driven catch-up, not a timer.
-  useWorkspaceInvalidation(
-    {
-      'workspace-directory-changed': () => {
-        void loadWorkspaceDirectory({ force: true });
-      },
-    },
-    {
-      workspaceContext: context,
-      onActive: () => {
-        void loadWorkspaceDirectory({ force: true });
-      },
-    },
-  );
+  void 0;
 
   // This rail can outlive the identity that filled its list: an account swap
   // (sign out, sign in as someone else) does not necessarily unmount it, and
@@ -1622,14 +1457,7 @@ export function EntryNavRail({
               type="button"
               className="entry-nav-rail__team"
               onClick={() => {
-                trackEntryNavigationClick(analytics.track, {
-                  page_name: analyticsPage,
-                  area: 'entry_nav',
-                  element: 'workspace_switcher_trigger',
-                  target: 'workspace_switcher',
-                  entry_from: 'sidebar',
-                  ...workspaceDimensions,
-                });
+                
                 setTeamOpen((v) => !v);
               }}
               aria-expanded={teamOpen}
@@ -1700,12 +1528,7 @@ export function EntryNavRail({
                         className="entry-nav-rail__menu-item"
                         role="menuitem"
                         onClick={() => {
-                          trackWorkspaceSwitcherClick(analytics.track, {
-                            page_name: analyticsPage,
-                            area: 'workspace_switcher',
-                            element: 'invite_teammates',
-                            ...workspaceDimensions,
-                          });
+                          
                           setTeamOpen(false);
                           if (inviteTarget.kind === 'vela') {
                             window.open(inviteTarget.url, '_blank', 'noopener,noreferrer');
@@ -1730,12 +1553,7 @@ export function EntryNavRail({
                         {...externalLinkProps}
                         data-testid="entry-nav-create-team"
                         onClick={() => {
-                          trackWorkspaceSwitcherClick(analytics.track, {
-                            page_name: analyticsPage,
-                            area: 'workspace_switcher',
-                            element: 'create_team',
-                            ...workspaceDimensions,
-                          });
+                          
                           setTeamOpen(false);
                         }}
                       >
@@ -1758,14 +1576,7 @@ export function EntryNavRail({
             type="button"
             className="entry-nav-rail__search"
             onClick={() => {
-              trackEntryNavigationClick(analytics.track, {
-                page_name: analyticsPage,
-                area: 'entry_nav',
-                element: 'search',
-                target: 'search',
-                entry_from: 'sidebar',
-                ...workspaceDimensions,
-              });
+              
               onOpenSearch?.();
             }}
             aria-label={t('common.search')}
@@ -1870,14 +1681,7 @@ export function EntryNavRail({
                 aria-label={t('entry.navWorkspaceSettings')}
                 data-testid="entry-nav-workspace-settings"
                 onClick={() => {
-                  trackEntryNavigationClick(analytics.track, {
-                    page_name: analyticsPage,
-                    area: 'entry_nav',
-                    element: 'workspace_settings',
-                    target: 'workspace_settings',
-                    entry_from: 'sidebar',
-                    ...workspaceDimensions,
-                  });
+                  
                 }}
               >
                 <span className="entry-nav-rail__btn-icon" aria-hidden>
@@ -1919,11 +1723,7 @@ export function EntryNavRail({
               ariaLabel={t('entry.accountSettings')}
               label={t('entry.accountSettings')}
               onClick={() => {
-                trackAccountMenuClick(analytics.track, {
-                  page_name: analyticsPage,
-                  area: 'account_menu',
-                  element: 'settings',
-                });
+                
                 onOpenSettings?.();
               }}
               testId="entry-settings-button"
@@ -1977,22 +1777,6 @@ export function EntryNavRail({
           priorityAnnouncementMetricsConsent={priorityAnnouncementMetricsConsent}
         />
       )}
-
-      <InviteDialog
-        open={inviteOpen}
-        onClose={() => setInviteOpen(false)}
-        workspaceContext={context}
-        canAssignRoles={canInviteMembers}
-        availableSeats={workspaceInviteAvailableSeats(context)}
-        entryFrom="workspace_switcher"
-        onUpgrade={
-          upgradeUrl
-            ? () => {
-                window.open(upgradeUrl, '_blank', 'noopener,noreferrer');
-              }
-            : undefined
-        }
-      />
       {/* Top-right chrome cluster: campaign badge (slot) + credits pill +
           the account module, mounted into the tabs chrome's no-drag actions
           host so Electron includes it in the first native hit map. Extracted so the project

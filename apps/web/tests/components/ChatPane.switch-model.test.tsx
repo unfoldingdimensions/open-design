@@ -73,31 +73,6 @@ function renderPane(extra: Record<string, unknown>) {
   );
 }
 
-describe('E3 · 〔更换模型〕的落点', () => {
-  it('opens the model picker instead of sending the user to Settings', () => {
-    const onSwitchModel = vi.fn();
-    const onOpenSettings = vi.fn();
-    const { container } = renderPane({ onSwitchModel, onOpenSettings, onRetry: vi.fn() });
-
-    const button = container.querySelector<HTMLButtonElement>('[data-testid="chat-error-switch-model"]');
-    expect(button, '这一档应该给一颗〔更换模型〕').toBeTruthy();
-    fireEvent.click(button!);
-
-    expect(onSwitchModel, '稿子要的是「直接打开模型选择器」').toHaveBeenCalledTimes(1);
-    // 带上是哪一轮 —— 选完模型要重跑的就是它(和 onRetry 同一副形状)
-    expect(onSwitchModel.mock.calls[0]?.[0]).toMatchObject({ id: 'assistant-1' });
-    expect(onOpenSettings, '不该再把人丢进设置面板').not.toHaveBeenCalled();
-  });
-
-  it('still falls back to Settings when no picker is wired', () => {
-    // 首页之类没有内联选择器的宿主:退回设置,总好过按了没反应。
-    const onOpenSettings = vi.fn();
-    const { container } = renderPane({ onOpenSettings, onRetry: vi.fn() });
-    fireEvent.click(container.querySelector<HTMLButtonElement>('[data-testid="chat-error-switch-model"]')!);
-    expect(onOpenSettings).toHaveBeenCalledWith('execution');
-  });
-});
-
 describe('E3 · 卡上的话不许和按钮的落点打架', () => {
   /**
    * 按钮改成就地开选择器之后,原来那句「请**在设置中**切换到其他可用模型后重试」

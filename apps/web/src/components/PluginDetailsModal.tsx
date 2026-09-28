@@ -18,10 +18,8 @@
 // stays identical — every variant reaches `usePlugin` through the
 // same callback wiring.
 
-import type {
-  InstalledPluginRecord,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { InstalledPluginRecord } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { createPortal } from 'react-dom';
 import { inferPluginPreview } from './plugins-home/preview';
 import { PluginScenarioDetail } from './plugin-details/PluginScenarioDetail';

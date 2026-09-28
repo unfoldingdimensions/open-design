@@ -1,115 +1,115 @@
 import type { Dict } from '../types';
 
 export const hu: Dict = {
-  'invite.header.eyebrow': "Team invitation",
-  'invite.loading': "Loading invitation…",
-  'invite.landing.title': "Join the team",
-  'invite.landing.subtitle': "You’ve been invited to collaborate in CapyDesign.",
-  'invite.landing.roleLabel': "Role",
-  'invite.landing.invitedEmail': "Invited email",
-  'invite.landing.expires': "Expires",
-  'invite.role.admin': "Admin",
-  'invite.role.member': "Member",
-  'invite.role.admin.desc': "Can manage members, seats, and all project settings.",
-  'invite.role.member.desc': "Can create your own projects, and view and comment on shared team projects.",
-  'invite.accept.cta': "Accept invitation",
-  'invite.accountMismatch.title': "You’re signed in as a different account",
-  'invite.accountMismatch.body': "This invitation was sent to a different email address. You can continue with your current account, or switch accounts.",
-  'invite.accountMismatch.continue': "Continue with current account",
-  'invite.accountMismatch.switch': "Switch account",
-  'invite.accepting.title': "Joining the team…",
-  'invite.accepting.body': "Setting up your membership.",
-  'invite.success.title': "You’re in",
-  'invite.success.body': "Opening CapyDesign so you can start collaborating.",
-  'invite.success.roleReceipt': "Joined as",
-  'invite.success.enter': "Enter workspace",
-  'invite.open.cta': "Open CapyDesign",
-  'invite.open.opening': "Opening CapyDesign…",
-  'invite.open.retry': "Already installed? Try opening again",
-  'invite.notInstalled.title': "Didn’t open automatically?",
-  'invite.notInstalled.body': "You may not have CapyDesign installed yet. Install it, then reopen this link to finish joining.",
-  'invite.notInstalled.download': "Download CapyDesign",
-  'invite.error.title': "Can’t accept this invitation",
-  'invite.error.invite_expired': "This invitation has expired. Ask an admin to send a new one.",
-  'invite.error.invite_consumed': "This invitation has already been used.",
-  'invite.error.workspace_seat_limit_reached': "The team has no seats left. Ask an admin to free up a seat or add more.",
-  'invite.error.workspace_subscription_locked': "The team’s subscription is inactive, so new members can’t join right now.",
-  'invite.error.workspace_not_found': "This workspace no longer exists.",
-  'invite.error.workspace_forbidden': "Your account isn’t allowed to accept this invitation.",
-  'invite.error.invite_unavailable': "This invitation is no longer available.",
-  'invite.error.generic': "Something went wrong. Please try again.",
-  'invite.error.retry': "Try again",
-  "workspaceInvite.dialogAria": "Invite members",
-  "workspaceInvite.title": "Invite members to your team",
-  "workspaceInvite.freePlanBody": "The free plan includes 1 seat. Inviting teammates will guide you to upgrade to Teams.",
-  "workspaceInvite.teamPlanBody": "Invite teammates to share projects, design systems, and plugins together.",
-  "workspaceInvite.seatsExhaustedBody": "Ebben a munkaterületben nincs több hely. Adj hozzá helyeket a csapattagok meghívásához.",
-  "workspaceInvite.seatsExhaustedAction": "Helyek és csomag megtekintése",
-  "workspaceInvite.emailLabel": "Invite members by email",
-  "workspaceInvite.roleLabel": "Assign role",
-  "workspaceInvite.defaultRoleLabel": "Default role",
-  "workspaceInvite.emailPlaceholder": "Enter email address…",
-  "workspaceInvite.removeRow": "Remove",
-  "workspaceInvite.addMember": "Add member",
-  "workspaceInvite.visibilityQuestion": "Will team members see my designs?",
-  "workspaceInvite.visibilityAnswer": "Team members can see designs you share to the team space. Private designs kept in Personal projects are not visible to others.",
-  "workspaceInvite.sent": "Invitation sent",
-  "workspaceInvite.sending": "Inviting…",
-  "workspaceInvite.confirm": "Confirm and invite",
-  "workspaceInvite.submitFailed": "Failed to send invitation. Try again later.",
-  "workspaceInvite.errorAlreadyMember": "Ez az e-mail-cím már csapattag.",
-  "workspaceInvite.errorPendingInvite": "Ehhez az e-mail-címhez már tartozik függőben lévő meghívó.",
-  "workspaceInvite.errorNoSession": "Jelentkezz be a Vela-fiókodba, mielőtt tagokat hívnál meg.",
-  "workspaceInvite.errorNoWorkspace": "Még nincs csapatmunkatér, ahová tagokat hívhatnál.",
-  "workspaceInvite.errorUnreachable": "A meghívót nem sikerült elküldeni. Próbáld újra később.",
-  'chat.amrCard.switchTitle': 'Sikertelen modellhívás — ez a futtatás szünetel',
-  'chat.amrCard.switchBody': 'Válts az CapyDesign Cloud hivatalos modellszolgáltatására — nincs szükség API-kulcs beállítására. Bejelentkezés, engedélyezés és feltöltés után ez a futtatás automatikusan újraindul.',
-  'chat.amrCard.chipOfficial': 'Hivatalos szolgáltatás',
-  'chat.amrCard.chipNoKey': 'Nincs API-kulcs',
-  'chat.amrCard.chipAutoRetry': 'Automatikus újrapróbálkozás bejelentkezés után',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrCard.switchCta': 'Váltás Cloud-re',
-  'chat.amrError.authMessage': 'Az CapyDesign Cloud-fiókod még nincs engedélyezve. Engedélyezd, és ez a futtatás automatikusan újraindul.',
-  'chat.amrError.balanceMessage': 'Az CapyDesign Cloud-egyenleged elfogyott. Tölts fel a futtatás folytatásához.',
+  
+  
   'chat.amrError.authorizeCta': 'Engedélyezés és újrapróbálkozás',
   'chat.amrError.rechargeCta': 'Feltöltés',
-  'chat.amrBalanceGate.title': 'Válts csomagot és alkoss tovább',
-  'chat.amrBalanceGate.message': 'Nincs elég keret (jelenleg {balance}). Csomagváltás vagy feltöltés után a feladat azonnal indulhat.',
-  'chat.amrBalanceGate.benefitsTitle': 'Amit az CapyDesign Cloud nyújt',
-  'chat.amrBalanceGate.benefit1': 'API-kulcs nélkül, rengeteg modell',
-  'chat.amrBalanceGate.benefit2': 'Beépített SOTA design agent, beállítás nélkül',
-  'chat.amrBalanceGate.benefit3': 'Hivatalos, megbízható szolgáltatás',
-  'chat.amrBalanceGate.benefit4': 'Folyamatosan bővül: egykattintásos publikálás, multimodális, csapatok és még több',
-  'chat.amrBalanceGate.laterCta': 'Most nem',
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.amrBalanceGate.plansCta': 'Csomagváltás',
-  'chat.amrBalanceGate.signedOutTitle': 'Jelentkezz be és kezdj alkotni',
-  'chat.amrBalanceGate.signedOutMessage': 'Az CapyDesign Cloud agentet használod — jelentkezz be, és ez a feladat azonnal indulhat.',
-  'chat.amrBalanceGate.signInCta': 'Bejelentkezés',
-  'chat.amrBalanceGate.watchingWallet': 'Az egyenleg frissülése után automatikusan folytatjuk.',
-  'chat.amrArtifactUpgrade.title': 'Finomíts tovább erősebb modellekkel',
-  'chat.amrArtifactUpgrade.message': 'Oldj fel fejlett modelleket, több párhuzamos feladatot és több havi kreditet.',
-  'chat.amrArtifactUpgrade.benefit1': 'Több fejlett modell, köztük a Fable 5 és a GPT-5.6',
-  'chat.amrArtifactUpgrade.benefit2': 'Akár 10-szer több párhuzamos feladat',
-  'chat.amrArtifactUpgrade.benefit3': 'Akár 300-szor több havi kredit',
-  'chat.amrArtifactUpgrade.benefit4': 'Elsőbbségi sor csúcsidőben a gyorsabb generálásért',
-  'chat.amrArtifactUpgrade.promoBanner': 'Korlátozott ideig: akár 67% kedvezmény az előfizetésekre',
-  'chat.amrArtifactUpgrade.countdownLabel': 'Az ajánlat véget ér',
-  'chat.amrArtifactUpgrade.plansCta': 'Válts magasabb csomagra, akár 67% kedvezménnyel',
-  'chat.amrArtifactUpgrade.homePlansCta': '67% kedvezmény',
-  'chat.amrArtifactUpgrade.laterCta': 'Folytatás Free csomaggal és küldés',
-  'chat.amrArtifactUpgrade.homeTitle': 'Elkészült az alkotásod. Vidd tovább a következő ötletet.',
-  'chat.amrArtifactUpgrade.homeMessage': 'Válts erősebb modellekre, több párhuzamos feladatra és több havi kreditre.',
-  'chat.amrArtifactUpgrade.homeArtifactCta': 'Alkotás megnyitása',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'chat.antigravityError.launchTerminalCta': 'Bejelentkezés terminálon keresztül',
   'chat.antigravityError.launchSwitchModelCta': 'Modellváltás a terminálban',
   'chat.connectionDropped': 'Ellenőrizd, hogy működik-e a hálózati kapcsolatod, majd próbáld újra.',
   'chat.runError.title.authRequired': 'Engedélyezés szükséges',
-  'chat.runError.title.balance': 'Nincs elég egyenleg',
+  
   'chat.runError.title.connectionDropped': 'A hálózati kapcsolat megszakadt',
-  'chat.runError.title.signInRequired.other': 'A(z) {agent} nincs bejelentkezve',
-  'chat.runError.title.signInRequired.amr': 'Az CapyDesign nincs bejelentkezve',
+  
+  
   'chat.runError.title.rateLimited': 'A modellszolgáltatás túlterhelt',
   'chat.runError.title.modelWindowLimit': 'Nagy a terhelés',
-  'chat.runError.title.membershipConcurrencyLimit': 'Elérted a párhuzamos feladatok korlátját',
+  
   'chat.runError.title.strategyTaskHalted': "A feladatot a minőségi kapu leállította",
   'chat.runError.title.agentReplyIncomplete': "A válasz megjött, de nem rögzült",
   'chat.runError.title.clarificationRepeated': "Az ügynök újabb kérdést tett fel",
@@ -117,8 +117,8 @@ export const hu: Dict = {
   'chat.runError.title.generic': 'A feladat sikertelen',
   'chat.runError.title.artifactMissing': "Nincs előnézhető fájl",
   'chat.runError.artifactMissingMessage': "Ez a feladat nem hozott létre előnézhető fájlt. Add meg, mit szeretnél generáltatni, és próbáld újra.",
-  'chat.runError.signInMessage.amr': 'Jelentkezz be, hogy lásd a projektjeidet és folytathasd a beszélgetést.',
-  'chat.runError.signInMessage.other': 'Először jelentkezz be a(z) {agent} szolgáltatásba, majd próbáld újra.',
+  
+  
   'chat.runError.agentFallback': 'az ügynök',
   'chat.runError.sourceLabel': 'Hiba részletei',
   'chat.runError.sourceExpandAria': 'Hibaforrás kibontása',
@@ -139,8 +139,8 @@ export const hu: Dict = {
   'chat.runError.rateLimitedMessage': 'Jelenleg sok kérés érkezik ehhez a modellszolgáltatáshoz, és elérted a szolgáltató kérésgyakorisági korlátját. Próbáld újra később, vagy próbálj meg másik modellre váltani.',
   'chat.runError.modelWindowLimitMessage': 'Jelenleg nagy a terhelés. Próbáld újra {retryAt} után. Ezt a kérést nem számoltuk fel.',
   'chat.runError.modelWindowLimitMessageNoTime': 'Jelenleg nagy a terhelés. Próbáld újra kicsit később. Ezt a kérést nem számoltuk fel.',
-  'chat.runError.membershipConcurrencyLimitMessage': 'A tagságod párhuzamos feladatainak kerete betelt. Várj {retryAt} időpontig, majd próbáld újra, vagy válts másik ügynökre. Az azonnali újrapróbálkozás nem segít.',
-  'chat.runError.membershipConcurrencyLimitMessageNoTime': 'A tagságod párhuzamos feladatainak kerete betelt. Várd meg egy másik feladat végét, majd próbáld újra, vagy válts másik ügynökre.',
+  
+  
   'chat.runError.upstreamUnavailableMessage': 'A jelenlegi modell átmenetileg nem érhető el. Próbáld újra később, vagy válts modellt.',
   'chat.runError.toolLoopMessage': 'A(z) {agent} ugyanazt a műveletet ismételte előrehaladás nélkül, ezért leállt. Ellenőrizd a célfájlt vagy parancsot, majd próbáld újra.',
   'chat.runError.outputInvalidMessage': 'Próbáld újragenerálni, vagy válts modellt, és próbáld újra. Ha ez rendszeresen előfordul, fordulj az ügyfélszolgálathoz.',
@@ -154,7 +154,7 @@ export const hu: Dict = {
   'chat.runError.title.cpuUnsupported': "A processzor nem támogatott",
   'chat.runError.title.cliSessionRefused': "Nem kompatibilis ügynökverzió",
   'chat.runError.quotaExhaustedMessage': "A modellszolgáltatásod kerete vagy számlázási korlátja elfogyott, ezért az újrapróbálkozás nem segít. Tölts fel a szolgáltatódnál, vagy válts másik modellre vagy szolgáltatásra.",
-  'chat.runError.workspaceCreditsMessage': "A munkaterületed kreditjei elfogytak. Adj hozzá kreditet (vagy kérd a munkaterület tulajdonosát, hogy töltse fel), vagy válts másik modellre vagy szolgáltatásra.",
+  
   'chat.runError.timedOutMessage': "Az MI hosszú ideje nem küldött új választ, ezért ez a futás leállt. Kérjük, próbáld újra később.",
   'chat.runError.inactivityTimeoutMessage': "Az MI hosszú ideje nem küldött új választ, ezért ez a futás leállt. Kérjük, próbáld újra később.",
   'chat.runError.emptyOutputMessage': "Az ügynök úgy fejeződött be, hogy nem adott kimenetet. Ez általában átmeneti, próbáld újra.",
@@ -163,8 +163,8 @@ export const hu: Dict = {
   'chat.runError.cpuUnsupportedMessage': "Az ügynök futtatókörnyezete olyan CPU-utasításkészletet (AVX2) igényel, amellyel ez az eszköz nem rendelkezik, ezért nem tud elindulni. Frissítsd az CapyDesignt a legújabb verzióra, amely kompatibilis futtatókörnyezetet tartalmaz.",
   'chat.runError.title.agentCrashed': 'A feladat váratlanul megszakadt',
   'chat.runError.agentCrashedMessage': 'Próbáld újragenerálni, vagy válts modellt, és próbáld újra. Ha ez rendszeresen előfordul, fordulj az ügyfélszolgálathoz.',
-  'chat.runError.title.accountSuspended': 'A fiók fel van függesztve',
-  'chat.runError.accountSuspendedMessage': 'Az ok megismeréséhez vagy a visszaállítás kéréséhez fordulj az ügyfélszolgálathoz.',
+  
+  
   'chat.runError.fallbackMessage': 'Ezúttal nem sikerült. Ha ismétlődik, küldd el nekünk a naplókat.',
   'chat.runError.cliSessionRefusedMessage':
     "A(z) {agent} megtagadta a munkamenet indítását. A telepített verzió általában nem kompatibilis az CapyDesignnal — válts másik verzióra, majd próbáld újra.",
@@ -340,17 +340,17 @@ export const hu: Dict = {
   'settings.onboardingSystemsBody': 'Válasszon vagy hozzon létre egy márkarendszert, hogy a generált munka valós színeket, tipográfiát és terméknyelvet kövessen.',
   'settings.onboardingExecutionTitle': 'Válasszon modellforrást',
   'settings.onboardingExecutionBody': 'Használja az CapyDesign Hosted szolgáltatást, csatlakoztasson helyi ügynököt, vagy adja meg saját modellkulcsát.',
-  'settings.onboardingAmrCloudBenefitOfficial': 'Hivatalosan ajánlott',
-  'settings.onboardingAmrCloudBenefitReady': 'Telepítés nélkül',
+  
+  
   'settings.onboardingAmrCloudBenefitModels': 'Érje el a Claude, GPT, Fable 5 és 5.6 sol modelleket időszakos kedvezménnyel és magas párhuzamossággal.',
-  'settings.onboardingAmrCloudBenefitPricing': 'SOTA Harness',
-  'settings.onboardingAmrCloudUpcomingLabel': 'Hamarosan',
-  'settings.onboardingAmrCloudUpcomingImageVideo': 'Kép és videó',
-  'settings.onboardingAmrCloudUpcomingSkills': 'Sok Skill',
-  'settings.onboardingAmrCloudUpcomingRouting': 'Intelligens útválasztás',
+  
+  
+  
+  
+  
   'settings.onboardingAmrModelSourceLabel': 'CapyDesign Hosted',
-  'settings.onboardingAmrCloudAuthorizeAction': 'CapyDesign Cloud engedélyezése',
-  'settings.onboardingAmrCloudAuthorizedAction': 'Engedélyezve',
+  
+  
   'settings.onboardingStepConnect': 'Connect',
   'settings.onboardingStepDesignSystem': 'Dizájnrendszer létrehozása',
   'settings.onboardingStepProfile': 'About you',
@@ -363,15 +363,15 @@ export const hu: Dict = {
   'settings.onboardingCloudBody': 'Jelentkezz be, és azonnal tervezz felhőalapú MI-vel – bonyolult beállítás nélkül.',
   'settings.onboardingCloudSignIn': 'Bejelentkezés az CapyDesignba',
   'settings.onboardingCloudContinue': 'Folytatás (bejelentkezve)',
-  'settings.onboardingCloudAlternative': 'Helyi CLI vagy saját API-kulcs használata',
+  
   'settings.onboardingCloudRights': 'Minden jog fenntartva.',
   'settings.onboardingCloudOr': 'vagy',
   'settings.onboardingGateTooltipNoRuntime': 'A következő lépések MI-n futnak — válassz futtatókörnyezetet a folytatáshoz.',
-  'settings.onboardingGateTooltipAmr': 'A következő lépések MI-n futnak — jelentkezz be az CapyDesign Cloud-be a folytatáshoz.',
+  
   'settings.onboardingGateTooltipLocal': 'A következő lépések MI-n futnak — válassz egy elérhető helyi CLI-t a folytatáshoz.',
   'settings.onboardingGateTooltipByok': 'A következő lépések MI-n futnak — add meg és teszteld a modellkulcsodat a folytatáshoz.',
   'settings.onboardingRecommended': 'Ajánlott',
-  'settings.onboardingAmrCloudOfficialBadge': 'Hivatalos',
+  
   'settings.onboardingLocalTitle': 'Helyi ügynök',
   'settings.onboardingLocalBody': 'Használja a Claude Code, Codex, Cursor, OpenCode, Kimi, Qwen, Hermes, Kiro és más eszközöket.',
   'settings.onboardingLocalAction': 'Open CLI settings',
@@ -417,7 +417,7 @@ export const hu: Dict = {
   'settings.onboardingSelectPlaceholder': 'Válassz egyet',
   'settings.onboardingSelectMultiplePlaceholder': 'Válassz egyet vagy többet',
   'settings.onboardingOrgSolo': 'Egyedül / személyes (1)',
-  'settings.onboardingOrgTeam': 'Kis csapat (2-10)',
+  
   'settings.onboardingOrgStartup': 'Startup / kkv (11-50)',
   'settings.onboardingOrgGrowth': 'Növekvő vállalat (51-200)',
   'settings.onboardingOrgMidMarket': 'Közepes vállalat (201-1000)',
@@ -460,7 +460,7 @@ export const hu: Dict = {
   'settings.modeApi': 'API-szolgáltató',
   'settings.cloudCalloutTitle': 'Use CapyDesign Cloud',
   'settings.cloudCalloutBody': 'Sign in to the cloud version to enable team spaces, shared projects, member permissions, and the audit dashboard.',
-  'settings.cloudCalloutButton': 'Sign in / Register',
+  
   'settings.modeApiMeta': 'API-szolgáltatók',
   'settings.byokNoFileToolsNotice': 'A BYOK nem tud projektfájlokat olvasni, írni vagy szerkeszteni. Ha kódmódosításra van szüksége, használja a Local CLI-t.',
   'settings.byokDraftNotice': 'Töltsd ki a kötelező mezőket a szolgáltató mentéséhez. A jelenlegi beállítás aktív marad.',
@@ -507,29 +507,29 @@ export const hu: Dict = {
   'settings.agentInstallGroup': 'Telepíthető ({count})',
   'settings.agentAuthRequired': 'Hitelesítés szükséges',
   'settings.agentAuthUnknown': 'A hitelesítési állapot ismeretlen',
-  'settings.amrCloud': 'CapyDesign Cloud',
-  'settings.amrAuthorize': 'Engedélyezés',
+  
+  
   'settings.amrBenefitOfficial': 'Officially maintained',
-  'settings.amrBenefitLowerPrice': 'Lower price',
+  
   'settings.amrBenefitManyModels': 'Számos modell',
-  'settings.amrPromoBonus': 'Korlátozott bónusz: +100%',
-  'settings.amrSignInToContinue': 'Jelentkezzen be a folytatáshoz',
+  
+  
   'settings.amrSignIn': 'Bejelentkezés',
   'settings.amrSignedIn': 'Bejelentkezve',
-  'settings.amrWalletBalance': 'Wallet balance',
+  
   'settings.amrWalletUnavailable': 'Balance temporarily unavailable',
-  'settings.amrWalletUpdatedAt': 'Updated {time}',
-  'settings.amrWalletCached': 'cached',
-  'settings.amrWalletRefresh': 'Refresh',
-  'settings.amrWalletRefreshTitle': 'Refresh CapyDesign Cloud wallet balance',
-  'settings.amrNotSignedIn': 'Nincs bejelentkezve',
+  
+  
+  
+  
+  
   'settings.amrSigningIn': 'Bejelentkezés…',
   'settings.amrActivationHint': 'Nem nyílt meg a bejelentkezési oldal? Az alábbi gombbal nyisd meg újra.',
   'settings.amrActivationBrowserFailed': 'A böngészőt nem sikerült automatikusan megnyitni. A folytatáshoz nyissa meg az alábbi bejelentkezési oldalt.',
   'settings.amrActivationOpen': 'Bejelentkezési oldal megnyitása',
   'settings.amrCancelSignIn': 'Bejelentkezés megszakítása',
-  'settings.amrAccountStatus': 'CapyDesign Cloud fiók állapota',
-  'settings.amrConsole': 'Kezelés',
+  
+  
   'settings.amrBalance': 'Keret',
   'settings.amrPlan': 'Csomag',
   'settings.amrUpgrade': 'Frissítés',
@@ -537,13 +537,13 @@ export const hu: Dict = {
   'settings.amrLoginErrorCompact': 'Az CapyDesign Cloud bejelentkezés sikertelen.',
   'settings.advanced': 'Speciális',
   'settings.amrLogin': 'Bejelentkezés',
-  'settings.amrLogout': 'Kijelentkezés',
-  'settings.amrLoggingIn': 'Bejelentkezés…',
-  'settings.amrLoggingOut': 'Kijelentkezés…',
-  'settings.amrLoggedInAs': 'Bejelentkezve mint {email}',
-  'settings.amrLoggedInWithPlan': 'Bejelentkezve mint {email} · {plan}',
-  'settings.amrLoggedInPill': 'Bejelentkezve',
-  'settings.amrNotLoggedIn': 'Nincs bejelentkezve',
+  
+  
+  
+  
+  
+  
+  
   'settings.apiSection': 'Anthropic API',
   'settings.quickFillProvider': 'Szolgáltató gyors kitöltése',
   'settings.providerPreset': 'Szolgáltatói előbeállítás',
@@ -625,7 +625,7 @@ export const hu: Dict = {
   'settings.modelUsesCliDefault': 'CLI-alapértelmezés',
   'settings.modelSourceFallback': 'Beépített lista',
   'settings.reasoningPicker': 'Gondolkodási erőfeszítés',
-  'settings.serviceTierPicker': 'Szolgáltatási szint',
+  
   'settings.modelPickerHint': 'A CLI-tól kérdezi le, ha az közzéteszi a `models` parancsot. Az „Alapértelmezett" a CLI saját konfigjára bízza a választást; az „Egyedi…" tetszőleges, a CLI által elfogadott modell-id-t enged megadni.',
   'settings.modelPickerLiveHint': 'A modellek frissültek a telepített CLI-ből. Az Alapértelmezett továbbra is a CLI konfigurációját használja.',
   'settings.modelPickerLiveCatalogOnlyHint': 'A modellek frissültek a telepített CLI-ből.',
@@ -766,21 +766,21 @@ export const hu: Dict = {
   'entry.mailAria': 'Kérdésed van? Írj nekünk e-mailt',
   'entry.accountSettings': 'Beállítások',
   'chat.collapsePane': 'Beszélgetéspanel összecsukása',
-  'collabPresence.ariaOne': '1 collaborator online',
-  'collabPresence.aria': '{count} collaborators online',
-  'collabPresence.ariaWithSelfOne': '1 collaborator online, including you',
-  'collabPresence.ariaWithSelf': '{count} collaborators online, including you',
-  'collabPresence.moreOnline': '{count} more online',
-  'collabPresence.dialogTitle': 'Online collaborators',
-  'collabPresence.onlineCount': '{count} online',
-  'collabPresence.selfBadge': 'You',
-  'collabPresence.roleOwner': 'Owner',
-  'collabPresence.roleAdmin': 'Admin',
-  'collabPresence.roleMember': 'Member',
-  'collabPresence.viewingFileSelf': 'You are viewing {file}',
-  'collabPresence.viewingFileOther': 'Viewing {file}',
-  'collabPresence.viewingProjectSelf': 'You are viewing this project',
-  'collabPresence.viewingProjectOther': 'Viewing this project',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   'entry.followXLabel': 'Kövesd a @OpenDesignHQ fiókot az X-en',
   'entry.followThreadsLabel': 'Follow CapyDesign on Threads',
   'entry.youtubeLabel': 'CapyDesign on YouTube',
@@ -800,7 +800,7 @@ export const hu: Dict = {
   "entry.billingTierTeam": "Teams",
   "entry.billingTierFree": "Free",
   "entry.billingTierPro": "Pro",
-  "entry.billingFamilyCreator": "Creator",
+  
   "entry.creditsAria": "{tier} · credits remaining",
   "entry.creditsAriaWithBalance": "{tier} · {balance} credits remaining",
   "entry.creditsGrantTip": "Teams credits are granted by subscription allowance. Usage is available in billing.",
@@ -812,12 +812,12 @@ export const hu: Dict = {
   "entry.creditsMemberNoticeTitle": "Need more credits?",
   "entry.creditsMemberNoticeBody": "You are currently a Member and cannot add credits yourself. Ask a team Admin to increase the allowance when you need more.",
   "entry.creditsMemberNoticeAction": "Ask Admin to increase allowance",
-  "entry.accountToggleTheme": "Toggle theme",
-  "entry.accountSwitchLanguage": "Switch language",
-  "entry.accountLanguageMeta": "中文 / English",
+  
+  
+  
   "entry.accountGithubHelp": "Get help on GitHub",
   "entry.accountFeatureRequest": "Submit feature request",
-  "entry.accountAddAccount": "Add account",
+  
   "entry.accountSignOut": "Sign out",
   "signOut.confirmTitle": "Kijelentkezés",
   "signOut.confirmMessage": "Biztosan ki szeretne jelentkezni?",
@@ -829,8 +829,8 @@ export const hu: Dict = {
   "entry.blankAllProjectsTitle": "No team projects yet",
   "entry.blankAllProjectsDescription": "Projects shared to the team will appear here for everyone in the workspace.",
   "entry.blankCreate": "New project",
-  'entry.workspaceTeamsTitle': 'Workspace csapatoknak — mondd el, mire van szüksége a csapatodnak',
-  'entry.workspaceTeamsAria': 'A „Workspace csapatoknak” oldal megnyitása',
+  
+  
   'entry.navExpand': 'Oldalsáv kibontása',
   'entry.navCollapse': 'Oldalsáv összecsukása',
   'entry.navNewProject': 'Új projekt',
@@ -848,18 +848,18 @@ export const hu: Dict = {
   'entry.draftsDescription': 'Projects you created, visible only to you',
   'entry.allProjectsDescription': 'Projects owned by everyone on the team',
   'entry.navBoard': 'Board',
-  'entry.navTeamSection': 'Team',
+  
   'entry.teamSlotNote': 'This space is provided by the team service. Integration is in progress.',
-  "entry.cloudCalloutTitle": "CapyDesign Cloud",
-  'entry.cloudRecovering': 'Account connection interrupted. Recovering automatically…',
+  
+  
   'entry.authExpiredBody': 'Your sign-in has expired. Sign in to continue using CapyDesign Cloud.',
   'home.createFailed': 'Failed to start the run. Try again.',
   'home.daemonRecovering': 'Local service connection interrupted. Recovering automatically…',
   'home.bundledScenarioMissing': 'Bundled scenario "{scenarioId}" is not installed. Reinstall the daemon to restore the default plugin set.',
-  "entry.cloudCalloutBody": "Jelentkezzen be az CapyDesign Cloud használatához és a felhőalapú együttműködéshez",
-  "entry.cloudCalloutDismissAria": "CapyDesign Cloud értesítés bezárása",
-  'entry.workspaceLockedNote': 'This workspace is locked. Restore billing to resume editing shared projects.',
-  'entry.workspaceLockedRecover': 'Restore access',
+  
+  
+  
+  
   'messageCenter.openAria': 'Open message center',
   'messageCenter.unreadCount': '{count} unread',
   'messageCenter.title': 'Message center',
@@ -889,8 +889,8 @@ export const hu: Dict = {
   'goPlanSunset.confirming': 'Confirming…',
   'goPlanSunset.acknowledge': 'Got it',
   'workspaceTabs.project': 'Projekt',
-  'workspaceTabs.pluginDetails': 'Plugin részletei',
-  'workspaceTabs.marketplace': 'Marketplace',
+  
+  
   'homeHero.title': 'Mit tervezel ma az ügynököddel?',
   'homeHero.startWithTemplate': 'Kezdés sablonnal…',
   'homeHero.startBlankProject': 'kezdj egy üres projektet',
@@ -1057,7 +1057,7 @@ export const hu: Dict = {
   'handoff.frameworkPrompt.solid': 'SolidJS',
   'handoff.frameworkPrompt.next': 'Next.js / React',
   'handoff.frameworkPrompt.vanilla': 'vanilla JavaScript, HTML és CSS',
-  'handoff.amrWebsite': 'CapyDesign Cloud webhely megnyitása',
+  
   'handoff.copyPrompt': 'Prompt másolása',
   'handoff.copyPromptForTarget': 'Prompt másolása ehhez: {target}',
   'handoff.copied': 'Másolva',
@@ -1111,7 +1111,7 @@ export const hu: Dict = {
   'recentProjects.sortName': 'Name',
   'recentProjects.viewList': 'List view',
   'recentProjects.sharedBadge': 'Shared',
-  'recentProjects.sharedProjectFallbackName': 'Shared project',
+  
   'recentProjects.creatorLine': 'Created by {name}',
   'recentProjects.selfCreator': 'Me',
   'recentProjects.teamMemberCreator': 'Team member',
@@ -1670,7 +1670,7 @@ export const hu: Dict = {
   'connectors.title': 'Kapcsolók',
   'connectors.subtitle': 'Helyi és jövőbeli adatforrások, amelyek élő artefaktokat táplálhatnak.',
   'connectors.account': 'Fiók',
-  'connectors.noAccount': 'Nincs csatlakoztatva',
+  
   'connectors.tools': 'Eszközök',
   'connectors.connect': 'Csatlakozás',
   'connectors.disconnect': 'Leválasztás',
@@ -2016,8 +2016,8 @@ export const hu: Dict = {
   'avatar.useApi': 'API · BYOK használata',
   'avatar.codeAgent': 'Kód-ügynök',
   'avatar.rescan': 'PATH újraellenőrzése',
-  'avatar.amrConsole': 'CapyDesign Cloud-fiók',
-  'avatar.amrConsoleMeta': 'Egyenleg és feltöltés',
+  
+  
   'avatar.settings': 'Beállítások',
   'avatar.backToProjects': 'Vissza a projektekhez',
   'avatar.metaActive': 'aktív',
@@ -2775,7 +2775,7 @@ export const hu: Dict = {
   'misc.primary': 'Elsődleges',
   'misc.designSystem': 'Designrendszer',
   'workspace.designFiles': 'Designfájlok',
-  'workspace.focusMode': 'Munkaterület fókuszálása',
+  
   'workspace.showChat': 'Csevegés megjelenítése',
   'workspace.closeTab': 'Lap bezárása',
   'workspace.fileSyncDownloading': 'Letöltés a csapattól…',
@@ -2786,13 +2786,13 @@ export const hu: Dict = {
   'workspace.deleteSelectedFilesConfirm': 'Törlöd a(z) {n} kijelölt fájlt a projektmappából?',
   'workspace.deleteSelectedFilesPartial': '{n} fájl törlése sikertelen.',
   'workspace.openFromDesignFiles': 'Nyiss meg egy fájlt innen:',
-  'workspace.designFilesLink': 'Designfájlok',
+  
   'workspace.loadingSketch': 'Vázlat betöltése…',
   'workspace.newTab': 'Új lap',
   'workspace.searchFilesPlaceholder': 'Search files…',
   'workspace.openTabs': 'Megnyitott lapok',
-  'workspace.searchTabs': 'Search tabs',
-  'workspace.noTabsFound': 'No tabs found',
+  
+  
   'workspace.openFile': 'Open a file',
   'workspace.noFilesMatch': 'No files match',
   'workspace.allFiles': 'All',
@@ -3203,14 +3203,14 @@ export const hu: Dict = {
   'fileViewer.presenterMode': 'Előadói mód',
   'fileViewer.exitPresentation': 'Bemutató bezárása',
   'fileViewer.shareLabel': 'Megosztás',
-  'fileViewer.shareMenuShareLink': 'MEGOSZTÁS',
+  
   'fileViewer.shareMenuPublishOnline': 'MEGOSZTÁS SAJÁT TÁRHELYEN',
-  'fileViewer.shareMenuDownload': 'LETÖLTÉS',
-  'fileViewer.shareMenuPresentation': 'Prezentáció',
-  'fileViewer.shareMenuSourceFiles': 'Forrásfájlok',
-  'fileViewer.shareMenuSave': 'MENTÉS',
+  
+  
+  
+  
   'fileViewer.shareMenuPublishViaOd': 'GYORS MEGOSZTÁS · OPENDESIGN',
-  'fileViewer.unifiedShareAria': 'Share and export actions',
+  
   'fileViewer.unifiedShareTab': 'Share',
   'fileViewer.unifiedExportTab': 'Export',
   'fileViewer.unifiedSendTab': 'Send to...',
@@ -3226,13 +3226,13 @@ export const hu: Dict = {
   'fileViewer.publishFile': 'Publish file',
   'fileViewer.publishingFile': 'Link létrehozása…',
   'fileViewer.unpublishFile': 'Megosztás leállítása',
-  'fileViewer.shareEmptyStateTitle': 'Még nincs mit megosztani',
-  'fileViewer.shareEmptyStateDescription': 'Hozz létre egy csapatot, vagy csatlakozz egyhez, hogy megoszthasd ezt a fájlt a kollégáiddal',
-  'fileViewer.shareEmptyStateCreateTeam': 'Csapat létrehozása',
-  'fileViewer.shareTeamMissingTitle': 'Még nincs csapat, amellyel megoszthatnád',
+  
+  
+  
+  
 
-  'fileViewer.publishFileRequiresTeam': 'A nyilvános hivatkozás közzétételéhez csapatmunkaterület szükséges. Válts csapatmunkaterületre, vagy tedd közzé a fájlt a Közzététel funkcióval.',
-  'fileViewer.publishFileRequiresWorkspace': 'A megosztási linkhez bejelentkezett munkaterület szükséges. Jelentkezz be az CapyDesign Cloudba, vagy oszd meg a fájlt telepítéssel.',
+  
+  
   'fileViewer.publishFileFailed': 'Nem sikerült létrehozni a megosztási linket. Próbáld újra, vagy használd a lenti telepítési lehetőségeket.',
   'fileViewer.workspaceShareSuccess': 'Shared with workspace members',
   'fileViewer.workspaceShareFailed': 'Could not share with workspace',
@@ -3242,10 +3242,10 @@ export const hu: Dict = {
   'fileViewer.copyShareLink': 'Megosztási link másolása',
   'fileViewer.openSharePage': 'Megosztási oldal megnyitása',
   'fileViewer.shareLinkRequiresDeploy': 'Előbb tedd közzé online, hogy linket kapj',
-  'fileViewer.shareLinkPublishGuide': 'Tedd közzé online fent a megosztás engedélyezéséhez ↑',
+  
   'fileViewer.shareAfterGenerationComplete': 'A generálás befejezése után megosztható',
   'fileViewer.copyProviderLink': '{provider} hivatkozás másolása',
-  'fileViewer.copyCloudflareLink': 'Cloudflare hivatkozás másolása',
+  
   'fileViewer.screenshotCopying': 'Képernyőkép másolása...',
   'fileViewer.screenshotCopied': 'Képernyőkép a vágólapra másolva',
   'fileViewer.screenshotClipboardDenied': 'A böngésző letiltotta a vágólap-hozzáférést',
@@ -3404,12 +3404,12 @@ export const hu: Dict = {
   'fileViewer.cloudflareDomainPrefixPlaceholder': 'demo',
   'fileViewer.cloudflareDomainPrefixInvalid': 'Csak egy DNS-címkét használj: kisbetűk, számok és kötőjelek.',
   'fileViewer.cloudflareHostnamePreview': 'Egyéni tartomány előnézete: {hostname}',
-  'fileViewer.cloudflareCustomDomainHint': 'Opcionális: egyedi domain csatolása. Ha üresen hagyod, akkor is létrejön egy pages.dev link.',
+  
   'fileViewer.cloudflarePagesDevLinkLabel': 'pages.dev URL',
   'fileViewer.cloudflareCustomDomainLinkLabel': 'Egyéni tartomány',
   'fileViewer.optional': 'Opcionális',
   'fileViewer.vercelPreviewOnly': 'A telepítések egyelőre csak Preview-k.',
-  'fileViewer.cloudflarePagesPreviewHint': 'A Cloudflare Pages Direct Uploadot használ.',
+  
   'fileViewer.savingConfig': 'Mentés…',
   'fileViewer.deployConfigSaveFailed': 'A Vercel beállítások nem menthetők.',
   'fileViewer.deployFailed': 'A telepítés sikertelen. Ellenőrizd a Vercel beállításokat, és próbáld újra.',
@@ -3461,8 +3461,8 @@ export const hu: Dict = {
   'assistant.forkConversation': 'Új beszélgetés',
   'assistant.forkingConversation': 'Új beszélgetés indítása…',
   'assistant.forkNote': 'Beszélgetés folytatása',
-  'assistant.shareToOpenDesign': 'Megosztás az CapyDesignnal',
-  'assistant.shareToOpenDesignBusy': 'Csomag előkészítése…',
+  
+  
   'assistant.feedbackPrompt': 'Visszajelzés',
   'assistant.feedbackPositive': 'Hasznos',
   'assistant.feedbackNegative': 'Nem hasznos',
@@ -3502,10 +3502,10 @@ export const hu: Dict = {
   'chat.runError.actionBlocked.busy': "Ebben a beszélgetésben még fut egy feladat. Az újrapróbálkozás a befejezése után lesz elérhető.",
   'chat.support.channel.feishu': "Feishu közösség",
   'chat.support.channel.discord': "Discord",
-  'chat.amrBalanceOwner.title': "Kérd meg a csapat tulajdonosát a feltöltésre",
-  'chat.amrBalanceOwner.message': "A csapat egyenlegét csak a tulajdonos töltheti fel. Kérd meg „{name}” felhasználót a feltöltésre, mielőtt folytatod.",
-  'chat.amrBalanceOwner.messageNoOwnerName': "A csapat egyenlegét csak a tulajdonos töltheti fel. Kérd meg a csapat tulajdonosát a feltöltésre, mielőtt folytatod.",
-  'chat.amrBalanceOwner.dismissCta': "Értem",
+  
+  
+  
+  
   'assistant.outTokens': '{n} ki',
   'assistant.producedFiles': 'A körben létrehozott fájlok',
   'assistant.openFile': 'Megnyitás',
@@ -4717,16 +4717,16 @@ export const hu: Dict = {
   // other-lane workspace destinations (members / billing / team space).
   'settings.workspace': 'Workspace',
   'settings.workspaceHint': 'Members, billing, and team spaces',
-  'settings.workspaceLede': 'Team-level settings for this workspace. These areas are managed by the team service — open one to continue.',
-  'settings.workspaceBack': 'Back to workspace',
-  'settings.workspaceMembers': 'Members & invites',
-  'settings.workspaceMembersHint': 'Manage who can access this workspace and send invitations.',
-  'settings.workspaceBilling': 'Subscription & seats',
-  'settings.workspaceBillingHint': 'Plan, seats, and payment for this workspace.',
-  'settings.workspaceAutoRecharge': 'Auto-recharge',
-  'settings.workspaceAutoRechargeHint': 'Automatically top up credits when the balance runs low.',
-  'settings.workspaceTeamSpace': 'Team space',
-  'settings.workspaceTeamSpaceHint': 'Shared projects and visibility for your team.',
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   // Full-page Settings (`/settings`): sidebar nav head above the section list.
   'settings.pageBackToHome': 'Back to home',
   'settings.pageNavGroupPersonal': 'Personal',
@@ -4734,9 +4734,9 @@ export const hu: Dict = {
   'newproj.startBlank': 'Üres',
   'newproj.startBlankHint': 'Kezdés a nulláról',
   'workspace.pages': 'Oldalak',
-  'workspace.allProjectFiles': 'A projekt összes fájlja',
+  
   'workspace.newBlankPage': 'Új üres oldal',
-  'workspace.noPagesYet': 'Még nincsenek oldalak',
+  
   'workspace.pageCreateFailed': 'Az oldal létrehozása nem sikerült.',
   'workspace.pageCreatorTitle': 'Oldal létrehozása',
   'workspace.pageCreatorSearch': 'Sablonok keresése',

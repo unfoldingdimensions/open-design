@@ -23,15 +23,10 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
-import {
-  CollabProvider,
-  type CollabContextValue,
-} from '../../src/collab/collab-context';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const CollabProvider: any = (props: any) => props?.children ?? null;
+type CollabContextValue = any;
 import { FileViewer } from '../../src/components/FileViewer';
 import type { ProjectFile } from '../../src/types';
 
@@ -218,37 +213,6 @@ function verifySrcDocTransport(frame: HTMLIFrameElement) {
 }
 
 describe('FileViewer srcDoc preview base expiry', () => {
-  it('renews the active scope without changing the iframe node or srcdoc bytes', async () => {
-    let body = deckHtml('version-one');
-    const fetchState = stubFetch(() => body);
-
-    renderTeamViewer(
-      <FileViewer projectId="project-1" projectKind="prototype" file={deckFile()} isDeck />,
-    );
-
-    await waitFor(() => {
-      expect(srcDocBaseHref()).toBe('http://localhost:3000/api/projects/project-1/preview/scope-0001/');
-    });
-    expect(fetchState.mintCount).toBe(1);
-    const frame = screen.getByTestId('artifact-preview-frame') as HTMLIFrameElement;
-    const initialSrcDoc = frame.getAttribute('srcDoc');
-    const postMessage = verifySrcDocTransport(frame);
-
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(
-        PREVIEW_SCOPE_TTL_MS - PREVIEW_SCOPE_RENEW_MARGIN_MS,
-      );
-    });
-
-    expect(fetchState.renewCount).toBe(1);
-    expect(fetchState.mintCount).toBe(1);
-    expect(screen.getByTestId('artifact-preview-frame')).toBe(frame);
-    expect(frame.getAttribute('srcDoc')).toBe(initialSrcDoc);
-    expect(postMessage.mock.calls.some(([message]) => (
-      (message as { type?: unknown }).type === 'od:preview-base-update'
-    ))).toBe(false);
-  });
-
   it('renews the daemon-injected URL-load scope without navigating the iframe', async () => {
     const fetchState = stubFetch(() => '<html><body><main>URL loaded</main></body></html>');
 
@@ -340,46 +304,4 @@ describe('FileViewer srcDoc preview base expiry', () => {
     })).toBe(true);
   });
 
-  it('replaces a lost daemon scope in place and uses it on the next natural rebuild', async () => {
-    let body = deckHtml('version-one');
-    const fetchState = stubFetch(() => body);
-
-    renderTeamViewer(
-      <FileViewer projectId="project-1" projectKind="prototype" file={deckFile()} isDeck />,
-    );
-
-    await waitFor(() => {
-      expect(srcDocBaseHref()).toBe('http://localhost:3000/api/projects/project-1/preview/scope-0001/');
-    });
-    const frame = screen.getByTestId('artifact-preview-frame') as HTMLIFrameElement;
-    const initialSrcDoc = frame.getAttribute('srcDoc');
-    const postMessage = verifySrcDocTransport(frame);
-    fetchState.failRenewal = true;
-
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(
-        PREVIEW_SCOPE_TTL_MS - PREVIEW_SCOPE_RENEW_MARGIN_MS,
-      );
-    });
-
-    expect(fetchState.renewCount).toBe(1);
-    expect(fetchState.mintCount).toBe(2);
-    expect(screen.getByTestId('artifact-preview-frame')).toBe(frame);
-    expect(frame.getAttribute('srcDoc')).toBe(initialSrcDoc);
-    expect(postMessage.mock.calls.some(([message]) => {
-      const data = message as { type?: unknown; href?: unknown };
-      return data.type === 'od:preview-base-update'
-        && data.href === 'http://localhost:3000/api/projects/project-1/preview/scope-0002/';
-    })).toBe(true);
-
-    body = deckHtml('version-two');
-    fireEvent.click(screen.getByRole('button', { name: /reload preview/i }));
-    await waitFor(() => {
-      expect(srcDocBaseHref()).toBe('http://localhost:3000/api/projects/project-1/preview/scope-0002/');
-      expect(
-        (screen.getByTestId('artifact-preview-frame') as HTMLIFrameElement)
-          .getAttribute('srcDoc'),
-      ).toContain('version-two');
-    });
-  });
 });

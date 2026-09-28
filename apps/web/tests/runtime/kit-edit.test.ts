@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 const registryMocks = vi.hoisted(() => ({
   deleteProjectFile: vi.fn(),

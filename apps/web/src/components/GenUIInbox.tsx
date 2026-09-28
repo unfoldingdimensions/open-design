@@ -7,9 +7,7 @@
 // POST /api/projects/:projectId/genui/:surfaceId/revoke.
 
 import { useCallback, useEffect, useState } from 'react';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
-import { workspaceProjectHeaders } from '../collab/workspace-identity';
-
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 interface SurfaceRow {
   id: string;
   surfaceId: string;
@@ -125,7 +123,7 @@ async function defaultFetchSurfaces(
 ): Promise<SurfaceRow[]> {
   const resp = await fetch(
     `/api/projects/${encodeURIComponent(projectId)}/genui`,
-    workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : undefined,
+    workspaceContext ? { headers: {} } : undefined,
   );
   if (!resp.ok) return [];
   const json = (await resp.json()) as { surfaces?: SurfaceRow[] };
@@ -141,7 +139,7 @@ async function defaultRevokeSurface(
     `/api/projects/${encodeURIComponent(projectId)}/genui/${encodeURIComponent(surfaceId)}/revoke`,
     {
       method: 'POST',
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     },
   );
   if (!resp.ok) {

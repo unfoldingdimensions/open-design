@@ -40,8 +40,6 @@ import {
   renderPluginBriefTemplate,
   resolvedWorkspaceContextForWrite,
 } from '../state/projects';
-import { useProjectCollabContext } from '../collab/collab-context';
-import { useWorkspaceContext } from '../collab/useWorkspaceContext';
 import { useI18n } from '../i18n';
 import { ContextChipStrip } from './ContextChipStrip';
 import { InlinePluginsRail } from './InlinePluginsRail';
@@ -102,8 +100,8 @@ export interface PluginsSectionHandle {
 export const PluginsSection = forwardRef<PluginsSectionHandle, Props>(
   function PluginsSection(props, ref) {
     const { locale } = useI18n();
-    const shellWorkspace = useWorkspaceContext();
-    const projectCollab = useProjectCollabContext();
+    const shellWorkspace = { context: null, loading: false, failure: undefined, identityChangePending: false, resourceReadIdentity: null };
+    const projectCollab = { workspaceContext: null, workspaceContextLoading: false, projectResourceAuthority: null };
     const [applied, setApplied] = useState<ApplyResult | null>(null);
     const [activeRecord, setActiveRecord] = useState<InstalledPluginRecord | null>(null);
 

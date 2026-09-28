@@ -1,13 +1,7 @@
 import type { Express, NextFunction, Request, RequestHandler, Response } from 'express';
-import type {
-  InstalledPluginRecord,
-  PluginDuplicateProjectRequest,
-  PluginDuplicateProjectResponse,
-  Project,
-  ProjectMetadata,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
-import { TeamResourceCopyForbiddenError } from '@capydesign/contracts';
+import type { InstalledPluginRecord, PluginDuplicateProjectRequest, PluginDuplicateProjectResponse, Project, ProjectMetadata } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../local/collab-contract.js';
+import { TeamResourceCopyForbiddenError } from '../../local/team-resource-state.js';
 import {
   duplicatePluginExampleIntoProject,
   PluginDuplicateProjectError,
@@ -15,20 +9,20 @@ import {
 import {
   enforceTeamResourceCopyAllowed,
   type TeamResourceStateProvider,
-} from '../../collab/team-resource-state.js';
+} from '../../local/team-resource-state.js';
 import {
   enforceVerifiedWorkspaceResourceMutation,
   resolveOptionalLocalWorkspaceRequestAuthority,
   type VerifyWorkspaceRequestAuthority,
-} from '../../collab/workspace-resource-mutation.js';
+} from '../../local/workspace-resource-mutation.js';
 import {
   authorizeCreatedProjectWorkspace,
   bindCreatedProjectToWorkspace,
   sendCreatedProjectWorkspaceError,
-} from '../../collab/created-project-workspace.js';
-import type { WorkspaceDirectoryFetchResult } from '../../collab/vela-workspace-context.js';
-import type { PluginShareAction } from '../../services/plugin-share-tasks.js';
-import type { AuthorizeProjectRequest } from '../../collab/project-request-authority.js';
+} from '../../local/created-project-workspace.js';
+import type { WorkspaceDirectoryFetchResult } from '../../local/workspace-directory.js';
+import type { PluginShareAction } from '../../plugins/share-helpers.js';
+import type { AuthorizeProjectRequest } from '../../local/project-request-authority.js';
 import { workspaceTeamPluginBindingResourceId } from '../../plugins/registry.js';
 import { localPluginRegistryScope } from '../../plugins/local-source.js';
 import {
@@ -143,10 +137,6 @@ interface PluginRouteHelpers {
   };
   connectorService: unknown;
   resolvedPortRef: { current: number | null | undefined };
-  pluginShareTaskStore: {
-    get(id: string): PluginShareTaskLike | null;
-    snapshot(task: PluginShareTaskLike, since?: number): unknown;
-  };
   applyBakedPreviews(plugins: InstalledPluginLike[], previewsDir: string): unknown;
   assembleExample(templateHtml: string, slidesHtml: string, title: string): string;
   sendMulterError(res: Response, err: unknown): unknown;
@@ -185,8 +175,6 @@ interface PluginRouteHelpers {
   sendApiError(res: Response, status: number, code: string, message: string): unknown;
   isLocalSameOrigin(req: Request, port: number | null | undefined): boolean;
   handleCandidateDraft(req: Request, res: Response): Promise<unknown>;
-  handleCandidateShareTask(req: Request, res: Response): Promise<unknown>;
-  handleProjectShareTask(req: Request, res: Response): Promise<unknown>;
 }
 
 export interface RegisterPluginRoutesDeps {
@@ -1008,32 +996,8 @@ export function registerProjectPluginRoutes(app: Express, deps: RegisterPluginRo
     if (!await authorizeWrite(req, res, req.params.id)) return;
     return helpers.handleCandidateDraft(req, res);
   });
-  app.post('/api/projects/:id/plugin-candidates/:candidateId/share-tasks', async (req, res) => {
-    if (!await authorizeWrite(req, res, req.params.id)) return;
-    return helpers.handleCandidateShareTask(req, res);
-  });
   app.post('/api/projects/:id/plugins/contribute-open-design', async (req, res) => {
     if (!await authorizeWrite(req, res, req.params.id)) return;
     return helpers.handleProjectPluginCli(req, res, 'contribute-open-design');
-  });
-  app.post('/api/projects/:id/plugins/share-tasks', async (req, res) => {
-    if (!await authorizeWrite(req, res, req.params.id)) return;
-    return helpers.handleProjectShareTask(req, res);
-  });
-  app.post('/api/plugins/share-tasks/:id/wait', async (req, res) => {
-    if (!helpers.isLocalSameOrigin(req, helpers.resolvedPortRef.current)) return res.status(403).json({ error: 'cross-origin request rejected' });
-    const task = helpers.pluginShareTaskStore.get(req.params.id);
-    if (!task) return res.status(404).json({ error: 'task not found' });
-    if (!await deps.authorizeProjectRequest(req, res, task.projectId, { mode: 'read' })) return;
-    const since = Number.isFinite(req.body?.since) ? Number(req.body.since) : 0;
-    const requestedTimeout = Number.isFinite(req.body?.timeoutMs) ? Number(req.body.timeoutMs) : 25_000;
-    const timeoutMs = Math.min(Math.max(requestedTimeout, 0), 25_000);
-    const respond = () => { if (!res.writableEnded) res.json(helpers.pluginShareTaskStore.snapshot(task, since)); };
-    if (task.status === 'done' || task.status === 'failed' || task.progress.length > since) return respond();
-    let resolved = false;
-    const wake = () => { if (resolved) return; resolved = true; task.waiters.delete(wake); clearTimeout(timer); respond(); };
-    task.waiters.add(wake);
-    const timer = setTimeout(wake, timeoutMs);
-    res.on('close', wake);
   });
 }

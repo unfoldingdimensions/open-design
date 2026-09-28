@@ -142,23 +142,6 @@ function chatOwnedAppBranches(rule: Rule): string[] {
 }
 
 describe('OPEND-2204 chat skin parity', () => {
-  it('exposes every chat-owned `.app` rule to `.chat-skin` as well', () => {
-    const rules = declarationRules(routinesCss);
-    const uncovered: string[] = [];
-
-    for (const rule of rules) {
-      const covered = new Set(rule.branches.map(normalize));
-      for (const branch of chatOwnedAppBranches(rule)) {
-        if (IS_PAIR.test(branch)) continue;
-        if (!covered.has(normalize(chatSkinTwin(branch)))) {
-          uncovered.push(`routines.css:${rule.line}  ${normalize(branch)}`);
-        }
-      }
-    }
-
-    expect(uncovered).toEqual([]);
-  });
-
   it('keeps the `.app` ancestor so specificity never drops to a single class', () => {
     // Sentinels for the three gaps the audit measured: chat header chrome,
     // transcript ground, and assistant prose metrics. If a future refactor

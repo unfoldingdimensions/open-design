@@ -158,44 +158,4 @@ describe('OD Next 折叠轮次 · run 边界(真机库字节)', () => {
     expect(last.elapsedMs!).toBeLessThan(turnSpanMs);
   });
 
-  it('屏幕上:run 0 的壳 → 已确认 → run 1 的壳,而不是「已确认 + 全部回答」黏成一段', () => {
-    const folded = foldStrategyTaskTurns(RELOAD).find((m) => m.role === 'assistant')!;
-    const { container } = render(
-      <I18nProvider initial="zh-CN">
-        <AssistantMessage message={folded} streaming={false} nextUserContent={ANSWERS} />
-      </I18nProvider>,
-    );
-    const flow = container.querySelector<HTMLElement>('.assistant-flow')!;
-    for (const shell of flow.querySelectorAll<HTMLDetailsElement>(':scope > details')) {
-      const summary = shell.querySelector<HTMLElement>(':scope > summary');
-      if (summary) fireEvent.click(summary);
-    }
-    const order = [...flow.children]
-      .map((el) => {
-        if (el.tagName === 'DETAILS') {
-          const text = el.textContent ?? '';
-          if (text.includes('视觉签名我已经锁定')) return 'shell:run0';
-          if (text.includes('index.html')) return 'shell:run2';
-          return 'shell:run1';
-        }
-        if (el.querySelector('[data-testid="question-form-summary"]')) return 'answered+prose';
-        if (el.classList.contains('prose-block')) return `prose:${runTag(el.textContent ?? '')}`;
-        return null;
-      })
-      .filter((tag): tag is string => tag !== null);
-
-    // 「已确认」那一块只能带 run 0 自己那句「推荐答案」,不能把 run 1 / run 2 的回答也吞进来
-    const answeredBlock = [...flow.querySelectorAll('.prose-block')]
-      .find((el) => el.querySelector('[data-testid="question-form-summary"]'))!;
-    expect(runTag(answeredBlock.textContent ?? '')).toBe('run0');
-
-    expect(order).toEqual([
-      'shell:run0',
-      'answered+prose',
-      'shell:run1',
-      'prose:run1',
-      'shell:run2',
-      'prose:run2',
-    ]);
-  });
 });

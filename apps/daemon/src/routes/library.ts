@@ -51,9 +51,9 @@ import {
   authorizeCreatedProjectWorkspace,
   bindCreatedProjectToWorkspace,
   sendCreatedProjectWorkspaceError,
-} from '../collab/created-project-workspace.js';
-import type { BoundWorkspaceResourceMutationGate } from '../collab/workspace-resource-mutation.js';
-import type { WorkspaceDirectoryFetchResult } from '../collab/vela-workspace-context.js';
+} from '../local/created-project-workspace.js';
+import type { BoundWorkspaceResourceMutationGate } from '../local/workspace-resource-mutation.js';
+import type { WorkspaceDirectoryFetchResult } from '../local/workspace-directory.js';
 import {
   confirmPairing,
   libraryConnectionStatus,

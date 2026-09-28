@@ -31,67 +31,6 @@ export const LOCALE_LABEL: Record<Locale, string> = {
 // offending string instead of a generic object mismatch.
 export interface Dict {
   // Workspace invite acceptance (C lane)
-  'invite.header.eyebrow': string;
-  'invite.loading': string;
-  'invite.landing.title': string;
-  'invite.landing.subtitle': string;
-  'invite.landing.roleLabel': string;
-  'invite.landing.invitedEmail': string;
-  'invite.landing.expires': string;
-  'invite.role.admin': string;
-  'invite.role.member': string;
-  'invite.role.admin.desc': string;
-  'invite.role.member.desc': string;
-  'invite.accept.cta': string;
-  'invite.accountMismatch.title': string;
-  'invite.accountMismatch.body': string;
-  'invite.accountMismatch.continue': string;
-  'invite.accountMismatch.switch': string;
-  'invite.accepting.title': string;
-  'invite.accepting.body': string;
-  'invite.success.title': string;
-  'invite.success.body': string;
-  'invite.success.roleReceipt': string;
-  'invite.success.enter': string;
-  'invite.open.cta': string;
-  'invite.open.opening': string;
-  'invite.open.retry': string;
-  'invite.notInstalled.title': string;
-  'invite.notInstalled.body': string;
-  'invite.notInstalled.download': string;
-  'invite.error.title': string;
-  'invite.error.invite_expired': string;
-  'invite.error.invite_consumed': string;
-  'invite.error.workspace_seat_limit_reached': string;
-  'invite.error.workspace_subscription_locked': string;
-  'invite.error.workspace_not_found': string;
-  'invite.error.workspace_forbidden': string;
-  'invite.error.invite_unavailable': string;
-  'invite.error.generic': string;
-  'invite.error.retry': string;
-  'workspaceInvite.dialogAria': string;
-  'workspaceInvite.title': string;
-  'workspaceInvite.freePlanBody': string;
-  'workspaceInvite.teamPlanBody': string;
-  'workspaceInvite.seatsExhaustedBody': string;
-  'workspaceInvite.seatsExhaustedAction': string;
-  'workspaceInvite.emailLabel': string;
-  'workspaceInvite.roleLabel': string;
-  'workspaceInvite.defaultRoleLabel': string;
-  'workspaceInvite.emailPlaceholder': string;
-  'workspaceInvite.removeRow': string;
-  'workspaceInvite.addMember': string;
-  'workspaceInvite.visibilityQuestion': string;
-  'workspaceInvite.visibilityAnswer': string;
-  'workspaceInvite.sent': string;
-  'workspaceInvite.sending': string;
-  'workspaceInvite.confirm': string;
-  'workspaceInvite.submitFailed': string;
-  'workspaceInvite.errorAlreadyMember': string;
-  'workspaceInvite.errorPendingInvite': string;
-  'workspaceInvite.errorNoSession': string;
-  'workspaceInvite.errorNoWorkspace': string;
-  'workspaceInvite.errorUnreachable': string;
   // Common
   'common.cancel': string;
   'chat.selectFromLibrary': string;
@@ -263,17 +202,8 @@ export interface Dict {
   'settings.onboardingSystemsBody': string;
   'settings.onboardingExecutionTitle': string;
   'settings.onboardingExecutionBody': string;
-  'settings.onboardingAmrCloudBenefitOfficial': string;
-  'settings.onboardingAmrCloudBenefitReady': string;
   'settings.onboardingAmrCloudBenefitModels': string;
-  'settings.onboardingAmrCloudBenefitPricing': string;
-  'settings.onboardingAmrCloudUpcomingLabel': string;
-  'settings.onboardingAmrCloudUpcomingImageVideo': string;
-  'settings.onboardingAmrCloudUpcomingSkills': string;
-  'settings.onboardingAmrCloudUpcomingRouting': string;
   'settings.onboardingAmrModelSourceLabel': string;
-  'settings.onboardingAmrCloudAuthorizeAction': string;
-  'settings.onboardingAmrCloudAuthorizedAction': string;
   'settings.onboardingStepConnect': string;
   'settings.onboardingStepDesignSystem': string;
   'settings.onboardingStepProfile': string;
@@ -286,15 +216,12 @@ export interface Dict {
   'settings.onboardingCloudBody': string;
   'settings.onboardingCloudSignIn': string;
   'settings.onboardingCloudContinue': string;
-  'settings.onboardingCloudAlternative': string;
   'settings.onboardingCloudOr': string;
   'settings.onboardingCloudRights': string;
   'settings.onboardingGateTooltipNoRuntime': string;
-  'settings.onboardingGateTooltipAmr': string;
   'settings.onboardingGateTooltipLocal': string;
   'settings.onboardingGateTooltipByok': string;
   'settings.onboardingRecommended': string;
-  'settings.onboardingAmrCloudOfficialBadge': string;
   'settings.onboardingLocalTitle': string;
   'settings.onboardingLocalBody': string;
   'settings.onboardingLocalAction': string;
@@ -340,7 +267,6 @@ export interface Dict {
   'settings.onboardingSelectPlaceholder': string;
   'settings.onboardingSelectMultiplePlaceholder': string;
   'settings.onboardingOrgSolo': string;
-  'settings.onboardingOrgTeam': string;
   'settings.onboardingOrgStartup': string;
   'settings.onboardingOrgGrowth': string;
   'settings.onboardingOrgMidMarket': string;
@@ -383,7 +309,6 @@ export interface Dict {
   'settings.modeApi': string;
   'settings.cloudCalloutTitle': string;
   'settings.cloudCalloutBody': string;
-  'settings.cloudCalloutButton': string;
   'settings.modeApiMeta': string;
   'settings.byokNoFileToolsNotice': string;
   'settings.byokDraftNotice': string;
@@ -431,36 +356,16 @@ export interface Dict {
   'settings.agentAuthUnknown': string;
   'settings.advanced': string;
   'settings.amrLogin': string;
-  'settings.amrLogout': string;
-  'settings.amrLoggingIn': string;
-  'settings.amrLoggingOut': string;
-  'settings.amrLoggedInAs': string;
-  'settings.amrLoggedInWithPlan': string;
-  'settings.amrLoggedInPill': string;
-  'settings.amrNotLoggedIn': string;
-  'settings.amrCloud': string;
-  'settings.amrAuthorize': string;
   'settings.amrBenefitOfficial': string;
-  'settings.amrBenefitLowerPrice': string;
   'settings.amrBenefitManyModels': string;
-  'settings.amrPromoBonus': string;
-  'settings.amrSignInToContinue': string;
   'settings.amrSignIn': string;
   'settings.amrSignedIn': string;
-  'settings.amrWalletBalance': string;
   'settings.amrWalletUnavailable': string;
-  'settings.amrWalletUpdatedAt': string;
-  'settings.amrWalletCached': string;
-  'settings.amrWalletRefresh': string;
-  'settings.amrWalletRefreshTitle': string;
-  'settings.amrNotSignedIn': string;
   'settings.amrSigningIn': string;
   'settings.amrActivationHint': string;
   'settings.amrActivationBrowserFailed': string;
   'settings.amrActivationOpen': string;
   'settings.amrCancelSignIn': string;
-  'settings.amrAccountStatus': string;
-  'settings.amrConsole': string;
   'settings.amrBalance': string;
   'settings.amrPlan': string;
   'settings.amrUpgrade': string;
@@ -468,16 +373,6 @@ export interface Dict {
   // other-lane workspace destinations. Shown only for a team workspace.
   'settings.workspace': string;
   'settings.workspaceHint': string;
-  'settings.workspaceLede': string;
-  'settings.workspaceBack': string;
-  'settings.workspaceMembers': string;
-  'settings.workspaceMembersHint': string;
-  'settings.workspaceBilling': string;
-  'settings.workspaceBillingHint': string;
-  'settings.workspaceAutoRecharge': string;
-  'settings.workspaceAutoRechargeHint': string;
-  'settings.workspaceTeamSpace': string;
-  'settings.workspaceTeamSpaceHint': string;
   // Full-page Settings (`/settings`): sidebar nav head above the section list
   // (back-to-home link, decorative search field, personal group label).
   'settings.pageBackToHome': string;
@@ -565,7 +460,6 @@ export interface Dict {
   'settings.modelUsesCliDefault': string;
   'settings.modelSourceFallback': string;
   'settings.reasoningPicker': string;
-  'settings.serviceTierPicker': string;
   'settings.modelPickerHint': string;
   'settings.modelPickerLiveHint': string;
   'settings.modelPickerLiveCatalogOnlyHint': string;
@@ -1133,21 +1027,6 @@ export interface Dict {
   'entry.mailAria': string;
   'entry.accountSettings': string;
   'chat.collapsePane': string;
-  'collabPresence.ariaOne': string;
-  'collabPresence.aria': string;
-  'collabPresence.ariaWithSelfOne': string;
-  'collabPresence.ariaWithSelf': string;
-  'collabPresence.moreOnline': string;
-  'collabPresence.dialogTitle': string;
-  'collabPresence.onlineCount': string;
-  'collabPresence.selfBadge': string;
-  'collabPresence.roleOwner': string;
-  'collabPresence.roleAdmin': string;
-  'collabPresence.roleMember': string;
-  'collabPresence.viewingFileSelf': string;
-  'collabPresence.viewingFileOther': string;
-  'collabPresence.viewingProjectSelf': string;
-  'collabPresence.viewingProjectOther': string;
   'entry.followXLabel': string;
   'entry.followThreadsLabel': string;
   'entry.youtubeLabel': string;
@@ -1167,7 +1046,6 @@ export interface Dict {
   'entry.billingTierTeam': string;
   'entry.billingTierFree': string;
   'entry.billingTierPro': string;
-  'entry.billingFamilyCreator': string;
   'entry.creditsAria': string;
   'entry.creditsAriaWithBalance': string;
   'entry.creditsGrantTip': string;
@@ -1179,12 +1057,8 @@ export interface Dict {
   'entry.creditsMemberNoticeTitle': string;
   'entry.creditsMemberNoticeBody': string;
   'entry.creditsMemberNoticeAction': string;
-  'entry.accountToggleTheme': string;
-  'entry.accountSwitchLanguage': string;
-  'entry.accountLanguageMeta': string;
   'entry.accountGithubHelp': string;
   'entry.accountFeatureRequest': string;
-  'entry.accountAddAccount': string;
   'entry.accountSignOut': string;
   // Sign-out confirmation dialog (recvqgMWpJZqhL) — shared by every logout
   // entry point (nav-rail account menu + AMR account pill) so a stray click
@@ -1199,8 +1073,6 @@ export interface Dict {
   'entry.blankAllProjectsTitle': string;
   'entry.blankAllProjectsDescription': string;
   'entry.blankCreate': string;
-  'entry.workspaceTeamsTitle': string;
-  'entry.workspaceTeamsAria': string;
   // Left nav rail (icon-only) — surface labels also serve as tooltips
   'entry.navExpand': string;
   'entry.navCollapse': string;
@@ -1220,18 +1092,11 @@ export interface Dict {
   'entry.draftsDescription': string;
   'entry.allProjectsDescription': string;
   'entry.navBoard': string;
-  'entry.navTeamSection': string;
   'entry.teamSlotNote': string;
-  'entry.cloudCalloutTitle': string;
-  'entry.cloudRecovering': string;
   'entry.authExpiredBody': string;
   'home.createFailed': string;
   'home.daemonRecovering': string;
   'home.bundledScenarioMissing': string;
-  'entry.cloudCalloutBody': string;
-  'entry.cloudCalloutDismissAria': string;
-  'entry.workspaceLockedNote': string;
-  'entry.workspaceLockedRecover': string;
   // Client message center
   'messageCenter.openAria': string;
   'messageCenter.unreadCount': string;
@@ -1262,8 +1127,6 @@ export interface Dict {
   'goPlanSunset.confirming': string;
   'goPlanSunset.acknowledge': string;
   'workspaceTabs.project': string;
-  'workspaceTabs.pluginDetails': string;
-  'workspaceTabs.marketplace': string;
 
   // Entry home
   'homeHero.title': string;
@@ -1433,7 +1296,6 @@ export interface Dict {
   'handoff.frameworkPrompt.solid': string;
   'handoff.frameworkPrompt.next': string;
   'handoff.frameworkPrompt.vanilla': string;
-  'handoff.amrWebsite': string;
   'handoff.copyPrompt': string;
   'handoff.copyPromptForTarget': string;
   'handoff.copied': string;
@@ -1487,7 +1349,6 @@ export interface Dict {
   'recentProjects.sortName': string;
   'recentProjects.viewList': string;
   'recentProjects.sharedBadge': string;
-  'recentProjects.sharedProjectFallbackName': string;
   'recentProjects.creatorLine': string;
   'recentProjects.selfCreator': string;
   'recentProjects.teamMemberCreator': string;
@@ -2211,7 +2072,6 @@ export interface Dict {
   'connectors.title': string;
   'connectors.subtitle': string;
   'connectors.account': string;
-  'connectors.noAccount': string;
   'connectors.tools': string;
   'connectors.connect': string;
   'connectors.disconnect': string;
@@ -2722,8 +2582,6 @@ export interface Dict {
   'avatar.useApi': string;
   'avatar.codeAgent': string;
   'avatar.rescan': string;
-  'avatar.amrConsole': string;
-  'avatar.amrConsoleMeta': string;
   'avatar.settings': string;
   'avatar.backToProjects': string;
   'avatar.metaActive': string;
@@ -2811,59 +2669,22 @@ export interface Dict {
   'project.routeMaterializationFailed': string;
   'project.resizeChatPanel': string;
   'chat.tabChat': string;
-  'chat.amrCard.switchTitle': string;
-  'chat.amrCard.switchBody': string;
-  'chat.amrCard.chipOfficial': string;
-  'chat.amrCard.chipNoKey': string;
-  'chat.amrCard.chipAutoRetry': string;
   'chat.amrCard.switchCta': string;
-  'chat.amrError.authMessage': string;
-  'chat.amrError.balanceMessage': string;
   'chat.amrError.authorizeCta': string;
   'chat.amrError.rechargeCta': string;
-  'chat.amrBalanceGate.title': string;
-  'chat.amrBalanceGate.message': string;
-  'chat.amrBalanceGate.benefitsTitle': string;
-  'chat.amrBalanceGate.benefit1': string;
-  'chat.amrBalanceGate.benefit2': string;
-  'chat.amrBalanceGate.benefit3': string;
-  'chat.amrBalanceGate.benefit4': string;
-  'chat.amrBalanceGate.laterCta': string;
   'chat.amrBalanceGate.plansCta': string;
-  'chat.amrBalanceGate.signedOutTitle': string;
-  'chat.amrBalanceGate.signedOutMessage': string;
-  'chat.amrBalanceGate.signInCta': string;
-  'chat.amrBalanceGate.watchingWallet': string;
-  'chat.amrArtifactUpgrade.title': string;
-  'chat.amrArtifactUpgrade.message': string;
-  'chat.amrArtifactUpgrade.benefit1': string;
-  'chat.amrArtifactUpgrade.benefit2': string;
-  'chat.amrArtifactUpgrade.benefit3': string;
-  'chat.amrArtifactUpgrade.benefit4': string;
-  'chat.amrArtifactUpgrade.promoBanner': string;
-  'chat.amrArtifactUpgrade.countdownLabel': string;
-  'chat.amrArtifactUpgrade.plansCta': string;
-  'chat.amrArtifactUpgrade.homePlansCta': string;
-  'chat.amrArtifactUpgrade.laterCta': string;
-  'chat.amrArtifactUpgrade.homeTitle': string;
-  'chat.amrArtifactUpgrade.homeMessage': string;
-  'chat.amrArtifactUpgrade.homeArtifactCta': string;
   'chat.antigravityError.launchTerminalCta': string;
   'chat.antigravityError.launchSwitchModelCta': string;
   'chat.connectionDropped': string;
   'chat.runError.title.authRequired': string;
-  'chat.runError.title.balance': string;
   'chat.runError.title.connectionDropped': string;
   /**
    * S02 · 本地 agent 没登录 / 登录过期。`{agent}` 由报错卡在渲染时填 ——
    * 「哪一个 agent 没登录」是这句话的全部信息量,主语不能省。
    */
-  'chat.runError.title.signInRequired.other': string;
   /** S04 · CapyDesign 智能体没登录 / 授权过期。主语固定,没有插值槽。 */
-  'chat.runError.title.signInRequired.amr': string;
   'chat.runError.title.rateLimited': string;
   'chat.runError.title.modelWindowLimit': string;
-  'chat.runError.title.membershipConcurrencyLimit': string;
   'chat.runError.title.cliMissing': string;
   'chat.runError.title.promptTooLarge': string;
   'chat.runError.title.modelUnavailable': string;
@@ -2903,8 +2724,6 @@ export interface Dict {
   'chat.runError.title.clientEnvironment': string;
   'chat.runError.title.generic': string;
   'chat.runError.title.artifactMissing': string;
-  'chat.runError.signInMessage.amr': string;
-  'chat.runError.signInMessage.other': string;
   'chat.runError.cliMissingMessage': string;
   'chat.runError.promptTooLargeMessage': string;
   'chat.runError.modelUnavailableMessage': string;
@@ -2914,8 +2733,6 @@ export interface Dict {
   'chat.runError.rateLimitedMessage': string;
   'chat.runError.modelWindowLimitMessage': string;
   'chat.runError.modelWindowLimitMessageNoTime': string;
-  'chat.runError.membershipConcurrencyLimitMessage': string;
-  'chat.runError.membershipConcurrencyLimitMessageNoTime': string;
   'chat.runError.upstreamUnavailableMessage': string;
   'chat.runError.toolLoopMessage': string;
   'chat.runError.outputInvalidMessage': string;
@@ -2923,7 +2740,6 @@ export interface Dict {
   /** S05 的正文。同样没有插值槽。 */
   'chat.runError.apiKeyInvalidMessage': string;
   'chat.runError.quotaExhaustedMessage': string;
-  'chat.runError.workspaceCreditsMessage': string;
   'chat.runError.timedOutMessage': string;
   'chat.runError.inactivityTimeoutMessage': string;
   'chat.runError.emptyOutputMessage': string;
@@ -2932,8 +2748,6 @@ export interface Dict {
   'chat.runError.cpuUnsupportedMessage': string;
   'chat.runError.title.agentCrashed': string;
   'chat.runError.agentCrashedMessage': string;
-  'chat.runError.title.accountSuspended': string;
-  'chat.runError.accountSuspendedMessage': string;
   'chat.runError.fallbackMessage': string;
   'chat.runError.cliSessionRefusedMessage': string;
   'chat.runError.strategyTaskStateMismatchMessage': string;
@@ -3677,7 +3491,6 @@ export interface Dict {
 
   // Workspace / file viewer / design files panel
   'workspace.designFiles': string;
-  'workspace.focusMode': string;
   'workspace.showChat': string;
   'workspace.closeTab': string;
   'workspace.deleteFileConfirm': string;
@@ -3688,13 +3501,10 @@ export interface Dict {
   'workspace.deleteSelectedFilesConfirm': string;
   'workspace.deleteSelectedFilesPartial': string;
   'workspace.openFromDesignFiles': string;
-  'workspace.designFilesLink': string;
   'workspace.loadingSketch': string;
   'workspace.newTab': string;
   'workspace.searchFilesPlaceholder': string;
   'workspace.openTabs': string;
-  'workspace.searchTabs': string;
-  'workspace.noTabsFound': string;
   'workspace.openFile': string;
   'workspace.noFilesMatch': string;
   'workspace.allFiles': string;
@@ -4105,14 +3915,8 @@ export interface Dict {
   'fileViewer.presenterMode': string;
   'fileViewer.exitPresentation': string;
   'fileViewer.shareLabel': string;
-  'fileViewer.shareMenuShareLink': string;
   'fileViewer.shareMenuPublishOnline': string;
-  'fileViewer.shareMenuDownload': string;
-  'fileViewer.shareMenuPresentation': string;
-  'fileViewer.shareMenuSourceFiles': string;
-  'fileViewer.shareMenuSave': string;
   'fileViewer.shareMenuPublishViaOd': string;
-  'fileViewer.unifiedShareAria': string;
   'fileViewer.unifiedShareTab': string;
   'fileViewer.unifiedExportTab': string;
   'fileViewer.unifiedSendTab': string;
@@ -4138,17 +3942,11 @@ export interface Dict {
    *  just a stopgap added for recvqae3pK5hyx/recvq6W8GX8NaH to avoid a blank
    *  tab. A personal workspace's share tab is now allowed to show only the
    *  cards that legitimately apply (or nothing, if none do). */
-  'fileViewer.shareEmptyStateTitle': string;
   /** @deprecated Orphaned (recvqgif6Xa7Wb): see `shareEmptyStateTitle`. */
-  'fileViewer.shareEmptyStateDescription': string;
   /** @deprecated Orphaned (recvqgif6Xa7Wb): see `shareEmptyStateTitle`. */
-  'fileViewer.shareEmptyStateCreateTeam': string;
   /** @deprecated Orphaned (recvqgif6Xa7Wb): see `shareEmptyStateTitle`. */
-  'fileViewer.shareTeamMissingTitle': string;
   /** @deprecated Orphaned: the public-file gate is no longer team-scoped.
    *  `fileViewer.publishFileRequiresWorkspace` replaced it. */
-  'fileViewer.publishFileRequiresTeam': string;
-  'fileViewer.publishFileRequiresWorkspace': string;
   'fileViewer.publishFileFailed': string;
   'fileViewer.workspaceShareSuccess': string;
   'fileViewer.workspaceShareFailed': string;
@@ -4158,10 +3956,8 @@ export interface Dict {
   'fileViewer.copyShareLink': string;
   'fileViewer.openSharePage': string;
   'fileViewer.shareLinkRequiresDeploy': string;
-  'fileViewer.shareLinkPublishGuide': string;
   'fileViewer.shareAfterGenerationComplete': string;
   'fileViewer.copyProviderLink': string;
-  'fileViewer.copyCloudflareLink': string;
   'fileViewer.screenshotCopying': string;
   'fileViewer.screenshotCopied': string;
   'fileViewer.screenshotClipboardDenied': string;
@@ -4320,12 +4116,10 @@ export interface Dict {
   'fileViewer.cloudflareDomainPrefixPlaceholder': string;
   'fileViewer.cloudflareDomainPrefixInvalid': string;
   'fileViewer.cloudflareHostnamePreview': string;
-  'fileViewer.cloudflareCustomDomainHint': string;
   'fileViewer.cloudflarePagesDevLinkLabel': string;
   'fileViewer.cloudflareCustomDomainLinkLabel': string;
   'fileViewer.optional': string;
   'fileViewer.vercelPreviewOnly': string;
-  'fileViewer.cloudflarePagesPreviewHint': string;
   'fileViewer.savingConfig': string;
   'fileViewer.deployConfigSaveFailed': string;
   'fileViewer.deployFailed': string;
@@ -4392,8 +4186,6 @@ export interface Dict {
   'assistant.forkingConversation': string;
   /** 分叉分界线下面那行脚注 —— 告诉人 Fork 不是跳走,上文已经带过去了。 */
   'assistant.forkNote': string;
-  'assistant.shareToOpenDesign': string;
-  'assistant.shareToOpenDesignBusy': string;
   'assistant.feedbackPrompt': string;
   'assistant.feedbackPositive': string;
   'assistant.feedbackNegative': string;
@@ -4437,12 +4229,8 @@ export interface Dict {
   'chat.runError.actionBlocked.busy': string;
   'chat.support.channel.feishu': string;
   'chat.support.channel.discord': string;
-  'chat.amrBalanceOwner.title': string;
   /** {name} = the workspace owner's display name. */
-  'chat.amrBalanceOwner.message': string;
   /** Same sentence with the owner's role in place of their name (T57). */
-  'chat.amrBalanceOwner.messageNoOwnerName': string;
-  'chat.amrBalanceOwner.dismissCta': string;
   'assistant.outTokens': string;
   'assistant.producedFiles': string;
   'assistant.openFile': string;
@@ -4991,9 +4779,7 @@ export interface Dict {
   'newproj.startBlank': string;
   'newproj.startBlankHint': string;
   'workspace.pages': string;
-  'workspace.allProjectFiles': string;
   'workspace.newBlankPage': string;
-  'workspace.noPagesYet': string;
   'workspace.pageCreateFailed': string;
   'workspace.pageCreatorTitle': string;
   'workspace.pageCreatorSearch': string;

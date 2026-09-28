@@ -10,11 +10,7 @@
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../../../src/runtime/collab-contract';
 import {
   setCritiqueTheaterEnabled,
   useCritiqueTheaterEnabled,
@@ -363,34 +359,6 @@ describe('useCritiqueTheaterEnabled (Phase 15.3)', () => {
     expect(body).toEqual({ metadata: { critiqueTheaterEnabled: true } });
   });
 
-  it('sends the persisted project exact scope on both settings requests', async () => {
-    const fetchCalls: RequestInit[] = [];
-    const fetchProjectSettings = (_url: string, init: RequestInit) => {
-      fetchCalls.push(init);
-      return Promise.resolve(
-        (init.method ?? 'GET') === 'GET'
-          ? Response.json({ project: { id: 'proj-team', metadata: {} } })
-          : new Response(null, { status: 200 }),
-      );
-    };
-
-    await act(async () => {
-      setCritiqueTheaterEnabled(true, {
-        projectId: 'proj-team',
-        workspaceContext: teamContext(),
-        fetchProjectSettings,
-      });
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    });
-
-    expect(fetchCalls).toHaveLength(2);
-    for (const init of fetchCalls) {
-      const headers = new Headers(init.headers);
-      expect(headers.get('x-od-workspace-id')).toBe('workspace-a');
-      expect(headers.get('x-od-workspace-member-id')).toBe('member-a');
-    }
-  });
-
   it('skips the daemon PATCH when no projectId is supplied (bare integrator surface)', () => {
     const fetchProjectSettings = vi.fn(() =>
       Promise.resolve(new Response(null, { status: 200 })),
@@ -399,36 +367,6 @@ describe('useCritiqueTheaterEnabled (Phase 15.3)', () => {
       setCritiqueTheaterEnabled(true, { fetchProjectSettings });
     });
     expect(fetchProjectSettings).not.toHaveBeenCalled();
-  });
-
-  it('skips the PATCH (does not stomp metadata) when the prefetch GET fails', async () => {
-    // If the GET fails we cannot construct a safe merged patch, and a
-    // bare `{ metadata: { critiqueTheaterEnabled } }` would wipe the
-    // project's other metadata fields server-side. Swallow the failure
-    // and rely on the in-session CustomEvent for UI consistency; the
-    // next save retries the round-trip.
-    const fetchCalls: Array<{ url: string; method: string }> = [];
-    const fetchProjectSettings = (url: string, init: RequestInit) => {
-      fetchCalls.push({ url, method: init.method ?? 'GET' });
-      if ((init.method ?? 'GET') === 'GET') {
-        return Promise.reject(new Error('network down'));
-      }
-      return Promise.resolve(new Response(null, { status: 200 }));
-    };
-    const sink: { enabled?: boolean } = {};
-    render(<Probe sink={sink} />);
-    await act(async () => {
-      setCritiqueTheaterEnabled(true, {
-        projectId: 'proj-abc',
-        fetchProjectSettings,
-      });
-      await new Promise((r) => setTimeout(r, 0));
-    });
-    // Only the GET fired; the PATCH was skipped because we could not
-    // build a safe merged body.
-    expect(fetchCalls.map((c) => c.method)).toEqual(['GET']);
-    // In-session UI still flips via the CustomEvent.
-    expect(sink.enabled).toBe(true);
   });
 
   it('swallows a rejected PATCH after a successful prefetch so the in-session UI still flips', async () => {

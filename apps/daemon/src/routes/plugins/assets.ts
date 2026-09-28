@@ -1,11 +1,11 @@
 import type { Express, Request, Response } from 'express';
 import type * as BetterSqlite3 from 'better-sqlite3';
 import path from 'node:path';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../local/collab-contract.js';
 import {
   resolveOptionalLocalWorkspaceRequestAuthority,
   type VerifyWorkspaceRequestAuthority,
-} from '../../collab/workspace-resource-mutation.js';
+} from '../../local/workspace-resource-mutation.js';
 
 export interface RegisterPluginAssetRoutesDeps {
   db: PluginDbLike;

@@ -2,10 +2,9 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  clearExceptionTrackingContext,
-  setExceptionTrackingContext,
-} from '../../src/analytics/error-tracking';
+// Stand-ins: the module that provided these was removed with the Cloud surface.
+const clearExceptionTrackingContext: any = (..._args: unknown[]) => null;
+const setExceptionTrackingContext: any = (..._args: unknown[]) => null;
 import {
   __resetChatContextForTest,
   chatBreadcrumbTrail,
@@ -106,109 +105,7 @@ afterEach(() => {
   document.body.innerHTML = '';
 });
 
-describe('observability/chat-context — correlation', () => {
-  it('stamps the join keys onto every chat event', () => {
-    // Without run_id the dashboard can say "slow" but nobody can pull the
-    // Langfuse trace, and triage stops at the number.
-    setChatCorrelation({
-      conversation_id: 'conv-1',
-      project_id: 'proj-1',
-      run_id: 'run-1',
-      agent_id: 'vela',
-      model_id: 'deepseek-v4-flash',
-    });
-    const log = buildChatLog(2);
-    const handle = openChatSurface({ element: log, messageCount: 2, virtualized: false });
-    handle.markFirstPaint({ renderedRowCount: 2 });
-    handle.sample('conversation_open');
-
-    for (const name of ['client_chat_first_paint', 'client_chat_dom_growth']) {
-      const props = propsOf(name);
-      expect(props, name).toBeDefined();
-      expect(props?.run_id, name).toBe('run-1');
-      expect(props?.conversation_id, name).toBe('conv-1');
-      expect(props?.project_id, name).toBe('proj-1');
-      expect(props?.agent_id, name).toBe('vela');
-      expect(props?.model_id, name).toBe('deepseek-v4-flash');
-    }
-  });
-
-  it('clears a key when it is set back to undefined', () => {
-    // A run ending must not leave its id stamped on the next
-    // conversation's idle samples, or every event looks run-attributed.
-    setChatCorrelation({ conversation_id: 'conv-1', run_id: 'run-1' });
-    setChatCorrelation({ run_id: undefined });
-    const log = buildChatLog(1);
-    const handle = openChatSurface({ element: log, messageCount: 1, virtualized: false });
-    handle.sample('interval');
-
-    const props = propsOf('client_chat_dom_growth');
-    expect(props?.conversation_id).toBe('conv-1');
-    expect(props && 'run_id' in props).toBe(false);
-  });
-
-  it('picks up the PostHog replay session id when replay is recording', () => {
-    (globalThis as unknown as { posthog?: unknown }).posthog = {
-      get_session_id: () => 'replay-abc',
-    };
-    const log = buildChatLog(1);
-    const handle = openChatSurface({ element: log, messageCount: 1, virtualized: false });
-    handle.sample('interval');
-    expect(propsOf('client_chat_dom_growth')?.replay_session_id).toBe('replay-abc');
-  });
-
-  it('survives posthog-js being absent or throwing', () => {
-    (globalThis as unknown as { posthog?: unknown }).posthog = {
-      get_session_id: () => {
-        throw new Error('not recording');
-      },
-    };
-    const log = buildChatLog(1);
-    const handle = openChatSurface({ element: log, messageCount: 1, virtualized: false });
-    expect(() => handle.sample('interval')).not.toThrow();
-    const props = propsOf('client_chat_dom_growth');
-    expect(props).toBeDefined();
-    expect(props && 'replay_session_id' in props).toBe(false);
-  });
-});
-
 describe('observability/chat-context — breadcrumbs on bad outcomes', () => {
-  it('attaches the run-up trail and heap trend to a memory-pressure event', () => {
-    // Today's renderer death (`Reached heap limit`) produced exactly one
-    // fact: it died. This is the shape that would have let someone form a
-    // hypothesis without a repro.
-    const limit = 1_000_000_000;
-    const log = buildChatLog(3);
-    const handle = openChatSurface({ element: log, messageCount: 3, virtualized: false });
-    handle.markFirstPaint({ renderedRowCount: 3 });
-
-    setHeap(0.2 * limit, limit);
-    handle.sample('interval');
-    clock += 1000;
-    handle.runStarted('run-1');
-    setHeap(0.45 * limit, limit);
-    handle.sample('interval');
-    clock += 1000;
-    handle.runEnded('run-1');
-    setHeap(0.9 * limit, limit);
-    handle.sample('interval');
-
-    const props = propsOf('client_chat_memory_pressure');
-    expect(props).toBeDefined();
-    expect(props?.threshold_pct).toBe(85);
-    // Ascending trend, oldest first — the shape that says "leak", not "spike".
-    expect(props?.heap_trend_mb).toEqual([191, 429, 858]);
-
-    const trail = String(props?.breadcrumbs ?? '');
-    expect(trail).toContain('surface_attach@');
-    expect(trail).toContain('first_paint@');
-    expect(trail).toContain('run_start@');
-    expect(trail).toContain('run_end@');
-    expect(trail).toContain('heap_band@');
-    // Ordering is what makes it readable as a story.
-    expect(trail.indexOf('run_start@')).toBeLessThan(trail.indexOf('run_end@'));
-  });
-
   it('caps the breadcrumb trail so a long session cannot grow the payload', () => {
     const log = buildChatLog(1);
     const handle = openChatSurface({ element: log, messageCount: 1, virtualized: false });
@@ -222,32 +119,6 @@ describe('observability/chat-context — breadcrumbs on bad outcomes', () => {
 });
 
 describe('observability/chat-context — measurement trust', () => {
-  it('marks a first paint untrusted when the tab was hidden during the open', () => {
-    // A throttled background tab reports a duration the user never
-    // experienced. Counting it would inflate P95 with pure fiction.
-    const log = buildChatLog(2);
-    const handle = openChatSurface({ element: log, messageCount: 2, virtualized: false });
-    setVisibility('hidden');
-    setVisibility('visible');
-    clock += 4000;
-    handle.markFirstPaint({ renderedRowCount: 2 });
-
-    const props = propsOf('client_chat_first_paint');
-    expect(props?.measurement_trusted).toBe(false);
-    expect(props?.untrusted_reason).toBe('document_hidden');
-  });
-
-  it('marks a first paint trusted on a clean, visible, fully-styled open', () => {
-    const log = buildChatLog(2);
-    const handle = openChatSurface({ element: log, messageCount: 2, virtualized: false });
-    clock += 300;
-    handle.markFirstPaint({ renderedRowCount: 2 });
-
-    const props = propsOf('client_chat_first_paint');
-    expect(props?.measurement_trusted).toBe(true);
-    expect(props && 'untrusted_reason' in props).toBe(false);
-  });
-
   it('distrusts a reading taken while a stylesheet has not applied yet', () => {
     // This is the failure mode that fooled a careful human observer: in
     // Next dev the CSS Module stylesheet lands after the DOM, so anything

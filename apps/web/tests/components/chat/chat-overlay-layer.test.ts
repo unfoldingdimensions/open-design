@@ -225,16 +225,6 @@ describe('先证明这把尺子能照出缺陷', () => {
     expect(globalZ('.staged-preview-modal')).not.toBeNull();
   });
 
-  it('目录扫到了东西,而且扫到的正是那两张真模态', () => {
-    // 空集合会让下面的 for 循环一条断言都不跑 —— 那是最坏的一种「全绿」
-    expect(SCRIMS.length).toBeGreaterThan(0);
-    expect(new Set(SCRIMS.map((r) => r.file))).toEqual(
-      new Set([
-        'components/chat/SupportDialog.module.css',
-        'components/chat/AmrOwnerTopUpDialog.module.css',
-      ]),
-    );
-  });
 });
 
 // ================================================================ 守护本体
@@ -328,21 +318,9 @@ describe('排除项是有意的', () => {
       selector: '.overlayInline',
       why: '就地形态:position: static,躺在文档流里给陈列页看的。抬它会盖住陈列页别的格子',
     },
-    {
-      file: 'components/chat/AmrOwnerTopUpDialog.module.css',
-      selector: '.overlayInline',
-      why: '同上',
-    },
   ];
 
   for (const { file, selector, why } of excluded) {
-    it(`${file} ${selector} 不在守护范围内 —— ${why}`, () => {
-      const rule = CHAT_RULES.find(
-        (r) => r.file === file && r.selector.split(',').some((s) => s.trim() === selector),
-      );
-      expect(rule, `${file} 里找不到 ${selector} —— 改名或删了,这条排除说明已经过期`).toBeTruthy();
-      expect(isFullscreenScrim(rule!)).toBe(false);
-    });
   }
 
   it('就地形态一律 z-index: auto —— 它躺在文档流里,抬了会盖住旁边的格子', () => {

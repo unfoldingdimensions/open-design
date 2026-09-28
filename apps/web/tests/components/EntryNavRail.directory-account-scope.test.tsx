@@ -17,7 +17,7 @@
 // warns about: a cache coarser than the identity of the request it holds.
 
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -164,36 +164,6 @@ describe('workspace switcher directory — account scope', () => {
     expect(workspaceDirectoryForIdentity(ACCOUNT_B_DIRECTORY, accountB)).toBe(
       ACCOUNT_B_DIRECTORY,
     );
-  });
-
-  it("never paints the previous account's workspaces after an account change", async () => {
-    let directory: unknown[] = ACCOUNT_A_DIRECTORY;
-    const gate = installGatedFetch(() => directory);
-
-    // Account A opens the switcher and the directory lands: the cache is warm.
-    const accountA = renderRail(contextFor('wm-a-team'));
-    fireEvent.click(screen.getByTestId('workspace-switcher'));
-    gate.releaseAll();
-    await waitFor(() => expect(menu().getByText('Ada private workspace')).toBeTruthy());
-
-    // Sign out, sign in as account B. Same shared team workspace, different
-    // membership — the identity the cache was filled under is gone.
-    accountA.unmount();
-    directory = ACCOUNT_B_DIRECTORY;
-    renderRail(contextFor('wm-b-team'));
-    fireEvent.click(screen.getByTestId('workspace-switcher'));
-
-    // Before B's own read answers, the rail must not present A's private
-    // workspace as one of B's. What it falls back to is the one workspace it can
-    // still attribute to B: the active one, named from B's own context.
-    expect(menu().queryByText('Ada private workspace')).toBeNull();
-    expect(menu().getByRole('menuitem', { name: /Shared Team/ })).toBeTruthy();
-    expect(menu().queryAllByRole('menuitem', { name: /workspace$/ })).toHaveLength(0);
-
-    // Once B's read lands, B's own workspaces appear.
-    gate.releaseAll();
-    await waitFor(() => expect(menu().getByText('Bruno private workspace')).toBeTruthy());
-    expect(menu().queryByText('Ada private workspace')).toBeNull();
   });
 
   // The identity-scoped cache key stops a cached answer being SERVED to the

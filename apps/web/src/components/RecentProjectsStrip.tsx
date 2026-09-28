@@ -27,16 +27,9 @@ import {
 } from '../providers/registry';
 import type { DesignSystemSummary, Project, ProjectDisplayStatus, ProjectFile } from '../types';
 import { Icon } from './Icon';
-import { InviteDialog } from './InviteDialog';
 import { STATUS_LABEL_KEYS } from './DesignsTab';
 import { isDesignSystemProject, isPublishedDesignSystemProject } from './design-system-project';
-import type { SharedProjectPredicate } from '../collab/all-projects-list';
-import { useTeamMembers } from '../collab/useTeamMembers';
-import {
-  notifyTeamProjectsChanged,
-  useWorkspaceBilling,
-  useWorkspaceContext,
-} from '../collab/useWorkspaceContext';
+import type { SharedProjectPredicate } from '../runtime/legacy-scope-types';
 import {
   canAccessWorkspaceInviteFlow,
   resolveWorkspaceInviteTarget,
@@ -44,12 +37,8 @@ import {
   workspaceUpgradeUrl,
 } from './EntryNavRail';
 import { moveWorkspaceProject, workspaceProjectMoveErrorCode } from '../state/projects';
-import {
-  workspaceContextHasTeamIdentity,
-  type WorkspaceCollabContext,
-  type WorkspaceProjectSummary,
-} from '@capydesign/contracts';
-import { useWorkspaceInvalidation } from '../collab/workspace-events';
+import { type ProjectListEntry } from '@capydesign/contracts';
+import { workspaceContextHasTeamIdentity, WorkspaceCollabContext } from '../runtime/collab-contract';
 import {
   THUMBNAIL_OVERSCAN_MARGIN,
   resumeThumbnailLoads,
@@ -63,21 +52,6 @@ import {
   setProjectCoverSnapshot,
 } from '../lib/project-cover-cache';
 import { useInView } from './plugins-home/useInView';
-import {
-  workspaceIdentityCacheKey,
-  workspaceProjectHeaders,
-} from '../collab/workspace-identity';
-import { useAnalytics } from '../analytics/provider';
-import {
-  trackProjectCollectionClick,
-  trackWorkspaceProjectActionResult,
-  trackWorkspaceSharedProjectOpenResult,
-} from '../analytics/events';
-import {
-  countBucket,
-  stableAnalyticsRequestErrorCode,
-  workspaceAnalyticsDimensions,
-} from '../analytics/workspace';
 import type { ProjectCollectionClickProps } from '@capydesign/contracts/analytics';
 
 /** Which project space this strip renders. Drives the per-card 共享 badge
@@ -121,7 +95,7 @@ interface Props {
   isSharedProject?: SharedProjectPredicate;
   /** Reported after a successful share/unshare so the caller can fold the change
    *  into its optimistic layer before the team-projects poll catches up. */
-  onProjectShared?: (project: WorkspaceProjectSummary) => void;
+  onProjectShared?: (project: ProjectListEntry) => void;
   /** Clears any optimistic owner proof when a share did not commit. */
   onProjectShareFailed?: (projectId: string) => void;
   onProjectUnshared?: (projectId: string) => void;
@@ -355,17 +329,14 @@ export function RecentProjectsStrip({
   isActive = true,
 }: Props) {
   const t = useT();
-  const analytics = useAnalytics();
   const analyticsPage = space === 'drafts' ? 'drafts' : space === 'team' ? 'all_projects' : 'home';
   const rowRef = useRef<HTMLDivElement | null>(null);
   // Real creator resolution (replaces the demo's mock 李娜/张伟 roster): the
   // member directory turns an ownerMemberId into a display name, while the
   // workspace context supplies the signed-in user's own name and profile image.
-  const { resolve: resolveMember } = useTeamMembers();
-  const {
-    context: workspaceContext,
-    loading: workspaceContextLoading,
-  } = useWorkspaceContext();
+  const { resolve: resolveMember } = ({ resolve: (_id: string) => null });
+  const workspaceContext = null;
+  const workspaceContextLoading = false;
   // A cover request captures the complete identity at dispatch. A mutable ref
   // keeps the queue callbacks stable without letting an in-flight read drift
   // to whichever Workspace a different render happens to select later.
@@ -373,23 +344,17 @@ export function RecentProjectsStrip({
   workspaceContextRef.current = workspaceContext;
   const workspaceContextLoadingRef = useRef(workspaceContextLoading);
   workspaceContextLoadingRef.current = workspaceContextLoading;
-  const workspaceIdentity = workspaceIdentityCacheKey(workspaceContext);
-  const workspaceBilling = useWorkspaceBilling();
-  const workspaceDimensions = workspaceAnalyticsDimensions(workspaceContext);
+  const workspaceIdentity = 'none';
+  const workspaceBilling = null;
+  const workspaceDimensions = undefined;
   function trackCollection(
     element: ProjectCollectionClickProps['element'],
     properties: Partial<Omit<ProjectCollectionClickProps, 'page_name' | 'area' | 'element'>> = {},
     requestId?: string,
   ) {
-    trackProjectCollectionClick(analytics.track, {
-      page_name: analyticsPage,
-      area: 'project_collection',
-      element,
-      ...workspaceDimensions,
-      ...properties,
-    }, requestId ? { requestId } : undefined);
+    
   }
-  const selfMemberId = workspaceContext?.workspaceMemberId ?? null;
+  const selfMemberId = null;
   // `canShareProjects` alone is a ROLE permission ("could this member share IF
   // a team existed"), not a "does a team exist" signal — a purely personal
   // workspace's owner still gets `canShareProjects: true`. Without also
@@ -399,19 +364,14 @@ export function RecentProjectsStrip({
   // recvqgif6Xa7Wb "隐藏非 Team workspace 分享到团队的入口") — the exact class
   // of bug `workspaceContextHasTeamIdentity`'s own doc comment warns about:
   // "Deriving it twice is how a UI grows a button that can only ever fail."
-  const collaborationAvailable =
-    collaborationEnabled ??
-    (workspaceContextHasTeamIdentity(workspaceContext) &&
-      workspaceContext?.permissions.canShareProjects === true);
+  // No workspace identity layer: there is no team to collaborate with.
+  const collaborationAvailable = collaborationEnabled ?? false;
   const canAccessInviteFlow = canAccessWorkspaceInviteFlow(workspaceContext);
   // The invite dialog's seat-gate upgrade CTA shares the public Pricing
   // destination owned by `workspaceUpgradeUrl` in EntryNavRail.tsx.
   const inviteUpgradeUrl = workspaceUpgradeUrl(workspaceContext, workspaceBilling);
   const inviteTarget = resolveWorkspaceInviteTarget(workspaceContext);
-  const canManageCollection =
-    canManageProjectCollection ??
-    (workspaceContext?.permissions.canManageSharedResources === true ||
-      workspaceContext?.permissions.canShareProjects === true);
+  const canManageCollection = canManageProjectCollection ?? false;
   const [responsiveLimit, setResponsiveLimit] = useState(DEFAULT_RECENT_PROJECT_LIMIT);
   const resolvedLimit = limit ?? responsiveLimit;
   const hasRecentProjects = projects.length > 0;
@@ -518,16 +478,16 @@ export function RecentProjectsStrip({
   } => {
     const ownerMemberId = projectOwnerMemberIds?.get(projectId) ?? null;
     if (ownerMemberId === selfMemberId || (!ownerMemberId && !isShared(projectId))) {
-      const name = workspaceContext?.displayName?.trim() || t('recentProjects.selfCreator');
+      const name = t('recentProjects.selfCreator');
       const initial = Array.from(name.trim())[0]?.toUpperCase() ?? 'M';
       return {
         name,
         initial,
-        avatarUrl: workspaceContext?.avatarUrl?.trim() || null,
+        avatarUrl: null,
         ownedBySelf: true,
       };
     }
-    const name = resolveMember(ownerMemberId)?.displayName ?? t('recentProjects.teamMemberCreator');
+    const name = t('recentProjects.teamMemberCreator');
     const initial = (Array.from(name.trim())[0] ?? 'T').toUpperCase();
     return { name, initial, avatarUrl: null, ownedBySelf: false };
   };
@@ -554,8 +514,6 @@ export function RecentProjectsStrip({
       showOwnerFilter,
       sortedProjects,
       t,
-      workspaceContext?.avatarUrl,
-      workspaceContext?.displayName,
     ],
   );
   const menuContainerRef = useRef<HTMLDivElement | null>(null);
@@ -577,10 +535,7 @@ export function RecentProjectsStrip({
     }
   });
   function requestMove(project: Project, action: 'to-team' | 'to-personal') {
-    trackCollection(action === 'to-team' ? 'move_to_team' : 'move_to_personal', {
-      project_key: project.id,
-      project_relation: resolveCreator(project.id).ownedBySelf ? 'self' : 'other',
-    });
+    
     if (moveDontRemind) {
       void (action === 'to-team' ? handleShareToTeam(project) : handleUnshareFromTeam(project));
       return;
@@ -778,7 +733,7 @@ export function RecentProjectsStrip({
         cache: 'no-store',
         signal,
         ...(requestWorkspaceContext
-          ? { headers: workspaceProjectHeaders(requestWorkspaceContext) }
+          ? { headers: {} }
           : {}),
       });
       if (signal.aborted) return undefined;
@@ -805,7 +760,7 @@ export function RecentProjectsStrip({
     if (workspaceContextLoadingRef.current) return Promise.resolve();
     const requestWorkspaceContext = workspaceContextRef.current;
     const snapshotKey = projectCoverSnapshotKey(
-      workspaceIdentityCacheKey(requestWorkspaceContext),
+      'none',
       project.id,
       project.updatedAt,
     );
@@ -938,34 +893,7 @@ export function RecentProjectsStrip({
     void requestProjectCover(project, { force: true });
   }, [requestProjectCover]);
 
-  useWorkspaceInvalidation(
-    {
-      'team-project-content-ready': ({ projectId, workspaceId }) => {
-        if (!activeRef.current) return;
-        if (workspaceContext?.workspaceId !== workspaceId) return;
-        void refreshProjectCover(projectId);
-      },
-    },
-    {
-      workspaceContext,
-      // Thin SSE events are not replayed. On reconnect/focus, retry only cards
-      // whose initial scan found no local cover, closing a missed-ready gap
-      // without re-fetching every already-resolved card in the grid.
-      onActive: () => {
-        if (!activeRef.current) return;
-        for (const { project } of visibleProjects) {
-          if (!coverSentinelSeenRef.current.has(project.id)) continue;
-          if (coverByProject[project.id] == null) {
-            if (coverInFlightRef.current.has(project.id)) continue;
-            // `null` is normally a cacheable no-cover decision. Reconnect is
-            // specifically the missed-invalidation recovery path, so bypass
-            // that snapshot and re-probe the exact current Workspace.
-            void requestProjectCover(project, { force: true });
-          }
-        }
-      },
-    },
-  );
+  void 0;
 
   useEffect(() => {
     const visibleIds = new Set(visibleProjects.map(({ project }) => project.id));
@@ -1018,10 +946,7 @@ export function RecentProjectsStrip({
   function startRename(project: Project) {
     const creator = resolveCreator(project.id);
     if (!creator.ownedBySelf) return;
-    trackCollection('rename', {
-      project_key: project.id,
-      project_relation: 'self',
-    });
+    
     setMenuOpenId(null);
     setRenameTarget({ id: project.id, original: project.name });
     setRenameInput(project.name);
@@ -1044,10 +969,7 @@ export function RecentProjectsStrip({
   function requestDelete(project: Project) {
     const creator = resolveCreator(project.id);
     if (!creator.ownedBySelf) return;
-    trackCollection('delete', {
-      project_key: project.id,
-      project_relation: 'self',
-    });
+    
     setMenuOpenId(null);
     setDeleteFailed(false);
     setConfirmTarget(project);
@@ -1067,19 +989,9 @@ export function RecentProjectsStrip({
         workspaceContext,
       });
       onProjectShared?.(movedProject);
-      notifyTeamProjectsChanged();
+      void 0;
       setMenuOpenId(null);
-      trackWorkspaceProjectActionResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'project_collection',
-        action: 'move_to_team',
-        result: 'success',
-        requested_count: 1,
-        succeeded_count: 1,
-        failed_count: 0,
-        duration_ms: Math.round(performance.now() - startedAt),
-        ...workspaceDimensions,
-      });
+      
     } catch (err) {
       onProjectShareFailed?.(project.id);
       console.warn('[RecentProjectsStrip] share project to team failed:', err);
@@ -1090,18 +1002,7 @@ export function RecentProjectsStrip({
           : 'share',
       );
       setMenuOpenId(project.id);
-      trackWorkspaceProjectActionResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'project_collection',
-        action: 'move_to_team',
-        result: 'failed',
-        requested_count: 1,
-        succeeded_count: 0,
-        failed_count: 1,
-        duration_ms: Math.round(performance.now() - startedAt),
-        error_code: workspaceProjectMoveErrorCode(err) ?? 'request_failed',
-        ...workspaceDimensions,
-      });
+      
     } finally {
       setSharingId(null);
     }
@@ -1119,36 +1020,15 @@ export function RecentProjectsStrip({
         workspaceContext,
       });
       onProjectUnshared?.(project.id);
-      notifyTeamProjectsChanged();
+      void 0;
       setMenuOpenId(null);
-      trackWorkspaceProjectActionResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'project_collection',
-        action: 'move_to_personal',
-        result: 'success',
-        requested_count: 1,
-        succeeded_count: 1,
-        failed_count: 0,
-        duration_ms: Math.round(performance.now() - startedAt),
-        ...workspaceDimensions,
-      });
+      
     } catch (err) {
       console.warn('[RecentProjectsStrip] unshare project from team failed:', err);
       setShareErrorProjectId(project.id);
       setShareErrorKind('unshare');
       setMenuOpenId(project.id);
-      trackWorkspaceProjectActionResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'project_collection',
-        action: 'move_to_personal',
-        result: 'failed',
-        requested_count: 1,
-        succeeded_count: 0,
-        failed_count: 1,
-        duration_ms: Math.round(performance.now() - startedAt),
-        error_code: workspaceProjectMoveErrorCode(err) ?? 'request_failed',
-        ...workspaceDimensions,
-      });
+      
     } finally {
       setUnsharingId(null);
     }
@@ -1162,38 +1042,14 @@ export function RecentProjectsStrip({
     // own defense-in-depth check.
     const creator = resolveCreator(project.id);
     if (!creator.ownedBySelf) return;
-    trackCollection('duplicate', {
-      project_key: project.id,
-      project_relation: 'self',
-    });
+    
     setMenuOpenId(null);
     const startedAt = performance.now();
     void Promise.resolve(onDuplicate(project.id)).then(() => {
-      trackWorkspaceProjectActionResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'project_collection',
-        action: 'duplicate',
-        result: 'success',
-        requested_count: 1,
-        succeeded_count: 1,
-        failed_count: 0,
-        duration_ms: Math.round(performance.now() - startedAt),
-        ...workspaceDimensions,
-      });
+      
     }).catch((err) => {
       console.warn('[RecentProjectsStrip] duplicate project failed:', err);
-      trackWorkspaceProjectActionResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'project_collection',
-        action: 'duplicate',
-        result: 'failed',
-        requested_count: 1,
-        succeeded_count: 0,
-        failed_count: 1,
-        duration_ms: Math.round(performance.now() - startedAt),
-        error_code: 'request_failed',
-        ...workspaceDimensions,
-      });
+      
     });
   }
 
@@ -1210,48 +1066,16 @@ export function RecentProjectsStrip({
       // keep the dialog open with a visible reason instead of closing it as
       // if the project were gone (recvqbh189zBY6).
       if (result === false) {
-        trackWorkspaceProjectActionResult(analytics.track, {
-          page_name: analyticsPage,
-          area: 'project_collection',
-          action: 'delete',
-          result: 'failed',
-          requested_count: 1,
-          succeeded_count: 0,
-          failed_count: 1,
-          duration_ms: Math.round(performance.now() - startedAt),
-          error_code: 'request_failed',
-          ...workspaceDimensions,
-        });
+        
         setDeleteFailed(true);
         return;
       }
       setConfirmTarget(null);
-      trackWorkspaceProjectActionResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'project_collection',
-        action: 'delete',
-        result: 'success',
-        requested_count: 1,
-        succeeded_count: 1,
-        failed_count: 0,
-        duration_ms: Math.round(performance.now() - startedAt),
-        ...workspaceDimensions,
-      });
+      
     } catch (err) {
       console.warn('[RecentProjectsStrip] delete project failed:', err);
       setDeleteFailed(true);
-      trackWorkspaceProjectActionResult(analytics.track, {
-        page_name: analyticsPage,
-        area: 'project_collection',
-        action: 'delete',
-        result: 'failed',
-        requested_count: 1,
-        succeeded_count: 0,
-        failed_count: 1,
-        duration_ms: Math.round(performance.now() - startedAt),
-        error_code: stableAnalyticsRequestErrorCode(err),
-        ...workspaceDimensions,
-      });
+      
     } finally {
       setDeletePending(false);
     }
@@ -1294,9 +1118,7 @@ export function RecentProjectsStrip({
 
   function requestBulkMove(action: 'to-team' | 'to-personal') {
     if (bulkMutationDisabled) return;
-    trackCollection(action === 'to-team' ? 'bulk_move_to_team' : 'bulk_move_to_personal', {
-      selection_count_bucket: countBucket(selectedCount),
-    });
+    
     if (moveDontRemind) {
       void commitBulkMove(action);
       return;
@@ -1327,26 +1149,15 @@ export function RecentProjectsStrip({
       }),
     );
     const succeeded = moved.filter(
-      (result): result is { id: string; project: WorkspaceProjectSummary } => result !== null,
+      (result): result is { id: string; project: ProjectListEntry } => result !== null,
     );
     for (const result of succeeded) {
       if (action === 'to-team') onProjectShared?.(result.project);
       else onProjectUnshared?.(result.id);
     }
-    if (succeeded.length > 0) notifyTeamProjectsChanged();
+    if (succeeded.length > 0) void 0;
     const failedCount = ids.length - succeeded.length;
-    trackWorkspaceProjectActionResult(analytics.track, {
-      page_name: analyticsPage,
-      area: 'project_collection',
-      action: action === 'to-team' ? 'bulk_move_to_team' : 'bulk_move_to_personal',
-      result: failedCount === 0 ? 'success' : succeeded.length > 0 ? 'partial_success' : 'failed',
-      requested_count: ids.length,
-      succeeded_count: succeeded.length,
-      failed_count: failedCount,
-      duration_ms: Math.round(performance.now() - startedAt),
-      ...(failedCount > 0 ? { error_code: 'one_or_more_failed' } : {}),
-      ...workspaceDimensions,
-    });
+    
   }
 
   async function commitBulkDelete() {
@@ -1368,18 +1179,7 @@ export function RecentProjectsStrip({
     );
     const succeededCount = deleted.filter((id): id is string => id !== null).length;
     const failedCount = ids.length - succeededCount;
-    trackWorkspaceProjectActionResult(analytics.track, {
-      page_name: analyticsPage,
-      area: 'project_collection',
-      action: 'bulk_delete',
-      result: failedCount === 0 ? 'success' : succeededCount > 0 ? 'partial_success' : 'failed',
-      requested_count: ids.length,
-      succeeded_count: succeededCount,
-      failed_count: failedCount,
-      duration_ms: Math.round(performance.now() - startedAt),
-      ...(failedCount > 0 ? { error_code: 'one_or_more_failed' } : {}),
-      ...workspaceDimensions,
-    });
+    
   }
 
   return (
@@ -1400,7 +1200,7 @@ export function RecentProjectsStrip({
                 type="button"
                 className="recent-projects__invite"
                 onClick={() => {
-                  trackCollection('invite_teammates');
+                  
                   if (inviteTarget.kind === 'vela') {
                     window.open(inviteTarget.url, '_blank', 'noopener,noreferrer');
                   } else if (inviteTarget.kind === 'local') {
@@ -1417,9 +1217,7 @@ export function RecentProjectsStrip({
                 className={`recent-projects__select-toggle${selectionMode ? ' is-active' : ''}`}
                 aria-pressed={selectionMode}
                 onClick={() => {
-                  trackCollection('multi_select_toggle', {
-                    selection_count_bucket: countBucket(selectedCount),
-                  });
+                  
                   setSelectionMode((current) => !current);
                   setSelectedProjectIds(new Set());
                   setMenuOpenId(null);
@@ -1447,10 +1245,7 @@ export function RecentProjectsStrip({
                         type="button"
                         className={ownerFilter === option.id ? 'is-active' : undefined}
                         onClick={() => {
-                          trackCollection('filter', {
-                            filter_type: 'owner',
-                            filter_value: option.id,
-                          });
+                          
                           setOwnerFilter(option.id);
                           setOpenHeaderMenu(null);
                         }}
@@ -1483,10 +1278,7 @@ export function RecentProjectsStrip({
                       type="button"
                       className={kindFilter === option.id ? 'is-active' : undefined}
                       onClick={() => {
-                        trackCollection('filter', {
-                          filter_type: 'project_type',
-                          filter_value: option.id,
-                        });
+                        
                         setKindFilter(option.id);
                         setOpenHeaderMenu(null);
                       }}
@@ -1506,14 +1298,8 @@ export function RecentProjectsStrip({
                 className="recent-projects__filter-clear"
                 data-testid="recent-projects-clear-filters"
                 onClick={() => {
-                  trackCollection('filter', {
-                    filter_type: 'owner',
-                    filter_value: 'all',
-                  });
-                  trackCollection('filter', {
-                    filter_type: 'project_type',
-                    filter_value: 'all',
-                  });
+                  
+                  
                   setOwnerFilter('all');
                   setKindFilter('all');
                   setOpenHeaderMenu(null);
@@ -1543,14 +1329,7 @@ export function RecentProjectsStrip({
                       type="button"
                       className={sort === option.id ? 'is-active' : undefined}
                       onClick={() => {
-                        trackCollection('sort', {
-                          sort_value:
-                            option.id === 'updatedAsc'
-                              ? 'updated_asc'
-                              : option.id === 'nameAsc'
-                                ? 'name_asc'
-                                : 'updated_desc',
-                        });
+                        
                         setSort(option.id);
                         setOpenHeaderMenu(null);
                       }}
@@ -1569,7 +1348,7 @@ export function RecentProjectsStrip({
                 aria-label={t('designs.viewGrid')}
                 onClick={() => {
                   if (view !== 'grid') {
-                    trackCollection('view_toggle', { view_value: 'grid' });
+                    
                     setView('grid');
                   }
                 }}
@@ -1583,7 +1362,7 @@ export function RecentProjectsStrip({
                 aria-label={t('recentProjects.viewList')}
                 onClick={() => {
                   if (view !== 'list') {
-                    trackCollection('view_toggle', { view_value: 'list' });
+                    
                     setView('list');
                   }
                 }}
@@ -1648,9 +1427,7 @@ export function RecentProjectsStrip({
                 disabled={bulkMutationDisabled}
                 title={bulkMutationTitle}
                 onClick={() => {
-                  trackCollection('bulk_delete', {
-                    selection_count_bucket: countBucket(selectedCount),
-                  });
+                  
                   setBulkDeleteOpen(true);
                 }}
               >
@@ -1732,26 +1509,14 @@ export function RecentProjectsStrip({
                   }
                   if (opening) return;
                   const openStartedAt = performance.now();
-                  const openRequestId = analytics.newRequestId();
+                  const openRequestId = crypto.randomUUID();
                   const projectRelation = creator.ownedBySelf ? 'self' : 'other';
                   const materialization =
                     project.metadata?.sharedProjectPlaceholderAt != null ? 'required' : 'warm';
-                  trackCollection('project_open', {
-                    project_key: project.id,
-                    project_relation: projectRelation,
-                  }, openRequestId);
+                  
                   const trackSharedOpenResult = (opened: boolean) => {
                     if (!shared && space !== 'team') return;
-                    trackWorkspaceSharedProjectOpenResult(analytics.track, {
-                      page_name: analyticsPage,
-                      area: 'project_collection',
-                      result: opened ? 'success' : 'failed',
-                      project_relation: projectRelation,
-                      materialization,
-                      duration_ms: Math.round(performance.now() - openStartedAt),
-                      ...(!opened ? { error_code: 'open_failed' } : {}),
-                      ...workspaceDimensions,
-                    }, { requestId: openRequestId });
+                    
                   };
                   // Release every background cover slot before the project view
                   // starts its foreground files/content reads. Waiting for the
@@ -1767,22 +1532,22 @@ export function RecentProjectsStrip({
                     if (result && typeof result === 'object' && 'then' in result) {
                       void Promise.resolve(result).then(
                         (opened) => {
-                          trackSharedOpenResult(opened !== false);
+                          
                           if (opened === false) resumeBackgroundCoverRequests();
                         },
                         () => {
-                          trackSharedOpenResult(false);
+                          
                           resumeBackgroundCoverRequests();
                         },
                       );
                     } else if (result === false) {
-                      trackSharedOpenResult(false);
+                      
                       resumeBackgroundCoverRequests();
                     } else {
-                      trackSharedOpenResult(true);
+                      
                     }
                   } catch {
-                    trackSharedOpenResult(false);
+                    
                     resumeBackgroundCoverRequests();
                   }
                 }}
@@ -1913,10 +1678,7 @@ export function RecentProjectsStrip({
                   aria-expanded={menuOpenId === project.id}
                     onClick={(event) => {
                       event.stopPropagation();
-                      trackCollection('more_menu', {
-                        project_key: project.id,
-                        project_relation: creator.ownedBySelf ? 'self' : 'other',
-                      });
+                      
                       setShareErrorProjectId(null);
                       setMenuOpenId((current) => current === project.id ? null : project.id);
                     }}
@@ -2218,23 +1980,6 @@ export function RecentProjectsStrip({
           </DialogFooter>
         </Dialog>
       ) : null}
-      <InviteDialog
-        open={inviteOpen}
-        onClose={() => setInviteOpen(false)}
-        workspaceContext={workspaceContext}
-        canAssignRoles={
-          canAssignInviteRoles ?? workspaceContext?.permissions.canInviteMembers === true
-        }
-        availableSeats={workspaceInviteAvailableSeats(workspaceContext)}
-        entryFrom="all_projects"
-        onUpgrade={
-          inviteUpgradeUrl
-            ? () => {
-                window.open(inviteUpgradeUrl, '_blank', 'noopener,noreferrer');
-              }
-            : undefined
-        }
-      />
     </section>
   );
 }
@@ -2446,7 +2191,7 @@ async function loadDeckCover(
   if (signal) {
     const response = await fetch(src, {
       signal,
-      ...(workspaceContext ? { headers: workspaceProjectHeaders(workspaceContext) } : {}),
+      ...(workspaceContext ? { headers: {} } : {}),
     });
     if (!response.ok) throw new Error(`Failed to load project cover: ${response.status}`);
     const parsed = deckPreviewSrcDoc(await response.text());

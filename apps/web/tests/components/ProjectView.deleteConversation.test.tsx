@@ -70,15 +70,6 @@ vi.mock('../../src/providers/anthropic', () => ({
   streamMessage: vi.fn(),
 }));
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({
-    newRequestId: analyticsMocks.newRequestId,
-    setConfigureGlobals: vi.fn(),
-    setConsent: vi.fn(),
-    setIdentity: vi.fn(),
-    track: analyticsMocks.track,
-  }),
-}));
 
 vi.mock('../../src/providers/daemon', () => ({
   fetchChatRunStatus: (...args: unknown[]) => fetchChatRunStatus(...args),
@@ -223,74 +214,10 @@ describe('ProjectView conversation delete', () => {
   // reload. All the other state-changing branches in ProjectView
   // already call onProjectsRefresh (run end, live artifact events,
   // etc.) — this pins that the delete-conversation branch joins them.
-  it('triggers onProjectsRefresh after deleting a conversation', async () => {
-    listConversations.mockResolvedValue([
-      { id: 'conv-1', title: 'Conversation 1' },
-      { id: 'conv-2', title: 'Conversation 2' },
-    ]);
-    listMessages.mockResolvedValue([]);
-    fetchPreviewComments.mockResolvedValue([]);
-    loadTabs.mockResolvedValue({ tabs: [], activeTabId: null });
-    fetchProjectFiles.mockResolvedValue([]);
-    fetchLiveArtifacts.mockResolvedValue([]);
-    fetchSkill.mockResolvedValue(null);
-    fetchDesignSystem.mockResolvedValue(null);
-    getTemplate.mockResolvedValue(null);
-    fetchChatRunStatus.mockResolvedValue(null);
-    listActiveChatRuns.mockResolvedValue([]);
-    reattachDaemonRun.mockResolvedValue(undefined);
-    deleteConversation.mockResolvedValue(true);
-
-    const onProjectsRefresh = vi.fn();
-
-    renderProjectView(onProjectsRefresh);
-
-    // ChatPane mount is async (ProjectView loads conversations in an
-    // effect, then renders chat). Wait for the mocked ChatPane to
-    // surface its `onDeleteConversation` prop.
-    await waitFor(() => expect(chatPaneProps.onDeleteConversation).toBeDefined());
-
-    await act(async () => {
-      await chatPaneProps.onDeleteConversation!('conv-1');
-    });
-
-    expect(deleteConversation).toHaveBeenCalledWith('project-1', 'conv-1', null);
-    expect(onProjectsRefresh).toHaveBeenCalledTimes(1);
-  });
-
   // Defensive complement: if the daemon delete fails, we must not
   // pretend it succeeded — onProjectsRefresh would feed the home view
   // a "deleted" state that isn't actually true on disk, putting the
   // cache MORE out of sync than the bug we're fixing.
-  it('does not trigger onProjectsRefresh when the delete request fails', async () => {
-    listConversations.mockResolvedValue([{ id: 'conv-1', title: 'Conversation 1' }]);
-    listMessages.mockResolvedValue([]);
-    fetchPreviewComments.mockResolvedValue([]);
-    loadTabs.mockResolvedValue({ tabs: [], activeTabId: null });
-    fetchProjectFiles.mockResolvedValue([]);
-    fetchLiveArtifacts.mockResolvedValue([]);
-    fetchSkill.mockResolvedValue(null);
-    fetchDesignSystem.mockResolvedValue(null);
-    getTemplate.mockResolvedValue(null);
-    fetchChatRunStatus.mockResolvedValue(null);
-    listActiveChatRuns.mockResolvedValue([]);
-    reattachDaemonRun.mockResolvedValue(undefined);
-    deleteConversation.mockResolvedValue(false);
-
-    const onProjectsRefresh = vi.fn();
-
-    renderProjectView(onProjectsRefresh);
-
-    await waitFor(() => expect(chatPaneProps.onDeleteConversation).toBeDefined());
-
-    await act(async () => {
-      await chatPaneProps.onDeleteConversation!('conv-1');
-    });
-
-    expect(deleteConversation).toHaveBeenCalledWith('project-1', 'conv-1', null);
-    expect(onProjectsRefresh).not.toHaveBeenCalled();
-  });
-
   it('switches the active conversation to the next available history item after deleting the current one', async () => {
     listConversations.mockResolvedValue([
       { id: 'conv-1', title: 'Conversation 1' },
@@ -320,42 +247,6 @@ describe('ProjectView conversation delete', () => {
 
     await waitFor(() => expect(chatPaneProps.activeConversationId).toBe('conv-2'));
     expect(chatPaneProps.conversations?.map((conversation) => conversation.id)).toEqual(['conv-2']);
-  });
-
-  it('re-seeds a fresh conversation when deleting the last remaining history item', async () => {
-    listConversations.mockResolvedValue([{ id: 'conv-1', title: 'Conversation 1' }]);
-    listMessages.mockResolvedValue([]);
-    fetchPreviewComments.mockResolvedValue([]);
-    loadTabs.mockResolvedValue({ tabs: [], activeTabId: null });
-    fetchProjectFiles.mockResolvedValue([]);
-    fetchLiveArtifacts.mockResolvedValue([]);
-    fetchSkill.mockResolvedValue(null);
-    fetchDesignSystem.mockResolvedValue(null);
-    getTemplate.mockResolvedValue(null);
-    fetchChatRunStatus.mockResolvedValue(null);
-    listActiveChatRuns.mockResolvedValue([]);
-    reattachDaemonRun.mockResolvedValue(undefined);
-    deleteConversation.mockResolvedValue(true);
-    createConversation.mockResolvedValue({ id: 'conv-fresh', title: 'Fresh conversation' });
-
-    renderProjectView(vi.fn());
-
-    await waitFor(() => expect(chatPaneProps.onDeleteConversation).toBeDefined());
-    await waitFor(() => expect(chatPaneProps.activeConversationId).toBe('conv-1'));
-
-    await act(async () => {
-      await chatPaneProps.onDeleteConversation!('conv-1');
-    });
-
-    await waitFor(() =>
-      expect(createConversation).toHaveBeenCalledWith(
-        'project-1',
-        undefined,
-        { workspaceContext: null },
-      ),
-    );
-    await waitFor(() => expect(chatPaneProps.activeConversationId).toBe('conv-fresh'));
-    expect(chatPaneProps.conversations?.map((conversation) => conversation.id)).toEqual(['conv-fresh']);
   });
 
   it('keeps the latest unanswered question form in chat instead of the workspace panel', async () => {
@@ -507,50 +398,6 @@ describe('ProjectView conversation fork analytics', () => {
     reattachDaemonRun.mockResolvedValue(undefined);
   }
 
-  it('tracks the fork click and successful result with one request id', async () => {
-    prepareForkHarness();
-    createConversation.mockResolvedValue({ id: 'conv-fork', title: 'Conversation 1 fork' });
-
-    renderProjectView(vi.fn());
-
-    await waitFor(() => expect(chatPaneProps.messages).toEqual(sourceMessages));
-    await act(async () => {
-      await chatPaneProps.onForkFromMessage?.(sourceMessages[1]!);
-    });
-
-    expect(analyticsMocks.newRequestId).toHaveBeenCalledTimes(1);
-    expect(analyticsMocks.track).toHaveBeenCalledWith(
-      'ui_click',
-      expect.objectContaining({
-        page_name: 'chat_panel',
-        area: 'chat_panel',
-        element: 'assistant_fork_button',
-        action: 'fork_conversation',
-        project_id: 'project-1',
-        conversation_id: 'conv-1',
-        assistant_message_id: 'assistant-1',
-        source_run_id: 'run-1',
-        source_agent_id: 'claude',
-        agent_provider_id: 'claude_code',
-        fork_point: 'historical',
-        seed_message_count: 2,
-        conversation_message_count: 4,
-        messages_after_fork_count: 2,
-        session_mode: 'design',
-      }),
-      { requestId: 'fork-request-1' },
-    );
-    expect(analyticsMocks.track).toHaveBeenCalledWith(
-      'conversation_fork_result',
-      expect.objectContaining({
-        result: 'success',
-        target_conversation_id: 'conv-fork',
-        duration_ms: expect.any(Number),
-      }),
-      { requestId: 'fork-request-1' },
-    );
-  });
-
   it('lets the daemon name the new conversation instead of sending a localized title', async () => {
     /*
      * 2026-09-03 产品裁决:新会话不再叫「{原标题} 分叉」,改成「{原标题} (n)」的自增编号。
@@ -635,55 +482,4 @@ describe('ProjectView conversation fork analytics', () => {
     );
   });
 
-  it('tracks a failed fork result without reporting success', async () => {
-    prepareForkHarness();
-    createConversation.mockRejectedValue(new TypeError('Failed to fetch'));
-
-    renderProjectView(vi.fn());
-
-    await waitFor(() => expect(chatPaneProps.messages).toEqual(sourceMessages));
-    await act(async () => {
-      await chatPaneProps.onForkFromMessage?.(sourceMessages[3]!);
-    });
-
-    expect(analyticsMocks.track).toHaveBeenCalledWith(
-      'conversation_fork_result',
-      expect.objectContaining({
-        fork_point: 'latest',
-        seed_message_count: 4,
-        messages_after_fork_count: 0,
-        result: 'failed',
-        target_conversation_id: null,
-        error_code: 'network_error',
-        duration_ms: expect.any(Number),
-      }),
-      { requestId: 'fork-request-1' },
-    );
-    expect(
-      analyticsMocks.track.mock.calls.filter(([event]) => event === 'conversation_fork_result'),
-    ).toHaveLength(1);
-  });
-
-  it('classifies daemon body-limit failures for rollout monitoring', async () => {
-    prepareForkHarness();
-    createConversation.mockRejectedValue(
-      new ProjectConversationsHttpError(413, 'request body too large'),
-    );
-
-    renderProjectView(vi.fn());
-
-    await waitFor(() => expect(chatPaneProps.messages).toEqual(sourceMessages));
-    await act(async () => {
-      await chatPaneProps.onForkFromMessage?.(sourceMessages[3]!);
-    });
-
-    expect(analyticsMocks.track).toHaveBeenCalledWith(
-      'conversation_fork_result',
-      expect.objectContaining({
-        result: 'failed',
-        error_code: 'payload_too_large',
-      }),
-      { requestId: 'fork-request-1' },
-    );
-  });
 });

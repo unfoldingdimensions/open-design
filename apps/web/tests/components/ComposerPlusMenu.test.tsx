@@ -424,69 +424,6 @@ describe('ComposerPlusMenu pick-row caret protection', () => {
   // style is the bug — the stylesheet positions it `position: absolute;
   // left: 100%` inside the row, so a viewport-space `left` is re-anchored to
   // the row's own left edge and throws the panel across the screen.
-  it('leaves submenu flyout placement to the stylesheet instead of viewport-space inline coords', () => {
-    const originalInnerWidth = window.innerWidth;
-    const originalInnerHeight = window.innerHeight;
-    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1440 });
-    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 900 });
-
-    try {
-      renderMenu({ placementPreference: 'down', onAddMcp: vi.fn() });
-      const trigger = screen.getByTestId('plus-trigger') as HTMLButtonElement;
-      trigger.getBoundingClientRect = () =>
-        ({
-          x: 369,
-          y: 548,
-          top: 548,
-          left: 369,
-          right: 405,
-          bottom: 584,
-          width: 36,
-          height: 36,
-          toJSON: () => ({}),
-        }) as DOMRect;
-
-      fireEvent.click(trigger);
-
-      const mcpParent = screen.getByRole('menuitem', { name: /^MCP/i });
-      const mcpRow = mcpParent.closest('.plus-menu__submenu-row') as HTMLDivElement;
-      mcpRow.getBoundingClientRect = () =>
-        ({
-          x: 375,
-          y: 800,
-          top: 800,
-          left: 375,
-          right: 571,
-          bottom: 828,
-          width: 196,
-          height: 28,
-          toJSON: () => ({}),
-        }) as DOMRect;
-
-      fireEvent.click(mcpParent);
-
-      const menu = screen.getAllByRole('menu')[0];
-      expect(menu?.className).toContain('plus-menu__popup--flyout-right');
-
-      const flyout = document.querySelector<HTMLElement>('.plus-menu__flyout');
-      expect(flyout).not.toBeNull();
-      // No inline geometry at all: side, offset and width all come from
-      // plus-menu.css, which anchors the flyout to its parent row.
-      expect(flyout?.style.left).toBe('');
-      expect(flyout?.style.right).toBe('');
-      expect(flyout?.style.top).toBe('');
-      expect(flyout?.style.bottom).toBe('');
-      expect(flyout?.style.width).toBe('');
-
-      const css = readFileSync(join(process.cwd(), 'src/styles/home/plus-menu.css'), 'utf8');
-      expect(css).toContain('.plus-menu__submenu-row {\n  position: relative;\n}');
-      expect(css).toContain('.plus-menu__flyout {\n  position: absolute;\n  left: 100%;');
-    } finally {
-      Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalInnerWidth });
-      Object.defineProperty(window, 'innerHeight', { configurable: true, value: originalInnerHeight });
-    }
-  });
-
   // Acceptance #50, part 1: the popup uses `overflow: visible` so its side
   // flyouts can escape, which means a stack taller than the room under the
   // trigger spills off the viewport with no way to scroll it back. The

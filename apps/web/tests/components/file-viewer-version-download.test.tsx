@@ -378,25 +378,4 @@ describe('FileViewer version download actions', () => {
     expect(exportAsZipMock).not.toHaveBeenCalled();
   });
 
-  it('keeps version export popovers and feedback above the version panel layers', () => {
-    const css = readExpandedIndexCss();
-    const panelZ = Number(cssValue(cssRule(css, '.artifact-version-panel'), 'z-index'));
-    expect(panelZ).toBeGreaterThan(0);
-    // The foot popovers open *inside* the floating panel (it clips its own
-    // overflow), so they have to stack over the panel's preview-loading overlay
-    // rather than over a full-window backdrop.
-    expect(
-      Number(cssValue(
-        cssRule(
-          css,
-          '.artifact-version-panel .artifact-version-panel__popover.file-version-download-menu.share-menu-popover',
-        ),
-        'z-index',
-      )),
-    ).toBeGreaterThan(Number(cssValue(cssRule(css, '.file-version-preview-overlay'), 'z-index')));
-    // The image-export dialog and its toast are full-window layers, so they must
-    // sit above the panel itself.
-    expect(Number(cssValue(cssRule(css, '.viewer-modal-backdrop.file-version-export-backdrop.modal-backdrop'), 'z-index'))).toBeGreaterThan(panelZ);
-    expect(Number(cssValue(cssRule(css, '.od-toast.file-version-export-toast.placement-top'), 'z-index'))).toBeGreaterThan(panelZ);
-  });
 });

@@ -9,9 +9,9 @@
 // coarse status the New Brand modal / onboarding step render.
 
 import { useCallback, useRef, useState } from 'react';
-import type { BrandExtractStartResponse, BrandStatus, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { BrandExtractStartResponse, BrandStatus } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from './collab-contract';
 import { useI18n } from '../i18n';
-import { workspaceProjectHeaders } from '../state/projects';
 
 /** Coarse kickoff phase. */
 export type BrandExtractPhase = 'idle' | 'starting' | 'done' | 'error';
@@ -110,7 +110,7 @@ export function useBrandExtract(): UseBrandExtract {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          ...(options.workspaceContext ? workspaceProjectHeaders(options.workspaceContext) : {}),
+          ...(options.workspaceContext ? {} : {}),
         },
         body: JSON.stringify({
           ...(url.trim() ? { url } : {}),

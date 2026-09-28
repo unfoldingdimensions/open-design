@@ -6,8 +6,6 @@ import type {
   ProjectContextPluginRef,
 } from './context.js';
 import type { ProjectSyncIntent, ProjectSyncIntentEvent, ProjectSyncState } from './project-sync.js';
-import type { TeamResourceState } from './team-resources.js';
-import type { WorkspaceCollabContext } from './collab.js';
 
 export type ProjectKind =
   | 'prototype'
@@ -392,7 +390,7 @@ export interface ProjectTemplate {
   createdAt: number;
 }
 
-export interface ProjectBrowserWorkspaceTab {
+export interface ProjectBrowserTab {
   id: string;
   insertAfter?: string | null;
   label: string;
@@ -404,7 +402,7 @@ export interface ProjectBrowserWorkspaceTab {
 export interface ProjectTabsState {
   tabs: string[];
   active: string | null;
-  browserTabs?: ProjectBrowserWorkspaceTab[];
+  browserTabs?: ProjectBrowserTab[];
   hasSavedState?: boolean;
   updatedAt?: number;
 }
@@ -555,48 +553,6 @@ export interface ProjectDetailResponse extends ProjectResponse {
 
 export type ProjectVisibility = 'personal' | 'team';
 
-/**
- * Daemon-authoritative workspace and billing scope for one persisted project.
- *
- * `visibility` answers whether the project itself is a private draft or shared
- * with the team. It is deliberately independent from `kind`: a private draft
- * may still belong to a team workspace and therefore use that workspace's
- * wallet. The tagged union prevents clients from treating every non-null
- * workspace id as a team-billing scope.
- */
-export type ProjectWorkspaceScope =
-  | {
-      kind: 'unbound';
-      projectId: string;
-      workspaceId: null;
-      context: null;
-    }
-  | {
-      kind: 'unavailable';
-      projectId: string;
-      workspaceId: string;
-      visibility: ProjectVisibility;
-      context: null;
-    }
-  | {
-      kind: 'personal';
-      projectId: string;
-      workspaceId: string;
-      visibility: ProjectVisibility;
-      context: WorkspaceCollabContext & { workspaceType: 'personal' };
-    }
-  | {
-      kind: 'team';
-      projectId: string;
-      workspaceId: string;
-      visibility: ProjectVisibility;
-      context: WorkspaceCollabContext & { workspaceType: 'team' };
-    };
-
-/** GET /api/projects/:id/workspace-scope. */
-export interface ProjectWorkspaceScopeResponse {
-  scope: ProjectWorkspaceScope;
-}
 
 // Local D-lane placeholder until the B-owned CurrentWorkspaceContext is
 // imported into open-design. The route adapter keeps this replaceable.
@@ -629,12 +585,18 @@ export interface ProjectAccessFlags {
   disabledReason?: ProjectDisabledReason;
 }
 
-export interface WorkspaceProjectSummary {
+/**
+ * Team-resource lifecycle state. The team-resource module went with the Cloud
+ * surface; the state is retained because local project summaries still carry it.
+ */
+export type ResourceLifecycleState = 'active' | 'frozen' | 'deleted';
+
+export interface ProjectListEntry {
   id: string;
   name: string;
   workspaceId: string;
   visibility: ProjectVisibility;
-  resourceState: TeamResourceState;
+  resourceState: ResourceLifecycleState;
   createdByWorkspaceMemberId: string | null;
   updatedByWorkspaceMemberId?: string | null;
   /**
@@ -656,8 +618,8 @@ export interface WorkspaceProjectSummary {
   project: Project;
 }
 
-export interface WorkspaceProjectsResponse {
-  projects: WorkspaceProjectSummary[];
+export interface ProjectSummariesResponse {
+  projects: ProjectListEntry[];
 }
 
 export interface MoveWorkspaceProjectRequest {

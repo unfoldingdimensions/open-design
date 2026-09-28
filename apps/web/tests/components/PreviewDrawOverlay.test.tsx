@@ -7,7 +7,7 @@ import { PreviewDrawOverlay } from '../../src/components/PreviewDrawOverlay';
 import { requestPreviewSnapshot } from '../../src/runtime/exports';
 
 vi.mock('../../src/runtime/exports', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/runtime/exports')>();
+  const actual = await importOriginal<any>();
   return {
     ...actual,
     requestPreviewSnapshot: vi.fn(async () => ({ dataUrl: 'data:image/png;base64,AAAA', w: 10, h: 10 })),

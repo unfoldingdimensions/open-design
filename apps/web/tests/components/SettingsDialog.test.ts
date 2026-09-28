@@ -26,7 +26,7 @@ import {
 import { deriveUpdaterModel } from '../../src/lib/updater';
 import type { CapyDesignHostUpdaterStatusSnapshot } from '@capydesign/host';
 import type { AppConfig, AppVersionInfo, ConnectionTestResponse } from '../../src/types';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 const originalFetch = globalThis.fetch;
 
@@ -91,12 +91,6 @@ describe('SettingsDialog Orbit artifact scope', () => {
       canWriteSyncedFiles: false,
     },
   } as WorkspaceCollabContext;
-
-  it('adds navigation scope for a bound Workspace artifact', () => {
-    expect(orbitLiveArtifactHref('project-1', 'artifact-1', context)).toBe(
-      '/api/live-artifacts/artifact-1/preview?projectId=project-1&workspaceId=workspace-team&workspaceMemberId=member-1',
-    );
-  });
 
   it('preserves the unscoped local artifact URL for legacy projects', () => {
     expect(orbitLiveArtifactHref('project-1', 'artifact-1', null)).toBe(

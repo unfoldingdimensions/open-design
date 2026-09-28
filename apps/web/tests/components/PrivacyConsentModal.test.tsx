@@ -8,11 +8,6 @@ import { I18nProvider } from '../../src/i18n';
 
 const analyticsTrack = vi.hoisted(() => vi.fn());
 
-vi.mock('../../src/analytics/provider', () => ({
-  useAnalytics: () => ({
-    track: analyticsTrack,
-  }),
-}));
 
 const PRIVACY_POLICY_HREF = 'https://github.com/nexu-io/open-design/blob/main/PRIVACY.md';
 
