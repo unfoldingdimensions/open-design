@@ -3,10 +3,10 @@ export interface RunContextSelection {
   pluginIds?: string[];
   mcpServerIds?: string[];
   connectorIds?: string[];
-  workspaceItems?: WorkspaceContextItem[];
+  workspaceItems?: RunContextItem[];
 }
 
-export type WorkspaceContextKind =
+export type RunContextItemKind =
   | 'design-files'
   | 'design-system'
   | 'project'
@@ -20,9 +20,9 @@ export type WorkspaceContextKind =
   | 'side-chat'
   | 'live-artifact';
 
-export interface WorkspaceContextItem {
+export interface RunContextItem {
   id: string;
-  kind: WorkspaceContextKind;
+  kind: RunContextItemKind;
   label: string;
   tabId?: string;
   path?: string;

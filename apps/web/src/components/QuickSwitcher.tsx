@@ -6,7 +6,7 @@
 // surface first, then the rest of the file list by mtime.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { WorkspaceContextItem } from '@capydesign/contracts';
+import type { RunContextItem } from '@capydesign/contracts';
 import { motion } from 'motion/react';
 import { modalOverlay, scaleIn } from '../motion';
 import { useT } from '../i18n';
@@ -16,14 +16,14 @@ import type { ProjectFile } from '../types';
 interface Props {
   projectId: string;
   files: ProjectFile[];
-  workspaceContexts?: WorkspaceContextItem[];
+  workspaceContexts?: RunContextItem[];
   onOpenFile: (name: string) => void;
   onOpenTab?: (tabId: string) => void;
   onClose: () => void;
 }
 
 type QuickSwitcherResult =
-  | { kind: 'tab'; context: WorkspaceContextItem; score: number }
+  | { kind: 'tab'; context: RunContextItem; score: number }
   | { kind: 'file'; file: ProjectFile; score: number };
 
 export function QuickSwitcher({
@@ -225,7 +225,7 @@ export function scoreMatch(file: ProjectFile, q: string): number {
   return 0;
 }
 
-export function scoreWorkspaceContextMatch(item: WorkspaceContextItem, q: string): number {
+export function scoreWorkspaceContextMatch(item: RunContextItem, q: string): number {
   const label = item.label.toLowerCase();
   const kind = item.kind.toLowerCase();
   const full = [
@@ -302,7 +302,7 @@ function quickSwitcherResultKindLabel(result: QuickSwitcherResult): string {
     : workspaceContextKindLabel(result.context.kind).toUpperCase();
 }
 
-function workspaceContextKindLabel(kind: WorkspaceContextItem['kind']): string {
+function workspaceContextKindLabel(kind: RunContextItem['kind']): string {
   switch (kind) {
     case 'browser':
       return 'Browser';

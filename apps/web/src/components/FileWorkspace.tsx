@@ -89,7 +89,7 @@ import {
   type ProjectFile,
   type ProjectFolder,
 } from '../types';
-import { resolveLocalizedText, type ChatSessionMode, type InstalledPluginRecord, type LocalizedText, type WorkspaceContextItem } from '@capydesign/contracts';
+import { resolveLocalizedText, type ChatSessionMode, type InstalledPluginRecord, type LocalizedText, type RunContextItem } from '@capydesign/contracts';
 import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { createTerminal, killTerminal, listPlugins, moveWorkspaceProject } from '../state/projects';
 import { MoveToTeamConfirmDialog, moveConfirmSkipped } from './MoveToTeamConfirmDialog';
@@ -309,8 +309,8 @@ interface Props {
   onConversationSessionModeChange?: (id: string, mode: ChatSessionMode) => void;
   onNewConversation?: () => void;
   activeConversationChat?: ActiveConversationChatState;
-  onActiveContextChange?: (context: WorkspaceContextItem | null) => void;
-  onWorkspaceContextsChange?: (contexts: WorkspaceContextItem[]) => void;
+  onActiveContextChange?: (context: RunContextItem | null) => void;
+  onWorkspaceContextsChange?: (contexts: RunContextItem[]) => void;
   messages?: ChatMessage[];
   artifactHtml?: string | null;
   conversationError?: string | null;
@@ -3405,7 +3405,7 @@ export function FileWorkspace({
     />
   );
 
-  const activeWorkspaceContext = useMemo<WorkspaceContextItem | null>(() => {
+  const activeWorkspaceContext = useMemo<RunContextItem | null>(() => {
     if (activeTab === DESIGN_SYSTEM_TAB && designSystemProject) {
       return {
         id: 'workspace:design-system',
@@ -3620,10 +3620,10 @@ export function FileWorkspace({
     }
   }, [workspaceTabIds]);
 
-  const workspaceContexts = useMemo<WorkspaceContextItem[]>(() => {
-    const out: WorkspaceContextItem[] = [];
+  const workspaceContexts = useMemo<RunContextItem[]>(() => {
+    const out: RunContextItem[] = [];
     const seen = new Set<string>();
-    const push = (item: WorkspaceContextItem | null | undefined) => {
+    const push = (item: RunContextItem | null | undefined) => {
       if (!item) return;
       const key = `${item.kind}:${item.id}`;
       if (seen.has(key)) return;

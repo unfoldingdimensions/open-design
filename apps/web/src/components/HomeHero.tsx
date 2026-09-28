@@ -25,7 +25,7 @@ import type {
   ReactNode,
   RefObject,
 } from 'react';
-import type { ChatSessionMode, ConnectorDetail, DesignSystemSummary, InputFieldSpec, InstalledPluginRecord, McpServerConfig, WorkspaceContextItem } from '@capydesign/contracts';
+import type { ChatSessionMode, ConnectorDetail, DesignSystemSummary, InputFieldSpec, InstalledPluginRecord, McpServerConfig, RunContextItem } from '@capydesign/contracts';
 import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { DesignSystemPicker } from './DesignSystemPicker';
 import type { SkillSummary } from '../types';
@@ -172,11 +172,11 @@ interface Props {
   contextOnlyPlugins?: InstalledPluginRecord[];
   contextOnlyMcpServers?: McpServerConfig[];
   contextOnlyConnectors?: ConnectorDetail[];
-  contextWorkspaceItems?: WorkspaceContextItem[];
+  contextWorkspaceItems?: RunContextItem[];
   onRemovePluginContext?: (pluginId: string) => void;
   onRemoveMcpContext?: (serverId: string) => void;
   onRemoveConnectorContext?: (connectorId: string) => void;
-  onAddWorkspaceContext?: (item: WorkspaceContextItem) => void;
+  onAddWorkspaceContext?: (item: RunContextItem) => void;
   onRemoveWorkspaceContext?: (id: string) => void;
   onAddPlugin?: () => void;
   onAddConnector?: () => void;
@@ -283,7 +283,7 @@ const EMPTY_STAGED_FILES: File[] = [];
 const EMPTY_SKILLS: SkillSummary[] = [];
 const EMPTY_MCP_OPTIONS: McpServerConfig[] = [];
 const EMPTY_CONNECTOR_OPTIONS: ConnectorDetail[] = [];
-const EMPTY_WORKSPACE_ITEMS: WorkspaceContextItem[] = [];
+const EMPTY_WORKSPACE_ITEMS: RunContextItem[] = [];
 
 export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
   {
@@ -1007,7 +1007,7 @@ export const HomeHero = forwardRef<HomeHeroHandle, Props>(function HomeHero(
     }
   }
 
-  function appendWorkspacePrompt(item: WorkspaceContextItem) {
+  function appendWorkspacePrompt(item: RunContextItem) {
     onAddWorkspaceContext(item);
     insertInlineMentionSeparator();
     editorRef.current?.insertMention({
@@ -2371,7 +2371,7 @@ function buildHomeMentionEntities({
   activeSkillId: string | null;
   activeSkillTitle: string | null;
   connectorOptions: ConnectorDetail[];
-  contextWorkspaceItems: WorkspaceContextItem[];
+  contextWorkspaceItems: RunContextItem[];
   mcpOptions: McpServerConfig[];
   pluginOptions: InstalledPluginRecord[];
   selectedPluginContexts: InstalledPluginRecord[];

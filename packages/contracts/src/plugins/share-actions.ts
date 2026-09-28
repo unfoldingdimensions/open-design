@@ -12,10 +12,6 @@ export const PLUGIN_SHARE_ACTION_PLUGIN_IDS: Record<PluginShareAction, string> =
   'contribute-open-design': 'od-plugin-contribute-open-design',
 };
 
-export interface CreatePluginShareProjectRequest {
-  action: PluginShareAction;
-  locale?: string;
-}
 
 export interface CreatePluginShareProjectResponse {
   ok: true;

@@ -54,7 +54,7 @@ import {
   type OdCard,
   type OdCardBrandBrowserAssist,
   type RunContextSelection,
-  type WorkspaceContextItem,
+  type RunContextItem,
 } from "@capydesign/contracts";
 import { OdCardView, type BrandBrowserAssistConfirm } from "./OdCard";
 import {
@@ -4098,7 +4098,7 @@ function FormBlock({
 
 function workspaceItemsForInlineQuestionUploads(
   attachments: ChatAttachment[],
-): WorkspaceContextItem[] {
+): RunContextItem[] {
   return attachments.map((attachment) => ({
     id: `file:${attachment.path}`,
     kind: "file",

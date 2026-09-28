@@ -4,7 +4,7 @@ import { useT } from '../../i18n';
 import type { Dict } from '../../i18n/types';
 import { Icon, type IconName } from '../Icon';
 import type { ProjectFile, ProjectFileKind } from '../../types';
-import type { WorkspaceContextItem } from '@capydesign/contracts';
+import type { RunContextItem } from '@capydesign/contracts';
 import type { TabLauncherClickProps } from '@capydesign/contracts/analytics';
 import type { LauncherAction, LauncherContext } from './tab-launcher';
 import styles from './TabLauncherMenu.module.css';
@@ -33,7 +33,7 @@ interface Props {
   /** Project files to search; the caller passes `visibleFiles`. */
   files: ProjectFile[];
   /** Open workspace tabs to search and focus. */
-  workspaceContexts?: WorkspaceContextItem[];
+  workspaceContexts?: RunContextItem[];
   /** Tab names already open, so matching rows can show an "open" marker. */
   openTabNames: string[];
   /** "Create new" actions from the launcher registry (empty in Stage 1). */
@@ -130,7 +130,7 @@ export function TabLauncherMenu({
   }, [files, query, kindFilter]);
 
   const tabResults = useMemo(() => {
-    if (kindFilter !== 'all') return [] as WorkspaceContextItem[];
+    if (kindFilter !== 'all') return [] as RunContextItem[];
     const q = query.trim().toLowerCase();
     return workspaceContexts
       .filter((item) => item.tabId)
@@ -166,7 +166,7 @@ export function TabLauncherMenu({
     onClose();
   }
 
-  function chooseTab(item: WorkspaceContextItem) {
+  function chooseTab(item: RunContextItem) {
     onTrack?.({ element: 'open_tab', tab_kind: item.kind });
     if (item.tabId) onOpenTab?.(item.tabId);
     onClose();
@@ -392,7 +392,7 @@ function kindLabel(kind: ProjectFileKind, t: TranslateFn): string {
   return t('designFiles.kindBinary');
 }
 
-function workspaceContextIconName(kind: WorkspaceContextItem['kind']): IconName {
+function workspaceContextIconName(kind: RunContextItem['kind']): IconName {
   if (kind === 'browser') return 'globe';
   if (kind === 'design-files' || kind === 'folder') return 'folder';
   if (kind === 'project') return 'folder';
@@ -404,7 +404,7 @@ function workspaceContextIconName(kind: WorkspaceContextItem['kind']): IconName 
   return 'file';
 }
 
-function workspaceContextSearchText(item: WorkspaceContextItem): string {
+function workspaceContextSearchText(item: RunContextItem): string {
   return [
     item.id,
     item.kind,

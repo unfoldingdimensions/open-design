@@ -39,7 +39,7 @@ import type { McpServerConfig, McpTemplate } from "../state/mcp";
 import { listPlugins } from "../state/projects";
 import type { AppConfig, ChatAttachment, ChatCommentAttachment, Project, ProjectFile, ProjectMetadata, SkillSummary } from "../types";
 import { DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID } from '@capydesign/contracts';
-import type { ContextItem, AppliedPluginSnapshot, ChatAnalyticsEntryFrom, ChatSessionMode, ConnectorDetail, InstalledPluginRecord, PluginSourceKind, ResearchOptions, RunContextSelection, WorkspaceContextItem } from '@capydesign/contracts';
+import type { ContextItem, AppliedPluginSnapshot, ChatAnalyticsEntryFrom, ChatSessionMode, ConnectorDetail, InstalledPluginRecord, PluginSourceKind, ResearchOptions, RunContextSelection, RunContextItem } from '@capydesign/contracts';
 import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { buildVisualAnnotationAttachment, commentTargetDisplayName } from '../comments';
 import { Icon, type IconName } from "./Icon";
@@ -180,8 +180,8 @@ function mergeStagedById<T extends { id: string }>(current: T[], incoming: T[]):
   return additions.length > 0 ? [...current, ...additions] : current;
 }
 
-function dedupeWorkspaceContextItems(items: WorkspaceContextItem[]): WorkspaceContextItem[] {
-  const out: WorkspaceContextItem[] = [];
+function dedupeWorkspaceContextItems(items: RunContextItem[]): RunContextItem[] {
+  const out: RunContextItem[] = [];
   const seen = new Set<string>();
   for (const item of items) {
     const key = `${item.kind}:${item.id}`;
@@ -193,7 +193,7 @@ function dedupeWorkspaceContextItems(items: WorkspaceContextItem[]): WorkspaceCo
 }
 
 function trackedWorkspaceLinkedDirsForContexts(
-  items: WorkspaceContextItem[],
+  items: RunContextItem[],
   linkedDirs: string[],
 ): Record<string, TrackedWorkspaceLinkedDir> {
   const out: Record<string, TrackedWorkspaceLinkedDir> = {};
@@ -364,9 +364,9 @@ interface Props {
   // stale copy lets an older detail snapshot win recency comparisons and
   // shadow the change (e.g. the working-dir label never updating).
   onProjectMetadataChange?: (updated: Project) => void;
-  activeWorkspaceContext?: WorkspaceContextItem | null;
-  initialWorkspaceContexts?: WorkspaceContextItem[];
-  workspaceContexts?: WorkspaceContextItem[];
+  activeWorkspaceContext?: RunContextItem | null;
+  initialWorkspaceContexts?: RunContextItem[];
+  workspaceContexts?: RunContextItem[];
   // BYOK image-model picker shown above the textarea for protocols that
   // inject the daemon-side generate_image tool (SenseAudio, AIHubMix).
   // Hidden for every other BYOK tab so the composer stays clean. The
@@ -758,7 +758,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
     const linkedDirs = projectMetadata?.linkedDirs ?? [];
     // 工作区上下文条目是自包含的(id / kind / label / path),存下来直接还原,
     // 和宿主本轮给的 `initialWorkspaceContexts` 合并去重。
-    const [stagedWorkspaceContexts, setStagedWorkspaceContexts] = useState<WorkspaceContextItem[]>(
+    const [stagedWorkspaceContexts, setStagedWorkspaceContexts] = useState<RunContextItem[]>(
       () => dedupeWorkspaceContextItems([
         ...initialWorkspaceContexts,
         ...restoredExtrasRef.current.context.workspaceItems,
@@ -912,9 +912,9 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
         ? activeWorkspaceContext
         : null;
     const selectedWorkspaceContexts = useMemo(() => {
-      const out: WorkspaceContextItem[] = [];
+      const out: RunContextItem[] = [];
       const seen = new Set<string>();
-      const push = (item: WorkspaceContextItem | null | undefined) => {
+      const push = (item: RunContextItem | null | undefined) => {
         if (!item) return;
         const key = `${item.kind}:${item.id}`;
         if (seen.has(key)) return;
@@ -1753,7 +1753,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
       }
     }
 
-    function appendWorkspacePrompt(item: WorkspaceContextItem) {
+    function appendWorkspacePrompt(item: RunContextItem) {
       setStagedWorkspaceContexts((current) =>
         current.some((candidate) => candidate.id === item.id)
           ? current
@@ -1819,7 +1819,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
           title: project.name || project.id,
           path: project.id,
           ...(path ? { absolutePath: path } : {}),
-        } satisfies WorkspaceContextItem;
+        } satisfies RunContextItem;
       });
       const trackedByDir = await addLinkedDirs(items.map((item) => workspaceContextLinkedDir(item) ?? ''));
       if (trackedByDir === false) {
@@ -1854,7 +1854,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
         return;
       }
       const label = selected.split(/[/\\]/).filter(Boolean).pop() || selected;
-      const item: WorkspaceContextItem = {
+      const item: RunContextItem = {
         id: `local-code:${selected}`,
         kind: 'local-code',
         label,
@@ -2967,7 +2967,7 @@ export const ChatComposer = forwardRef<ChatComposerHandle, Props>(
       setMention(null);
     }
 
-    function insertWorkspaceMention(item: WorkspaceContextItem) {
+    function insertWorkspaceMention(item: RunContextItem) {
       setStagedWorkspaceContexts((current) =>
         current.some((candidate) => candidate.id === item.id)
           ? current
@@ -3884,7 +3884,7 @@ function buildComposerMentionEntities({
   plugins: InstalledPluginRecord[];
   skills: SkillSummary[];
   staged: ChatAttachment[];
-  workspaceContexts: WorkspaceContextItem[];
+  workspaceContexts: RunContextItem[];
 }): InlineMentionEntity[] {
   const entities: InlineMentionEntity[] = [];
   const workspaceSeen = new Set<string>();
@@ -4126,7 +4126,7 @@ function ComposerStopIcon({ className }: { className?: string }) {
   );
 }
 
-function workspaceContextIcon(item: WorkspaceContextItem): IconName {
+function workspaceContextIcon(item: RunContextItem): IconName {
   if (item.kind === 'browser') return 'globe';
   if (item.kind === 'folder' || item.kind === 'design-files') return 'folder';
   if (item.kind === 'project') return 'folder';
@@ -4137,7 +4137,7 @@ function workspaceContextIcon(item: WorkspaceContextItem): IconName {
   return 'file';
 }
 
-function workspaceContextTitle(item: WorkspaceContextItem, t: TranslateFn): string {
+function workspaceContextTitle(item: RunContextItem, t: TranslateFn): string {
   return [
     workspaceContextKindLabel(item.kind, t),
     item.path ? `path: ${item.path}` : null,
@@ -4147,7 +4147,7 @@ function workspaceContextTitle(item: WorkspaceContextItem, t: TranslateFn): stri
   ].filter(Boolean).join(' | ');
 }
 
-function workspaceContextDescription(item: WorkspaceContextItem, t: TranslateFn): string {
+function workspaceContextDescription(item: RunContextItem, t: TranslateFn): string {
   if (item.kind === 'design-files') return item.path || t('chat.designToolbox.context.designFiles');
   if (item.kind === 'project') return item.absolutePath || item.path || item.title || item.id;
   if (item.kind === 'local-code') return item.absolutePath || item.path || item.title || item.id;
@@ -4170,7 +4170,7 @@ function projectFileMentionDescription(file: ProjectFile, fallback: string): str
   return [file.kind, file.mime].filter(Boolean).join(' · ');
 }
 
-function workspaceContextSearchText(item: WorkspaceContextItem): string {
+function workspaceContextSearchText(item: RunContextItem): string {
   return [
     item.id,
     item.kind,
@@ -4183,7 +4183,7 @@ function workspaceContextSearchText(item: WorkspaceContextItem): string {
   ].join(' ');
 }
 
-function workspaceContextKindLabel(kind: WorkspaceContextItem['kind'], t: TranslateFn): string {
+function workspaceContextKindLabel(kind: RunContextItem['kind'], t: TranslateFn): string {
   switch (kind) {
     case 'browser':
       return t('chat.designToolbox.context.browser');
@@ -4227,7 +4227,7 @@ function StagedRunContexts({
   t,
 }: {
   designSystemPicker?: ReactNode;
-  workspaceItems: WorkspaceContextItem[];
+  workspaceItems: RunContextItem[];
   currentWorkspaceContextId: string | null;
   skills: SkillSummary[];
   mcpServers: McpServerConfig[];
@@ -5854,7 +5854,7 @@ function designToolboxSkillIcon(skill: SkillSummary): IconName {
 }
 
 function designToolboxContextLine(
-  workspaceItem: WorkspaceContextItem | null,
+  workspaceItem: RunContextItem | null,
   t: TranslateFn,
 ): string {
   if (!workspaceItem) {
@@ -5874,7 +5874,7 @@ function designToolboxDraftLine(activeDraft: string, t: TranslateFn): string {
 }
 
 function designToolboxWorkspaceKindLabel(
-  kind: WorkspaceContextItem['kind'],
+  kind: RunContextItem['kind'],
   t: TranslateFn,
 ): string {
   switch (kind) {
@@ -5910,7 +5910,7 @@ function designToolboxActionPrompt({
 }: {
   action: DesignToolboxAction;
   skill: SkillSummary | null;
-  workspaceItem: WorkspaceContextItem | null;
+  workspaceItem: RunContextItem | null;
   activeDraft: string;
   resourceIndex: DesignToolboxResourceIndex;
   t: TranslateFn;
@@ -6028,7 +6028,7 @@ function designToolboxSkillPrompt({
   t,
 }: {
   skill: SkillSummary;
-  workspaceItem: WorkspaceContextItem | null;
+  workspaceItem: RunContextItem | null;
   activeDraft: string;
   resourceIndex: DesignToolboxResourceIndex;
   t: TranslateFn;
@@ -6050,7 +6050,7 @@ function designToolboxResourcePrompt({
   t,
 }: {
   resource: Exclude<DesignToolboxResource, { kind: 'skill' }>;
-  workspaceItem: WorkspaceContextItem | null;
+  workspaceItem: RunContextItem | null;
   activeDraft: string;
   resourceIndex: DesignToolboxResourceIndex;
   t: TranslateFn;
@@ -6366,7 +6366,7 @@ function MentionPopover({
   onPickConnector,
 }: {
   files: ProjectFile[];
-  workspaceContexts: WorkspaceContextItem[];
+  workspaceContexts: RunContextItem[];
   connectors: ConnectorDetail[];
   plugins: InstalledPluginRecord[];
   skills: SkillSummary[];
@@ -6377,7 +6377,7 @@ function MentionPopover({
   activeIndex: number;
   stagedSkillIds: Set<string>;
   onPickFile: (path: string) => void;
-  onPickWorkspaceContext: (item: WorkspaceContextItem) => void;
+  onPickWorkspaceContext: (item: RunContextItem) => void;
   onPickPlugin: (record: InstalledPluginRecord) => void;
   onPickSkill: (skill: SkillSummary) => void;
   onPickMcp: (server: McpServerConfig) => void;

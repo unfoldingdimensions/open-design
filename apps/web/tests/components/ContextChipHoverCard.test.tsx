@@ -7,7 +7,7 @@ import { ContextChipHoverCard } from '../../src/components/ContextChipHoverCard'
 // Stand-ins: the module that provided these was removed with the Cloud surface.
 const workspaceContextDetailLine: any = (..._args: unknown[]) => null;
 const workspaceContextKindLabel: any = (..._args: unknown[]) => null;
-import type { WorkspaceContextItem } from '@capydesign/contracts';
+import type { RunContextItem } from '@capydesign/contracts';
 
 afterEach(cleanup);
 

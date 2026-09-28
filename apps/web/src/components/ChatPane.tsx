@@ -94,7 +94,7 @@ import type {
   AppliedPluginSnapshot,
   ChatSessionMode,
   RunContextSelection,
-  WorkspaceContextItem,
+  RunContextItem,
 } from '@capydesign/contracts';
 import type {
   TrackingProjectKind,
@@ -926,9 +926,9 @@ interface Props {
   // Authoritative post-patch project from the daemon — see ChatComposer's
   // prop of the same name for the recency invariant.
   onProjectMetadataChange?: (updated: Project) => void;
-  activeWorkspaceContext?: WorkspaceContextItem | null;
-  initialWorkspaceContexts?: WorkspaceContextItem[];
-  workspaceContexts?: WorkspaceContextItem[];
+  activeWorkspaceContext?: RunContextItem | null;
+  initialWorkspaceContexts?: RunContextItem[];
+  workspaceContexts?: RunContextItem[];
   currentSkillId?: string | null;
   onProjectSkillChange?: (skillId: string | null) => void;
   researchAvailable?: boolean;

@@ -197,7 +197,7 @@ import {
   type SaveMessageOptions,
   waitGeneratedPluginShareTask,
 } from '../state/projects';
-import type { AppliedPluginSnapshot, BrandStatus, ChatAnalyticsEntryFrom, ChatSessionMode, InstalledPluginRecord, RunContextSelection, WorkspaceContextItem } from '@capydesign/contracts';
+import type { AppliedPluginSnapshot, BrandStatus, ChatAnalyticsEntryFrom, ChatSessionMode, InstalledPluginRecord, RunContextSelection, RunContextItem } from '@capydesign/contracts';
 import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import type {
   AgentEvent,
@@ -1567,7 +1567,7 @@ function isStoredStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === 'string');
 }
 
-function isStoredWorkspaceContextItem(value: unknown): value is WorkspaceContextItem {
+function isStoredWorkspaceContextItem(value: unknown): value is RunContextItem {
   if (value === null || typeof value !== 'object') return false;
   const record = value as Record<string, unknown>;
   return (
@@ -1691,8 +1691,8 @@ function brandBrowserSnapshotMatchesSource(
 }
 
 function workspaceContextItemEqual(
-  a: WorkspaceContextItem | null,
-  b: WorkspaceContextItem | null,
+  a: RunContextItem | null,
+  b: RunContextItem | null,
 ): boolean {
   if (a === b) return true;
   if (!a || !b) return false;
@@ -1709,8 +1709,8 @@ function workspaceContextItemEqual(
 }
 
 function workspaceContextItemsEqual(
-  a: WorkspaceContextItem[],
-  b: WorkspaceContextItem[],
+  a: RunContextItem[],
+  b: RunContextItem[],
 ): boolean {
   if (a === b) return true;
   if (a.length !== b.length) return false;
@@ -3197,8 +3197,8 @@ export function ProjectView({
   const routeFileNameRef = useRef(routeFileName);
   routeFileNameRef.current = routeFileName;
   const [activeWorkspaceContext, setActiveWorkspaceContext] =
-    useState<WorkspaceContextItem | null>(null);
-  const [workspaceContexts, setWorkspaceContexts] = useState<WorkspaceContextItem[]>([]);
+    useState<RunContextItem | null>(null);
+  const [workspaceContexts, setWorkspaceContexts] = useState<RunContextItem[]>([]);
   const tabsLoadedRef = useRef(false);
   const tabsHydratedFromSavedStateRef = useRef(false);
   const [tabsHydrationVersion, setTabsHydrationVersion] = useState(0);
@@ -4285,13 +4285,13 @@ export function ProjectView({
     [flushTabsDaemonSave, project.id],
   );
 
-  const handleActiveWorkspaceContextChange = useCallback((next: WorkspaceContextItem | null) => {
+  const handleActiveWorkspaceContextChange = useCallback((next: RunContextItem | null) => {
     setActiveWorkspaceContext((current) =>
       workspaceContextItemEqual(current, next) ? current : next,
     );
   }, []);
 
-  const handleWorkspaceContextsChange = useCallback((next: WorkspaceContextItem[]) => {
+  const handleWorkspaceContextsChange = useCallback((next: RunContextItem[]) => {
     // This runs in a post-commit effect inside FileWorkspace: on any tab
     // mutation the workspace-context set changes and this setState schedules a
     // SECOND full render of the entire ProjectView -> FileWorkspace ->

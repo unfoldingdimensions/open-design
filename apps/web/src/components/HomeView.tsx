@@ -19,7 +19,7 @@ function workspaceContextLinkedDirs(_items: readonly { id: string }[]): string[]
   return [];
 }
 import { Dialog, DialogFooter, DialogTitle } from '@capydesign/components';
-import type { ApplyResult, ChatSessionMode, ConnectorDetail, CreateProjectExampleReference, InputFieldSpec, McpServerConfig, InstalledPluginRecord, LocalCatalogScope, ProjectKind, ProjectListEntry, AudioVoiceOption, WorkspaceContextItem } from '@capydesign/contracts';
+import type { ApplyResult, ChatSessionMode, ConnectorDetail, CreateProjectExampleReference, InputFieldSpec, McpServerConfig, InstalledPluginRecord, LocalCatalogScope, ProjectKind, ProjectListEntry, AudioVoiceOption, RunContextItem } from '@capydesign/contracts';
 import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import {
   automaticStrategyTaskProfileForRouteId,
@@ -607,7 +607,7 @@ export function HomeView({
   const [selectedPluginContexts, setSelectedPluginContexts] = useState<SelectedPluginContext[]>([]);
   const [selectedMcpContexts, setSelectedMcpContexts] = useState<SelectedMcpContext[]>([]);
   const [selectedConnectorContexts, setSelectedConnectorContexts] = useState<SelectedConnectorContext[]>([]);
-  const [contextWorkspaceItems, setContextWorkspaceItems] = useState<WorkspaceContextItem[]>([]);
+  const [contextWorkspaceItems, setContextWorkspaceItems] = useState<RunContextItem[]>([]);
   const [stagedFiles, setStagedFiles] = useState<File[]>([]);
   const [workingDir, setWorkingDir] = useState<string | null>(null);
   // Token paired with `workingDir` when picked through the desktop host's
@@ -2032,7 +2032,7 @@ export function HomeView({
     setStagedFiles((current) => current.filter((_, i) => i !== index));
   }
 
-  function addWorkspaceContext(item: WorkspaceContextItem) {
+  function addWorkspaceContext(item: RunContextItem) {
     setContextWorkspaceItems((current) =>
       current.some((candidate) => candidate.id === item.id)
         ? current
