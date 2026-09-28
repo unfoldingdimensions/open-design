@@ -32,133 +32,13 @@ export interface PublicFileManualRevokeRequiredData extends PublicProjectFilePub
   projectId: string;
 }
 
-export interface PublicFileManualRevokeRequiredResponse {
-  error: {
-    code: typeof PUBLIC_FILE_MANUAL_REVOKE_REQUIRED;
-    message: string;
-    data: PublicFileManualRevokeRequiredData;
-  };
-}
 
-/** A member present in a shared project (heartbeat identity). */
-export interface CollabPresenceMember {
-  memberId: string;
-  name?: string;
-  role?: CollabMemberRole;
-  avatarUrl?: string | null;
-  filePath?: string | null;
-  activity?: string | { label?: string } | Record<string, unknown> | null;
-  heartbeatAt?: string;
-}
 
-/** GET /api/projects/:id/presence and the heartbeat response body. */
-export interface CollabPresenceResponse {
-  present: CollabPresenceMember[];
-}
 
-/**
- * Daemon-local lifecycle for an inbound shared-project content transfer.
- *
- * This is deliberately transport-agnostic: the UI only needs to know whether
- * bytes are still being fetched/materialized. `updatedAt` lets an SSE update
- * and a racing `/collab/status` response resolve in last-write-wins order.
- */
-export interface ProjectContentTransferState {
-  status: 'downloading' | 'idle';
-  /** Hub version associated with the transfer, when the event supplied one. */
-  version?: number;
-  /** First observation of this transfer (epoch ms). */
-  startedAt: number;
-  /** Last transition (epoch ms, monotonic within one daemon process). */
-  updatedAt: number;
-}
 
-/** POST /api/projects/:id/presence/heartbeat request body. */
-export interface CollabPresenceHeartbeatRequest {
-  memberId: string;
-  name?: string;
-  role?: CollabMemberRole;
-  clientId?: string;
-  /**
-   * Monotonic operation number within one clientId lease. New clients send it
-   * so a leave tombstone can reject an older heartbeat that arrives late.
-   * Optional for compatibility with older web and CLI callers.
-   */
-  sequence?: number;
-  filePath?: string | null;
-  activity?: string | { label?: string } | Record<string, unknown> | null;
-}
 
-/** POST /api/projects/:id/presence/leave request body. */
-export interface CollabPresenceLeaveRequest {
-  memberId: string;
-  clientId?: string;
-  /** See {@link CollabPresenceHeartbeatRequest.sequence}. */
-  sequence?: number;
-}
 
-export interface CollabPresenceLeaveResponse extends OkResponse {
-  present: CollabPresenceMember[];
-}
 
-/**
- * GET /api/projects/:id/collab/status. `publishedVersion` is the head version
- * members poll to learn when to pull; null before the first publish.
- * `syncState` is the project sync state (see {@link ProjectSyncState}).
- */
-export interface CollabSyncStatusResponse {
-  publishedVersion: number | null;
-  /**
-   * The latest published version this daemon has durably materialized into the
-   * local project tree for the current workspace + project owner scope. Null
-   * means the local cursor is unavailable, so clients must fail closed and
-   * treat a non-null published head as potentially pending.
-   */
-  materializedVersion: number | null;
-  /**
-   * Latest daemon-local inbound-transfer state. Null means this daemon has not
-   * observed a transfer for the project in its current process lifetime.
-   */
-  contentTransferState?: ProjectContentTransferState | null;
-  /**
-   * True while this daemon's only local record for the project is an
-   * unmaterialized shared-project placeholder — a row registered so the
-   * project's other routes stop 404ing, whose content directory is empty and
-   * is NOT the project's content (see the daemon's
-   * `sharedProjectPlaceholderAt` stamp).
-   *
-   * It is the one download signal that does not depend on remote enrichment.
-   * `publishedVersion` is null on a fresh install's very first status response
-   * — the daemon answers from local state and fetches the real hub head in the
-   * background for a later poll — so a client gated only on
-   * `publishedVersion`/`contentTransferState` cannot distinguish "empty
-   * project" from "content still downloading" on first open, and shows an
-   * empty project with create-a-file CTAs instead of a syncing state.
-   *
-   * Clients must treat this as authoritative over the local file list: while
-   * it is true, zero files means "not downloaded yet", never "nothing here".
-   */
-  awaitingFirstMaterialization?: boolean;
-  syncState: ProjectSyncState;
-  /**
-   * The member who shared this project (its single writer), resolved
-   * server-side (from the team hub). A member compares this to their own id to
-   * know whether they view the project read-only. Absent for a project that is
-   * not team-shared (off-team / hub unconfigured).
-   */
-  ownerMemberId?: string | null;
-  /**
-   * Human-friendly display name of {@link ownerMemberId}, resolved from the
-   * collab-cloud member directory so the client can render a "这是 麻薯 创建的
-   * 共享项目" banner instead of an opaque member id. Absent when the directory
-   * is unconfigured or the owner is not registered in it. STUB: the real name
-   * source is B's member roster; the collab-cloud directory stands in until B
-   * exposes it (see {@link CollabCloudMemberDirectoryEntry}).
-   */
-  ownerDisplayName?: string;
-  /** The owner's team role (owner/admin/member), from the same directory entry. */
-  ownerRole?: CollabMemberRole;
-}
 
 /** Idempotent local bootstrap for a hub-authorized Team project first open. */
 export interface CollabProjectBootstrapResponse {
@@ -166,16 +46,7 @@ export interface CollabProjectBootstrapResponse {
   awaitingFirstMaterialization: boolean;
 }
 
-/** POST /api/projects/:id/collab/pull response. */
-export interface CollabPullResponse extends OkResponse {
-  /** The actual hub version materialized by this pull, or null when unpublished. */
-  version: number | null;
-}
 
-/** POST /api/projects/:id/collab/sync-intent response. */
-export interface CollabSyncIntentResponse extends OkResponse {
-  syncState: ProjectSyncState;
-}
 
 /**
  * A project shared to the caller's team, surfaced from the resource hub so a
@@ -198,22 +69,6 @@ export interface TeamProject {
   metadata?: ProjectMetadata;
 }
 
-/**
- * GET /api/workspace/projects/team. Team-wide shared-project discovery: every
- * project any member shared to the team, read from the resource hub. A member's
- * own `/api/projects` list is only their LOCAL projects; team-shared projects
- * live on the hub until pulled. Empty off-team or when the hub is not configured.
- *
- * The web client polls this on an interval so teammates see each other's shares
- * without refreshing. Today the read is daemon-local (fast), so it just refetches
- * the whole list. Once D's directory service owns team visibility this read
- * proxies vela over the CLI — a slower cross-network call — and should gain a
- * cheap change probe (vela's version / last-modified) so the poll only pulls the
- * full list when it actually changed.
- */
-export interface WorkspaceTeamProjectsResponse {
-  projects: TeamProject[];
-}
 
 // Workspace context seam onto the B (identity/membership) + D (visibility)
 // lanes. A faithful SUBSET of B's `CurrentWorkspaceContext`
@@ -349,14 +204,6 @@ export interface WorkspaceCollabContext {
   avatarUrl?: string | null;
 }
 
-/**
- * GET /api/workspace/context. The daemon resolves the locally selected entry
- * through B's authenticated membership directory; `context` is null when the
- * caller is signed out or the directory is unavailable.
- */
-export interface WorkspaceContextResponse {
-  context: WorkspaceCollabContext | null;
-}
 
 /** A workspace visible to the signed-in Vela identity. Mirrors B's directory item. */
 export interface WorkspaceDirectoryItem {
@@ -382,16 +229,6 @@ export interface WorkspaceDirectoryResponse {
   activeWorkspaceId: string | null;
 }
 
-/**
- * PUT /api/workspace/active.
- * Verifies and resolves this tab's exact Workspace/member selection, then
- * persists the Workspace id as this client's next-start bootstrap hint. It
- * does not create implicit data-plane authority.
- */
-export interface WorkspaceActiveRequest {
-  workspaceId: string;
-  workspaceMemberId: string;
-}
 
 export interface WorkspaceActiveResponse {
   /** The verified Workspace id persisted as the client's restart default. */
@@ -829,30 +666,8 @@ export interface WorkspaceBillingAuthoritativeRead {
   observedAt: string;
 }
 
-/**
- * One exact workspace/member projection a renderer wants the daemon to keep
- * warm. Renderers replace their whole set atomically; the daemon owns
- * authorization, refresh, retries, upstream subscriptions, and expiry.
- */
-export interface WorkspaceBillingInterestScope {
-  workspaceId: string;
-  workspaceMemberId: string;
-}
 
-/** PUT /api/workspace/billing/interests/:clientId request body. */
-export interface WorkspaceBillingInterestRequest {
-  /** Monotonic unsigned decimal scoped to this renderer-lifetime client id. */
-  generation: string;
-  /** Full replacement set, not a delta. */
-  interests: WorkspaceBillingInterestScope[];
-}
 
-/** Successful interest declaration/renewal response. */
-export interface WorkspaceBillingInterestResponse {
-  clientId: string;
-  acceptedGeneration: string;
-  leaseExpiresAt: string;
-}
 
 /**
  * The caller's Vela account billing summary.
@@ -924,49 +739,11 @@ export interface WorkspaceBillingResponse {
   authoritativeWorkspaceRead?: WorkspaceBillingAuthoritativeRead;
 }
 
-export type WorkspaceTeamBillingPlanId = 'team_plus' | 'team_pro' | 'team_max';
 
-export interface WorkspaceTeamBillingPlan {
-  planId: WorkspaceTeamBillingPlanId;
-  seatUnitAmountCents: number;
-  currency: 'usd';
-  minSeats: number;
-  status: 'active' | 'disabled';
-}
 
-/**
- * GET /api/workspace/billing/catalog. Compatibility/diagnostic shape for Vela
- * team subscription plans when A exposes them through the CLI. The local client
- * does not render pricing or own checkout; upgrade opens Vela Web and billing
- * state syncs back through `WorkspaceBillingSummary`.
- */
-export interface WorkspaceBillingCatalog {
-  workspaceId: string;
-  billingInterval: 'monthly';
-  plans: WorkspaceTeamBillingPlan[];
-}
 
-export interface WorkspaceBillingCatalogResponse {
-  catalog: WorkspaceBillingCatalog | null;
-}
 
-/**
- * Compatibility request to start a team-subscription checkout via Vela CLI.
- * The current product surface links the user to Vela Web instead of rendering
- * an in-client plan picker.
- */
-export interface WorkspaceBillingCheckoutRequest {
-  planId?: WorkspaceTeamBillingPlanId;
-  seats?: number;
-}
 
-/**
- * Result of starting a team-subscription checkout via the vela billing CLI 收口.
- * Kept as a compatibility contract; the primary C-line UI opens Vela Web.
- */
-export interface WorkspaceBillingCheckoutResponse {
-  checkoutUrl: string | null;
-}
 
 // ————————————————————————————————————————————————————————————————————————————
 // Collab cloud (C-lane §D2.5 / §D4): cross-daemon comment sync + member directory
@@ -996,21 +773,8 @@ export interface CollabCloudMemberDirectoryEntry {
   role: CollabMemberRole;
 }
 
-/** PUT /teams/:teamId/members/:memberId request body. Idempotent upsert. */
-export interface CollabCloudMemberRegisterRequest {
-  displayName: string;
-  role: CollabMemberRole;
-}
 
-/** PUT /teams/:teamId/members/:memberId response. */
-export interface CollabCloudMemberRegisterResponse extends OkResponse {
-  member: CollabCloudMemberDirectoryEntry;
-}
 
-/** GET /teams/:teamId/members and GET /api/workspace/members response. */
-export interface CollabCloudMembersResponse {
-  members: CollabCloudMemberDirectoryEntry[];
-}
 
 /**
  * The comment sync unit — a faithful serialization of the daemon's local
@@ -1084,23 +848,5 @@ export interface CollabCloudComment {
   deleted?: boolean;
 }
 
-/** POST /teams/:teamId/projects/:projectId/comments request body. */
-export interface CollabCloudCommentPushRequest {
-  comment: CollabCloudComment;
-}
 
-/** POST /teams/:teamId/projects/:projectId/comments response. */
-export interface CollabCloudCommentPushResponse extends OkResponse {
-  /** The monotonic sequence the cloud assigned to the stored comment. */
-  seq: number;
-}
 
-/**
- * GET /teams/:teamId/projects/:projectId/comments?sinceSeq=N response. Returns
- * only comments with `seq > sinceSeq`, ascending, plus the highest `seq` seen
- * (the caller's next cursor even when `comments` is empty).
- */
-export interface CollabCloudCommentsResponse {
-  comments: CollabCloudComment[];
-  latestSeq: number;
-}
