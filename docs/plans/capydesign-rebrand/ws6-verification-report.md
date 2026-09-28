@@ -353,6 +353,34 @@ The one genuinely dead export, `CreatePluginShareProjectRequest` (0 references a
 The pre-existing plugin-test failures were confirmed by stashing every change and re-running the same
 file: the same 4 tests fail at the unmodified tip.
 
+## Contracts trim — `api/handoff` and `api/workspaces`: both false positives
+
+Neither module contains a single `amr`, `vela`, `cloud`, `billing`, `invite` or `membership`
+reference, and both have live consumers and **zero dead exports**:
+
+| Module | Exports | Dead | Real consumers |
+| --- | --- | --- | --- |
+| `api/handoff.ts` | 3 | 0 | `daemon/src/design/handoff-design.ts`, `daemon/src/handoff-cli.ts` |
+| `api/workspaces.ts` | 13 | 0 | `OrchestratorWorkspace` alone: 55 references across `routes/project`, `workspace-contract`, `import-export-routes`, and their tests |
+
+The inventory flagged `handoff` because the scan vocabulary contained the word *handoff* (an AMR
+device-handoff surface did exist and was removed — but it was the i18n keys `handoff.amr*`, not this
+DTO module, which is the transcript→prompt synthesizer for the BYOK endpoint). It flagged
+`workspaces` on the word *workspace*, but these are **run** workspaces — `od-owned` vs
+`folder-backed` on-disk working directories with orchestrator provenance — not team workspace
+identity.
+
+No change made. `api/social-share` and `plugins/strategy-v2` fall in the same class.
+
+A methodology note: a shell-escaped one-liner version of the closure check reported every export in
+both modules as dead, contradicting the direct counts. Rewriting it as a file gave the correct
+answer. Shell escaping is not a safe medium for regex-heavy analysis — the tooling now lives in files.
+
+With these removed the inventory's real remainder is the `analytics/*` family (~150 references across
+12 modules), which is gated on a scope decision, plus `api/projects` (3) and `api/attribution` (2).
+The `.openclaw/tmp/contracts-cloud-symbols.txt` snapshot predates the collab deletion and still lists
+`api/collab`; regenerate it before using it as a work list.
+
 ## Open items (not WS6 regressions)
 
 1. WS1 licence attribution item blocking `pnpm guard` — needs a product call.
