@@ -423,6 +423,44 @@ Recommendation: **(b) within WS6**, because the Cloud part of analytics is alrea
 remaining change is a different workstream with a worse risk profile; treat (a) as its own scoped
 change that starts with the run-lifecycle call sites.
 
+## Contracts trim — closing the small remainder
+
+Regenerating the inventory (the file was a pre-collab snapshot) gave the accurate position: **191 symbols / 323 refs**, later **189 / 320**. Of those, the `analytics/*` family is ~150 and is now settled by decision (b). The rest resolved as follows.
+
+| Item | Outcome |
+| --- | --- |
+| `api/projects::TeamResourceState` | renamed `ResourceLifecycleState` — used by one DTO field and the daemon shim |
+| `api/registry::AmrModelsResponse` / `AmrModelsSource` | **genuine AMR residue** — moved to the web local stand-in module; `/api/amr/models` no longer exists so the fetch always resolves null |
+| `api/artifacts::ArtifactProvenanceHandoffKind` | false positive (matched *handoff*) |
+| `plugins/plugin-url::pluginShareUrl` | false positive (matched *share*) |
+| `api/project-sync::ProjectSyncState` | kept — real enum, used by the daemon's project route and the local modules |
+| `api/attribution` | **open** — see below |
+
+### `api/attribution` is a live caller of a removed route
+
+`apps/packaged/src/download-attribution.ts` (207 lines) POSTs to the **local daemon** at
+`ATTRIBUTION_CLAIM_PATH` = `/api/attribution/claim`. That route was removed during WS6
+(`registerRemovedAttributionRoutes`), so every claim now 404s. Scope of the removal:
+
+- `apps/packaged/src/download-attribution.ts` — 207 lines
+- `apps/packaged/src/index.ts` — `discoverPackagedDownloadAttribution` (:273), `claimPackagedDownloadAttribution` (:353)
+- `apps/packaged/tests/download-attribution.test.ts` (62 lines), `block-attribution-ruling.test.ts` (167 lines)
+
+Not done in this pass: it is a behavioural change in the packaged Electron entry, a surface untouched
+by the rest of this workstream, and it deserves its own verification run rather than being folded into
+a contracts commit.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| contracts build | exit 0 |
+| contracts test | 60 files, 636 tests, exit 0 |
+| daemon typecheck | exit 0, 0 errors |
+| web typecheck | exit 0, 0 errors |
+| **packaged typecheck** | exit 0, 0 errors |
+| **full web suite** | **902 passed, 1 skipped (903); 8,688 passed, 19 skipped (8,707); 0 failed; exit 0; 676.39s** |
+
 ## Open items (not WS6 regressions)
 
 1. WS1 licence attribution item blocking `pnpm guard` — needs a product call.
