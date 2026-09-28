@@ -2,7 +2,7 @@
 
 ## Close-out
 
-WS6 is complete. Final state on `rebrand/ws6-cloud-removal`: **69 commits**, working tree clean,
+WS6 code scope is complete (one privacy-copy item outstanding). Final state on `rebrand/ws6-cloud-removal`: **70 commits**, working tree clean,
 `main` untouched at `eb706207a`.
 
 ### Final verification
@@ -38,14 +38,39 @@ skeleton, destinations already removed) and **25 verified non-Cloud items**:
   `api/proxy` (2), `prompts/od-next-*` (3).
 - Deliberately kept: `api/project-sync::ProjectSyncState` (4) — a real enum with live consumers.
 
-### One outstanding item, outside WS6's scope
+### One WS6 item outstanding: the privacy copy
 
-`pnpm guard` fails on a single pre-existing **WS1** item: two `prompt-templates/image/*.json` files
-declare `source.license: "Original X post"`, outside the allow-list `Apache-2.0 | MIT | CC-BY-4.0`.
-Those files belong to WS1 and were deliberately not touched. It needs a product call — relax the
-allow-list, change the two strings, or waive. **This is the only thing between this branch and an
-all-green local check**, and the reason the merge to `main` remains withheld per the original
-instruction to merge only when clean.
+The map assigns WS6 the privacy truth (line 245): with hosted analytics and telemetry destinations
+gone, `PRIVACY.md` and the Settings → Privacy copy must say so. That is **not yet done**, and the
+current copy is actively misleading rather than merely stale:
+
+| Key | Current text | Problem |
+| --- | --- | --- |
+| `settings.privacyHint` | "What data is shared with the CapyDesign team" | nothing is shared |
+| `settings.privacyConsentLead` | "Sharing usage data helps us understand how CapyDesign performs…" | no destination exists |
+| `settings.privacyConsentBannerFooter` | "Data sharing is on by default…" | untrue in a destination-less build |
+
+`PRIVACY.md` is half-updated already (it notes telemetry services are unreachable) but still
+describes two hosted telemetry classes and an opt-out model. Scope: ~10 `settings.privacy*` keys
+across 19 locale files, plus `PRIVACY.md`.
+
+Left for a decision rather than rushed: privacy wording is legally sensitive and the 19-locale
+spread means the phrasing should be agreed before it is translated. **This is the last WS6
+code-adjacent item.**
+
+### The guard failure is explicitly permitted
+
+The map's own acceptance criterion (line 38): *"WS6 verification therefore uses 'guard is no worse
+than this baseline' — the only permitted remaining guard failure is the two attribution entries."*
+The two tracked prompt templates are named there by path and assigned to **WS1 / WS8**, not WS6. So
+the current guard state **meets WS6's bar**: it fails on exactly those two entries and nothing else.
+
+### Residue WS6 hands to other workstreams (by design)
+
+- `open-design.ai` URL constants — **179 occurrences** in app source — WS7 owns the rewrite.
+- `docs/`, `specs/`, `design-systems/`, `design-templates/`, `plugins/`, `skills/` renaming — WS8.
+- The two attribution prompt templates — WS1 / WS8.
+- Full-suite rebaseline — WS12.
 
 ### Latent breakages found and fixed along the way
 
