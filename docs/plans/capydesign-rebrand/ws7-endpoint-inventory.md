@@ -1,164 +1,148 @@
 # WS7 — Upstream URL / feed / infrastructure inventory
 
-Status: **in progress**. Branch `rebrand/ws7-upstream-links-and-infra`, cut from
-`rebrand/ws6-cloud-removal` (WS6 not yet landed — see "Dependency note").
+Status: **in progress** — first sweep landed; residue listed below.
+Branch: `rebrand/ws7-upstream-links-and-infra`, rebased onto `main` after WS6
+merged (`8c9b8da2d`).
 
-This file is the WS7 "Step 0" surface map: every `open-design.ai` / `nexu-io`
-occurrence in the tree, classified **attribution** (keep, provenance) or
-**endpoint** (remove / repoint / fail-closed). It is the work order for the rest
-of the sweep.
-
-## Dependency note (read first)
-
-`PLAN.md`/`prompts/README.md` require WS6 to land **before** WS7, because both
-edit `apps/daemon/src/server.ts`, `apps/web/src/components/HomeHero.tsx` and the
-prompt files. At the time WS7 started, WS6 was **still WIP** on
-`rebrand/ws6-cloud-removal`:
-
-- WS6 daemon side is largely done (vela / langfuse / collab / attribution route
-  modules deleted).
-- WS6 **web** side is **not** done: `apps/web/src/collab/`,
-  `apps/web/src/runtime/amr-guidance.ts`, `apps/web/src/campaigns/go-plan.ts`,
-  `GoPlanSunsetDialog.tsx` still exist and still carry `open-design.ai` URLs.
-
-WS7 therefore runs **serially after WS6's landed commits** but **before WS6
-finishes**. The WS6-owned files listed below must **not** be edited by WS7; they
-will be deleted by WS6 rather than renamed.
+Baseline note: WS6's own close-out measured **179 `open-design.ai` URL occurrences
+in app source** and handed them to WS7. This file classifies them.
 
 ## Classification legend
 
 - **attribution** — provenance of the upstream project. **Keep.**
-  LICENSE / NOTICE / THIRD-PARTY-NOTICES, `docs/CHANGELOG/**`, upstream
-  `nexu-io/open-design#NNNN` issue references in comments.
+  LICENSE / NOTICE / THIRD-PARTY-NOTICES, `docs/CHANGELOG/**`, and upstream
+  `nexu-io/open-design#NNNN` issue references in code comments (including
+  "See nexu-io/open-design#7410"-style notes).
 - **endpoint** — an operational reference to nexu-io infrastructure (a fetch
-  target or a shipped link surface). **Remove, repoint to the fork, or make
-  opt-in / fail-closed.** Never leave a live default aimed at another company.
+  target, a shipped link, or a prompt/email address surfaced to users).
+  **Remove, repoint to the fork, or make opt-in / fail-closed.**
 
-## Done in this pass
+## Two standing decisions applied in this sweep
 
-| path:line | value | disposition |
-|---|---|---|
-| `apps/desktop/src/main/updater/config.ts:41,117-118,222` | `https://releases.open-design.ai/<channel>/latest/metadata.json` default feed | **fail closed** — default removed; `metadataUrl` now only from `OD_UPDATE_METADATA_URL`; no feed ⇒ explicit `update-not-configured`, `shouldAutoCheck()` false, **no fetch**. Test added: `apps/desktop/tests/main/updater.test.ts` "fails closed: no network fetch when no update feed is configured". |
-| `apps/desktop/src/main/updater.ts` | feed resolution / check / status | gated on a configured feed (see commit `9a90e19e3`) |
+1. **GitHub operational links → the fork.** Anything user-facing that pointed at
+   `github.com/nexu-io/open-design` for *navigation* (repo, releases, issues/new,
+   readme, fork/PR targets) now points at
+   `github.com/unfoldingdimensions/open-design`. Issue references in comments are
+   left untouched as attribution.
+2. **No CapyDesign web domain exists** (WS9 visual assets and WS11 release infra
+   are both human-blocked), so `open-design.ai` operational endpoints are
+   **removed or made opt-in with no default**, never repointed at a guessed host.
+   A build must not fetch from — or advertise — another vendor's production
+   infrastructure.
 
-Verified: `pnpm --filter @capydesign/desktop typecheck` clean; updater suite
-95 passed / 2 skipped; fail-closed test green.
+## Landed in this sweep
 
-## Remaining endpoint work (NOT yet done)
+### Fail-closed updater (the WS7 hazard)
 
-### Daemon — runtime fetch / link targets (`apps/daemon/src`)
+| path | change |
+|---|---|
+| `apps/desktop/src/main/updater/config.ts` | hardcoded default feed `https://releases.open-design.ai/<channel>/latest/metadata.json` **removed**; `metadataUrl` only from `OD_UPDATE_METADATA_URL` |
+| `apps/desktop/src/main/updater.ts` | check/status/auto-check gated on a configured feed; explicit `update-not-configured` state; **no fetch** without config |
+| `apps/desktop/tests/main/updater*.test.ts` | new test: "fails closed: no network fetch when no update feed is configured" (quoted in the commit) |
 
-| path:line | value | disposition |
-|---|---|---|
-| `plugins/marketplaces.ts:77` | `DEFAULT_MARKETPLACE_REPO = 'nexu-io/open-design'` | repoint default to the fork (`unfoldingdimensions/open-design`); registry base is `raw.githubusercontent.com/<repo>/main/plugins/registry` |
-| `plugins/marketplaces.ts:80,81` (+ uses `:123,:142`) | `https://open-design.ai/marketplace`, `.../plugins` public link bases | **no CapyDesign site exists** ⇒ make env-only (no hardcoded default), or disable the public marketplace with an explicit `OD_MARKETPLACE_*` override. Ripples to `apps/daemon/tests/plugins-marketplaces.test.ts` (12 refs) |
-| `plugins/plugin-preview-bakes.ts:23` | `DEFAULT_PUBLIC_BASE = 'https://repo-assets.open-design.ai/plugin-previews'` | **disable the default; opt-in env only** (`OD_PLUGIN_PREVIEWS_BASE_URL`). Ripples to `plugin-preview-bakes.test.ts:14` |
-| `plugins/export.ts:179`, `plugins/scaffold.ts:102`, `plugins/skill-candidates.ts:359` | `$schema: 'https://open-design.ai/schemas/plugin.v1.json'` written into **generated** manifests | drop the `$schema` key (no CapyDesign schema host exists) — or host it and bump the schema version |
-| `plugins/publish.ts:155,158` | issue target/label `nexu-io/open-design` | repoint to the fork |
-| `plugins/publish.ts:285` | generated doc link `https://open-design.ai/docs/plugins-spec.md` | point at the in-repo doc |
-| `plugins/marketplace-seed.ts:6` | `OFFICIAL_PLUGIN_SOURCE_REPO = 'github:nexu-io/open-design@main'` | repoint to the fork |
-| `prompts/system.ts:1664` | Ask-mode paragraph: GitHub + website + **Discord invite** | **read `docs/prompt-composition.md` first.** Remove the links (keep the sentence) or use CapyDesign's own. Mirror `packages/contracts/src/prompts/system.ts:641` + `plugins/_official/scenarios/od-next-strategy/assets/*`; update `packages/contracts/tests/system-prompt.test.ts` |
-| `runtimes/metadata.ts:11` | `installUrl: 'https://open-design.ai/amr'` | remove **with the AMR runtime** (WS6) |
-| `runtimes/metadata.ts:12,31,59` | `github.com/nexu-io/open-design/blob/main/docs/...` | repoint to the fork |
-| `server.ts:3587` | `publisher: { id:'open-design', url:'https://open-design.ai' }` | repoint to the fork or drop `url` |
-| `cli.ts:5324,5379,5411,5723,6194` | `capt plugin fork/contribute` targets `nexu-io/open-design`; issue/PR forms | repoint to the fork (product behaviour, not just a link) |
-| `design-systems/index.ts:1995` | prints `https://github.com/nexu-io/open-design` | repoint to the fork |
-
-### Contracts (`packages/contracts/src`)
+### Daemon — runtime fetch / link targets
 
 | path:line | value | disposition |
 |---|---|---|
-| `plugins/plugin-url.ts:19` | `OPEN_DESIGN_SITE_ORIGIN = 'https://open-design.ai'` | **make required-config**: drop the default, make `origin` a required argument, and pass it in from `apps/web/src/components/plugin-details/PluginShareMenu.tsx:100`. Update `packages/contracts/tests/plugin-url.test.ts` and `apps/web/tests/components/PluginShareMenu.test.tsx` |
-| `prompts/system.ts:641` | Ask-mode links (mirror of daemon prompt) | same as daemon `prompts/system.ts` |
-| `api/social-share.ts:1` | `OPEN_DESIGN_GITHUB_REPO_URL = 'https://github.com/nexu-io/open-design'` | repoint to the fork |
-| `analytics/events/ui-click.ts:938`, `runtime/html-injection-points.ts:11,196` | comments | **keep** (attribution) |
+| `plugins/plugin-preview-bakes.ts:23` | `https://repo-assets.open-design.ai/plugin-previews` default | **removed** — opt-in via `OD_PLUGIN_PREVIEWS_BASE_URL`; with no base and no on-disk clips the bake is disabled (fail closed) |
+| `plugins/marketplaces.ts:77,80,81` | `DEFAULT_MARKETPLACE_REPO='nexu-io/open-design'`, public `open-design.ai/marketplace|plugins` bases | repo **repointed to the fork**; public-site bases **removed** (foreign-host URLs are no longer special-cased) |
+| `plugins/marketplace-seed.ts:6` | `github:nexu-io/open-design@main` | repointed to the fork |
+| `plugins/export.ts:179`, `scaffold.ts:102`, `skill-candidates.ts:359` | `$schema: https://open-design.ai/schemas/plugin.v1.json` written into generated manifests | **key dropped** (no CapyDesign schema host; the version stays in `specVersion`) |
+| `plugins/publish.ts:155,158,285` | issue target/label; `open-design.ai/docs/plugins-spec.md` | repointed to the fork; doc link now repo-relative (`docs/plugins-spec.md`) |
+| `runtimes/metadata.ts:10-12` | orphaned `amr` install entry (`open-design.ai/amr`, upstream docs) | **entry removed** (the AMR runtime was deleted by WS6); `hermes`/`pi` doc links repointed to the fork |
+| `server.ts:3277` | `publisher: { id:'open-design', url:'https://open-design.ai' }` | `url` **removed** |
+| `design-systems/index.ts:1995` | generated guide credits `github.com/nexu-io/open-design` | repointed to the fork |
+| `cli.ts:5321,5376,5408,5720,6191` | `plugin fork/contribute` + issue/PR forms target `nexu-io/open-design` | repointed to the fork |
 
-### Web (`apps/web/src`)
+### Contracts
 
-| path:line | value | disposition |
+| path | change |
+|---|---|
+| `api/social-share.ts:1` | `OPEN_DESIGN_GITHUB_REPO_URL` repointed to the fork |
+| `prompts/system.ts:641` | Ask-mode paragraph: **"Official links: …" sentence removed** (GitHub/website/Discord). Mirrored in `apps/daemon/src/prompts/system.ts:1664`; `packages/contracts/tests/system-prompt.test.ts` updated to assert no upstream links are composed |
+
+### Web / desktop / tools
+
+| path | change |
+|---|---|
+| `first-party-external-link.ts:1` | `FIRST_PARTY_HOSTS` **emptied** — no host is treated as first-party; the click bridge is inert until an origin is listed. Test updated to assert non-interception |
+| `providers/registry.ts:1360,1387-1399` | `bridgeFirstPartyUrl` **deleted** — it POSTed to `/api/attribution/bridge-url`, a route WS6 removed (dead caller) |
+| `components/HomeHero.tsx:2125` | favicon host map entry `'open-design.ai'` **removed** |
+| `DesignFilesPanel`, `EntryNavRail` (repo), `SettingsDialog`, `UpdateDialog`, `WhatsNewPopup`, `useGithubStars`, `runtime/plugin-source`, `design-files/pluginFolderActions`, `home-hero/plugin-authoring`, `share-to-community/shareToCommunityPrompt`, `PrivacyConsentModal` | repo/releases/issues links **repointed to the fork** |
+| `apps/desktop/src/main/index.ts:580,593`, `runtime.ts:1098` | readme/issues/crash-report links repointed to the fork |
+| `tools/pack/src/linux.ts:545`, `tools/release/src/catalog/export.ts:33,34`, `validate.ts:37,38` | packaging/release repo links and the catalog `sourceUrl` check repointed to the fork |
+
+### Test updates shipped with the sweep
+
+`plugins-marketplaces`, `plugin-preview-bakes`, `plugins-publish`,
+`design-system-archive`, `runtimes/env-and-detection` (daemon);
+`plugin-source`, `pluginFolderActions`, `PrivacyConsentModal`, `UpdateDialog`,
+`WhatsNewPopup`, `SettingsDialog.execution`, `first-party-external-link` (web);
+`system-prompt` (contracts).
+
+### Verification evidence
+
+| Check | Result |
+|---|---|
+| `contracts` / `daemon` / `web` / `desktop` / `packaged` typecheck | **exit 0** each |
+| contracts suite | **636 passed** |
+| desktop updater suite | **95 passed / 2 skipped** |
+| daemon `plugins-` suite vs a stashed baseline | **32 failed / 550 passed on both** — zero new failures |
+| daemon `env-and-detection` vs baseline | **9 failed** vs baseline **10** — one improved (removed the dead `amr` metadata assertion), none introduced |
+| web batch (38 files, 605 tests) | **0 failed** |
+
+## Residue — still open (endpoint class)
+
+| path:line | value | why it is still open |
 |---|---|---|
-| `first-party-external-link.ts:1` | `FIRST_PARTY_HOSTS = open-design.ai, www…, staging…` | **decide explicitly.** No CapyDesign host exists ⇒ make the set empty and let the browser handle links. Update `apps/web/tests/first-party-external-link.test.ts` |
-| `providers/registry.ts:1414` | same host allow-list | align with the above |
-| `components/HomeHero.tsx:2327` | favicon host map `'open-design.ai': '/logo.svg'` | repoint or remove |
-| `components/HomeHero.tsx:4259,4394` | "Website URL to clone: https://open-design.ai" example (en + zh) | **WS8** (prose), flagged here |
-| `components/enterpriseUrl.ts:7` | `ENTERPRISE_BASE = 'https://open-design.ai'` | no CapyDesign marketing site ⇒ needs a human decision (remove the Enterprise link or repoint) |
-| `components/sketch-model.ts:70` | `OPEN_DESIGN_EXCALIDRAW_SOURCE = 'https://open-design.ai/sketch'` | repoint / opt-in env |
-| `runtime/visual-style-catalog.ts:118` | `STYLE_CATALOG_ASSET_ORIGIN = 'https://repo-assets.open-design.ai'` | **disable default / opt-in env.** Large test ripple: `AssistantMessage.test.tsx` (13), `QuestionForm.test.tsx` (6) |
-| `components/LibrarySection.tsx:1146` | `https://open-design.ai/clipper` | repoint / remove |
-| `SettingsDialog.tsx:297`, `UpdateDialog.tsx:30`, `WhatsNewPopup.tsx:33`, `useGithubStars.ts:12`, `EntryNavRail.tsx:107,112`, `DesignFilesPanel.tsx:348`, `runtime/plugin-source.ts:52,53`, `design-files/pluginFolderActions.ts:40`, `home-hero/plugin-authoring.ts:51`, `share-to-community/shareToCommunityPrompt.ts:31` | repo / releases / issues / contact links | repoint to the fork |
-| `plugin-details/PluginShareMenu.tsx:80,206` | public detail-page comments/uses | follow `plugin-url.ts` |
-| **WS6-owned (do NOT edit)** | `campaigns/go-plan.ts:12`, `GoPlanSunsetDialog.tsx:15`, `runtime/amr-guidance.ts:25`, `PrivacyConsentModal.tsx:11` | WS6 deletes these; privacy truth is WS6→WS8 |
-| comments (`exports.ts:1560`, `srcdoc.ts:117,1407`, `file-viewer-render-mode.ts:127,279`, `FileViewer.tsx:9999`, `mention-home.css:849`, `design-files/pluginFolderActions.ts:27`, `QuestionForm.tsx:768`) | upstream issue refs | **keep** (attribution) |
+| `apps/daemon/src/local/legacy-bridge.ts:113,120,232,296` | `DEFAULT_AMR_RECHARGE_URL = https://open-design.ai/amr/dashboard…` | WS6 kept it deliberately "so the recharge action link keeps its historical shape". The AMR service is gone, so this is a dead link in failure cards — needs a product call (remove the link vs. keep a dead one) |
+| `apps/web/src/components/enterpriseUrl.ts:7` | `ENTERPRISE_BASE='https://open-design.ai'` | needs a CapyDesign marketing site (WS9/WS11 human-blocked); caller `EntrySettingsMenu:275` should hide the link when unset |
+| `apps/web/src/runtime/visual-style-catalog.ts:118` | `STYLE_CATALOG_ASSET_ORIGIN='https://repo-assets.open-design.ai'` | needs a CapyDesign asset CDN; make opt-in env. Ripples to `AssistantMessage.test.tsx` (13) and `QuestionForm.test.tsx` (6) |
+| `apps/web/src/components/sketch-model.ts:70` | `OPEN_DESIGN_EXCALIDRAW_SOURCE='https://open-design.ai/sketch'` | no fork equivalent; make opt-in env or drop the source field |
+| `apps/web/src/components/LibrarySection.tsx:1138` | clipper download link `open-design.ai/clipper` | no CapyDesign clipper host; needs a call (remove the link vs. host one) |
+| `packages/contracts/src/plugins/plugin-url.ts:19` | `OPEN_DESIGN_SITE_ORIGIN='https://open-design.ai'` + `PluginShareMenu.tsx:80,206` | prompt asks for **required-config**: drop the default, make `origin` required, plumb it from `PluginShareMenu`. Ripples to `plugin-url.test.ts` + `PluginShareMenu.test.tsx` (10) |
+| `apps/web/src/components/EntryNavRail.tsx:65` | `mailto:support@open-design.ai` | no CapyDesign support address exists |
+| `apps/desktop/src/main/runtime.ts:1099,1109-1110` | `SUPPORT_EMAIL='support@open-design.ai'` + its mailto-hardening comment | same; ripples to `mailto-open.test.ts` |
+| `tools/release/src/catalog/export.ts:35`, `tools/release/src/storage/dsh-bootstrap-bundle.ts:13` | previews base + `open-design.ai/install-dsh.ps1` | WS11 release infrastructure (human-blocked) |
+| `apps/web/src/components/HomeHero.tsx:4057,4192` | "Website URL to clone: https://open-design.ai" example (en + zh) | UI copy — WS8 owns prose |
+| `packages/contracts/src/analytics/events/ui-click.ts:938`, `apps/packaged/src/sidecars.ts:291`, web comments (`exports.ts`, `srcdoc.ts`, `file-viewer-render-mode.ts`, `FileViewer.tsx`, `mention-home.css`, `pluginFolderActions.ts:27`, `QuestionForm.tsx:768`) | upstream issue refs | **attribution — keep** |
 
-### Desktop (`apps/desktop/src`)
+## Residue — outside app source
 
-| path:line | value | disposition |
-|---|---|---|
-| `main/runtime.ts:1098` | `CRASH_REPORT_ISSUES_URL = 'https://github.com/nexu-io/open-design/issues/new'` | repoint to the fork |
-| `main/runtime.ts:1099,1109-1110` | `SUPPORT_EMAIL = 'support@open-design.ai'` (+ mailto-hardening comment) | remove the address or repoint; ripple in `apps/desktop/tests/main/mailto-open.test.ts` |
-| `main/index.ts:580,593` | Readme / new-issue external links | repoint to the fork |
-| `artifact-export.ts:290,304`, `deck-capture.ts:1997`, `pdf-export.ts:264,278,282` | comments | **keep** (attribution) |
+1. **`.github/`** — issue templates, `CODEOWNERS`, PR template, and ~20 workflows
+   that post to nexu-io infrastructure (`metrics`, `release-*`, `whats-new-publish`,
+   `bake-plugin-previews*`, `refresh-*`, `cut-release`, `finalize-release`,
+   `notify-*-feishu`, `dsh-*`, `catalog-publish`, `ui-extended-main`, …). Read
+   `.github/AGENTS.md` first; audit and repoint/remove, do not restructure.
+   `.github/config/scopes.json` + `.github/scripts/scopes.py` may name upstream paths.
+2. **Repo metadata & shipped docs (URLs only, prose is WS8)** — `package.json`
+   (`repository`/`homepage`/`bugs`/`author`), `README.md` badges + hero `<img>` +
+   star-history + download/Discord links and the same in 13 `docs/i18n/README.*.md`,
+   `CONTRIBUTING.md`, `MAINTAINERS.md`, `deploy/README.md`,
+   `tools/pack/helm/open-design/*`, `clipper/store/LISTING.md`, `figma-plugin/`,
+   `clipper/`, `docs/windows-troubleshooting.md`, `docs/install-guide.md`.
+3. **Test fixtures** — remaining `open-design.ai` expectations in
+   `AssistantMessage.test.tsx` (style-catalog), `ProjectView.*` + `providers/sse`
+   (AMR recharge URL), `packages/plugin-runtime`, `packages/sidecar-proto`,
+   `tools/pack/tests`, `tools/release/tests`, `e2e/**`. WS12 re-baselines; the
+   AMR-specific ones are WS6 residue.
+4. **e2e typecheck is red** (pre-existing, WS6 residue):
+   `e2e/lib/playwright/amr.ts` and `e2e/ui/entry-chrome-flows.test.ts` import
+   `WorkspaceCollabContext` / `WorkspaceDirectoryItem` which no longer exist in
+   `@capydesign/contracts`; `e2e/tests/tools-dev/release-channel.test.ts` and
+   `scripts/check-whats-new-document.ts` import the deleted
+   `apps/daemon/src/services/whats-new.ts`.
+5. **The workstream-wide regression fence (TODO)** — no shipped module may contain
+   a **default operational** `open-design.ai` / `*.open-design.ai` URL, with an
+   explicit allow-list for attribution and changelogs. It cannot land green until
+   the residue above is closed.
 
-### Tools (`tools/*/src`) — release infrastructure (WS11 owns naming; WS7 owns URLs)
+## Pre-existing failures observed (not WS7)
 
-| path:line | value | disposition |
-|---|---|---|
-| `tools/pack/src/linux.ts:545` | packaging git url `nexu-io/open-design.git` | repoint to the fork |
-| `tools/release/src/catalog/export.ts:33,34,35` | `REPO_TREE` / `REPO_BLOB` / `PLUGIN_PREVIEWS_BASE_URL` | repoint repo links to the fork; previews base → opt-in (WS11) |
-| `tools/release/src/catalog/validate.ts:37,38` | hardcoded `nexu-io/open-design/` sourceUrl check | repoint to the fork (or make the org configurable) |
-| `tools/release/src/storage/dsh-bootstrap-bundle.ts:13` | `https://open-design.ai/install-dsh.ps1?version=1` | **WS11 / human-blocked** release infra |
-
-### Repo metadata & shipped docs (URLs only — prose is WS8)
-
-- `package.json` — `repository`, `homepage`, `bugs`, `author`.
-- `README.md` — badges, hero `<img>` from `repo-assets.open-design.ai`, Website /
-  Download / Cloud links, star-history chart, macOS/Windows download links,
-  coding-agents image, Discord — plus the same in **13 `docs/i18n/README.*.md`**.
-- `.github/ISSUE_TEMPLATE/*`, `.github/pull_request_template.md`,
-  `.github/CODEOWNERS`, `CONTRIBUTING.md`, `MAINTAINERS.md`.
-- `deploy/README.md`, `tools/pack/helm/open-design/README.md` (+ `Chart.yaml`,
-  `values.yaml`), `clipper/store/LISTING.md`, `docs/windows-troubleshooting.md`,
-  `docs/install-guide.md`, `figma-plugin/`, `clipper/` manifests.
-
-### `.github` automation (read `.github/AGENTS.md` first — audit, don't restructure)
-
-Workflows/scripts that reach nexu-io infra and need a per-item decision
-(repoint / remove / keep with reason):
-
-```
-.github/workflows/{metrics,refresh-contributors-wall,refresh-plugin-popularity,
-  release-beta,release-stable,release-prerelease,release-prerelease-card,
-  whats-new-publish,bake-plugin-previews,bake-plugin-previews-release,
-  e2e-coverage-reminder,cut-release,cut-patch-release,finalize-release,
-  catalog-publish,discord-resolved,dsh-upstream-drift,dsh-bootstrap-publish,
-  ui-extended-main}.yml
-.github/scripts/{publish_whats_new.py,rerun_infra_cancel.py,handoff.py,
-  agent-pr-explore-local.sh,agent-pr-explore-sandbox.sh,provision-agent-pr-explore-runner.sh,release/publish-platform.ps1}
-.github/actions/bake-previews/action.yml
-.github/config/scopes.json + .github/scripts/scopes.py (path rules)
-```
-
-### Regression fence (TODO, blocked on the sweep)
-
-Add the WS7 workstream-wide test: no shipped module may contain a **default
-operational** `open-design.ai` / `*.open-design.ai` URL, with an explicit
-allow-list for attribution references and changelogs. It cannot land green until
-the src sweep above is complete (daemon plugins, web link surfaces, contracts).
-
-## Tests to update alongside the sweep (WS12 re-baselines the rest)
-
-- `apps/daemon/tests/plugins-marketplaces.test.ts`, `plugin-preview-bakes.test.ts`
-- `apps/web/tests/components/{PluginShareMenu,AssistantMessage,QuestionForm,PluginsView,ExtensionsMarketplace.plugin-detail-entry}.test.*`
-- `apps/web/tests/first-party-external-link.test.ts`, `providers/registry.test.ts`,
-  `components/enterprise-url.test.ts`, `components/sketch-model.test.ts`
-- `packages/contracts/tests/plugin-url.test.ts`, `packages/contracts/tests/system-prompt.test.ts`
-
-## Pre-existing failures observed on this branch (NOT caused by WS7)
-
-- `pnpm guard` fails at `scripts/check-attribution-notices.ts`:
-  two `prompt-templates/image/*seedream*.json` declare
-  `source.license 'Original X post'`, outside the allow-list. Both files are
-  byte-identical to `main` ⇒ **pre-existing**; belongs to WS1's ledger/allow-list.
-- `apps/desktop` suite: `tests/main/frame-capture.test.ts` and
-  `tests/main/loopback-connection-limit.test.ts` fail — both byte-identical to
-  `main` ⇒ pre-existing (Windows/env), unrelated to WS7.
+- `pnpm guard` — red on `scripts/check-attribution-notices.ts` only: two
+  `prompt-templates/image/*seedream*.json` declare `source.license 'Original X
+  post'`. WS6's close-out names these as WS1/WS8 items and explicitly permits the
+  guard to stay red on exactly this.
+- desktop `frame-capture` / `loopback-connection-limit` suites (Windows/env),
+  daemon `env-and-detection` AMR + binary-resolution cases, daemon `plugins-`
+  cluster (32) — all verified identical on a stashed baseline.
