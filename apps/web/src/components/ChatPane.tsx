@@ -49,7 +49,8 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { hasOdCard, OD_NEXT_STRATEGY_ID, type ProjectMediaTask, type WorkspaceCollabContext } from '@capydesign/contracts';
+import { hasOdCard, OD_NEXT_STRATEGY_ID, type ProjectMediaTask } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import type { AmrAuthRetryContinuation, AmrAuthRetryPersonalAdoptionWitness } from '../runtime/legacy-scope-types';
 import {
   buildRecoveryTaskAnalytics,

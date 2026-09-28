@@ -2,10 +2,8 @@ import type { Express, Response } from 'express';
 import type Database from 'better-sqlite3';
 import path from 'node:path';
 import fs from 'node:fs';
-import type {
-  DesignSystemTokenContractRebuildJobResponse,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { DesignSystemTokenContractRebuildJobResponse } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../local/collab-contract.js';
 import { TeamResourceCopyForbiddenError } from '../local/team-resource-state.js';
 import {
   enforceTeamResourceCopyAllowed,

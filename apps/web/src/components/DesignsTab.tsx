@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { Dialog, DialogDescription, DialogFooter, DialogTitle } from "@capydesign/components";
-import type { WorkspaceCollabContext } from "@capydesign/contracts";
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { projectKindFromMetadataToTracking } from "@capydesign/contracts/analytics";
 import { useT } from "../i18n";
 import {

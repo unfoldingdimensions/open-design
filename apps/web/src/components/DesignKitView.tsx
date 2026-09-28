@@ -27,7 +27,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Textarea } from '@capydesign/components';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import type { DesignSystemEditClickProps } from '@capydesign/contracts/analytics';
 import { useT } from '../i18n';
 import {

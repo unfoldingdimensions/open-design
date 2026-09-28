@@ -45,11 +45,7 @@ import {
   recalledTodosFromTodoWriteInput,
   type RecalledTodo,
 } from '@capydesign/contracts';
-import type {
-  CollabCloudMemberDirectoryEntry,
-  TeamProject,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { CollabCloudMemberDirectoryEntry, TeamProject, WorkspaceCollabContext } from './local/collab-contract.js';
 import {
   detectOdNextDevicePlatformFromText,
   resolveOdNextDevicePlatform,

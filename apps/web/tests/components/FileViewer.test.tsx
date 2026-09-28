@@ -83,11 +83,7 @@ const resetWorkspaceContextCache: any = (..._args: unknown[]) => null;
 // Stand-ins: the module that provided these was removed with the Cloud surface.
 const CollabProvider: any = (props: any) => props?.children ?? null;
 type CollabContextValue = any;
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 /** A team workspace context — the only state that can address the resource hub,
  *  and therefore the only one where the public "Publish file" entry is offered. */

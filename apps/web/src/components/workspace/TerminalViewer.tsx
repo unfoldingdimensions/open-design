@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ITheme, Terminal } from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
-import type {
-  TerminalDataEvent,
-  TerminalExitEvent,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { TerminalDataEvent, TerminalExitEvent } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../runtime/collab-contract';
 import { useT } from '../../i18n';
 import { Icon } from '../Icon';
 import {

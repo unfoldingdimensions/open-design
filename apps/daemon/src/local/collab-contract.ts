@@ -1,6 +1,18 @@
-import type { OkResponse } from '../common.js';
-import type { ProjectMetadata } from './projects.js';
-import type { ProjectSyncState } from './project-sync.js';
+/**
+ * Local stand-in for the removed Cloud collaboration contract.
+ *
+ * CapyDesign has no workspace identity layer, no remote collaboration service
+ * and no billing: this module carries the shapes the local surfaces still
+ * consume (project scope, presence/sync DTOs, the workspace context every
+ * workspace surface reads) so they no longer live in `@capydesign/contracts`.
+ *
+ * Types only where possible; the few functions here are pure derivations over
+ * those types, not calls to anything remote.
+ */
+import type { OkResponse } from '@capydesign/contracts';
+import type { ProjectMetadata } from '@capydesign/contracts';
+import type { ProjectVisibility } from '@capydesign/contracts';
+import type { ProjectSyncState } from '@capydesign/contracts';
 import type {
   PreviewAnnotationStyle,
   PreviewCommentAnchorState,
@@ -9,7 +21,7 @@ import type {
   PreviewCommentPosition,
   PreviewCommentSelectionKind,
   PreviewCommentStatus,
-} from './comments.js';
+} from '@capydesign/contracts';
 
 // Team-edition collaboration shared DTOs: presence overlay (presence) and
 // the sync trigger. Single source of truth for the daemon routes, the web
@@ -848,5 +860,41 @@ export interface CollabCloudComment {
   deleted?: boolean;
 }
 
+/**
+ * Local project scope. CapyDesign resolves exactly one implicit local scope, so
+ * `kind` is 'unbound' in practice; the remaining arms are retained because
+ * surviving call sites still branch on them.
+ */
+export type ProjectWorkspaceScope =
+  | {
+      kind: 'unbound';
+      projectId: string;
+      workspaceId: null;
+      context: null;
+    }
+  | {
+      kind: 'unavailable';
+      projectId: string;
+      workspaceId: string;
+      visibility: ProjectVisibility;
+      context: null;
+    }
+  | {
+      kind: 'personal';
+      projectId: string;
+      workspaceId: string;
+      visibility: ProjectVisibility;
+      context: WorkspaceCollabContext & { workspaceType: 'personal' };
+    }
+  | {
+      kind: 'team';
+      projectId: string;
+      workspaceId: string;
+      visibility: ProjectVisibility;
+      context: WorkspaceCollabContext & { workspaceType: 'team' };
+    };
 
-
+/** GET /api/projects/:id/workspace-scope. */
+export interface ProjectWorkspaceScopeResponse {
+  scope: ProjectWorkspaceScope;
+}

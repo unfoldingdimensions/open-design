@@ -26,7 +26,7 @@ import {
   isCapyDesignHostAvailable,
   printHostPdf,
 } from '@capydesign/host';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from './collab-contract';
 import { sourceHasLegacyDeckScreenSlides } from './deck-slide-structure';
 
 // Re-exported so app components can gate desktop-only export paths without

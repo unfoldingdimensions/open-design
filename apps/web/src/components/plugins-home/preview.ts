@@ -16,10 +16,8 @@
 // branch on a single discriminator and lets the unit tests assert
 // classification without touching React.
 
-import type {
-  InstalledPluginRecord,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { InstalledPluginRecord } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../runtime/collab-contract';
 export type PluginPreviewKind = 'media' | 'html' | 'design' | 'text';
 
 export interface MediaPreviewSpec {

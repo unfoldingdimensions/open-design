@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import type { AppState, BinaryFiles } from '@excalidraw/excalidraw/types';
 import type { ExcalidrawElement, NonDeleted } from '@excalidraw/excalidraw/element/types';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { fetchProjectFileText } from '../providers/registry';
 import type { ProjectFile } from '../types';
 import {

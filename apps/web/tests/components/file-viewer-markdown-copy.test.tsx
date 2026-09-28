@@ -13,7 +13,7 @@ import { fetchProjectFileText, writeProjectTextFile } from '../../src/providers/
 // Stand-ins: the module that provided these was removed with the Cloud surface.
 const CollabProvider: any = (props: any) => props?.children ?? null;
 type CollabContextValue = any;
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 vi.mock('../../src/providers/registry', async () => {
   const actual = await vi.importActual<typeof import('../../src/providers/registry')>(

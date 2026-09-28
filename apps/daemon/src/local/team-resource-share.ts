@@ -2,10 +2,7 @@
 // no Cloud sharing plane, so nothing is ever shared and no authority can be
 // unavailable for it. The interface shapes are preserved so surviving local
 // routes (design-system / plugin / skill copy paths) keep compiling.
-import type {
-  WorkspaceCollabContext,
-  WorkspaceDirectoryItem,
-} from '@capydesign/contracts';
+import type { WorkspaceCollabContext, WorkspaceDirectoryItem } from './collab-contract.js';
 import type { ResourceHubPrincipal } from './resource-principal.js';
 
 export class TeamResourceShareForbiddenError extends Error {

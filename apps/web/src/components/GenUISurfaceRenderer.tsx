@@ -10,10 +10,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useT } from '../i18n';
-import type {
-  GenUISurfaceSpec,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { GenUISurfaceSpec } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 export interface PendingSurface {
   // The surface descriptor as declared in `od.genui.surfaces[]`.
   surface: GenUISurfaceSpec;

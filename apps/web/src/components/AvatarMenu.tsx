@@ -17,10 +17,7 @@ import {
 import { KNOWN_PROVIDERS } from '../state/config';
 import { SUGGESTED_MODELS_BY_PROTOCOL } from '../state/apiProtocols';
 import { fetchProviderModels } from '../providers/provider-models';
-import {
-  canReachWorkspaceBillingEntrance,
-  workspaceBillingAuthorityContext,
-} from '@capydesign/contracts';
+import { canReachWorkspaceBillingEntrance, workspaceBillingAuthorityContext } from '../runtime/collab-contract';
 import type { AgentInfo, AppConfig, ExecMode, ProviderModelOption } from '../types';
 import {
   canUpgradeVelaPlan,

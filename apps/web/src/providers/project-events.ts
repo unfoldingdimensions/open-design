@@ -2,13 +2,8 @@ import { useEffect, useRef } from 'react';
 import type { CollabProjectInvalidationSsePayload, ProjectContentTransferStateSsePayload } from '../runtime/legacy-scope-types';
 import { BackoffController } from '../lib/backoff';
 import { bindStreamVisibility } from '../lib/stream-visibility';
-import {
-  type ChatArtifactRefsChangedSsePayload,
-  type LiveArtifactRefreshSsePayload,
-  type LiveArtifactSsePayload,
-  type ProjectConversationCreatedSsePayload,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { type ChatArtifactRefsChangedSsePayload, type LiveArtifactRefreshSsePayload, type LiveArtifactSsePayload, type ProjectConversationCreatedSsePayload } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 export interface ProjectFileChangeEvent {
   type: 'file-changed';
   path: string;

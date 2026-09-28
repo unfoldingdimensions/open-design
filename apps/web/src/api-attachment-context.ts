@@ -1,4 +1,4 @@
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from './runtime/collab-contract';
 import {
   fetchProjectFilePreview,
   fetchProjectFileText,

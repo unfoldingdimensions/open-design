@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
 import type { Dispatch } from 'react';
 
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../../runtime/collab-contract';
 import { isPanelEvent, type PanelEvent } from '@capydesign/contracts/critique';
 
 import {

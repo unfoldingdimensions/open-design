@@ -35,15 +35,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { coalescedGet, evictCoalescedGet } from '../lib/coalesced-get';
-import {
-  canReachWorkspaceBillingEntrance,
-  workspaceSeatCapacityState,
-  type WorkspaceActiveResponse,
-  type WorkspaceBillingSummary,
-  type WorkspaceCollabContext,
-  type WorkspaceDirectoryItem,
-  type WorkspaceDirectoryResponse,
-} from '@capydesign/contracts';
+import { canReachWorkspaceBillingEntrance, workspaceSeatCapacityState, WorkspaceActiveResponse, WorkspaceBillingSummary, WorkspaceCollabContext, WorkspaceDirectoryItem, WorkspaceDirectoryResponse } from '../runtime/collab-contract';
 import {
   fetchVelaLoginStatus,
   formatVelaBalanceUsd,

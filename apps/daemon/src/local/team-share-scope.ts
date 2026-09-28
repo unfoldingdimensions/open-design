@@ -1,7 +1,7 @@
 // Local replacement for the deleted team-share scope guard. CapyDesign has no
 // team plane and no workspace identity, so nothing can ever be "refused" on
 // workspace-type grounds and no row is impossible.
-import type { WorkspaceType } from '@capydesign/contracts';
+import type { WorkspaceType } from './collab-contract.js';
 import { resolveWorkspaceScope, type WorkspaceScope } from './workspace-scope.js';
 
 export type TeamShareScopeRefusal = 'asserted_personal' | 'directory_personal';

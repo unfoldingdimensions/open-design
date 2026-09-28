@@ -11,7 +11,8 @@ import type {
   Conversation,
   ProjectFile,
 } from '../../types';
-import type { ChatSessionMode, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { ChatSessionMode } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../runtime/collab-contract';
 import type { ChatSendMeta } from '../ChatComposer';
 import { useConversationChat } from './useConversationChat';
 import styles from './SideChatTab.module.css';

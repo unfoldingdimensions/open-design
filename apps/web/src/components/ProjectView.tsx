@@ -79,16 +79,8 @@ import {
   resolveQuestionFormStrategyTaskExecutionId,
   strategySettledMessageFields,
 } from '../runtime/strategy-question-continuation';
-import {
-  isTodoWriteToolName,
-  workspaceBillingAuthorityContext,
-  type ByokChatProviderConfig,
-  type ByokMediaDefaults,
-  type ByokChatProtocol,
-  type ChatTaskExecutionAnalytics,
-  type ProjectWorkspaceScope,
-  type ResearchOptions,
-} from '@capydesign/contracts';
+import { isTodoWriteToolName, type ByokChatProviderConfig, type ByokMediaDefaults, type ByokChatProtocol, type ChatTaskExecutionAnalytics, type ResearchOptions } from '@capydesign/contracts';
+import { workspaceBillingAuthorityContext, ProjectWorkspaceScope } from '../runtime/collab-contract';
 import {
   anonymizeArtifactId,
   artifactKindToTracking,
@@ -205,16 +197,8 @@ import {
   type SaveMessageOptions,
   waitGeneratedPluginShareTask,
 } from '../state/projects';
-import type {
-  AppliedPluginSnapshot,
-  BrandStatus,
-  ChatAnalyticsEntryFrom,
-  ChatSessionMode,
-  InstalledPluginRecord,
-  RunContextSelection,
-  WorkspaceCollabContext,
-  WorkspaceContextItem,
-} from '@capydesign/contracts';
+import type { AppliedPluginSnapshot, BrandStatus, ChatAnalyticsEntryFrom, ChatSessionMode, InstalledPluginRecord, RunContextSelection, WorkspaceContextItem } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import type {
   AgentEvent,
   AgentInfo,

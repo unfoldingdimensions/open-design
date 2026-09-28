@@ -7,7 +7,7 @@ import { DesignKitView, useBrandFonts } from '../../src/components/DesignKitView
 import { PreviewModal } from '../../src/components/PreviewModal';
 import { I18nProvider } from '../../src/i18n';
 import type { DesignKit } from '../../src/runtime/design-kit';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 function previewKit(): DesignKit {
   return {

@@ -4,11 +4,8 @@ import { access, mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type {
-  InstalledPluginRecord,
-  Project,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { InstalledPluginRecord, Project } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../src/local/collab-contract.js';
 import { sendApiError } from '../src/http/api-errors.js';
 import {
   closeDatabase,

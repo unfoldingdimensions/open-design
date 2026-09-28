@@ -1,7 +1,7 @@
 // Local replacement for the deleted Vela-backed workspace directory. CapyDesign
 // has no Cloud workspace directory; the type survives only so local route
 // signatures that still accept an optional directory fetcher keep compiling.
-import type { WorkspaceDirectoryItem } from '@capydesign/contracts';
+import type { WorkspaceDirectoryItem } from './collab-contract.js';
 
 export type { WorkspaceDirectoryItem };
 

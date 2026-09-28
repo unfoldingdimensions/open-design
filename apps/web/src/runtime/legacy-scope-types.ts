@@ -6,7 +6,7 @@
  * resolution: a project surface resolves to "unbound" (one implicit local
  * scope), and a run retry continuation is plain local run state.
  */
-import type { ProjectWorkspaceScope, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { ProjectWorkspaceScope, WorkspaceCollabContext } from './collab-contract';
 
 /**
  * Whether a project is currently shared into the team. CapyDesign has no

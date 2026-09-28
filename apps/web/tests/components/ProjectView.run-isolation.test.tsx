@@ -12,7 +12,7 @@ import {
 import { ProjectConversationsHttpError } from '../../src/state/projects';
 import type { SettingsSection } from '../../src/components/SettingsDialog';
 import type { ProjectWorkspaceScopeState } from '../../src/runtime/legacy-scope-types';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import type { AmrAuthRetryContinuation } from '../../src/runtime/legacy-scope-types';
 import type {
   AgentInfo,

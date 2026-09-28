@@ -13,7 +13,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'motion/react';
-import type { FigmaImportResult, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { FigmaImportResult } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { Button } from '@capydesign/components';
 import { Icon } from './Icon';
 import { modalOverlay, modalContent } from '../motion';

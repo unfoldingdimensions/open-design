@@ -16,10 +16,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/App';
 import type { Route } from '../../src/router';
 import type { AppConfig, Project } from '../../src/types';
-import type {
-  WorkspaceCollabContext,
-  WorkspaceDirectoryItem,
-} from '@capydesign/contracts';
+import type { WorkspaceCollabContext, WorkspaceDirectoryItem } from '../../src/runtime/collab-contract';
 import {
   fetchComposioConfigFromDaemon,
   fetchDaemonConfig,

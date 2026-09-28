@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../../runtime/collab-contract';
 const STORAGE_KEY = 'open-design:config';
 const TOGGLE_EVENT = 'open-design:critique-theater-toggle';
 

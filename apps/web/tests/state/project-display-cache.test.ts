@@ -1,8 +1,4 @@
-import {
-  buildWorkspacePermissions,
-  type CollabMemberRole,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, CollabMemberRole, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import {

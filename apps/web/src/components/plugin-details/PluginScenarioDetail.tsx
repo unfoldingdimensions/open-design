@@ -9,11 +9,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Dialog } from '@capydesign/components';
-import type {
-  InstalledPluginRecord,
-  PluginManifest,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { InstalledPluginRecord, PluginManifest } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../runtime/collab-contract';
 import { useI18n } from '../../i18n';
 import { localizePluginChrome } from '../../i18n/plugin-content';
 import { Icon } from '../Icon';

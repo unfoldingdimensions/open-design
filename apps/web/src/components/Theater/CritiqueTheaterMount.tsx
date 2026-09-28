@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../runtime/collab-contract';
 
 import { useCritiqueStream } from './hooks/useCritiqueStream';
 import { TheaterStage } from './TheaterStage';

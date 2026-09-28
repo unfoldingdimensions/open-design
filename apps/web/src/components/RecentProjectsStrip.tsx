@@ -37,11 +37,8 @@ import {
   workspaceUpgradeUrl,
 } from './EntryNavRail';
 import { moveWorkspaceProject, workspaceProjectMoveErrorCode } from '../state/projects';
-import {
-  workspaceContextHasTeamIdentity,
-  type WorkspaceCollabContext,
-  type ProjectListEntry,
-} from '@capydesign/contracts';
+import { type ProjectListEntry } from '@capydesign/contracts';
+import { workspaceContextHasTeamIdentity, WorkspaceCollabContext } from '../runtime/collab-contract';
 import {
   THUMBNAIL_OVERSCAN_MARGIN,
   resumeThumbnailLoads,

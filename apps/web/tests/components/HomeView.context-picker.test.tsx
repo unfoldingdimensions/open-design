@@ -2,17 +2,8 @@
 
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  buildWorkspacePermissions,
-  buildWorkspaceSeatSummary,
-  DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID,
-  type DesignSystemSummary,
-  type InstalledPluginRecord,
-  type ConnectorDetail,
-  type McpServerConfig,
-  type SkillSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID, type DesignSystemSummary, type InstalledPluginRecord, type ConnectorDetail, type McpServerConfig, type SkillSummary } from '@capydesign/contracts';
+import { buildWorkspacePermissions, buildWorkspaceSeatSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 const workspaceA: WorkspaceCollabContext = {
   workspaceId: 'workspace-a',

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@capydesign/components';
-import type { BrandSummary, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { BrandSummary } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { useT } from '../i18n';
 import { navigate, useRoute } from '../router';
 import {

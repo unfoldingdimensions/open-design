@@ -9,38 +9,10 @@
 import { coalescedGet, evictCoalescedGet } from '../lib/coalesced-get';
 import { isDaemonProxyConnectionFailure } from '../runtime/daemon-proxy-failure';
 import { BackoffController, type BackoffOptions } from '../lib/backoff';
-import {
-  API_ERROR_CODES,
-  isSameWorkspacePrincipal,
-  type ApiErrorCode,
-} from '@capydesign/contracts';
-import type {
-  AppliedPluginSnapshot,
-  ApplyResult,
-  ChatSessionMode,
-  CollabProjectBootstrapResponse,
-  CreateConversationRequest,
-  CreateDesignSystemProjectFromProjectResponse,
-  CreateProjectExampleReference,
-  DuplicateProjectResponse,
-  CreatePluginShareProjectResponse,
-  CreateTerminalRequest,
-  ImportFolderRequest,
-  ImportFolderResponse,
-  InstalledPluginRecord,
-  LocalCatalogScope,
-  PluginDuplicateProjectResponse,
-  PluginInstallOutcome,
-  PluginShareAction,
-  ProjectPluginFolderInstallRequest,
-  ProjectScenarioTaskProfile,
-  ProjectVisibility,
-  ProjectWorkspaceScopeResponse,
-  TerminalSession,
-  WorkspaceCollabContext,
-  ProjectListEntry,
-  ProjectSummariesResponse,
-} from '@capydesign/contracts';
+import { API_ERROR_CODES, type ApiErrorCode } from '@capydesign/contracts';
+import { isSameWorkspacePrincipal } from '../runtime/collab-contract';
+import type { AppliedPluginSnapshot, ApplyResult, ChatSessionMode, CreateConversationRequest, CreateDesignSystemProjectFromProjectResponse, CreateProjectExampleReference, DuplicateProjectResponse, CreatePluginShareProjectResponse, CreateTerminalRequest, ImportFolderRequest, ImportFolderResponse, InstalledPluginRecord, LocalCatalogScope, PluginDuplicateProjectResponse, PluginInstallOutcome, PluginShareAction, ProjectPluginFolderInstallRequest, ProjectScenarioTaskProfile, ProjectVisibility, TerminalSession, ProjectListEntry, ProjectSummariesResponse } from '@capydesign/contracts';
+import type { CollabProjectBootstrapResponse, ProjectWorkspaceScopeResponse, WorkspaceCollabContext } from '../runtime/collab-contract';
 import { randomUUID } from '../utils/uuid';
 import { markProjectDisplaySnapshotsDirty } from './project-display-cache';
 import type {

@@ -9,13 +9,8 @@ import Database from 'better-sqlite3';
 import path from 'node:path';
 import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
-import type {
-  ChatMessage,
-  CollabCloudComment,
-  OdNextDevicePlatformV1,
-  ProjectBrowserTab,
-  ProjectTabsState,
-} from '@capydesign/contracts';
+import type { ChatMessage, OdNextDevicePlatformV1, ProjectBrowserTab, ProjectTabsState } from '@capydesign/contracts';
+import type { CollabCloudComment } from './local/collab-contract.js';
 import {
   eventsEndedWithUnfinishedWork,
   isTodoWriteToolName,

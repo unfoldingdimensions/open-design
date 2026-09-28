@@ -20,7 +20,7 @@
 // make every rocket click also toggle the account menu.
 
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import type { CapyDesignHostUpdaterStatusSnapshot } from '@capydesign/host';
 import { installMockCapyDesignHost } from '@capydesign/host/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

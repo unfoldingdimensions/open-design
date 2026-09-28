@@ -1,7 +1,4 @@
-import {
-  workspacePrincipalKey,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { workspacePrincipalKey, WorkspaceCollabContext } from '../runtime/collab-contract';
 
 import type { Project } from '../types';
 

@@ -32,27 +32,8 @@ import {
   PREVIEW_RUNTIME_STATE_LIMITS,
   PREVIEW_RUNTIME_STATE_VERSION,
 } from '@capydesign/contracts/runtime/preview-runtime-state';
-import {
-  automaticStrategyTaskProfileForProjectMetadata,
-  defaultScenarioPluginIdForProjectMetadata,
-  type ChatSessionMode,
-  type LocalCatalogScope,
-  type PluginManifest,
-  type PreviewComment,
-  type ProjectDesignTokenSuggestionProp,
-  type ProjectDesignTokenSuggestionQuery,
-  type ProjectFile,
-  type ProjectFileTextPreviewResponse,
-  type ProjectFileVersion,
-  type ProjectFileVersionPromptSource,
-  type ProjectFileVersionSource,
-  type ProjectFileVersionWarning,
-  type ProjectMetadata,
-  type RestoreProjectAutomaticScenarioRequest,
-  type RestoreProjectAutomaticScenarioResponse,
-  type ProjectSyncState,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { automaticStrategyTaskProfileForProjectMetadata, defaultScenarioPluginIdForProjectMetadata, type ChatSessionMode, type LocalCatalogScope, type PluginManifest, type PreviewComment, type ProjectDesignTokenSuggestionProp, type ProjectDesignTokenSuggestionQuery, type ProjectFile, type ProjectFileTextPreviewResponse, type ProjectFileVersion, type ProjectFileVersionPromptSource, type ProjectFileVersionSource, type ProjectFileVersionWarning, type ProjectMetadata, type RestoreProjectAutomaticScenarioRequest, type RestoreProjectAutomaticScenarioResponse, type ProjectSyncState } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../local/collab-contract.js';
 import { readMeta as readBrandMeta } from '../../brands/store.js';
 import { createProjectArtifactFile } from '../../artifacts/create.js';
 import { ArtifactPublicationBlockedError } from '../../artifacts/publication-guard.js';
@@ -4820,7 +4801,7 @@ export function registerProjectRoutes(app: Express, ctx: RegisterProjectRoutesDe
       knownWorkspaceType: workspaceTypes?.typeOf(binding?.workspaceId) ?? null,
       ...(ctx.configuredEnv ? { configuredEnv: ctx.configuredEnv() } : {}),
     });
-    /** @type {import('@capydesign/contracts').ProjectWorkspaceScopeResponse} */
+    /** @type {import('../../local/collab-contract.js').ProjectWorkspaceScopeResponse} */
     const body = { scope };
     res.json(body);
   });

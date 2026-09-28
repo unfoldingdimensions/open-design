@@ -5,7 +5,7 @@ import {
   type CritiqueSseEventName,
   type PanelEvent,
 } from '@capydesign/contracts/critique';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../../runtime/collab-contract';
 
 import type { CritiqueAction } from './reducer';
 import { BackoffController } from '../../../lib/backoff';

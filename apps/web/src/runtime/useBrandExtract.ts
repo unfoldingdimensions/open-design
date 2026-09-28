@@ -9,7 +9,8 @@
 // coarse status the New Brand modal / onboarding step render.
 
 import { useCallback, useRef, useState } from 'react';
-import type { BrandExtractStartResponse, BrandStatus, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { BrandExtractStartResponse, BrandStatus } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from './collab-contract';
 import { useI18n } from '../i18n';
 
 /** Coarse kickoff phase. */

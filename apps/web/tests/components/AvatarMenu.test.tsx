@@ -3,11 +3,7 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  buildWorkspacePermissions,
-  type WorkspaceBillingResponse,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildWorkspacePermissions, WorkspaceBillingResponse, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 // Stand-ins: the module that provided these was removed with the Cloud surface.
 const workspaceBillingSummaryForContext: any = (..._args: unknown[]) => null;

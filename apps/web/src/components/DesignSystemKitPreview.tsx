@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import type { BrandSummary, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { BrandSummary } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import type { WorkspaceResourceReadIdentity } from '../runtime/resource-read-identity';
 import { useT } from '../i18n';
 import { fetchDesignSystem } from '../providers/registry';

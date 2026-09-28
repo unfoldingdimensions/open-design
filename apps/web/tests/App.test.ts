@@ -15,10 +15,8 @@ import {
   shouldSyncMediaProvidersOnSave,
 } from '../src/App';
 import type { AppConfig, Project } from '../src/types';
-import type {
-  WorkspaceCollabContext,
-  ProjectListEntry,
-} from '@capydesign/contracts';
+import type { ProjectListEntry } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../src/runtime/collab-contract';
 
 describe('projectRouteSurfaceState', () => {
   it('only shows an unbounded loader while the initial project list is loading', () => {

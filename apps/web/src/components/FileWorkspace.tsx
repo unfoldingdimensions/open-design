@@ -89,14 +89,8 @@ import {
   type ProjectFile,
   type ProjectFolder,
 } from '../types';
-import {
-  resolveLocalizedText,
-  type ChatSessionMode,
-  type InstalledPluginRecord,
-  type LocalizedText,
-  type WorkspaceCollabContext,
-  type WorkspaceContextItem,
-} from '@capydesign/contracts';
+import { resolveLocalizedText, type ChatSessionMode, type InstalledPluginRecord, type LocalizedText, type WorkspaceContextItem } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { createTerminal, killTerminal, listPlugins, moveWorkspaceProject } from '../state/projects';
 import { MoveToTeamConfirmDialog, moveConfirmSkipped } from './MoveToTeamConfirmDialog';
 import { DesignFilesPanel, type DesignFilesNavState } from './DesignFilesPanel';

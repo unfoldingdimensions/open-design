@@ -39,19 +39,8 @@ import type { McpServerConfig, McpTemplate } from "../state/mcp";
 import { listPlugins } from "../state/projects";
 import type { AppConfig, ChatAttachment, ChatCommentAttachment, Project, ProjectFile, ProjectMetadata, SkillSummary } from "../types";
 import { DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID } from '@capydesign/contracts';
-import type {
-  ContextItem,
-  AppliedPluginSnapshot,
-  ChatAnalyticsEntryFrom,
-  ChatSessionMode,
-  ConnectorDetail,
-  InstalledPluginRecord,
-  PluginSourceKind,
-  ResearchOptions,
-  RunContextSelection,
-  WorkspaceCollabContext,
-  WorkspaceContextItem,
-} from '@capydesign/contracts';
+import type { ContextItem, AppliedPluginSnapshot, ChatAnalyticsEntryFrom, ChatSessionMode, ConnectorDetail, InstalledPluginRecord, PluginSourceKind, ResearchOptions, RunContextSelection, WorkspaceContextItem } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { buildVisualAnnotationAttachment, commentTargetDisplayName } from '../comments';
 import { Icon, type IconName } from "./Icon";
 import { ChatCloseIcon, ChatFileIcon, ChatSendArrowIcon } from "./chat/primitives/icons";

@@ -1,6 +1,6 @@
 // Local replacement for the deleted resource-hub principal. CapyDesign has no
 // Cloud collaboration plane, so no resource principal can be derived.
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from './collab-contract.js';
 
 export interface ResourceHubPrincipal {
   memberId: string;

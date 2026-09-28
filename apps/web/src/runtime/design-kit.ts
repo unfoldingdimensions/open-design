@@ -9,13 +9,8 @@
 // module layout regardless of where the data came from.
 
 import { useEffect, useState } from 'react';
-import type {
-  Brand,
-  BrandSummary,
-  BrandVoice,
-  DesignSystemPackageInfo,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { Brand, BrandSummary, BrandVoice, DesignSystemPackageInfo } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from './collab-contract';
 import { designSystemStaticUrl, fetchProjectFileText, projectRawUrl } from '../providers/registry';
 import { parseDesignMd, type ParsedDesignMd } from './design-md-parse';
 

@@ -2,7 +2,7 @@
 //
 // CapyDesign projects live in one implicit local scope: they are never bound to
 // a workspace, so the browser/runtime scope is always `unbound`.
-import type { ProjectWorkspaceScope, WorkspaceType } from '@capydesign/contracts';
+import type { ProjectWorkspaceScope, WorkspaceType } from './collab-contract.js';
 
 interface ProjectWorkspaceBinding {
   workspaceId?: unknown;

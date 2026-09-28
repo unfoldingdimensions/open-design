@@ -19,21 +19,8 @@ function workspaceContextLinkedDirs(_items: readonly { id: string }[]): string[]
   return [];
 }
 import { Dialog, DialogFooter, DialogTitle } from '@capydesign/components';
-import type {
-  ApplyResult,
-  ChatSessionMode,
-  ConnectorDetail,
-  CreateProjectExampleReference,
-  InputFieldSpec,
-  McpServerConfig,
-  InstalledPluginRecord,
-  LocalCatalogScope,
-  ProjectKind,
-  WorkspaceCollabContext,
-  ProjectListEntry,
-  AudioVoiceOption,
-  WorkspaceContextItem,
-} from '@capydesign/contracts';
+import type { ApplyResult, ChatSessionMode, ConnectorDetail, CreateProjectExampleReference, InputFieldSpec, McpServerConfig, InstalledPluginRecord, LocalCatalogScope, ProjectKind, ProjectListEntry, AudioVoiceOption, WorkspaceContextItem } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import {
   automaticStrategyTaskProfileForRouteId,
   DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID,

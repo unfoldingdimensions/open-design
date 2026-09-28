@@ -25,16 +25,8 @@ import type {
   ReactNode,
   RefObject,
 } from 'react';
-import type {
-  ChatSessionMode,
-  ConnectorDetail,
-  DesignSystemSummary,
-  InputFieldSpec,
-  InstalledPluginRecord,
-  McpServerConfig,
-  WorkspaceCollabContext,
-  WorkspaceContextItem,
-} from '@capydesign/contracts';
+import type { ChatSessionMode, ConnectorDetail, DesignSystemSummary, InputFieldSpec, InstalledPluginRecord, McpServerConfig, WorkspaceContextItem } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { DesignSystemPicker } from './DesignSystemPicker';
 import type { SkillSummary } from '../types';
 import { Icon, type IconName } from './Icon';

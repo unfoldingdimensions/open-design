@@ -16,18 +16,8 @@ import {
   commentSendSucceeded,
   type CommentSendResult,
 } from './comment-send-result';
-import {
-  buildSocialSharePayload,
-  OPEN_DESIGN_GITHUB_REPO_URL,
-  workspaceContextHasTeamIdentity,
-  type CollabCloudMemberDirectoryEntry,
-  type CollabMemberRole,
-  type AgentInfo,
-  type ProjectFileVersion,
-  type SocialShareRequest,
-  type SocialShareResponse,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { buildSocialSharePayload, OPEN_DESIGN_GITHUB_REPO_URL, type AgentInfo, type ProjectFileVersion, type SocialShareRequest, type SocialShareResponse } from '@capydesign/contracts';
+import { workspaceContextHasTeamIdentity, CollabCloudMemberDirectoryEntry, CollabMemberRole, WorkspaceCollabContext } from '../runtime/collab-contract';
 import { PREVIEW_OBSERVABILITY_HOST_STATE_MESSAGE_TYPE } from '@capydesign/contracts/runtime/preview-observability';
 import { PREVIEW_URL_GUARD_MAX_HTML_BYTES } from '@capydesign/contracts/runtime/preview-guards';
 import {

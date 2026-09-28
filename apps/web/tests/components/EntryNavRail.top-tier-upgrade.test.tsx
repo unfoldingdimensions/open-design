@@ -16,7 +16,7 @@
 // plan they already hold.
 
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import type { WorkspaceBillingSummary, WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceBillingSummary, WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { EntryNavRail, resetWorkspaceDirectoryCache } from '../../src/components/EntryNavRail';

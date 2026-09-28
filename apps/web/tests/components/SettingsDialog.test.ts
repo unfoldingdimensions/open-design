@@ -26,7 +26,7 @@ import {
 import { deriveUpdaterModel } from '../../src/lib/updater';
 import type { CapyDesignHostUpdaterStatusSnapshot } from '@capydesign/host';
 import type { AppConfig, AppVersionInfo, ConnectionTestResponse } from '../../src/types';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 
 const originalFetch = globalThis.fetch;
 

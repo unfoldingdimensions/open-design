@@ -1,12 +1,6 @@
 import type { Express, NextFunction, Request, RequestHandler, Response } from 'express';
-import type {
-  InstalledPluginRecord,
-  PluginDuplicateProjectRequest,
-  PluginDuplicateProjectResponse,
-  Project,
-  ProjectMetadata,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { InstalledPluginRecord, PluginDuplicateProjectRequest, PluginDuplicateProjectResponse, Project, ProjectMetadata } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../local/collab-contract.js';
 import { TeamResourceCopyForbiddenError } from '../../local/team-resource-state.js';
 import {
   duplicatePluginExampleIntoProject,

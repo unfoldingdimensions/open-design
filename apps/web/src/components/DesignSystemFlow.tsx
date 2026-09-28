@@ -1,13 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ChangeEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { Button, Textarea } from '@capydesign/components';
-import type {
-  ConnectorConnectResponse,
-  ConnectorDetail,
-  ConnectorStatusResponse,
-  DesignSystemSummary,
-  LibraryAsset,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { ConnectorConnectResponse, ConnectorDetail, ConnectorStatusResponse, DesignSystemSummary, LibraryAsset } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { streamViaDaemon } from '../providers/daemon';
 import {
   connectConnector,

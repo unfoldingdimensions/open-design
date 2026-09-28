@@ -1,8 +1,4 @@
-import type {
-  WorkspaceCollabContext,
-  WorkspaceDirectoryItem,
-  WorkspaceDirectoryResponse,
-} from '@capydesign/contracts';
+import type { WorkspaceCollabContext, WorkspaceDirectoryItem, WorkspaceDirectoryResponse } from '../../src/runtime/collab-contract';
 
 /**
  * A complete `WorkspaceCollabContext` whose workspace + member identity the

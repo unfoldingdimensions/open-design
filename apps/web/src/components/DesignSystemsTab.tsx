@@ -8,10 +8,7 @@ import type {
   TrackingDesignSystemStatusValue,
 } from '@capydesign/contracts/analytics';
 import { useI18n } from '../i18n';
-import {
-  workspaceContextHasTeamIdentity,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { workspaceContextHasTeamIdentity, WorkspaceCollabContext } from '../runtime/collab-contract';
 import type { Locale } from '../i18n/types';
 import {
   localizeDesignSystemCategory,

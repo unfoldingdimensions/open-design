@@ -1,12 +1,7 @@
 import { effectiveMaxTokens } from '../state/maxTokens';
 import type { AppConfig, ChatMessage } from '../types';
-import type {
-  ProxyImageContentBlock,
-  ProxyMessage,
-  ProxyMessageContent,
-  ProxyTextContentBlock,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { ProxyImageContentBlock, ProxyMessage, ProxyMessageContent, ProxyTextContentBlock } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { projectFileUrl } from './registry';
 import type { StreamHandlers } from './anthropic';
 import { parseSseFrame } from './sse';

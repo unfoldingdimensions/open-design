@@ -11,16 +11,8 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { Dialog } from '@capydesign/components';
-import {
-  PLUGIN_SHARE_ACTION_PLUGIN_IDS,
-  resolveLocalizedText,
-  workspaceContextHasTeamIdentity,
-  type ApplyResult,
-  type InstalledPluginRecord,
-  type PluginSourceKind,
-  type SkillSummary,
-  type WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { PLUGIN_SHARE_ACTION_PLUGIN_IDS, resolveLocalizedText, type ApplyResult, type InstalledPluginRecord, type PluginSourceKind, type SkillSummary } from '@capydesign/contracts';
+import { workspaceContextHasTeamIdentity, WorkspaceCollabContext } from '../runtime/collab-contract';
 import {
   fetchSkills,
   importSkill,

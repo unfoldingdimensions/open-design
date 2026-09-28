@@ -1,40 +1,6 @@
-import {
-  PUBLIC_FILE_MANUAL_REVOKE_REQUIRED,
-  workspaceContextHasTeamIdentity,
-  type PublicFileManualRevokeRequiredData,
-  type PublicProjectFilePublication,
-} from '@capydesign/contracts';
-import type {
-  ConnectorAuthConfigPrepareResponse,
-  ConnectorDetail,
-  ConnectorConnectResponse,
-  ConnectorDiscoveryResponse,
-  ConnectorDetailResponse,
-  ConnectorListResponse,
-  ConnectorStatusResponse,
-  FigmaImportResult,
-  ImportGitHubDesignSystemRequest,
-  ImportGitHubDesignSystemResponse,
-  ImportShadcnDesignSystemRequest,
-  ImportShadcnDesignSystemResponse,
-  CapyDesignGithubLatestReleaseResponse,
-  ImportLocalDesignSystemRequest,
-  ImportLocalDesignSystemResponse,
-  ReplaceProjectWorkingDirResponse,
-  ProjectFileTextPreviewResponse,
-  ProjectFileResponse,
-  ProjectPreviewScopeRenewResponse,
-  ProjectPreviewUrlResponse,
-  ProjectFileVersion,
-  ProjectFileVersionSource,
-  ProjectFileVersionResponse,
-  ProjectFileVersionsResponse,
-  ProjectMediaTasksResponse,
-  RestoreProjectFileVersionResponse,
-  SocialShareRequest,
-  SocialShareResponse,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import { PUBLIC_FILE_MANUAL_REVOKE_REQUIRED, workspaceContextHasTeamIdentity, PublicFileManualRevokeRequiredData, PublicProjectFilePublication } from '../runtime/collab-contract';
+import type { ConnectorAuthConfigPrepareResponse, ConnectorDetail, ConnectorConnectResponse, ConnectorDiscoveryResponse, ConnectorDetailResponse, ConnectorListResponse, ConnectorStatusResponse, FigmaImportResult, ImportGitHubDesignSystemRequest, ImportGitHubDesignSystemResponse, ImportShadcnDesignSystemRequest, ImportShadcnDesignSystemResponse, CapyDesignGithubLatestReleaseResponse, ImportLocalDesignSystemRequest, ImportLocalDesignSystemResponse, ReplaceProjectWorkingDirResponse, ProjectFileTextPreviewResponse, ProjectFileResponse, ProjectPreviewScopeRenewResponse, ProjectPreviewUrlResponse, ProjectFileVersion, ProjectFileVersionSource, ProjectFileVersionResponse, ProjectFileVersionsResponse, ProjectMediaTasksResponse, RestoreProjectFileVersionResponse, SocialShareRequest, SocialShareResponse } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import type {
   AgentInfo,
   AppVersionInfo,

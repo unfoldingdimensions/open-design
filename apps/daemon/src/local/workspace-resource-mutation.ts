@@ -7,7 +7,7 @@
 // authorization decision: there is no workspace to scope to, so nothing is
 // ever denied. `x-od-workspace-*` headers are still parsed for compatibility
 // (accept-and-ignore) but never influence an access decision.
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from './collab-contract.js';
 import type { Response } from 'express';
 
 export type WorkspaceResourceContext = {

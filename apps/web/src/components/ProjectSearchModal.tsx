@@ -20,7 +20,7 @@ import { Icon } from './Icon';
 import { useT } from '../i18n';
 import { relativeTimeLong } from '../utils/chatTime';
 import { projectCover, projectCategory, ProjectTag } from './RecentProjectsStrip';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 
 interface Props {
   projects: Project[];

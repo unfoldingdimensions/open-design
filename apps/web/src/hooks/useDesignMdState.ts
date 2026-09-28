@@ -7,11 +7,8 @@
 // DESIGN.md likely no longer matches the current project state.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type {
-  Conversation,
-  ProjectFile,
-  WorkspaceCollabContext,
-} from '@capydesign/contracts';
+import type { Conversation, ProjectFile } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { parseProvenance } from '../lib/parse-provenance';
 import { fetchProjectFiles } from '../providers/registry';
 import { listConversations } from '../state/projects';

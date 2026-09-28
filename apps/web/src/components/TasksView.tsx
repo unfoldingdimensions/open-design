@@ -28,7 +28,7 @@ import {
 } from './NewAutomationModal';
 import { describeRoutineSchedule } from './routineScheduleLabels';
 import { listProjects } from '../state/projects';
-import type { WorkspaceCollabContext } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 
 type ProjectSummary = { id: string; name: string };
 type TemplateFilter =

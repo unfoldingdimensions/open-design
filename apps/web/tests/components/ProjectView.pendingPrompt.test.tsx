@@ -2,6 +2,7 @@
 
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import type { Brand } from '@capydesign/contracts';
+import type { WorkspaceCollabContext } from '../../src/runtime/collab-contract';
 import type { ComponentProps, ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -47,7 +48,7 @@ const registryOriginals = vi.hoisted(() => ({
     projectId: string,
     options?: {
       signal?: AbortSignal;
-      workspaceContext?: import('@capydesign/contracts').WorkspaceCollabContext | null;
+      workspaceContext?: WorkspaceCollabContext | null;
       fresh?: boolean;
       requireAuthoritative?: boolean;
     },
