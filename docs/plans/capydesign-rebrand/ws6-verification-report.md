@@ -1,5 +1,67 @@
 # WS6 (Cloud surface removal) — verification report
 
+## Close-out
+
+WS6 is complete. Final state on `rebrand/ws6-cloud-removal`: **69 commits**, working tree clean,
+`main` untouched at `eb706207a`.
+
+### Final verification
+
+| Check | Result |
+| --- | --- |
+| `pnpm --filter @capydesign/contracts build` | exit 0 |
+| `pnpm --filter @capydesign/contracts test` | 60 files, **636 tests**, exit 0 |
+| `daemon` typecheck | exit 0, 0 errors |
+| `web` typecheck | exit 0, 0 errors |
+| `packaged` typecheck | exit 0, 0 errors |
+| `desktop` typecheck | exit 0, 0 errors |
+| `packaged` test suite | 6 failed / 308 passed — **identical on a stashed baseline**, pre-existing |
+| **full web suite** | **902 passed, 1 skipped (903); 8,688 passed, 19 skipped (8,707); 0 failed; exit 0; 847.92s** |
+| `pnpm guard` | **red on one item only** — see below |
+| contracts files deleted vs `main` | 13 |
+
+### Contracts trim: final ledger
+
+| Measure | Start | End |
+| --- | --- | --- |
+| Cloud-vocabulary exported symbols | 221 | **187** |
+| References to them | 576 | **318** |
+| `api/collab.ts` | 1,106 lines | **deleted** |
+
+The 187 remaining break down as **162 `analytics/*`** (settled by decision (b): kept as an inert typed
+skeleton, destinations already removed) and **25 verified non-Cloud items**:
+
+- False positives — matched on vocabulary, not substance: `plugins/strategy-v2` (19, the *strategy*
+  plan contract), `api/social-share` (17), `plugins/share-actions` (14, live plugin publishing),
+  `api/handoff` (5, the transcript→prompt synthesizer), `api/workspaces` (4, *run* working
+  directories), `plugins/plugin-url` (1), `api/artifacts::ArtifactProvenanceHandoffKind` (1),
+  `api/proxy` (2), `prompts/od-next-*` (3).
+- Deliberately kept: `api/project-sync::ProjectSyncState` (4) — a real enum with live consumers.
+
+### One outstanding item, outside WS6's scope
+
+`pnpm guard` fails on a single pre-existing **WS1** item: two `prompt-templates/image/*.json` files
+declare `source.license: "Original X post"`, outside the allow-list `Apache-2.0 | MIT | CC-BY-4.0`.
+Those files belong to WS1 and were deliberately not touched. It needs a product call — relax the
+allow-list, change the two strings, or waive. **This is the only thing between this branch and an
+all-green local check**, and the reason the merge to `main` remains withheld per the original
+instruction to merge only when clean.
+
+### Latent breakages found and fixed along the way
+
+1. `packages/contracts` had not built since step 5 — `esbuild.config.mjs` still listed a deleted AMR
+   file, and because `daemon` typecheck runs the contracts build first, **daemon typecheck had been
+   failing the whole time**.
+2. **22 dangling imports in web source**, masked because a stale `contracts/dist` still contained
+   modules deleted in step 5. No clean checkout would have built.
+3. A real behavioural regression: the `legacy-bridge` shim had reduced `classifyAccountFailure` to
+   `return null`, silently gutting the text-based AMR failure classification. Ported the real
+   implementation back and restored the precedence rule.
+4. Four unhandled errors (`collabCheckStatusNow is not a function`) invisible to per-test assertions,
+   because a stand-in omitted callable members. Caught only by the suite's exit code, not its totals.
+
+---
+
 Branch: `rebrand/ws6-cloud-removal`. `main` untouched (`eb706207a`).
 Generated: 2026-09-23. Machine: Windows 10.0.26200, Node 22.22.0 (workspace toolchain), pnpm workspace.
 
