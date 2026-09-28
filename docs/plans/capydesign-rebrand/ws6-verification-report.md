@@ -381,6 +381,48 @@ With these removed the inventory's real remainder is the `analytics/*` family (~
 The `.openclaw/tmp/contracts-cloud-symbols.txt` snapshot predates the collab deletion and still lists
 `api/collab`; regenerate it before using it as a work list.
 
+## Decision note: is `analytics/*` in WS6 scope?
+
+Evidence gathered rather than assumed:
+
+| Measure | Value |
+| --- | --- |
+| Contracts analytics source | 290,048 bytes across 21 modules |
+| Same, built (`dist`) | 197,334 bytes |
+| Emit call sites in product code | ~180 across 44 daemon/web files |
+| Test suites named analytic/tracking/observab* | 11 |
+| Cloud references inside the tree | none (`amr`/`vela`/PostHog destinations already removed) |
+
+**The runtime is already dead.** `apps/daemon/src/local/telemetry-sink.ts` is explicitly a
+"destination-less telemetry surface": `createAnalyticsService` returns a no-op service,
+`readAnalyticsEndpointConfig` returns null, every sink reader returns null, and every `post*` returns
+`{ status: 'not_expected', drop_reason: 'missing_sink_config' }`. Nothing is sent anywhere today.
+
+**So the question is not "are we deleting live telemetry" — it is "does CapyDesign want the
+instrumentation points at all".** Two things make that a product decision rather than a WS6 cleanup:
+
+1. The cost is not in contracts. Contracts shrinking is ~290KB of source; the actual work is ~180
+   emit call sites in product control flow. Several sit where real work happens:
+   `run-analytics-lifecycle.ts`, `run-lifecycle-tracer.ts`, `run-terminal-reconciliation.ts`,
+   `run-failure-evidence.ts` (the classification path repaired earlier), `run-retry-policy.ts`.
+2. Some of it is instrumentation *for local reliability*, not funnel analytics: `web/observability/chat-health.ts`
+   (577 lines) exists to make four chat-panel failure modes measurable — first paint, DOM growth,
+   memory pressure — and `web/analytics/byok-run.ts` exists because BYOK runs bypass the daemon and
+   would otherwise be invisible to the run lifecycle. Deleting them removes the measurement points,
+   not just the destination.
+
+Both end states are defensible:
+
+- **(a) Shed it** — remove the schema, the 180 call sites and the 11 suites. The app gets lighter and
+  conceptually cleaner. Risk: disturbing run-lifecycle and diagnostic behaviour, which is exactly the
+  area that produced two silent regressions during this workstream.
+- **(b) Keep it as an inert typed skeleton** — zero runtime cost, destinations already removed, and it
+  is the shape any future local or opt-in sink would use.
+
+Recommendation: **(b) within WS6**, because the Cloud part of analytics is already done and the
+remaining change is a different workstream with a worse risk profile; treat (a) as its own scoped
+change that starts with the run-lifecycle call sites.
+
 ## Open items (not WS6 regressions)
 
 1. WS1 licence attribution item blocking `pnpm guard` — needs a product call.
