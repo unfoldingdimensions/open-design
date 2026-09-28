@@ -553,3 +553,21 @@ a contracts commit.
 1. WS1 licence attribution item blocking `pnpm guard` — needs a product call.
 2. Remaining WS6 scope: i18n key prune across 19 locales, Privacy consent UI unwiring,
    contracts trim (222 load-bearing references), vocabulary rename pass, packaging.
+
+### Merged
+
+Merged into `main` on explicit instruction as `8c9b8da2d` ("Merge rebrand/ws6-cloud-removal: remove
+the Open Design Cloud surface"), a `--no-ff` merge with parents `eb706207a` (previous `main`) and
+`52441ce47` (branch head). 73 commits, 1,037 files changed.
+
+Post-merge verification: `main` tree hash `ea2ff15995d6ad143a0c505c80609f795cadd6b3` is **identical**
+to the branch tree, and `git diff --stat main rebrand/ws6-cloud-removal` is empty — so the full
+verification recorded above (full web suite 902 files / 8,688 tests / 0 failed; all four package
+typechecks clean; contracts 636 tests) applies unchanged to the merged result. `contracts build`
+re-confirmed exit 0 on `main`; `rebrand/ws6-cloud-removal` is an ancestor of `main`; no
+`Co-authored-by` trailers exist in the merged range.
+
+**Outstanding after the merge:** the privacy truth. The in-app copy still states that usage data may
+be shared, which is false in a build with no analytics destination. Drafted and held for review in
+`ws6-privacy-copy-draft.md`. This is a pre-existing inaccuracy that the merge neither introduced nor
+worsened.
