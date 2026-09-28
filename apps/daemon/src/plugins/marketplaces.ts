@@ -74,11 +74,9 @@ export interface EnsureMarketplaceManifestInput {
 }
 
 const HTTPS_RE = /^https:\/\//i;
-const DEFAULT_MARKETPLACE_REPO = 'nexu-io/open-design';
+const DEFAULT_MARKETPLACE_REPO = 'unfoldingdimensions/open-design';
 const DEFAULT_MARKETPLACE_REPO_REF = 'main';
 const DEFAULT_MARKETPLACE_REGISTRY_PATH = 'plugins/registry';
-const PUBLIC_MARKETPLACE_BASE_URL = 'https://open-design.ai/marketplace';
-const PUBLIC_PLUGINS_BASE_URL = 'https://open-design.ai/plugins';
 
 function marketplaceRegistryRepo(): string {
   return (process.env.OD_MARKETPLACE_REPO?.trim() || DEFAULT_MARKETPLACE_REPO)
@@ -119,17 +117,6 @@ export function marketplaceRegistryIdFromUrl(url: string): string | null {
 
   const configuredId = registryIdFromBaseUrl(trimmed, marketplaceRegistryBaseUrl());
   if (configuredId) return configuredId;
-
-  const publicBases = [PUBLIC_MARKETPLACE_BASE_URL, PUBLIC_PLUGINS_BASE_URL];
-  for (const base of publicBases) {
-    if (trimmed === `${base}/open-design-marketplace.json`) return 'official';
-    if (trimmed.startsWith(`${base}/`) && trimmed.endsWith('/open-design-marketplace.json')) {
-      const id = trimmed
-        .slice(base.length + 1)
-        .replace(/\/open-design-marketplace\.json$/, '');
-      if (id && !id.includes('/')) return id;
-    }
-  }
 
   try {
     const parsed = new URL(trimmed);

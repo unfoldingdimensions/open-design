@@ -1357,8 +1357,9 @@ function popupBlockedMessage(): string {
 }
 
 export async function openExternalUrl(url: string): Promise<boolean> {
-  const bridgedUrl = await bridgeFirstPartyUrl(url);
-  const targetUrl = bridgedUrl ?? url;
+  // No first-party site origin exists for CapyDesign, so no attribution bridge
+  // is applied: the URL navigates as given.
+  const targetUrl = url;
   if (isCapyDesignHostAvailable()) {
     const opened = await openHostExternalUrl(targetUrl);
     if (opened.ok) return true;
@@ -1382,23 +1383,6 @@ export async function openExternalUrl(url: string): Promise<boolean> {
     return false;
   }
   return false;
-}
-
-async function bridgeFirstPartyUrl(url: string): Promise<string | null> {
-  try {
-    const target = new URL(url);
-    if (!['open-design.ai', 'www.open-design.ai', 'staging.open-design.ai'].includes(target.hostname)) return null;
-    const resp = await fetch('/api/attribution/bridge-url', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: target.toString() }),
-    });
-    if (!resp.ok) return null;
-    const body = await resp.json() as { url?: unknown };
-    return typeof body.url === 'string' ? body.url : null;
-  } catch {
-    return null;
-  }
 }
 
 async function decodeConnectorError(resp: Response): Promise<string> {

@@ -20,7 +20,7 @@ import {
 } from '../lib/updater';
 import styles from './UpdateDialog.module.css';
 
-const RELEASES_URL = 'https://github.com/nexu-io/open-design/releases';
+const RELEASES_URL = 'https://github.com/unfoldingdimensions/open-design/releases';
 const MENU_SOURCE = 'mac-app-menu';
 
 function withEllipsis(value: string): string {

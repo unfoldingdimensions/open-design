@@ -11,8 +11,6 @@ import {
   PLUGIN_PREVIEWS_ROUTE,
 } from '../src/plugins/plugin-preview-bakes.js';
 
-const PUBLIC_BASE = 'https://repo-assets.open-design.ai/plugin-previews';
-
 interface ManifestEntry {
   video: string;
   poster: string;
@@ -101,8 +99,9 @@ describe('plugin preview bake manifest', () => {
 });
 
 describe('bakedPreviewBlock', () => {
-  it('uses the public preview origin when the manifest points to remote-only nested assets', async () => {
+  it('disables a remote-only bake when no preview base is configured (fail closed)', async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), 'od-baked-preview-'));
+    delete process.env.OD_PLUGIN_PREVIEWS_BASE_URL;
     await writeManifest(tmpDir, {
       'html-plugin': {
         video: 'html-plugin/abc123abc123abcd/preview.mp4',
@@ -113,11 +112,9 @@ describe('bakedPreviewBlock', () => {
       },
     });
 
-    expect(bakedPreviewBlock('html-plugin', tmpDir)).toEqual({
-      video: `${PUBLIC_BASE}/html-plugin/abc123abc123abcd/preview.mp4`,
-      poster: `${PUBLIC_BASE}/html-plugin/abc123abc123abcd/poster.jpg`,
-      holdMs: 2500,
-    });
+    // No on-disk clips and no configured base: the bake is skipped rather than
+    // read from a hardcoded (third-party) origin.
+    expect(bakedPreviewBlock('html-plugin', tmpDir)).toBeNull();
   });
 
   it('uses the daemon static route when nested preview assets exist on disk', async () => {
@@ -166,6 +163,9 @@ describe('bakedPreviewBlock', () => {
 describe('applyBakedPreviews', () => {
   it('attaches baked previews without overwriting authored preview blocks', async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), 'od-baked-preview-'));
+    previousBaseUrl = process.env.OD_PLUGIN_PREVIEWS_BASE_URL;
+    const base = 'https://cdn.example.test/previews';
+    process.env.OD_PLUGIN_PREVIEWS_BASE_URL = base;
     await writeManifest(tmpDir, {
       'html-plugin': {
         video: 'html-plugin/aaaabbbbccccdddd/preview.mp4',
@@ -196,8 +196,8 @@ describe('applyBakedPreviews', () => {
     expect(bakedRecord).not.toBe(records[0]);
     expect(bakedRecord?.manifest.od.preview).toEqual({ type: 'html', entry: './index.html' });
     expect(bakedRecord?.manifest.od.bakedPreview).toEqual({
-      video: `${PUBLIC_BASE}/html-plugin/aaaabbbbccccdddd/preview.mp4`,
-      poster: `${PUBLIC_BASE}/html-plugin/aaaabbbbccccdddd/poster.jpg`,
+      video: `${base}/html-plugin/aaaabbbbccccdddd/preview.mp4`,
+      poster: `${base}/html-plugin/aaaabbbbccccdddd/poster.jpg`,
       holdMs: 2500,
     });
     expect(out[1]).toBe(records[1]);

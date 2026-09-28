@@ -356,7 +356,6 @@ function synthesizeSkill(candidate: SkillPluginCandidate): string {
 
 function buildManifest(slug: string, candidate: SkillPluginCandidate) {
   return {
-    $schema: 'https://open-design.ai/schemas/plugin.v1.json',
     specVersion: OPEN_DESIGN_PLUGIN_SPEC_VERSION,
     name: slug,
     title: candidate.title,

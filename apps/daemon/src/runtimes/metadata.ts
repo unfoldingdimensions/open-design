@@ -7,10 +7,6 @@ const AGENT_INSTALL_LINKS: Record<
     installUrl: 'https://ampcode.com/manual#install',
     docsUrl: 'https://ampcode.com/manual',
   },
-  amr: {
-    installUrl: 'https://open-design.ai/amr',
-    docsUrl: 'https://github.com/nexu-io/open-design/blob/main/docs/new-agent-runtime-acp.md',
-  },
   claude: {
     installUrl: 'https://docs.anthropic.com/en/docs/claude-code/setup',
     docsUrl: 'https://docs.anthropic.com/en/docs/claude-code',
@@ -28,7 +24,7 @@ const AGENT_INSTALL_LINKS: Record<
     docsUrl: 'https://github.com/sst/opencode',
   },
   hermes: {
-    installUrl: 'https://github.com/nexu-io/open-design/blob/main/docs/agent-adapters.md',
+    installUrl: 'https://github.com/unfoldingdimensions/open-design/blob/main/docs/agent-adapters.md',
     docsUrl: 'https://hermes-agent.nousresearch.com/docs/',
   },
   'trae-cli': {
@@ -56,7 +52,7 @@ const AGENT_INSTALL_LINKS: Record<
     docsUrl: 'https://docs.github.com/en/copilot/how-tos/use-copilot-extensions/use-in-cli',
   },
   pi: {
-    installUrl: 'https://github.com/nexu-io/open-design/blob/main/docs/agent-adapters.md',
+    installUrl: 'https://github.com/unfoldingdimensions/open-design/blob/main/docs/agent-adapters.md',
     docsUrl: 'https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/README.md',
   },
   kiro: {

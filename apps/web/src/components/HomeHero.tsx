@@ -2121,9 +2121,7 @@ function PluginPromptPresets({
   );
 }
 
-const FIRST_PARTY_WEB_CLONE_SITE_ICONS: Record<string, string> = {
-  'open-design.ai': '/logo.svg',
-};
+const FIRST_PARTY_WEB_CLONE_SITE_ICONS: Record<string, string> = {};
 
 function webCloneFaviconUrl(domain: string): string {
   return `https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(domain)}`;

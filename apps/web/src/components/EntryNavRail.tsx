@@ -57,7 +57,7 @@ import type {
   AccountMenuClickProps,
   TrackingWorkspacePage,
 } from '@capydesign/contracts/analytics';
-const REPO_URL = 'https://github.com/nexu-io/open-design';
+const REPO_URL = 'https://github.com/unfoldingdimensions/open-design';
 const GITHUB_HELP_URL = `${REPO_URL}/issues/new`;
 const GITHUB_FEATURE_URL = `${REPO_URL}/pulls`;
 const DISCORD_URL = 'https://discord.gg/mHAjSMV6gz';

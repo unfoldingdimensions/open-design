@@ -17,11 +17,6 @@ import path from 'node:path';
 
 export const PLUGIN_PREVIEWS_ROUTE = '/api/plugin-previews';
 
-// Public R2 (Cloudflare CDN) origin the baked clips are published to. Used as
-// the default so the packaged desktop app and the web deployment both serve
-// previews with zero configuration; OD_PLUGIN_PREVIEWS_BASE_URL overrides it.
-const DEFAULT_PUBLIC_BASE = 'https://repo-assets.open-design.ai/plugin-previews';
-
 interface BakeEntry {
   video: string;
   poster: string;
@@ -88,14 +83,16 @@ export function bakedPreviewBlock(id: string, dir: string): BakedPreviewBlock | 
   // Resolve where the clip is fetchable from, in priority order:
   //   1. an explicit OD_PLUGIN_PREVIEWS_BASE_URL override;
   //   2. the daemon's own /api/plugin-previews route when the clips are on disk
-  //      (local dev / a freshly-baked dir);
-  //   3. the public R2 origin — the default for the packaged desktop app and the
-  //      web deployment, so neither needs any config: the checked-in manifest
-  //      names the clips and they're served from R2's CDN.
+  //      (local dev / a freshly-baked dir).
+  // There is deliberately NO default remote origin: CapyDesign ships no asset
+  // CDN, and a fork must not read another vendor's host. With no configured base
+  // and no on-disk clips the bake is disabled (fail closed) and every plugin
+  // keeps the live-iframe path.
   const envBase = process.env.OD_PLUGIN_PREVIEWS_BASE_URL?.replace(/\/+$/, '');
   const onDisk =
     existsSync(path.join(dir, entry.video)) && existsSync(path.join(dir, entry.poster));
-  const base = envBase || (onDisk ? PLUGIN_PREVIEWS_ROUTE : DEFAULT_PUBLIC_BASE);
+  const base = envBase || (onDisk ? PLUGIN_PREVIEWS_ROUTE : null);
+  if (base == null) return null;
   return {
     poster: `${base}/${entry.poster}`,
     video: `${base}/${entry.video}`,

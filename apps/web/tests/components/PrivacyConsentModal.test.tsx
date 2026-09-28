@@ -9,7 +9,7 @@ import { I18nProvider } from '../../src/i18n';
 const analyticsTrack = vi.hoisted(() => vi.fn());
 
 
-const PRIVACY_POLICY_HREF = 'https://github.com/nexu-io/open-design/blob/main/PRIVACY.md';
+const PRIVACY_POLICY_HREF = 'https://github.com/unfoldingdimensions/open-design/blob/main/PRIVACY.md';
 
 function renderModal(overrides?: { onShare?: () => void; onDecline?: () => void }) {
   const onShare = overrides?.onShare ?? vi.fn();
