@@ -207,6 +207,57 @@ listener wiring (`project-events.test.ts` caught it — 18/18 after the real lis
 
 The full-suite test total fell from 8,719 to 8,707 because the deleted invite suite held 12 tests.
 
+## Contracts trim — `api/collab` cluster
+
+Inventory of the collab cluster: 24 Cloud-vocabulary exports, 223 external file references. A
+dependency-closure pass over the module (per-symbol spans, not name co-occurrence) showed two
+tiers:
+
+- **28 exports referenced nowhere at all** — no consumer, and no surviving symbol in the file
+  references them (billing catalog/checkout/wallet/interest/revision-clock, presence DTOs, member
+  register, cloud comment/member responses, `WorkspaceLifecycleState` chain, …).
+- **40 exports with real consumers**, mutually interdependent.
+
+Deleted the 28: `api/collab.ts` went **1,106 → 852 lines**. Zero product risk, since nothing
+referenced them.
+
+### Why the remaining 40 need one coordinated change
+
+The survivors form a single type cluster. `WorkspaceCollabContext` (138 files) is built from
+`WorkspacePermissions`, `WorkspaceSeatSummary`, `WorkspaceLifecycleState`, `WorkspaceMemberStatus`,
+`WorkspaceBillingState`, `WorkspaceProviderMode`; the derivation helpers
+(`buildWorkspacePermissions`, `workspacePrincipalKey`, `isSameWorkspacePrincipal`,
+`canReachWorkspaceBillingEntrance`, `workspaceBillingAuthorityContext`,
+`workspaceContextHasTeamIdentity`, `workspaceContextHasWorkspaceIdentity`,
+`workspaceSeatCapacityState`) take those types as parameters; and `api/projects.ts` imports
+`WorkspaceCollabContext` for the `ProjectWorkspaceScope` union. So `ProjectWorkspaceScope` and the
+collab module block each other, and neither can move alone.
+
+A first closure pass is a trap worth recording: an earlier check compared names **on the same line**
+only, which classified `WorkspacePermissions` as deletable even though `WorkspaceCollabContext`
+uses it on a different line. Switching to per-symbol source spans cut the deletable set from 44 to
+28.
+
+Another measurement trap: an ad-hoc PowerShell count reported `WorkspaceType` in 90 files, while the
+authoritative inventory and a direct check both say **3**. The over-count came from the ad-hoc scan,
+not the tooling — a reminder to cross-check a suspicious count before sizing work from it.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| contracts build | exit 0 |
+| contracts test | 60 files, 636 tests, exit 0 |
+| daemon typecheck | exit 0, 0 errors |
+| web typecheck | exit 0, 0 errors |
+| full web suite | see below |
+
+### Remaining plan for the cluster
+
+One coordinated change: move the 40 surviving exports (852 lines) into a local module per app,
+repoint the importers (~90 web files, ~10 daemon files, 1 in `packages/host`), then delete
+`api/collab.ts` and the `ProjectWorkspaceScope` union with it.
+
 ## Open items (not WS6 regressions)
 
 1. WS1 licence attribution item blocking `pnpm guard` — needs a product call.
