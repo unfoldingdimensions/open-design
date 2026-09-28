@@ -589,14 +589,14 @@ export interface ProjectAccessFlags {
  * Team-resource lifecycle state. The team-resource module went with the Cloud
  * surface; the state is retained because local project summaries still carry it.
  */
-export type TeamResourceState = 'active' | 'frozen' | 'deleted';
+export type ResourceLifecycleState = 'active' | 'frozen' | 'deleted';
 
 export interface ProjectListEntry {
   id: string;
   name: string;
   workspaceId: string;
   visibility: ProjectVisibility;
-  resourceState: TeamResourceState;
+  resourceState: ResourceLifecycleState;
   createdByWorkspaceMemberId: string | null;
   updatedByWorkspaceMemberId?: string | null;
   /**

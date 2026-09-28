@@ -6,6 +6,7 @@
  * resolution: a project surface resolves to "unbound" (one implicit local
  * scope), and a run retry continuation is plain local run state.
  */
+import type { AgentModelOption } from '@capydesign/contracts';
 import type { ProjectWorkspaceScope, WorkspaceCollabContext } from './collab-contract';
 
 /**
@@ -159,3 +160,18 @@ export interface TeamProjectsChangedSsePayload {
  * only the arm the consumer narrows on is retained.
  */
 export type WorkspaceInvalidationSsePayload = TeamProjectsChangedSsePayload;
+
+/**
+ * AMR (vela) model-catalogue response. The endpoint that served it is gone with
+ * the Cloud surface, so the local fetch path always resolves to null; the shape
+ * is kept so the surviving call sites stay type-safe.
+ */
+export type AmrModelsSource = 'preset' | 'remote';
+
+export interface AmrModelsResponse {
+  source: AmrModelsSource;
+  models: AgentModelOption[];
+  refreshing: boolean;
+  stale?: boolean;
+  remoteError?: string;
+}

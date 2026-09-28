@@ -14,7 +14,8 @@ import {
   projectKindFromMetadataToTracking,
   fidelityToTracking,
 } from '@capydesign/contracts/analytics';
-import type { AmrModelsResponse, ChatSessionMode, CreateProjectExampleReference, LocalCatalogScope, RunContextSelection, ProjectScenarioTaskProfile, ProjectListEntry } from '@capydesign/contracts';
+import type { ChatSessionMode, CreateProjectExampleReference, LocalCatalogScope, RunContextSelection, ProjectScenarioTaskProfile, ProjectListEntry } from '@capydesign/contracts';
+import type { AmrModelsResponse } from './runtime/legacy-scope-types';
 import type { TeamProject, WorkspaceCollabContext, ProjectWorkspaceScope } from './runtime/collab-contract';
 import { DEFAULT_UNSELECTED_SCENARIO_PLUGIN_ID } from '@capydesign/contracts';
 import { EntryView } from './components/EntryView';

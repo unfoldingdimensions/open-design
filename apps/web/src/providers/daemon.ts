@@ -12,7 +12,8 @@ import type { AmrSessionState, AmrAuthNetworkPath, AmrAuthStage, AmrAuthStageRes
  */
 import type { AgentEvent, ChatCommentAttachment, ChatMessage } from '../types';
 /* removed: imports from '@capydesign/contracts/analytics' no longer exist in contracts */
-import type { ApiErrorResponse, ChatAnalyticsHints, ChatRunCreateResponse, ChatRunListResponse, ChatRunStatus, ChatRunStatusResponse, ChatRequest, ChatSessionMode, ChatSseEvent, ChatSseStartPayload, DaemonAgentPayload, AmrModelsResponse, ByokChatProviderConfig, MediaExecutionPolicy, ResearchOptions, RunCancelOrigin, RunContextSelection, SseErrorPayload, StrategyTaskProjectionV2 } from '@capydesign/contracts';
+import type { ApiErrorResponse, ChatAnalyticsHints, ChatRunCreateResponse, ChatRunListResponse, ChatRunStatus, ChatRunStatusResponse, ChatRequest, ChatSessionMode, ChatSseEvent, ChatSseStartPayload, DaemonAgentPayload, ByokChatProviderConfig, MediaExecutionPolicy, ResearchOptions, RunCancelOrigin, RunContextSelection, SseErrorPayload, StrategyTaskProjectionV2 } from '@capydesign/contracts';
+import type { AmrModelsResponse } from '../runtime/legacy-scope-types';
 import type { WorkspaceCollabContext } from '../runtime/collab-contract';
 import { OD_NEXT_AGENT_DECLARED_BLOCK_REASON } from '@capydesign/contracts';
 import type { StreamHandlers } from './anthropic';

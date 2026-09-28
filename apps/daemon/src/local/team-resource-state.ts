@@ -1,14 +1,14 @@
 // Local replacement for the deleted team-resource state seam. CapyDesign has
 // no team resources and no resource hub, so every resource is local/personal
 // and the copy red-line can never trip.
-import type { TeamResourceState } from '@capydesign/contracts';
+import type { ResourceLifecycleState } from '@capydesign/contracts';
 
 /** The resource a copy-out route is about to duplicate into a personal copy. */
 export interface TeamResourceCopyTarget {
   /** Personal resources copy freely; the red-line only applies to team resources. */
   scope: 'personal' | 'team';
   /** Lifecycle state — consulted only for team-scoped resources. */
-  state?: TeamResourceState;
+  state?: ResourceLifecycleState;
 }
 
 /**
