@@ -1,10 +1,9 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "import-screenshot-to-prototype",
   "title": "Screenshot To Prototype",
   "version": "0.1.0",
-  "description": "Rebuild a screenshot as an editable OpenDesign prototype.",
+  "description": "Rebuild a screenshot as an editable CapyDesign prototype.",
   "license": "MIT",
   "tags": ["import", "screenshot-import", "image-import", "prototype"],
   "compat": {

@@ -50,8 +50,7 @@ Ship a premium template-mode Hyperframes composition with a ready default showca
 └── example.html
 ```
 
-The rendered MP4 showcase used by `example.html` is hosted at
-`https://repo-assets.open-design.ai/resources/videos/skills/8-bit-orbit-video-template/default-showcase.mp4`.
+A rendered MP4 showcase for `example.html` existed on the upstream asset host; CapyDesign does not operate that host and the file is not bundled.
 
 ## Workflow
 

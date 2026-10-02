@@ -1,11 +1,10 @@
 {
-  "$schema": "https://open-design.ai/schemas/marketplace.v1.json",
   "specVersion": "1.0.0",
   "name": "open-design-spec-examples",
   "version": "0.1.0",
   "owner": {
-    "name": "OpenDesign Spec Examples",
-    "url": "https://github.com/nexu-io/open-design"
+    "name": "CapyDesign Spec Examples",
+    "url": "https://github.com/unfoldingdimensions/open-design"
   },
   "metadata": {
     "description": "Example plugin spec catalog for authoring and PR workflows.",

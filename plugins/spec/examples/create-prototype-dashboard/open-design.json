@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "create-prototype-dashboard",
   "title": "Example Ops Dashboard",
@@ -7,10 +6,10 @@
   "description": "Spec example plugin for creating a dense operations dashboard prototype with KPIs, charts, and an action table.",
   "license": "MIT",
   "author": {
-    "name": "OpenDesign Spec Examples",
-    "url": "https://github.com/nexu-io/open-design"
+    "name": "CapyDesign Spec Examples",
+    "url": "https://github.com/unfoldingdimensions/open-design"
   },
-  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/spec/examples/create-prototype-dashboard",
+  "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/spec/examples/create-prototype-dashboard",
   "tags": ["create", "prototype", "dashboard", "operations"],
   "compat": {
     "agentSkills": [{ "path": "./SKILL.md" }]

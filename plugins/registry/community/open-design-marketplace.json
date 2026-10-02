@@ -1,11 +1,10 @@
 {
-  "$schema": "https://open-design.ai/schemas/marketplace.v1.json",
   "specVersion": "1.0.0",
   "name": "open-design-community",
   "version": "0.2.10",
   "owner": {
-    "name": "OpenDesign Community",
-    "url": "https://open-design.ai/marketplace/community"
+    "name": "CapyDesign Community",
+    "url": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/community"
   },
   "metadata": {
     "description": "Default community plugin registry seed. Entries here are discoverable by default but remain restricted until the user installs and trusts them.",
@@ -16,13 +15,13 @@
       "name": "community/registry-starter",
       "title": "Community Registry Starter",
       "version": "0.1.0",
-      "source": "github:nexu-io/open-design@main/plugins/community/registry-starter",
+      "source": "github:unfoldingdimensions/open-design@main/plugins/community/registry-starter",
       "publisher": {
         "id": "open-design-community",
-        "github": "nexu-io",
-        "url": "https://github.com/nexu-io/open-design"
+        "github": "unfoldingdimensions",
+        "url": "https://github.com/unfoldingdimensions/open-design"
       },
-      "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/community/registry-starter",
+      "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/community/registry-starter",
       "license": "MIT",
       "capabilitiesSummary": [
         "prompt:inject"
@@ -38,13 +37,13 @@
       "name": "community/import-smoke-test",
       "title": "Community Import Smoke Test",
       "version": "0.1.0",
-      "source": "github:nexu-io/open-design@main/plugins/community/import-smoke-test",
+      "source": "github:unfoldingdimensions/open-design@main/plugins/community/import-smoke-test",
       "publisher": {
         "id": "open-design-community",
-        "github": "nexu-io",
-        "url": "https://github.com/nexu-io/open-design"
+        "github": "unfoldingdimensions",
+        "url": "https://github.com/unfoldingdimensions/open-design"
       },
-      "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/community/import-smoke-test",
+      "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/community/import-smoke-test",
       "license": "MIT",
       "capabilitiesSummary": [
         "prompt:inject"
@@ -61,7 +60,7 @@
       "name": "community/hallmark",
       "title": "Hallmark",
       "version": "1.0.0",
-      "source": "github:nexu-io/open-design@main/plugins/community/hallmark",
+      "source": "github:unfoldingdimensions/open-design@main/plugins/community/hallmark",
       "publisher": {
         "id": "nutlope",
         "github": "Nutlope",
@@ -86,7 +85,7 @@
       "name": "community/humanize-ppt",
       "title": "Humanize PPT",
       "version": "1.1.2",
-      "source": "github:nexu-io/open-design@main/plugins/community/humanize-ppt",
+      "source": "github:unfoldingdimensions/open-design@main/plugins/community/humanize-ppt",
       "publisher": {
         "id": "learnprompt",
         "github": "LearnPrompt",
@@ -138,7 +137,7 @@
         "code-agent",
         "design-to-code"
       ],
-      "description": "Hand an Open Design project off to OpenCode as an offline-complete bundle: a verbatim project mirror, the design system materialized with real font binaries, and a machine-enforced adherence config."
+      "description": "Hand an CapyDesign project off to OpenCode as an offline-complete bundle: a verbatim project mirror, the design system materialized with real font binaries, and a machine-enforced adherence config."
     }
   ]
 }

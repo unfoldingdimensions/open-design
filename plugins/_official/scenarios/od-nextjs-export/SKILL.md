@@ -1,6 +1,6 @@
 # Export To Next.js
 
-Use this plugin when the user wants to hand an accepted OpenDesign artifact to a Next.js App Router project.
+Use this plugin when the user wants to hand an accepted CapyDesign artifact to a Next.js App Router project.
 
 ## Workflow
 

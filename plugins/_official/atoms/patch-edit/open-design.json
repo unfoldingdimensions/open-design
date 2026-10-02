@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "patch-edit",
   "title": "Patch edit",
@@ -8,10 +7,10 @@
   "description": "Apply one rewrite-plan step at a time as small reviewable file edits.",
   "license": "MIT",
   "author": {
-    "name": "OpenDesign",
+    "name": "CapyDesign",
     "url": "https://github.com/nexu-io"
   },
-  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/atoms/patch-edit",
+  "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/_official/atoms/patch-edit",
   "tags": [
     "atom",
     "first-party",

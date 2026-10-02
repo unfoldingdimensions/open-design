@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "image-template-infographic-otaku-dance-choreography-breakdown-gokurakujodo-16-panels",
   "title": "Infographic - Otaku Dance Choreography Breakdown (Gokuraku Jodo, 16 Panels)",
@@ -49,9 +48,9 @@
   "license": "Apache-2.0",
   "author": {
     "name": "open-design contributors",
-    "url": "https://github.com/nexu-io/open-design"
+    "url": "https://github.com/unfoldingdimensions/open-design"
   },
-  "homepage": "https://github.com/nexu-io/open-design",
+  "homepage": "https://github.com/unfoldingdimensions/open-design",
   "tags": [
     "image-template",
     "first-party",

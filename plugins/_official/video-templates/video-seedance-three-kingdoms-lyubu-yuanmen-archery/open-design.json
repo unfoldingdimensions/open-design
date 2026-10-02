@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "video-template-video-seedance-three-kingdoms-lyubu-yuanmen-archery",
   "title": "Video - Three Kingdoms ARPG - Lyu Bu Yuanmen Archery (Seedance 2.0)",
@@ -49,9 +48,9 @@
   "license": "Apache-2.0",
   "author": {
     "name": "open-design contributors",
-    "url": "https://github.com/nexu-io/open-design"
+    "url": "https://github.com/unfoldingdimensions/open-design"
   },
-  "homepage": "https://github.com/nexu-io/open-design",
+  "homepage": "https://github.com/unfoldingdimensions/open-design",
   "tags": [
     "video-template",
     "first-party",
@@ -75,9 +74,7 @@
     "scenario": "video",
     "surface": "video",
     "preview": {
-      "type": "video",
-      "poster": "https://repo-assets.open-design.ai/resources/images/prompt-templates/video-seedance-three-kingdoms-lyubu-yuanmen-archery-poster.jpg",
-      "video": "https://repo-assets.open-design.ai/resources/videos/prompt-templates/video-seedance-three-kingdoms-lyubu-yuanmen-archery.mp4"
+      "type": "video"
     },
     "useCase": {
       "query": {

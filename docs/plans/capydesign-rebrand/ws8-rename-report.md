@@ -2,12 +2,13 @@
 
 Status: **slice 1 complete** (README family, `docs/` active prose, root guides,
 `AGENTS.md` files, deploy-script identity, clipper store listing).
+**Slice 2 complete** (see the section at the bottom): `plugins/`, `skills/`,
+`design-templates/`, `craft/`.
 Branch: `rebrand/ws7-upstream-links-and-infra` (branched from the WS7 tip per the
 WS8 dependency rule: after WS3/WS5/WS7).
 
-Slices still open: `plugins/` (417), `skills/` (104), `design-templates/` (77),
-`craft/` (4), `specs/` (39), and `design-systems/` (1,813 — the third-party trap,
-last).
+Slices still open: `specs/` (39) and `design-systems/` (1,813 — the third-party
+trap, last).
 
 ## WS1 coordination finding
 
@@ -101,3 +102,56 @@ paragraph uses the Rule 4 wording and agrees with the notices.
   (non-workflow), and `.sh` files; no compiled surface changed. The documented
   e2e/seedream baseline is unchanged.
 - Residue grep per the WS8 prompt, classified above.
+
+## Slice 2 — plugins, skills, design-templates, craft
+
+1,743 files changed. The plan's 602-occurrence estimate was stale: the live
+grep measured 1,161 `OpenDesign|Open Design` hits in `.md`/`.json` alone plus
+476 more inside example HTML. All first-party metadata renamed: plugin
+`title`/`description` (incl. all 13 locale variants per sidecar), input
+prompt examples, `author.name`, provenance stamps ("Formalized by
+OpenDesign → CapyDesign"), `skills/` integration prose (incl. the third-party
+wrappers — only product references changed; `UI/UX Pro Max`, authors, and
+upstream names are untouched), `craft/` wrapper notes, and `plugins/spec/**`
+(living contributor docs, not versioned history — reasoning: they document the
+current spec, mirror `docs/plugins-spec.md` which slice 1 renamed, and carry
+no dated-release character).
+
+Data reconcile decisions (all aligned with decisions already taken):
+
+- **`$schema` key dropped from 487 plugin/registry JSON files** — WS7 removed
+  it from generated manifests; checked-in sidecars now agree (no CapyDesign
+  schema host exists).
+- **Registry install sources repointed**: `github:nexu-io/open-design@main/…`
+  → the fork, in both registry indexes and the import-smoke-test README;
+  jsdelivr preview URLs → `cdn.jsdelivr.net/gh/unfoldingdimensions/open-design@main/…`
+  (same in-repo paths, real CDN).
+- **Dead `repo-assets.open-design.ai` preview fields deleted** from the 4
+  seedance video-template pairs — the media was never bundled and the CDN is
+  gone (JSON re-validated with `JSON.parse` after deletion, including fixing
+  the trailing comma the deletion exposed). Two skills' "showcase hosted at"
+  sentences and the html-ppt `hero.gif` embeds (3 languages) neutralized for
+  the same reason.
+- **Dead marketplace/homepage URLs repointed**: `open-design.ai/marketplace…`
+  author URLs → fork repo; `github.com/nexu-io/open-design` homepage/repo
+  fields → the fork; the official index's "served from open-design.ai/marketplace"
+  claim replaced with the local-only reality.
+- **Demo data repointed**: the github-dashboard example and share-github-pr
+  placeholder now query the fork's repo.
+- **`open-design-homepage` example reframed honestly**: it mirrors the
+  *upstream* open-design.ai homepage, rebranded for CapyDesign — the upstream
+  link stays as the mirrored source's attribution.
+
+Deliberately kept (classified):
+
+| Class | What | Count |
+|---|---|---|
+| `attribution / provenance` | `nexu-io/html-video` + `nexu-io/html-anything` template-source links (the repos the html-ppt/video templates were vendored from) | 121 |
+| `attribution` | `source: { repo: nexu-io/open-design, license, author: "open-design contributors" }` blocks crediting template origin | 55 |
+| `attribution` | the homepage example's mirrored-source link | 7 |
+| `WS3-owned` | `plugins/_official/scenarios/od-next-strategy/assets/**` (verbatim model-facing prompt text) — untouched; the scenario's own `open-design.json` got the same `$schema` drop as every sidecar | 4 hits |
+| `deferred: HTML pass` | 476 `OpenDesign` hits inside example/preview `.html` outputs — several are third-party-verbatim bundles (guizang example slides, deck-editorial) that must NOT be renamed; first-party demo outputs should be regenerated from their compose scripts rather than hand-edited | 476 |
+
+Contract tokens untouched throughout: `open-design.json` filename,
+`open-design-marketplace.json`, `od-*` scenario ids, `od:` manifest namespace,
+`od://` scheme, `scripts/od-preview-rewrite.mjs`.

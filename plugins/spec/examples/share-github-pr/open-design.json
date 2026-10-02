@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "share-github-pr",
   "title": "Share as GitHub PR",
@@ -46,7 +45,7 @@
       ]
     },
     "inputs": [
-      { "name": "targetRepo", "type": "string", "required": true, "label": "Target repository", "placeholder": "nexu-io/open-design" }
+      { "name": "targetRepo", "type": "string", "required": true, "label": "Target repository", "placeholder": "unfoldingdimensions/open-design" }
     ],
     "capabilities": ["prompt:inject", "fs:read", "connector", "connector:github", "network"]
   }

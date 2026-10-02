@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "example-ppt-keynote",
   "title": "Present an Operating-Model Redesign like a Strategy Engagement Lead",
@@ -18,10 +17,10 @@
   },
   "license": "MIT",
   "author": {
-    "name": "OpenDesign",
+    "name": "CapyDesign",
     "url": "https://github.com/nexu-io"
   },
-  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/ppt-keynote",
+  "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/_official/examples/ppt-keynote",
   "tags": [
     "example",
     "first-party",

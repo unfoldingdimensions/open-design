@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "example-html-ppt-zhangzara-8-bit-orbit",
   "title": "Turn a Hobby into a Story Deck like a Passion-Project Storyteller",
@@ -18,10 +17,10 @@
   },
   "license": "MIT",
   "author": {
-    "name": "OpenDesign",
+    "name": "CapyDesign",
     "url": "https://github.com/nexu-io"
   },
-  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-8-bit-orbit",
+  "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-8-bit-orbit",
   "tags": [
     "example",
     "first-party",

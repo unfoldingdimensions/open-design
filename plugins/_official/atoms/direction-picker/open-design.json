@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "direction-picker",
   "title": "Direction picker",
@@ -8,10 +7,10 @@
   "description": "Resolves the visual direction at the plan stage from the brief and design system, without asking the user.",
   "license": "MIT",
   "author": {
-    "name": "OpenDesign",
+    "name": "CapyDesign",
     "url": "https://github.com/nexu-io"
   },
-  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/atoms/direction-picker",
+  "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/_official/atoms/direction-picker",
   "tags": [
     "atom",
     "first-party",
