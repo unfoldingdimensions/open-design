@@ -16,10 +16,9 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { QuestionFormView } from '../../src/components/QuestionForm';
 import type { QuestionForm } from '../../src/artifacts/question-form';
+import { QuestionFormView } from '../../src/components/QuestionForm';
 import { visualStyleCardsForContext } from '../../src/runtime/visual-style-catalog';
-import { VISUAL_STYLE_BATCH_SIZE } from '../../src/runtime/visual-style-deck';
 
 afterEach(cleanup);
 
@@ -61,19 +60,16 @@ describe('direction-cards 由内置目录接管', () => {
     expect(screen.queryByText('克制留白')).toBeNull();
   });
 
-  it('每张卡都带**真预览图**,不是占位块', () => {
+  it('每张卡都走**绘制的预览**,不用远程真图(本地构建)', () => {
     const { container } = render(
       <QuestionFormView form={modelAuthored} interactive visualStyleContext="prototype" onSubmit={vi.fn()} />,
     );
-    const imgs = container.querySelectorAll('img.qf-visual-preview-image');
-    /* 牌面上是【这一批的 6 张】,不是整份目录 —— 2026-08-27 产品口径
-       (「换一批时,顺序从 22 个里每次挑 6 个出来」)。这条要守的是
-       「每一张都是真图」,和一批放几张无关,所以按牌面上的卡数比。 */
-    expect(imgs.length).toBe(container.querySelectorAll('.qf-visual-card').length);
-    expect(imgs.length).toBe(VISUAL_STYLE_BATCH_SIZE);
-    expect((imgs[0] as HTMLImageElement).src).toContain('/style-catalog/v1/prototype-');
-    // 占位块那一路一张都不该出
-    expect(container.querySelectorAll('.qf-visual-preview-prototype')).toHaveLength(0);
+    /* CapyDesign 是本地优先:目录不再挂 R2 托管预览图。每一张卡都走
+       `.qf-visual-preview-prototype` 那路 CSS 绘制预览,一张远程 <img> 都不该出。 */
+    expect(container.querySelectorAll('img.qf-visual-preview-image')).toHaveLength(0);
+    expect(
+      container.querySelectorAll('.qf-visual-preview-prototype').length,
+    ).toBe(container.querySelectorAll('.qf-visual-card').length);
   });
 
   it('是**单选** —— 方向只能挑一个', () => {
