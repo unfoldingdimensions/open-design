@@ -91,51 +91,76 @@ in app source** and handed them to WS7. This file classifies them.
 | daemon `env-and-detection` vs baseline | **9 failed** vs baseline **10** — one improved (removed the dead `amr` metadata assertion), none introduced |
 | web batch (38 files, 605 tests) | **0 failed** |
 
-## Residue — still open (endpoint class)
+## Residue — first-draft list, now fully dispositioned
 
-| path:line | value | why it is still open |
+The items below were listed as "still open" in the first draft of this file.
+Later commits in this workstream closed every one of them; the disposition and
+commit are recorded so the sweep is auditable.
+
+| first-draft item | disposition | commit |
 |---|---|---|
-| `apps/daemon/src/local/legacy-bridge.ts:113,120,232,296` | `DEFAULT_AMR_RECHARGE_URL = https://open-design.ai/amr/dashboard…` | WS6 kept it deliberately "so the recharge action link keeps its historical shape". The AMR service is gone, so this is a dead link in failure cards — needs a product call (remove the link vs. keep a dead one) |
-| `apps/web/src/components/enterpriseUrl.ts:7` | `ENTERPRISE_BASE='https://open-design.ai'` | needs a CapyDesign marketing site (WS9/WS11 human-blocked); caller `EntrySettingsMenu:275` should hide the link when unset |
-| `apps/web/src/runtime/visual-style-catalog.ts:118` | `STYLE_CATALOG_ASSET_ORIGIN='https://repo-assets.open-design.ai'` | needs a CapyDesign asset CDN; make opt-in env. Ripples to `AssistantMessage.test.tsx` (13) and `QuestionForm.test.tsx` (6) |
-| `apps/web/src/components/sketch-model.ts:70` | `OPEN_DESIGN_EXCALIDRAW_SOURCE='https://open-design.ai/sketch'` | no fork equivalent; make opt-in env or drop the source field |
-| `apps/web/src/components/LibrarySection.tsx:1138` | clipper download link `open-design.ai/clipper` | no CapyDesign clipper host; needs a call (remove the link vs. host one) |
-| `packages/contracts/src/plugins/plugin-url.ts:19` | `OPEN_DESIGN_SITE_ORIGIN='https://open-design.ai'` + `PluginShareMenu.tsx:80,206` | prompt asks for **required-config**: drop the default, make `origin` required, plumb it from `PluginShareMenu`. Ripples to `plugin-url.test.ts` + `PluginShareMenu.test.tsx` (10) |
-| `apps/web/src/components/EntryNavRail.tsx:65` | `mailto:support@open-design.ai` | no CapyDesign support address exists |
-| `apps/desktop/src/main/runtime.ts:1099,1109-1110` | `SUPPORT_EMAIL='support@open-design.ai'` + its mailto-hardening comment | same; ripples to `mailto-open.test.ts` |
-| `tools/release/src/catalog/export.ts:35`, `tools/release/src/storage/dsh-bootstrap-bundle.ts:13` | previews base + `open-design.ai/install-dsh.ps1` | WS11 release infrastructure (human-blocked) |
-| `apps/web/src/components/HomeHero.tsx:4057,4192` | "Website URL to clone: https://open-design.ai" example (en + zh) | UI copy — WS8 owns prose |
-| `packages/contracts/src/analytics/events/ui-click.ts:938`, `apps/packaged/src/sidecars.ts:291`, web comments (`exports.ts`, `srcdoc.ts`, `file-viewer-render-mode.ts`, `FileViewer.tsx`, `mention-home.css`, `pluginFolderActions.ts:27`, `QuestionForm.tsx:768`) | upstream issue refs | **attribution — keep** |
+| `legacy-bridge.ts` `DEFAULT_AMR_RECHARGE_URL` | dead AMR link removed with the Cloud surface | `a2940f402` |
+| `enterpriseUrl.ts` `ENTERPRISE_BASE` | module and enterprise link surface deleted | `a2940f402` |
+| `visual-style-catalog.ts` `STYLE_CATALOG_ASSET_ORIGIN` | hosted asset origin removed; catalog is local-only | `a2940f402` |
+| `sketch-model.ts` excalidraw `source` | provenance now names the fork repo (nothing fetches it) | `a2940f402` |
+| `LibrarySection.tsx` clipper download link | removed (no CapyDesign clipper host) | `a2940f402` |
+| `plugin-url.ts` `OPEN_DESIGN_SITE_ORIGIN` + `PluginShareMenu` plumbing | module and share-origin plumbing deleted | `a2940f402` |
+| `EntryNavRail` / `runtime.ts` `support@open-design.ai` | support-address surface removed; `isFirstPartyMailtoUrl` rejects every mailto | `a2940f402` |
+| HomeHero "Website URL to clone" example (en + zh) | example URL neutralized in both locales | `ea7d8ffcc` |
+| stale `nexu-io/open-design` comments in `pluginFolderActions.ts` / `plugins/publish.ts` | corrected to the fork (code already targeted it) | this close-out |
+| `tools/release` previews base + `install-dsh.ps1` | **stays for WS11** — release infrastructure, human-supplied origin | — |
+| upstream issue refs (`ui-click.ts:938`, `sidecars.ts:291`, web comments) | **attribution — keep** | — |
 
-## Residue — outside app source
+## Final dispositions — outside app source
 
-1. **`.github/`** — issue templates, `CODEOWNERS`, PR template, and ~20 workflows
-   that post to nexu-io infrastructure (`metrics`, `release-*`, `whats-new-publish`,
-   `bake-plugin-previews*`, `refresh-*`, `cut-release`, `finalize-release`,
-   `notify-*-feishu`, `dsh-*`, `catalog-publish`, `ui-extended-main`, …). Read
-   `.github/AGENTS.md` first; audit and repoint/remove, do not restructure.
-   `.github/config/scopes.json` + `.github/scripts/scopes.py` may name upstream paths.
-2. **Repo metadata & shipped docs (URLs only, prose is WS8)** — `package.json`
-   (`repository`/`homepage`/`bugs`/`author`), `README.md` badges + hero `<img>` +
-   star-history + download/Discord links and the same in 13 `docs/i18n/README.*.md`,
-   `CONTRIBUTING.md`, `MAINTAINERS.md`, `deploy/README.md`,
-   `tools/pack/helm/open-design/*`, `clipper/store/LISTING.md`, `figma-plugin/`,
-   `clipper/`, `docs/windows-troubleshooting.md`, `docs/install-guide.md`.
-3. **Test fixtures** — remaining `open-design.ai` expectations in
-   `AssistantMessage.test.tsx` (style-catalog), `ProjectView.*` + `providers/sse`
-   (AMR recharge URL), `packages/plugin-runtime`, `packages/sidecar-proto`,
-   `tools/pack/tests`, `tools/release/tests`, `e2e/**`. WS12 re-baselines; the
-   AMR-specific ones are WS6 residue.
-4. **e2e typecheck is red** (pre-existing, WS6 residue):
-   `e2e/lib/playwright/amr.ts` and `e2e/ui/entry-chrome-flows.test.ts` import
-   `WorkspaceCollabContext` / `WorkspaceDirectoryItem` which no longer exist in
-   `@capydesign/contracts`; `e2e/tests/tools-dev/release-channel.test.ts` and
-   `scripts/check-whats-new-document.ts` import the deleted
-   `apps/daemon/src/services/whats-new.ts`.
-5. **The workstream-wide regression fence (TODO)** — no shipped module may contain
-   a **default operational** `open-design.ai` / `*.open-design.ai` URL, with an
-   explicit allow-list for attribution and changelogs. It cannot land green until
-   the residue above is closed.
+1. **`.github` repository metadata** (this close-out): issue-template
+   discussion/issue links, `CODEOWNERS` (`@unfoldingdimensions` — no maintainer
+   team exists on the fork yet), `CONTRIBUTING.md` (clone/issues/discussions →
+   fork; upstream Discord invite removed), `MAINTAINERS.md` (repo refs → fork).
+   The `open-design.ai/tutorials` promise was dropped from the tutorial
+   template; its upstream-product checkbox label (line 58) is product naming —
+   WS8.
+2. **Deploy / helm / pack image defaults** (this close-out): every
+   `ghcr.io/nexu-io/od` default — `deploy/docker-compose.yml`, `.env.example`,
+   `Dockerfile.local`, `scripts/install.sh`, `scripts/publish-images.sh`
+   (namespace), `azure/*`, `tools/pack/docker-compose.yml`, helm
+   `values.yaml` — now points at `ghcr.io/unfoldingdimensions/od`, the origin
+   this repository's own `docker-image.yml` publishes
+   (`ghcr.io/${{ github.repository_owner }}/od`). Until the fork's first image
+   is published the pull 404s cleanly; it can never silently install
+   nexu-io's build. helm `Chart.yaml`: `sources`/`home` → the fork repo;
+   `icon` and maintainer `url` removed (no fork site). The helm README
+   installs from the checkout instead of the removed `open-design.ai/charts`
+   repo.
+3. **Docs URL pass** (this close-out): `docs/windows-troubleshooting.md`
+   (single download source: fork releases), `docs/install-guide.md` (clone +
+   image refs → fork), `clipper/store/LISTING.md` (homepage/source/
+   issues/privacy → fork URLs). The Firefox `gecko` id
+   `web-clipper@open-design.ai` (LISTING.md:178) deliberately stays — it is an
+   extension publishing identity, not a fetched endpoint, and choosing a fork
+   id belongs with the actual store submission.
+4. **`.github` release-infra identities — deliberately left for WS11**, with
+   the reasons recorded in `2eb9f4dbb`: `owner: nexu-io` R2 upload targets in
+   the bake/refresh/metrics workflows, the `bot@open-design.ai` committer
+   identity, the `nexu-io/core-maintainers` review team in
+   `finalize-release`, and `WHATS_NEW_PUBLIC_URL` plus the whats-new publisher
+   user-agent. These are the identities WS11 replaces when the human-supplied
+   release infrastructure lands.
+5. **Sample-data fixtures** quoting the old slug (`handoff.py`,
+   `rerun_infra_cancel.py`, `tools/release/tests`, `tools/pack/tests`,
+   `e2e/**`) are not live endpoints; WS12 re-baselines the suites. The e2e
+   typecheck is red for pre-existing WS6 reasons (imports of deleted
+   `WorkspaceCollabContext` / `WorkspaceDirectoryItem` / whats-new service) —
+   WS12.
+6. **Attribution kept**: `nexu-io/open-design#NNNN` issue references in
+   comments, LICENSE / NOTICE / THIRD-PARTY-NOTICES, `docs/CHANGELOG/**`.
+
+## Regression fence
+
+Landed: `apps/web/tests/ws7-no-hosted-endpoints.test.ts` (`83fbb4827`) scans
+`apps`/`packages`/`tools` shipped source (comment lines excluded, WS11's two
+`tools/release` URLs allow-listed) and asserts zero operational
+`*.open-design.ai` defaults.
 
 ## Pre-existing failures observed (not WS7)
 

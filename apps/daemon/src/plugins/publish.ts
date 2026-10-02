@@ -11,7 +11,7 @@
 //   - awesome-agent-skills   → VoltAgent/awesome-agent-skills
 //   - clawhub                → openclaw/clawhub
 //   - skills-sh              → skills.sh discovery hint
-//   - open-design            → nexu-io/open-design (plugins/community/<plugin-name>/).
+//   - open-design            → unfoldingdimensions/open-design (plugins/community/<plugin-name>/).
 //                              The dedicated `open-design/plugin-registry` repo per
 //                              docs/plans/plugin-registry.md §1.2 stays the long-term
 //                              target, but submissions land in the monorepo until
