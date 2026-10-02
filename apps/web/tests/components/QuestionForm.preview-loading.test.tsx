@@ -1,4 +1,10 @@
 // @vitest-environment jsdom
+// Visual-direction preview loading contract.
+//
+// CapyDesign is local-only: the style catalog ships no hosted preview assets,
+// so cards render the drawn per-variant preview and no <img> is fetched at
+// all. These tests lock that absence — if a hosted preview origin ever
+// returns, the lazy-loading guarantees below must return with it.
 
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -24,7 +30,7 @@ const form = {
 } as QuestionForm;
 
 describe('visual-direction preview loading', () => {
-  it('eagerly fetches a display-sized first batch instead of six 1600px originals', () => {
+  it('renders the first batch eagerly with no hosted image fetches', () => {
     render(
       <QuestionFormView
         form={form}
@@ -34,21 +40,18 @@ describe('visual-direction preview loading', () => {
       />,
     );
 
-    const images = screen.getAllByRole<HTMLImageElement>('img');
-    expect(images).toHaveLength(VISUAL_STYLE_BATCH_SIZE);
+    // The batch size contract still governs how many cards render.
+    const cards = document.querySelectorAll('.qf-visual-stack .qf-visual-card');
+    expect(cards).toHaveLength(VISUAL_STYLE_BATCH_SIZE);
 
-    for (const image of images) {
-      expect(image.getAttribute('src')).toMatch(
-        /^https:\/\/repo-assets\.open-design\.ai\/cdn-cgi\/image\/width=640,quality=75,format=auto\/style-catalog\/v1\/deck-.*-v1\.webp$/,
-      );
-      expect(image.getAttribute('loading')).toBe('eager');
-      expect(image.getAttribute('decoding')).toBe('async');
-      expect(image.getAttribute('width')).toBe('640');
-      expect(image.getAttribute('height')).toBe('480');
-    }
+    // No hosted preview assets exist: zero <img> elements, drawn previews only.
+    const images = screen.queryAllByRole('img');
+    expect(
+      images.filter((image) => (image.getAttribute('src') ?? '').includes('open-design.ai')),
+    ).toHaveLength(0);
   });
 
-  it('keeps historical locked forms lazy so scrolling old turns does not fetch every batch', () => {
+  it('keeps historical locked forms free of hosted image fetches too', () => {
     render(
       <QuestionFormView
         form={form}
@@ -58,8 +61,9 @@ describe('visual-direction preview loading', () => {
       />,
     );
 
-    const images = screen.getAllByRole<HTMLImageElement>('img');
-    expect(images).toHaveLength(VISUAL_STYLE_BATCH_SIZE);
-    expect(images.every((image) => image.getAttribute('loading') === 'lazy')).toBe(true);
+    const images = screen.queryAllByRole('img');
+    expect(
+      images.filter((image) => (image.getAttribute('src') ?? '').includes('open-design.ai')),
+    ).toHaveLength(0);
   });
 });

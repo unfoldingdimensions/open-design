@@ -112,26 +112,25 @@ describe('「已确认」陈述块的底', () => {
     expect(rule!, '16px 被写成了字面值').not.toMatch(/--answered-radius:\s*16px/);
   });
 
-  it('带缩略图的视觉方向答案降到 12px 那一档', () => {
+  it('纯文本的视觉方向答案不降到 12px 那一档（本地构建没有缩略图）', () => {
     const context: VisualStyleContext = 'deck';
+    // CapyDesign 本地构建不再带托管预览图，目录里的卡都没有 preview。
+    // 没有缩略图就没有 12px 那一档：这一档的前提（有图）已经不存在。
     const card = visualStyleCardsForContext(context).find((c) => c.preview);
-    expect(card, '目录里没有带预览图的卡 —— 这条会变成空转').toBeTruthy();
+    expect(card, '目录里不应再出现带预览图的卡').toBeUndefined();
     const block = answered({
       form: {
         ...form,
         questions: [{ id: 'tone', label: 'Visual direction', type: 'radio', options: [] }],
       },
-      answers: { tone: card!.value },
+      answers: { tone: 'deck-editorial-narrative' },
       visualStyleContext: context,
     });
-    expect(block.querySelector('.av'), '这一格没渲染出缩略图,变体的前提不成立').toBeTruthy();
     expect(
       block.classList.contains('mod-visual-answer'),
-      '带缩略图的那档没挂上 `mod-visual-answer`',
-    ).toBe(true);
-    expect(getComputedStyle(block).getPropertyValue('--answered-radius').trim()).toBe(
-      'var(--radius-lg)',
-    );
+      '没有缩略图却挂上了带图的那档圆角',
+    ).toBe(false);
+    expect(block.querySelector('.av'), '本地构建渲染出了远程缩略图').toBeNull();
   });
 
   it('「已确认」是绿字,而且不挂勾', () => {
