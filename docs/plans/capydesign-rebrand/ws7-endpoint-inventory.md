@@ -1,6 +1,6 @@
 # WS7 — Upstream URL / feed / infrastructure inventory
 
-Status: **in progress** — first sweep landed; residue listed below.
+Status: **complete** (app source clean; residual release-infra URLs belong to WS11).
 Branch: `rebrand/ws7-upstream-links-and-infra`, rebased onto `main` after WS6
 merged (`8c9b8da2d`).
 
