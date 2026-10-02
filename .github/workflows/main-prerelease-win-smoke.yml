@@ -33,7 +33,7 @@ env:
 
 jobs:
   smoke:
-    if: github.repository == 'nexu-io/open-design'
+    if: github.repository == 'unfoldingdimensions/open-design'
     runs-on: windows-latest
     outputs:
       commit: ${{ steps.commit.outputs.commit }}

@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   cut:
-    if: github.repository == 'nexu-io/open-design'
+    if: github.repository == 'unfoldingdimensions/open-design'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/create-github-app-token@v2
@@ -89,7 +89,7 @@ jobs:
           fi
 
           published="$(gh release view "open-design-v$LATEST_RELEASE" \
-            --repo nexu-io/open-design \
+            --repo unfoldingdimensions/open-design \
             --json isDraft,isPrerelease \
             --jq '(.isDraft or .isPrerelease) | not' 2>/dev/null || true)"
           if [ "$published" != "true" ]; then
@@ -134,7 +134,7 @@ jobs:
         run: |
           set -euo pipefail
           gh label create "backport release/v$VERSION" \
-            --repo nexu-io/open-design \
+            --repo unfoldingdimensions/open-design \
             --color 0E8A16 \
             --description "Backport this fix to release/v$VERSION" \
             --force

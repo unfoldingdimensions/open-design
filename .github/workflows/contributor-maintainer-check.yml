@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   route:
-    if: github.repository == 'nexu-io/open-design'
+    if: github.repository == 'unfoldingdimensions/open-design'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
 

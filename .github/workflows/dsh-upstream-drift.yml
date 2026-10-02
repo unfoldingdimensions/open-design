@@ -28,7 +28,7 @@ concurrency:
 jobs:
   check:
     name: Compare pinned DeepSeek Harness against the registry
-    if: github.repository == 'nexu-io/open-design' && github.ref == 'refs/heads/main'
+    if: github.repository == 'unfoldingdimensions/open-design' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

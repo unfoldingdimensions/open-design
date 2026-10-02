@@ -88,8 +88,8 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           set -euo pipefail
-          if [ "$REPOSITORY" != "nexu-io/open-design" ]; then
-            echo "This workflow publishes the nexu-io/open-design card only; got $REPOSITORY" >&2
+          if [ "$REPOSITORY" != "unfoldingdimensions/open-design" ]; then
+            echo "This workflow publishes the unfoldingdimensions/open-design card only; got $REPOSITORY" >&2
             exit 1
           fi
           publish=true
