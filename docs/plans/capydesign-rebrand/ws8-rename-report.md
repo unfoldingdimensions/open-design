@@ -27,6 +27,7 @@ paragraph uses the Rule 4 wording and agrees with the notices.
 | Root guides (`QUICKSTART`, `CONTEXT`, `CONTRIBUTING`, `MAINTAINERS`, `PRIVACY`) | 29 hits | 0 |
 | `AGENTS.md` root + 4 per-directory files | 13 hits | 0 |
 | `clipper/store/LISTING.md` | 32 hits | 0 |
+| `clipper/store/PRIVACY.md` | 8 hits + a missed-WS7 `nexu-io` issues URL | 0 |
 | `deploy/scripts/{install,update,uninstall}.sh` + `deploy/azure/azure-pipelines.yml` | 11 user-facing `OpenDesign` strings | 0 |
 
 ## Content decisions beyond the mechanical swap
