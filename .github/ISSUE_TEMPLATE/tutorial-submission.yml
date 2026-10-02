@@ -55,5 +55,5 @@ body:
     attributes:
       label: Before you submit
       options:
-        - label: This video is actually about OpenDesign (nexu-io/open-design), not a different product.
+        - label: This video is actually about CapyDesign (unfoldingdimensions/open-design), not a different product.
           required: true
