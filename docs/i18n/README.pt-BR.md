@@ -1,27 +1,8 @@
 <h1 align="center">OpenDesign: a alternativa open-source ao Claude Design</h1>
 
-> ⚡ **[OpenDesign Cloud — o serviço oficial de modelos.](https://open-design.ai/zh/pricing/)** Uma única recarga permite usar modelos de agentes e de imagem dentro do OpenDesign: GPT, Claude e DeepSeek para agentes; GPT Image 2.0, Seedream 5.0 Pro e Nano Banana 2.0 para imagens.
->
-> 🚀 **[DeepSeek V4 Flash e V4 Pro já estão disponíveis.](https://open-design.ai/zh/pricing/)** Use inteligência de ponta em protótipos, apresentações, sistemas de design e tarefas cotidianas de agentes. Membros do OpenDesign podem usar os dois modelos sem limites por duas semanas, diretamente no aplicativo.
->
-> 🧩 **[DeepSeek Harness agora é compatível.](https://open-design.ai/zh/agents/deepseek-harness-design/)** Conecte o Agent Harness oficial `dsh` da DeepSeek ao OpenDesign como runtime nativo, com raciocínio estruturado, chamadas de ferramentas, descoberta de modelos, cancelamento e retomada de sessão. Os arquivos gerados permanecem no fluxo do OpenDesign para visualização ao vivo e entrega.
-
 <p align="center">
-  <img src="https://repo-assets.open-design.ai/resources/images/hero.png" alt="OpenDesign hero banner" width="100%" />
-</p>
-
-<p align="center">
-  <a href="https://open-design.ai/">Site</a> ·
-  <a href="https://open-design.ai/">Download</a> ·
-  <a href="https://open-design.ai/cloud/">OpenDesign Cloud</a> ·
-  <a href="https://discord.gg/mHAjSMV6gz">Discord</a> ·
-  <a href="https://x.com/OpenDesignHQ">Siga @OpenDesignHQ</a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/nexu-io/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/nexu-io/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
+  <a href="https://github.com/unfoldingdimensions/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/unfoldingdimensions/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
   <a href="../../LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat" /></a>
-  <a href="https://discord.gg/mHAjSMV6gz"><img alt="discord" src="https://img.shields.io/discord/1479002485040480266?style=flat&logo=discord&logoColor=white&label=discord&color=5865F2&cacheSeconds=3600" /></a>
   <a href="QUICKSTART.pt-BR.md"><img alt="quickstart" src="https://img.shields.io/badge/quickstart-3%20commands-green?style=flat" /></a>
 </p>
 
@@ -36,7 +17,6 @@
 O OpenDesign transforma esse loop em um **sistema de arquivos de skills funcionais, templates de renderização, design systems e plugins** que seus agentes conseguem ler, escrever e remixar.
 
 Ele também é a **alternativa ao Figma para a era dos agentes** — em vez de empurrar pixels num canvas, ele entrega artefatos de página única em CSS real, fontes reais, componentes reais, exportados direto para HTML / PDF / PPTX / MP4 — já moldados pelo seu design system, já executáveis dentro do agente que você usa todos os dias.
-
 
 ---
 
@@ -131,10 +111,6 @@ No Studio de um projeto, a conversa, os arquivos gerados e a visualização ao v
 | [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Suportado | `capt mcp install hermes` |
 
 `capt mcp install <agent> --print` para uma prévia em dry-run · `--uninstall` para remover · lista completa com `capt mcp install --help`.
-
-<p align="center">
-  <img src="https://repo-assets.open-design.ai/resources/images/coding-agents.png" alt="The 25 coding-agent CLIs OpenDesign supports — Claude Code · Codex · OpenCode · Hermes · Antigravity · Vela · Grok Build · Kimi · Cursor Agent · Qwen · Qoder · GitHub Copilot · Pi · Kiro · Kilo · Mistral Vibe · DeepSeek · Reasonix · Aider · Amp · CodeBuddy · Mimo · AtomCode · Devin · Trae" width="100%" />
-</p>
 
 **Nenhuma CLI instalada?** O proxy BYOK em `POST /api/proxy/{anthropic,openai,azure,google,ollama,senseaudio}/stream` te dá o mesmo loop (sem spawn de processo) — cole `baseUrl` + `apiKey` + `model`, com suporte a OpenAI, Anthropic, Azure OpenAI, Google Gemini, Ollama, LM Studio, vLLM ou qualquer endpoint compatível com OpenAI. A proteção SSRF por alvo bloqueia IPs internos / link-local / CGNAT na borda do daemon.
 
@@ -280,10 +256,6 @@ O OpenDesign (OD) é a alternativa open-source. Mesmo loop, mesmo modelo mental 
 
 A forma mais rápida de usar o OpenDesign. Sem Node, sem pnpm, sem clone.
 
-- **macOS** (Apple Silicon · Intel x64) → [**open-design.ai**](https://open-design.ai/) ou [GitHub Releases](https://github.com/nexu-io/open-design/releases)
-- **Windows** (x64) → [**open-design.ai**](https://open-design.ai/) ou [GitHub Releases](https://github.com/nexu-io/open-design/releases)
-- **Linux** (AppImage, trilha opcional) → [GitHub Releases](https://github.com/nexu-io/open-design/releases)
-
 Após instalar: o app detecta automaticamente cada CLI de coding agent no seu `PATH`, carrega mais de 100 skills funcionais, o catálogo separado de templates de renderização e 151 pacotes de design systems e permite que você digite um briefing na tela de entrada.
 
 ### 🤖 Instale no seu coding agent (sem interface)
@@ -308,7 +280,7 @@ Em uma execução CLI local com filesystem, o agente combina a skill funcional o
 ### 🐳 Rode com Docker
 
 ```bash
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design/deploy
 cp .env.example .env
 echo "OD_API_TOKEN=$(openssl rand -hex 32)" >> .env
@@ -325,7 +297,7 @@ O template da Sealos App Store executa a imagem Docker publicada do OpenDesign c
 ### 🧑‍💻 Rode a partir do código-fonte
 
 ```bash
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design
 corepack enable && pnpm install
 pnpm tools-dev run web
@@ -586,12 +558,10 @@ Entrega faseada → [`docs/roadmap.md`](../../docs/roadmap.md).
 
 Pessoas de verdade por trás de cada canal.
 
-- 💬 **Discord** — chat diário, compartilhamento de plugins, perguntas → [**discord.gg/mHAjSMV6gz**](https://discord.gg/mHAjSMV6gz)
-- 🐦 **X / Twitter** — notas de release, marcos, bastidores → [**@OpenDesignHQ**](https://x.com/OpenDesignHQ)
-- 🗣️ **GitHub Discussions** — Q&A aprofundado, RFCs, "mostre seu trabalho" → [**Discussions**](https://github.com/nexu-io/open-design/discussions)
-- 🐛 **GitHub Issues** — relatos de bugs, pedidos de features → [**Issues**](https://github.com/nexu-io/open-design/issues)
+- 🗣️ **GitHub Discussions** — Q&A aprofundado, RFCs, "mostre seu trabalho" → [**Discussions**](https://github.com/unfoldingdimensions/open-design/discussions)
+- 🐛 **GitHub Issues** — relatos de bugs, pedidos de features → [**Issues**](https://github.com/unfoldingdimensions/open-design/issues)
 
-As labels [`good-first-issue`](https://github.com/nexu-io/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) e [`help-wanted`](https://github.com/nexu-io/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) são a forma mais fácil de começar.
+As labels [`good-first-issue`](https://github.com/unfoldingdimensions/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) e [`help-wanted`](https://github.com/unfoldingdimensions/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) são a forma mais fácil de começar.
 
 ---
 
@@ -607,7 +577,7 @@ O OpenDesign continua avançando porque os contribuidores — designers, engenhe
 | Um novo **design system** | Solte um pacote centrado em `DESIGN.md`; adicione `manifest.json`, `tokens.css`, componentes, assets ou procedência quando necessário | [`design-systems/<brand>/`](../../design-systems/) |
 | Um novo **plugin** | Solte `open-design.json` + o payload específico do tipo numa pasta de categoria | [`plugins/community/`](../../plugins/community/) · spec em [`plugins/spec/SPEC.md`](../../plugins/spec/SPEC.md) · guia de dev por agente em [`plugins/spec/AGENT-DEVELOPMENT.md`](../../plugins/spec/AGENT-DEVELOPMENT.md) |
 | Suportar uma nova **CLI de coding agent** | Definição de runtime + registro; parser só para formato novo | [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/runtimes/defs/) |
-| Corrigir um bug ou polir a UI | Explore a label [`good-first-issue`](https://github.com/nexu-io/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) | [Issues →](https://github.com/nexu-io/open-design/issues) |
+| Corrigir um bug ou polir a UI | Explore a label [`good-first-issue`](https://github.com/unfoldingdimensions/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) | [Issues →](https://github.com/unfoldingdimensions/open-design/issues) |
 | Traduzir a documentação | Atualize os arquivos `README.<lang>.md` | [`TRANSLATIONS.md`](../../TRANSLATIONS.md) |
 
 ### 🤖 Contribuindo como agente
@@ -616,7 +586,7 @@ Se *você é o agente que está lendo isto*, o caminho mais rápido é:
 
 ```bash
 # 1. Boot locally
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design && corepack enable && pnpm install
 pnpm tools-dev run web
 
@@ -635,8 +605,6 @@ gh pr create --fill
 Fluxo completo de contribuição amigável a agentes, estilo de código e barra de qualidade de PR → [English](../../CONTRIBUTING.md) ([Deutsch](CONTRIBUTING.de.md) · [Français](CONTRIBUTING.fr.md) · [简体中文](CONTRIBUTING.zh-CN.md) · [日本語](CONTRIBUTING.ja-JP.md) · [Português](CONTRIBUTING.pt-BR.md)).
 
 ### 🏅 Programa OpenDesign Fellow
-
-Estamos recrutando **OpenDesign Fellows** ao redor do mundo — os Fellows moldam o produto ao lado do time central, representam oficialmente o OpenDesign em sua região e fazem a comunidade crescer localmente, com suporte financiado ($1,000 / MR), créditos gratuitos de LLM e uma trilha de revisão direta. Detalhes → [`MAINTAINERS.md`](../../MAINTAINERS.md) e o anúncio no [Discord](https://discord.gg/mHAjSMV6gz).
 
 ---
 
@@ -669,17 +637,13 @@ Regras dos mantenedores, critérios de promoção e o protocolo de saída → [`
 
 Obrigado a todas as pessoas que participaram — código, docs, feedback, uma issue afiada, uma nova skill, um novo design system.
 
-<a href="https://github.com/nexu-io/open-design/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=nexu-io/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="OpenDesign contributors" />
+<a href="https://github.com/unfoldingdimensions/open-design/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="OpenDesign contributors" />
 </a>
 
 ---
 
 ## Atividade do repositório
-
-<picture>
-  <img alt="OpenDesign — repository metrics" src="https://repo-assets.open-design.ai/resources/images/github-metrics.svg" />
-</picture>
 
 O SVG acima é regenerado diariamente por [`.github/workflows/metrics.yml`](../../.github/workflows/metrics.yml) usando [`lowlighter/metrics`](https://github.com/lowlighter/metrics).
 
@@ -687,19 +651,7 @@ O SVG acima é regenerado diariamente por [`.github/workflows/metrics.yml`](../.
 
 ## Dê uma estrela
 
-<p align="center">
-  <a href="https://github.com/nexu-io/open-design"><img src="https://repo-assets.open-design.ai/resources/images/star-us.png" alt="Star OpenDesign on GitHub — github.com/nexu-io/open-design" width="100%" /></a>
-</p>
-
 Se isto te poupou trinta minutos, dê um ★. Estrelas não pagam o aluguel — mas dizem ao próximo designer, agente e contribuidor que este experimento vale a atenção deles. Um clique, três segundos, um sinal de verdade.
-
-<a href="https://star-history.dera.page/#nexu-io/open-design&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=nexu-io/open-design&type=Date&theme=dark&cache_bust=2026-08-04" />
-    <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=nexu-io/open-design&type=Date&cache_bust=2026-08-04" />
-    <img alt="OpenDesign star history" src="https://star-history.dera.page/svg?repos=nexu-io/open-design&type=Date&cache_bust=2026-08-04" />
-  </picture>
-</a>
 
 ---
 

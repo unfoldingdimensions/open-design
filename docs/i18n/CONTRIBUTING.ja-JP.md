@@ -283,10 +283,9 @@ CLA は求めません。Apache-2.0 でカバーされます。あなたのコ�
 - **クォータ、SLAs、固定任期はありません。** ステップダウンは容易かつ可逆的です（Emeritus → 生活が落ち着いたら復帰）。
 - すべての閾値、推薦フロー、ステップダウンルール、初期プロジェクトの免除規定は [`MAINTAINERS.md`](../../MAINTAINERS.md) に記載されています。上記のいずれかに興味があれば、そのドキュメントを読んでください。
 
-tl;dr：良い PR を出し、丁寧にレビューし、[Discussions][discussions] / [Discord][discord] に顔を出していれば、あとは自然と道が開けます。
+tl;dr：良い PR を出し、丁寧にレビューし、[Discussions][discussions] に顔を出していれば、あとは自然と道が開けます。
 
 [discussions]: https://github.com/nexu-io/open-design/discussions
-[discord]: https://discord.gg/mHAjSMV6gz
 
 ---
 

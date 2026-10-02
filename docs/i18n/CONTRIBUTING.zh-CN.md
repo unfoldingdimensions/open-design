@@ -302,10 +302,9 @@ node --experimental-strip-types scripts/sync-litellm-models.ts
 - **没有 quota，没有 SLA，没有固定任期。** 退出很容易也可逆（Emeritus → 生活忙完后回归）。
 - 全部门槛阈值、提名流程、退出规则、早期项目例外条款都在 [`MAINTAINERS.md`](../../MAINTAINERS.md)——上面任何一条勾起兴趣的话，去读那份文档。
 
-tl;dr：好好提 PR、认真 review、在 [Discussions][discussions] / [Discord][discord] 多冒泡，剩下的自然会发生。
+tl;dr：好好提 PR、认真 review、在 [Discussions][discussions] 多冒泡，剩下的自然会发生。
 
 [discussions]: https://github.com/nexu-io/open-design/discussions
-[discord]: https://discord.gg/mHAjSMV6gz
 
 ---
 

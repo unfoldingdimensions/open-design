@@ -312,10 +312,9 @@ Table OVERRIDES ใน `maxTokens.ts` มีไว้สำหรับกรณ
 - **ไม่มี quotas, ไม่มี SLAs, ไม่มี fixed term.** Stepping down ง่ายและ reversible (Emeritus → กลับมาเมื่อชีวิตนิ่งขึ้น).
 - Thresholds ทั้งหมด, nomination flow, step-down rules และ early-project waiver อยู่ใน [`MAINTAINERS.md`](../../MAINTAINERS.md). อ่านเอกสารนั้นถ้าสนใจข้อใดข้างต้น.
 
-tl;dr: ship PR ดี ๆ, review อย่างใส่ใจ, อยู่ใน [Discussions][discussions] / [Discord][discord], แล้วที่เหลือจะตามมาเอง.
+tl;dr: ship PR ดี ๆ, review อย่างใส่ใจ, อยู่ใน [Discussions][discussions], แล้วที่เหลือจะตามมาเอง.
 
 [discussions]: https://github.com/nexu-io/open-design/discussions
-[discord]: https://discord.gg/qhbcCH8Am4
 
 ---
 

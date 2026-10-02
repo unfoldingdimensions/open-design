@@ -288,10 +288,9 @@ Wenn Sie kontinuierlich beigetragen haben und wissen möchten, wie der Weg zum M
 - Es gibt **keine Quoten, keine SLAs und keine feste Amtszeit.** Ein Rücktritt ist einfach und reversibel (Emeritus → Rückkehr, sobald sich das Leben wieder beruhigt).
 - Alle Schwellenwerte, der Nominierungsablauf, die Regeln zum Rücktritt und die Ausnahmeregelung für die frühe Projektphase stehen in [`MAINTAINERS.md`](../../MAINTAINERS.md). Lesen Sie dieses Dokument, falls Sie etwas davon interessiert.
 
-Das tl;dr: Liefern Sie gute PRs, prüfen Sie sorgfältig, halten Sie sich in [Discussions][discussions] / [Discord][discord] auf — und der Rest ergibt sich von selbst.
+Das tl;dr: Liefern Sie gute PRs, prüfen Sie sorgfältig, halten Sie sich in [Discussions][discussions] auf — und der Rest ergibt sich von selbst.
 
 [discussions]: https://github.com/nexu-io/open-design/discussions
-[discord]: https://discord.gg/mHAjSMV6gz
 
 ---
 

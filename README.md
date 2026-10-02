@@ -1,27 +1,19 @@
-<h1 align="center">OpenDesign: The open-source Claude Design alternative</h1>
+<h1 align="center">CapyDesign: The open-source Claude Design alternative</h1>
 
-> ⚡ **[OpenDesign Cloud — the official model service.](https://open-design.ai/zh/pricing/)** One recharge to use both agent and image models inside OpenDesign: GPT, Claude, and DeepSeek for agents; GPT Image 2.0, Seedream 5.0 Pro, and Nano Banana 2.0 for images.
->
-> 🚀 **[DeepSeek V4 Flash and V4 Pro are now available.](https://open-design.ai/zh/pricing/)** Put top-tier intelligence to work across prototypes, decks, design systems, and everyday agent tasks. OpenDesign members can use both models without limits for two weeks, directly inside the app.
->
-> 🧩 **[DeepSeek Harness is now supported.](https://open-design.ai/zh/agents/deepseek-harness-design/)** Connect DeepSeek's official `dsh` agent harness to OpenDesign as a native runtime, with structured thinking, tool calls, model discovery, cancellation, and session resume. Generated files stay in the OpenDesign workflow for live preview and delivery.
+> **CapyDesign is local-only.** There is no hosted service, no account, and no
+> telemetry endpoint: your briefs, projects, and artifacts never leave your
+> machine. Bring your own coding-agent CLI and your own model keys.
 
 <p align="center">
-  <img src="https://repo-assets.open-design.ai/resources/images/hero.png" alt="OpenDesign hero banner — the headline &quot;The open-source Claude Design alternative&quot; over a classical scene of columns and robed figures on a digital-code backdrop, with stat cards for design systems, plugins, coding agents, and media providers" width="100%" />
+  <a href="https://github.com/unfoldingdimensions/open-design/releases">Releases</a> ·
+  <a href="QUICKSTART.md">Quickstart</a> ·
+  <a href="https://github.com/unfoldingdimensions/open-design/discussions">Discussions</a> ·
+  <a href="https://github.com/unfoldingdimensions/open-design/issues">Issues</a>
 </p>
 
 <p align="center">
-  <a href="https://open-design.ai/?utm_source=github&utm_medium=referral&utm_content=readme_website">Website</a> ·
-  <a href="https://open-design.ai/?utm_source=github&utm_medium=referral&utm_content=readme_download">Download</a> ·
-  <a href="https://open-design.ai/cloud/?utm_source=github&utm_medium=referral&utm_content=readme_cloud">OpenDesign Cloud</a> ·
-  <a href="https://discord.gg/mHAjSMV6gz">Discord</a> ·
-  <a href="https://x.com/OpenDesignHQ">Follow @OpenDesignHQ</a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/nexu-io/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/nexu-io/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
+  <a href="https://github.com/unfoldingdimensions/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/unfoldingdimensions/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat" /></a>
-  <a href="https://discord.gg/mHAjSMV6gz"><img alt="discord" src="https://img.shields.io/discord/1479002485040480266?style=flat&logo=discord&logoColor=white&label=discord&color=5865F2&cacheSeconds=3600" /></a>
   <a href="QUICKSTART.md"><img alt="quickstart" src="https://img.shields.io/badge/quickstart-3%20commands-green?style=flat" /></a>
 </p>
 
@@ -136,10 +128,6 @@ Inside a project's Studio, the conversation, generated files, and live preview s
 For DeepSeek Harness, install the official `dsh` CLI first, then select it in OpenDesign or run `capt agent setup deepseek-harness` to install/repair OD's connection component. For MCP integrations: `capt mcp install <agent> --print` for a dry-run preview · `--uninstall` to remove · full list with `capt mcp install --help`.
 
 ¹ Automatic MCP configuration for Claude Desktop is currently supported on macOS and Windows only.
-
-<p align="center">
-  <img src="https://repo-assets.open-design.ai/resources/images/coding-agents.png" alt="The 26 coding-agent CLIs OpenDesign supports — DeepSeek Harness · Claude Code · Codex · OpenCode · Hermes · Antigravity · Vela · Grok Build · Kimi · Cursor Agent · Qwen · Qoder · GitHub Copilot · Pi · Kiro · Kilo · Mistral Vibe · DeepSeek · Reasonix · Aider · Amp · CodeBuddy · Mimo · AtomCode · Devin · Trae" width="100%" />
-</p>
 
 **No CLI installed?** The BYOK proxy at `POST /api/proxy/{anthropic,openai,azure,google,ollama,senseaudio}/stream` gives you the same loop (no process spawn) — paste `baseUrl` + `apiKey` + `model`, with presets for OpenAI, Atlas Cloud, Anthropic, Azure OpenAI, Google Gemini, Ollama, LM Studio, vLLM, or any OpenAI-compatible endpoint. Atlas Cloud uses `https://api.atlascloud.ai/v1` with your own key and OpenAI-compatible model ids such as `qwen/qwen3.5-flash`. Per-target SSRF protection blocks internal IPs / link-local / CGNAT at the daemon edge.
 
@@ -281,13 +269,16 @@ OpenDesign (OD) is the open-source alternative. Same loop, same artifact-first m
 
 ## Quick start
 
-### 🖥️ Download the desktop app (recommended — zero config)
+### 🖥️ Build the desktop app
 
-The fastest way to use OpenDesign. No Node, no pnpm, no clone.
+A local-only product has no download server — build it from source:
 
-- **macOS** (Apple Silicon · Intel x64) → [**open-design.ai**](https://open-design.ai/?utm_source=github&utm_medium=referral&utm_content=readme_download_macos) or [GitHub Releases](https://github.com/nexu-io/open-design/releases)
-- **Windows** (x64) → [**open-design.ai**](https://open-design.ai/?utm_source=github&utm_medium=referral&utm_content=readme_download_windows) or [GitHub Releases](https://github.com/nexu-io/open-design/releases)
-- **Linux** → No prebuilt Linux artifact is currently published in the official releases. For now, [run OpenDesign from source](#-run-from-source); Linux release work is tracked in [#4368](https://github.com/nexu-io/open-design/issues/4368).
+```bash
+git clone https://github.com/unfoldingdimensions/open-design.git
+cd open-design
+corepack enable && pnpm install
+pnpm tools-pack mac build   # or: pnpm tools-pack win build
+```
 
 After install: the app auto-detects every coding-agent CLI on your `PATH`, loads 100+ functional skills, the separate rendering-template catalog, and 151 design systems, and lets you type a brief in the entry view.
 
@@ -307,14 +298,11 @@ capt mcp install <agent>
 # <agent> = claude | codex | reasonix | raven | cursor | copilot | openclaw
 #         | antigravity | pi | vibe | hermes | cline | kimi | kiro
 #         | trae | opencode
-
-# Hosted equivalent for curl-based setup:
-curl -fsSL https://open-design.ai/install.sh | sh -s <agent>
 ```
 
-`install.sh` is a thin shell wrapper around `capt mcp install`; it exists so the
-hosted URL returns shell instead of the landing-page HTML fallback and fails
-fast if your shell resolves a non-Open-Design `capt` binary.
+The installer is the `capt` CLI itself: it runs on your machine and writes the
+MCP config next to the agent you point it at. There is no hosted installer to
+curl — if you are reading this in a packaged app, use **Settings → MCP server**.
 
 > **macOS / WSL2 users:** `/usr/bin/od` is a system octal-dump command and can
 > shadow OpenDesign's `capt` command. Desktop-app users should prefer the
@@ -332,7 +320,7 @@ In a filesystem-backed local CLI run, the agent composes the selected functional
 ### 🐳 Run with Docker
 
 ```bash
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design/deploy
 cp .env.example .env
 echo "OD_API_TOKEN=$(openssl rand -hex 32)" >> .env
@@ -354,7 +342,7 @@ The Sealos App Store template runs the published OpenDesign Docker image with pe
 ### 🧑‍💻 Run from source
 
 ```bash
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design
 corepack enable && pnpm install
 pnpm tools-dev run web
@@ -607,7 +595,7 @@ Full architecture → [`docs/architecture.md`](docs/architecture.md). Skill prot
 - [x] **0.12.0** — _Brand-backed Design System_: turn the brand you already own into a reusable, portable `DESIGN.md` system
 - [x] **0.13.0** — _Stay in Flow_: native session resume, faster model picking, and export straight to screenshot-backed PPTX / PDF
 - [x] Published desktop releases — macOS (Apple Silicon + Intel) + Windows (x64)
-- [ ] Published Linux desktop release (optional lane) — tracked in [#4368](https://github.com/nexu-io/open-design/issues/4368)
+- [ ] Published Linux desktop release (optional lane)
 - [ ] Comment-mode surgical edits — partially shipped; reliable targeted patching in progress
 - [ ] AI-emitted tweaks panel UX — not yet implemented
 - [ ] `npx capt init` to scaffold a project with `DESIGN.md`
@@ -621,14 +609,13 @@ Phased delivery → [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Community
 
-Real people behind every channel.
+CapyDesign is local-only, so there is no Discord or social account to join — the
+GitHub repository is the community.
 
-- 💬 **Discord** — daily chat, plugin sharing, questions → [**discord.gg/mHAjSMV6gz**](https://discord.gg/mHAjSMV6gz)
-- 🐦 **X / Twitter** — release notes, milestones, behind the scenes → [**@OpenDesignHQ**](https://x.com/OpenDesignHQ)
-- 🗣️ **GitHub Discussions** — deep Q&A, RFCs, "show your work" → [**Discussions**](https://github.com/nexu-io/open-design/discussions)
-- 🐛 **GitHub Issues** — bug reports, feature requests → [**Issues**](https://github.com/nexu-io/open-design/issues)
+- 🗣️ **GitHub Discussions** — deep Q&A, RFCs, "show your work" → [**Discussions**](https://github.com/unfoldingdimensions/open-design/discussions)
+- 🐛 **GitHub Issues** — bug reports, feature requests → [**Issues**](https://github.com/unfoldingdimensions/open-design/issues)
 
-The [`good-first-issue`](https://github.com/nexu-io/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) and [`help-wanted`](https://github.com/nexu-io/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) labels are the easiest way in.
+The [`good-first-issue`](https://github.com/unfoldingdimensions/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) and [`help-wanted`](https://github.com/unfoldingdimensions/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) labels are the easiest way in.
 
 ---
 
@@ -645,7 +632,7 @@ OpenDesign keeps moving because contributors — designers, engineers, prompt au
 | A new **design system** | Drop a package centered on `DESIGN.md`; add `manifest.json`, `tokens.css`, components, assets, or provenance when needed | [`design-systems/<brand>/`](design-systems/) |
 | A new **plugin** | Drop `open-design.json` + the type-specific payload under a category folder | [`plugins/community/`](plugins/community/) · spec in [`plugins/spec/SPEC.md`](plugins/spec/SPEC.md) · agent dev guide in [`plugins/spec/AGENT-DEVELOPMENT.md`](plugins/spec/AGENT-DEVELOPMENT.md) |
 | Support a new **coding-agent CLI** | One runtime definition + registry entry; add a parser only for a new wire format | [`apps/daemon/src/runtimes/defs/`](apps/daemon/src/runtimes/defs/) |
-| Fix a bug or polish UI | Browse the [`good-first-issue`](https://github.com/nexu-io/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) label | [Issues →](https://github.com/nexu-io/open-design/issues) |
+| Fix a bug or polish UI | Browse the [`good-first-issue`](https://github.com/unfoldingdimensions/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) label | [Issues →](https://github.com/unfoldingdimensions/open-design/issues) |
 | Translate the docs | Update the `README.<lang>.md` files | [`TRANSLATIONS.md`](TRANSLATIONS.md) |
 
 ### 🤖 Contributing as an agent
@@ -654,7 +641,7 @@ If *you are the agent reading this*, the fastest path is:
 
 ```bash
 # 1. Boot locally
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design && corepack enable && pnpm install
 pnpm tools-dev run web
 
@@ -672,9 +659,11 @@ gh pr create --fill
 
 Full agent-friendly contribution flow, code style, and PR bar → [`CONTRIBUTING.md`](CONTRIBUTING.md) ([Deutsch](docs/i18n/CONTRIBUTING.de.md) · [Français](docs/i18n/CONTRIBUTING.fr.md) · [简体中文](docs/i18n/CONTRIBUTING.zh-CN.md) · [日本語](docs/i18n/CONTRIBUTING.ja-JP.md) · [한국어](docs/i18n/CONTRIBUTING.ko.md) · [Português](docs/i18n/CONTRIBUTING.pt-BR.md) · [ภาษาไทย](docs/i18n/CONTRIBUTING.th.md)).
 
-### 🏅 OpenDesign Fellow program
+### Fellow program
 
-We're recruiting **OpenDesign Fellows** around the world — Fellows shape the product alongside the core team, represent OpenDesign officially in their region, and grow the community locally, backed by funded support ($1,000 / MR), free LLM credits, and a direct review track. Details → [`MAINTAINERS.md`](MAINTAINERS.md) and the announcement on [Discord](https://discord.gg/mHAjSMV6gz).
+The upstream Fellow program is not part of this fork: there is no funded track,
+no credit grant, and no Discord to apply through. Contribution works the ordinary
+way — open a PR.
 
 ---
 
@@ -714,59 +703,20 @@ Maintainer rules, promotion criteria, and the exit protocol → [`MAINTAINERS.md
 
 Thanks to everyone who has taken part — code, docs, feedback, a sharp issue, a new skill, a new design system.
 
-<a href="https://github.com/nexu-io/open-design/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=nexu-io/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="OpenDesign contributors" />
+<a href="https://github.com/unfoldingdimensions/open-design/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1" alt="CapyDesign contributors" />
 </a>
 
 ---
 
 ## Repository activity
 
-<picture>
-  <img alt="OpenDesign — repository metrics" src="https://repo-assets.open-design.ai/resources/images/github-metrics.svg" />
-</picture>
-
-The SVG above is regenerated daily by [`.github/workflows/metrics.yml`](.github/workflows/metrics.yml) using [`lowlighter/metrics`](https://github.com/lowlighter/metrics).
-
----
+Repository activity lives in GitHub's own Insights tabs -- no metrics image is
+generated or hosted for this fork.
 
 ## Star us
 
-<p align="center">
-  <a href="https://github.com/nexu-io/open-design"><img src="https://repo-assets.open-design.ai/resources/images/star-us.png" alt="Star OpenDesign on GitHub — github.com/nexu-io/open-design" width="100%" /></a>
-</p>
-
-If this saved you thirty minutes, give it a ★. Stars don't pay rent — but they tell the next designer, agent, and contributor that this experiment is worth their attention. One click, three seconds, a real signal.
-
-<a href="https://star-history.dera.page/#nexu-io/open-design&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=nexu-io/open-design&type=Date&theme=dark&cache_bust=2026-08-04" />
-    <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=nexu-io/open-design&type=Date&cache_bust=2026-08-04" />
-    <img alt="OpenDesign star history" src="https://star-history.dera.page/svg?repos=nexu-io/open-design&type=Date&cache_bust=2026-08-04" />
-  </picture>
-</a>
-
----
-
-## References & lineage
-
-| Project | Role |
-|---|---|
-| Claude Design | The closed-source product this repo is the open-source alternative to. |
-| [`alchaincyf/huashu-design`](https://github.com/alchaincyf/huashu-design) | The design-philosophy compass — junior-designer workflow, brand-asset protocol, anti-AI-slop checklist, five-dimensional critique. |
-| [`op7418/guizang-ppt-skill`](https://github.com/op7418/guizang-ppt-skill) | The magazine-style web PPT skill, bundled verbatim under [`design-templates/guizang-ppt/`](design-templates/guizang-ppt/). Default for deck mode. |
-| [`lewislulu/html-ppt-skill`](https://github.com/lewislulu/html-ppt-skill) | The HTML PPT Studio family — 15 deck templates, 36 themes, 31 page layouts, animation runtime, magnetic-card presenter mode. |
-| [`OpenCoworkAI/open-codesign`](https://github.com/OpenCoworkAI/open-codesign) | The first open-source Claude Design alternative; UX patterns we borrow (streaming-artifact loop, sandboxed iframe, live agent panel). |
-| [`multica-ai/multica`](https://github.com/multica-ai/multica) | The daemon + adapter architecture — PATH-scan agent detection, local daemon as the only privileged process. |
-| [`VoltAgent/awesome-design-md`](https://github.com/VoltAgent/awesome-design-md) | Historical source of the original 9-section `DESIGN.md` schema and 70 upstream-derived systems; current packages may extend that baseline. |
-| [`bergside/awesome-design-skills`](https://github.com/bergside/awesome-design-skills) | Source of the 57 design skills added under `design-systems/`. |
-| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | The HTML→MP4 motion-graphics framework, integrated as the first-class `hyperframes-html` in OpenDesign. |
-| [Claude Code skills][skill] | The `SKILL.md` convention we adopt verbatim. |
-
-Detailed provenance → [`docs/references.md`](docs/references.md).
-
-[skill]: https://docs.anthropic.com/en/docs/claude-code/skills
-
-## License
-
-Apache-2.0. Bundled skills and templates with their own `LICENSE` files retain those licenses, including `design-templates/guizang-ppt/` (MIT, [@op7418](https://github.com/op7418)), `design-templates/html-ppt/` (MIT, [@lewislulu](https://github.com/lewislulu)), and `skills/web-clone/` (MIT, [@Jane-xiaoer](https://github.com/Jane-xiaoer)).
+If this saved you thirty minutes, give it a star -- the button is on the
+[repository home](https://github.com/unfoldingdimensions/open-design). Stars
+don't pay rent -- but they tell the next designer, agent, and contributor that
+this experiment is worth their attention.
