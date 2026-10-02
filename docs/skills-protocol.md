@@ -4,7 +4,7 @@
 
 > Want to ship a skill upstream rather than read the protocol spec? See [`skills-contributing.md`](skills-contributing.md) — quick start, merge bar, PR template, common rejections. This file is the **what** (frontmatter grammar, discovery rules, mode semantics); that file is the **how** (clone to merged PR).
 
-A **Skill** is an atomic functional capability in OD. A **design template** is a rendering-catalogue entry. Both use Claude Code's `SKILL.md` convention as their portable instruction format and may add `od:` metadata, but they have different ownership and APIs: functional skills live in `skills/` and `/api/skills`; rendering templates live in `design-templates/` and `/api/design-templates`.
+A **Skill** is an atomic functional capability in CapyDesign. A **design template** is a rendering-catalogue entry. Both use Claude Code's `SKILL.md` convention as their portable instruction format and may add `od:` metadata, but they have different ownership and APIs: functional skills live in `skills/` and `/api/skills`; rendering templates live in `design-templates/` and `/api/design-templates`.
 
 > **Compatibility promise:** A bundle that contains `SKILL.md` remains readable by agents that support the Agent Skills format. Installation and catalogue placement are separate concerns: the bundled guizang integration is maintained under `design-templates/guizang-ppt/`, while external distribution normally uses the plugin system.
 
@@ -48,11 +48,11 @@ triggers:
 
 Body is free-form Markdown that describes the workflow the agent should follow — typically a numbered step list plus principles. This is what [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill) does.
 
-**OD reads all of this as-is.** No changes required.
+**CapyDesign reads all of this as-is.** No changes required.
 
-## 2. OD extensions (optional)
+## 2. CapyDesign extensions (optional)
 
-Skills can declare additional front-matter fields to unlock OD-specific UI. All fields are optional; absent fields fall back to sensible defaults.
+Skills can declare additional front-matter fields to unlock CapyDesign-specific UI. All fields are optional; absent fields fall back to sensible defaults.
 
 ```yaml
 ---
@@ -60,7 +60,7 @@ name: magazine-web-ppt
 description: …
 triggers: […]
 
-# --- OD extensions below this line ---
+# --- CapyDesign extensions below this line ---
 
 od:
   mode: deck                        # prototype | deck | template | design-system | image | video | audio | utility
@@ -81,7 +81,7 @@ od:
 ---
 ```
 
-### 2.1 What OD uses each field for
+### 2.1 What CapyDesign uses each field for
 
 | Field | Used by |
 |---|---|
@@ -139,7 +139,7 @@ against a design-template id continue to compose its instructions.
 
 ### Runtime resource staging
 
-OpenDesign does not distribute an active bundle by symlinking it into every
+CapyDesign does not distribute an active bundle by symlinking it into every
 agent's global configuration. Before a project run, the daemon makes a real
 copy of every active skill/template with side files under the project's
 `.od-skills/` alias. The prompt preamble advertises that CWD-relative copy and
@@ -184,7 +184,7 @@ An `od.mode` the daemon does not recognize is not fatal: the loader falls back t
 - **Purpose:** classify a functional workflow that creates, extracts, audits,
   or transforms design-system material.
 - **Output:** defined by the skill. A portable workflow may emit only
-  `DESIGN.md`; current OpenDesign import/create flows build a package with
+  `DESIGN.md`; current CapyDesign import/create flows build a package with
   `manifest.json`, `DESIGN.md`, `tokens.css`, and optional rich resources.
 - **Schema:** no fixed nine headings. Repository packages require substantive
   coverage and keep prose synchronized with the token contract; see
@@ -241,7 +241,7 @@ the current repository package schema.
 
 Some craft knowledge is **universal** — true regardless of brand. ALL CAPS always needs ≥0.06em letter-spacing; `var(--accent)` should appear at most 2 times per screen; `#6366f1` is always the AI-default tell. These rules don't belong in any one `DESIGN.md` because they apply across every brand.
 
-OD ships these as a separate packaged resource tree:
+CapyDesign ships these as a separate packaged resource tree:
 
 ```
 craft/
@@ -311,13 +311,13 @@ the only path authority.
 
 The upstream-inspired bundle ships at
 [`design-templates/guizang-ppt/`](../design-templates/guizang-ppt/) with its
-license preserved and OpenDesign metadata applied:
+license preserved and CapyDesign metadata applied:
 
 1. The daemon lists it through `/api/design-templates`, independently of the
    functional `/api/skills` registry.
 2. The user opens the Deck creation tab and selects the guizang template from
    the rendering catalogue.
-3. OpenDesign stores the selected template id as the project's primary
+3. CapyDesign stores the selected template id as the project's primary
    `skillId`. The daemon's combined skill-like resolver loads that template's
    `SKILL.md` and resources; it does not also inject the Deck tab's default
    functional skill.

@@ -1,8 +1,8 @@
-# RFC: Agent-ready OpenDesign — one assistant that can drive the whole app
+# RFC: Agent-ready CapyDesign — one assistant that can drive the whole app
 
 **Status:** Draft (umbrella design for review; only slice 1 ships code in the first PR)
 **Author:** @leonaburime-ucla
-**Related:** #5398 (make OpenDesign agent-ready)
+**Related:** #5398 (make CapyDesign agent-ready)
 
 ## Summary
 
@@ -24,9 +24,9 @@ the design space.
 - **The chat is stuck on one page; real work isn't.** A real task touches several
   places (design system → deck → media), which today means several chats and a
   lot of clicking.
-- **People can't find what OD can do.** Capabilities are discoverable only by
+- **People can't find what CapyDesign can do.** Capabilities are discoverable only by
   navigating to their page; there is no one catalog of "what can you do?".
-- **The inbound half is missing.** OD already emits its runs in **AG-UI format —
+- **The inbound half is missing.** CapyDesign already emits its runs in **AG-UI format —
   the outbound half** (`packages/agui-adapter` → `/api/agui`). There is no
   inbound path where the assistant *executes* an interface action and gets the
   result back. That return path is the genuinely new seam.
@@ -89,7 +89,7 @@ with its own permissions RFC.
 
 ## Agent tool search — options
 
-As OD accumulates tools across design systems, media, connectors, and Composio,
+As CapyDesign accumulates tools across design systems, media, connectors, and Composio,
 handing the model the full catalog gets expensive — the daemon's own MCP layer
 notes a `tools/list` response costs on the order of ~150 tokens per call. So the
 model should **find** relevant tools, not receive all of them. Two orthogonal

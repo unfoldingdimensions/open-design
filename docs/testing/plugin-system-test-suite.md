@@ -42,17 +42,17 @@
 ```bash
 pnpm guard
 pnpm typecheck
-pnpm --filter @open-design/contracts test
-pnpm --filter @open-design/plugin-runtime test
-pnpm --filter @open-design/registry-protocol test
-pnpm --filter @open-design/daemon test
-pnpm --filter @open-design/web test
+pnpm --filter @capydesign/contracts test
+pnpm --filter @capydesign/plugin-runtime test
+pnpm --filter @capydesign/registry-protocol test
+pnpm --filter @capydesign/daemon test
+pnpm --filter @capydesign/web test
 ```
 
 验收标准：
 
 - 所有命令退出码为 `0`。
-- 如 `@open-design/daemon test` 出现非插件相关历史失败，必须在发布记录里列出文件名、失败用例、是否已知，不能只写“daemon failed”。
+- 如 `@capydesign/daemon test` 出现非插件相关历史失败，必须在发布记录里列出文件名、失败用例、是否已知，不能只写“daemon failed”。
 
 ### 2.2 插件聚焦回归
 

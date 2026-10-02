@@ -85,13 +85,13 @@ Every external project this spec leans on. Three questions per entry: what is it
 
 [genericagent]: https://github.com/lsdefine/GenericAgent
 - **What it is:** Minimal self-evolving autonomous agent framework that crystallizes solved tasks into a personal skill tree for direct reuse.
-- **Why it matters:** It names the core loop OD needs for design work: solve once, verify, save the execution path, and recall it with less context next time.
+- **Why it matters:** It names the core loop CapyDesign needs for design work: solve once, verify, save the execution path, and recall it with less context next time.
 - **What we borrow:**
   - Skill crystallization from successful tasks.
   - Layered memory and direct recall to reduce prompt size.
   - A bias toward small composable primitives instead of a heavy agent framework.
 - **What we don't:**
-  - Broad uncontrolled desktop authority. OD keeps daemon, connector, filesystem, and review gates explicit.
+  - Broad uncontrolled desktop authority. CapyDesign keeps daemon, connector, filesystem, and review gates explicit.
 
 ### [cc-switch][ccsw] (farion1231)
 - **Repo:** [github.com/farion1231/cc-switch][ccsw]
@@ -130,7 +130,7 @@ Every external project this spec leans on. Three questions per entry: what is it
 - **What we don't:**
   - Treating one upstream list as the current catalogue boundary. The bundled
     catalogue now contains 151 packages drawn from multiple attributed sources
-    and OpenDesign-authored systems.
+    and CapyDesign-authored systems.
   - Their Discord / community layer — not our product.
 
 ### [guizang-ppt-skill][guizang] (op7418)
@@ -140,7 +140,7 @@ Every external project this spec leans on. Three questions per entry: what is it
 - **What it is:** A Claude Code skill producing magazine-style, horizontal-swipe web decks. Structure: `SKILL.md` + `assets/template.html` + `references/{components,layouts,themes,checklist}.md`. 6-step workflow. Single-file HTML output with embedded CSS/WebGL. Keyboard/scroll/touch navigation.
 - **Why it matters:** Reference implementation of a high-quality Claude skill and the source of our bundled guizang deck template.
 - **What we borrow:**
-  - The workflow and assets are bundled under [`design-templates/guizang-ppt/`](../design-templates/guizang-ppt/) with the upstream license preserved and OpenDesign metadata/file-handoff integration applied.
+  - The workflow and assets are bundled under [`design-templates/guizang-ppt/`](../design-templates/guizang-ppt/) with the upstream license preserved and CapyDesign metadata/file-handoff integration applied.
   - Skill directory convention (`assets/` + `references/` + `SKILL.md`) as the pattern we document for skill authors.
   - The "6-step workflow + quality-checklist rubric" pattern for authoring new skills.
 - **What we don't:** We do not require the retired `capt skill add` flow; the rendering template ships in the catalogue and can still be consumed as a portable `SKILL.md` bundle.
@@ -152,9 +152,9 @@ Every external project this spec leans on. Three questions per entry: what is it
 | Project | Relevance |
 |---|---|
 | [Claude Code skills docs](https://docs.anthropic.com/) | Source of the `SKILL.md` format we adopt |
-| [Cursor rules](https://docs.cursor.com/) | Historical format inspiration only; the current Cursor Agent adapter receives OpenDesign's composed prompt over stdin and uses the same CWD-local resource staging as other runtimes |
+| [Cursor rules](https://docs.cursor.com/) | Historical format inspiration only; the current Cursor Agent adapter receives CapyDesign's composed prompt over stdin and uses the same CWD-local resource staging as other runtimes |
 | [Reveal.js](https://revealjs.com/) / [Marp](https://marp.app/) | Reference for deck HTML navigation patterns |
-| [Shadcn/ui](https://ui.shadcn.com/) | Component and registry reference; the product shell now uses repository-owned primitives from `@open-design/components` |
+| [Shadcn/ui](https://ui.shadcn.com/) | Component and registry reference; the product shell now uses repository-owned primitives from `@capydesign/components` |
 | [Vercel AI SDK](https://sdk.vercel.ai/) | Historical API-fallback exploration; current BYOK providers run through the OpenCode adapter rather than a direct SDK adapter |
 | [Puppeteer](https://pptr.dev/) | Reference for template/skill-owned browser rendering; core desktop PDF export uses Electron `printToPDF` or the screenshot/PDF pipeline |
 | [pptxgenjs](https://gitbrent.github.io/PptxGenJS/) | PPTX export engine |
@@ -164,7 +164,7 @@ Every external project this spec leans on. Three questions per entry: what is it
 
 ## Compatibility & differentiation matrix
 
-| Dimension | [Claude Design][cd] | [Open CoDesign][ocod] | [multica][multica] | [cc-switch][ccsw] | **OD** |
+| Dimension | [Claude Design][cd] | [Open CoDesign][ocod] | [multica][multica] | [cc-switch][ccsw] | **CapyDesign** |
 |---|---|---|---|---|---|
 | Open source | ❌ | ✅ | ✅ | ✅ | ✅ |
 | Primary form factor | Web (hosted) | Electron | Web + Go daemon | Tauri | **Next.js web + Node daemon** |
@@ -178,13 +178,13 @@ Every external project this spec leans on. Three questions per entry: what is it
 | Template gallery | ✅ | ✅ (15) | ❌ | ❌ | **✅** |
 | Design-system authoring mode | ❌ | ❌ | ❌ | ❌ | **✅** |
 
-The two empty-column crossings where OD lights up and others don't: **Vercel-deployable + design-system authoring**, and **uses existing code agent + first-class DESIGN.md**. That's the niche.
+The two empty-column crossings where CapyDesign lights up and others don't: **Vercel-deployable + design-system authoring**, and **uses existing code agent + first-class DESIGN.md**. That's the niche.
 
 ---
 
 ## What we explicitly don't borrow (and why)
 
-- **Electron as a separate product architecture.** OpenDesign now ships thin
+- **Electron as a separate product architecture.** CapyDesign now ships thin
   desktop and packaged Electron hosts, including signing/update work, but the
   product UI remains the same Next.js web app and daemon rather than a second
   desktop-only implementation.
