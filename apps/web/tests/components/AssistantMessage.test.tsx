@@ -1241,10 +1241,8 @@ describe('AssistantMessage question forms', () => {
 
     expect(screen.getByText('Visual tone')).toBeTruthy();
     expect(screen.getByText('Editorial narrative')).toBeTruthy();
-    expect(screen.getByRole('img', { name: 'Visual tone: Editorial narrative' })).toHaveAttribute(
-      'src',
-      'https://repo-assets.open-design.ai/style-catalog/v1/deck-editorial-narrative-v1.webp',
-    );
+    // Local-only build: no hosted preview asset is referenced.
+    expect(screen.queryByRole('img', { name: 'Visual tone: Editorial narrative' })).toBeNull();
   });
 
   it('keeps a catalog-backed direction-card preview in the answered summary', () => {
@@ -1281,12 +1279,7 @@ describe('AssistantMessage question forms', () => {
     );
 
     expect(screen.getByText('Expressive consumer')).toBeTruthy();
-    expect(
-      screen.getByRole('img', { name: 'Visual direction: Expressive consumer' }),
-    ).toHaveAttribute(
-      'src',
-      'https://repo-assets.open-design.ai/style-catalog/v1/prototype-expressive-consumer-v1.webp',
-    );
+    expect(screen.queryByRole('img', { name: 'Visual direction: Expressive consumer' })).toBeNull();
     expect(screen.queryByText('prototype-expressive-consumer')).toBeNull();
   });
 
@@ -1333,10 +1326,8 @@ describe('AssistantMessage question forms', () => {
     const cards = container.querySelectorAll('.qf-visual-card');
     const previews = container.querySelectorAll('img.qf-visual-preview-image');
     expect(cards.length).toBeGreaterThan(0);
-    expect(previews).toHaveLength(cards.length);
-    expect((previews[0] as HTMLImageElement).src).toContain(
-      '/style-catalog/v1/prototype-',
-    );
+    // Local-only build: the drawn preview replaces the remote thumbnail image.
+    expect(previews).toHaveLength(0);
   });
 
   it('serves host-owned direction cards when the model emits only the canonical trigger', () => {
@@ -1371,52 +1362,41 @@ describe('AssistantMessage question forms', () => {
     const cards = container.querySelectorAll('.qf-visual-card');
     const previews = container.querySelectorAll('img.qf-visual-preview-image');
     expect(cards.length).toBeGreaterThan(0);
-    expect(previews).toHaveLength(cards.length);
-    expect((previews[0] as HTMLImageElement).src).toContain(
-      '/style-catalog/v1/prototype-',
-    );
+    expect(previews).toHaveLength(0);
   });
 
   it.each([
     {
       projectKind: 'web_clone' as const,
       title: 'Quiet SaaS',
-      src: 'https://repo-assets.open-design.ai/style-catalog/v1/prototype-quiet-saas-v1.webp',
     },
     {
       projectKind: 'wireframe' as const,
       title: 'Quiet SaaS',
-      src: 'https://repo-assets.open-design.ai/style-catalog/v1/prototype-quiet-saas-v1.webp',
     },
     {
       projectKind: 'live_artifact' as const,
       title: 'Quiet SaaS',
-      src: 'https://repo-assets.open-design.ai/style-catalog/v1/prototype-quiet-saas-v1.webp',
     },
     {
       projectKind: 'document' as const,
       title: 'Docs reference',
-      src: 'https://repo-assets.open-design.ai/style-catalog/v1/document-docs-reference-v1.webp',
     },
     {
       projectKind: 'image' as const,
       title: 'Editorial photo',
-      src: 'https://repo-assets.open-design.ai/style-catalog/v1/image-photo-editorial-v1.webp',
     },
     {
       projectKind: 'video' as const,
       title: 'Swiss Pulse',
-      src: 'https://repo-assets.open-design.ai/style-catalog/v1/video-swiss-pulse-v1.webp',
     },
     {
       projectKind: 'hyperframes' as const,
       title: 'Swiss Pulse',
-      src: 'https://repo-assets.open-design.ai/style-catalog/v1/video-swiss-pulse-v1.webp',
     },
-  ])('keeps selected $projectKind style previews in the answered summary', ({
+  ])('keeps selected $projectKind style cards (no hosted preview) in the answered summary', ({
     projectKind,
     title,
-    src,
   }) => {
     const form = [
       '<question-form id="discovery" title="Quick brief">',
@@ -1446,7 +1426,9 @@ describe('AssistantMessage question forms', () => {
       />,
     );
 
-    expect(screen.getByRole('img', { name: `Visual tone: ${title}` })).toHaveAttribute('src', src);
+    // Local-only build: no hosted preview asset is referenced anywhere.
+    expect(screen.queryByRole('img', { name: `Visual tone: ${title}` })).toBeNull();
+    expect(screen.getByText(title)).toBeTruthy();
   });
 
   it('normalizes every selected legacy visual style to its preview card', () => {
@@ -1481,11 +1463,10 @@ describe('AssistantMessage question forms', () => {
       />,
     );
 
-    expect(screen.getByRole('img', { name: 'Visual tone: Editorial narrative' })).toBeTruthy();
-    expect(screen.getByRole('img', { name: 'Visual tone: Premium pitch' })).toHaveAttribute(
-      'src',
-      'https://repo-assets.open-design.ai/style-catalog/v1/deck-premium-pitch-v1.webp',
-    );
+    expect(screen.queryByRole('img', { name: 'Visual tone: Editorial narrative' })).toBeNull();
+    expect(screen.queryByRole('img', { name: 'Visual tone: Premium pitch' })).toBeNull();
+    // No hosted preview ⇒ the summary renders the picks as a plain text row.
+    expect(screen.getByText('Editorial narrative, Premium pitch')).toBeTruthy();
   });
 
   it('keeps a custom visual style selection alongside preview cards', () => {
@@ -1520,8 +1501,8 @@ describe('AssistantMessage question forms', () => {
       />,
     );
 
-    expect(screen.getByRole('img', { name: 'Visual tone: Editorial narrative' })).toBeTruthy();
-    expect(screen.getByText('Warm Japanese editorial')).toBeTruthy();
+    expect(screen.queryByRole('img', { name: 'Visual tone: Editorial narrative' })).toBeNull();
+    expect(screen.getByText('Editorial narrative, Warm Japanese editorial')).toBeTruthy();
   });
 
   it('does not recommend next steps for a question-only turn', () => {

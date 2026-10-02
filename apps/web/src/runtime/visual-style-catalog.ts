@@ -102,7 +102,8 @@ export interface VisualStyleCard {
   description: string;
   variant: VisualStyleVariant;
   category: VisualStyleCategory;
-  preview: VisualStylePreviewAsset;
+  /** Absent in a local-only build: no hosted preview assets are shipped. */
+  preview?: VisualStylePreviewAsset;
   recommended?: boolean;
 }
 
@@ -113,23 +114,6 @@ interface VisualStyleCatalogEntry {
   variant: VisualStyleVariant;
   category: VisualStyleCategory;
   recommended?: boolean;
-}
-
-const STYLE_CATALOG_ASSET_ORIGIN = 'https://repo-assets.open-design.ai';
-const STYLE_CATALOG_ASSET_PATH = '/style-catalog/v1';
-const STYLE_CATALOG_ASSET_BASE_URL = `${STYLE_CATALOG_ASSET_ORIGIN}${STYLE_CATALOG_ASSET_PATH}`;
-/**
- * The picker never draws a preview wider than a few hundred CSS pixels. Its
- * source catalogue is uniformly 1600x1200, so decoding six originals would
- * spend about 11.5 megapixels on a 200px card stack. Cloudflare's derivative
- * keeps enough pixels for a 3x 200px display while cutting transfer and decode
- * work; `format=auto` lets the browser take AVIF/WebP without changing the
- * stable original URL exposed by `src`.
- */
-const STYLE_CATALOG_THUMBNAIL_TRANSFORM = 'width=640,quality=75,format=auto';
-
-function styleCatalogThumbnailUrl(filename: string): string {
-  return `${STYLE_CATALOG_ASSET_ORIGIN}/cdn-cgi/image/${STYLE_CATALOG_THUMBNAIL_TRANSFORM}${STYLE_CATALOG_ASSET_PATH}/${filename}`;
 }
 
 const DECK_STYLE_CATALOG: VisualStyleCatalogEntry[] = [
@@ -835,18 +819,16 @@ const STYLE_CATALOGS: Readonly<Record<VisualStyleContext, VisualStyleCatalogEntr
 export function visualStyleCardsForContext(context: VisualStyleContext): VisualStyleCard[] {
   const catalog = STYLE_CATALOGS[context];
   return catalog.map((style) => {
-    const filename = `${context}-${style.slug}-v1.webp`;
     return {
       value: `${context}-${style.slug}`,
       title: style.title,
       description: style.description,
       variant: style.variant,
       category: style.category,
-      preview: {
-        src: `${STYLE_CATALOG_ASSET_BASE_URL}/${filename}`,
-        thumbnailSrc: styleCatalogThumbnailUrl(filename),
-        alt: `${style.title} ${context} style preview.`,
-      },
+      // CapyDesign is local-only: the catalog ships no hosted preview assets,
+      // so cards carry no remote image and the picker renders its drawn
+      // per-variant preview instead of fetching a third-party CDN.
+      preview: undefined,
       recommended: style.recommended,
     };
   });

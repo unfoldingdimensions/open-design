@@ -181,7 +181,7 @@ const defaultDeps: OpenFirstPartyMailtoDeps = {
 
 // Open a first-party mailto in the user's LOCAL mail client. Callers must have
 // already validated the URL against the first-party allowlist
-// (`isFirstPartyMailtoUrl` / `isSupportMailtoUrl` in runtime.ts); this function
+// (`isFirstPartyMailtoUrl` in runtime.ts); this function
 // re-checks only the scheme so nothing but a mailto can ever reach the shell.
 //
 // On macOS, when the OS-level mailto handler is a web browser, the URL is

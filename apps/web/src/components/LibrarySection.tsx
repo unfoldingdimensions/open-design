@@ -1131,18 +1131,6 @@ export function LibrarySection({ active, onOpenProject }: Props) {
       {fontFaceCss ? <style>{fontFaceCss}</style> : null}
       <header className="entry-section__head">
         <h1 className="entry-section__title">{t('library.title')}</h1>
-        <div className={styles.clipperHint}>
-          <p className={styles.headerHint}>{t('library.headerHint')}</p>
-          <a
-            className={styles.clipperDownload}
-            href="https://open-design.ai/clipper"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Icon name="download" size={15} />
-            {t('library.getClipper')}
-          </a>
-        </div>
       </header>
 
       <div className={styles.toolbar}>
