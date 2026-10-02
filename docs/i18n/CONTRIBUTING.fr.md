@@ -1,6 +1,6 @@
-# Contribuer à OpenDesign
+# Contribuer à CapyDesign
 
-Merci d'envisager de contribuer. OD reste volontairement petit : l'essentiel
+Merci d'envisager de contribuer. CapyDesign reste volontairement petit : l'essentiel
 de la valeur vit dans des **fichiers** (Skills, Design Systems, morceaux de
 prompt) plutôt que dans du code de framework. Les contributions les plus utiles
 sont donc souvent un dossier, un fichier Markdown ou un petit adapter qui tient
@@ -17,9 +17,9 @@ une PR doit atteindre avant d’être mergée.
 
 | Si vous voulez… | Vous ajoutez en réalité | Où cela vit | Taille |
 |---|---|---|---|
-| Faire générer à OD un nouveau type d'artifact (facture, écran iOS Settings, one-pager…) | un **template de design** | [`design-templates/<your-template>/`](../../design-templates/) | un dossier avec `SKILL.md` et ses assets de rendu |
+| Faire générer à CapyDesign un nouveau type d'artifact (facture, écran iOS Settings, one-pager…) | un **template de design** | [`design-templates/<your-template>/`](../../design-templates/) | un dossier avec `SKILL.md` et ses assets de rendu |
 | Ajouter une capacité fonctionnelle invoquée par les agents pendant une tâche | un **Skill** | [`skills/<your-skill>/`](../../skills/) | un dossier avec `SKILL.md` et des ressources optionnelles |
-| Faire parler à OD le langage visuel d'une nouvelle marque | un **Design System** | [`design-systems/<brand>/`](../../design-systems/) | un paquet : `manifest.json`, `DESIGN.md` et `tokens.css` |
+| Faire parler à CapyDesign le langage visuel d'une nouvelle marque | un **Design System** | [`design-systems/<brand>/`](../../design-systems/) | un paquet : `manifest.json`, `DESIGN.md` et `tokens.css` |
 | Brancher une nouvelle CLI de coding agent | un **Agent adapter** | [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/runtimes/defs/) | une définition et une entrée de registre |
 | Ajouter une feature, corriger un bug, reprendre un pattern UX de [`open-codesign`][ocod] | du code | `apps/web/src/`, `apps/daemon/` | PR classique |
 | Améliorer la doc, porter une section en Français / Deutsch / 中文, corriger une faute | documentation | `README.md`, `docs/i18n/README.fr.md`, `docs/i18n/README.de.md`, `docs/i18n/README.zh-CN.md`, `docs/`, `QUICKSTART.md` | une PR |
@@ -42,7 +42,7 @@ corepack enable           # sélectionne la version de pnpm définie par package
 pnpm install
 pnpm tools-dev run web    # boucle daemon + web au premier plan
 pnpm typecheck            # tsc -b --noEmit
-pnpm --filter @open-design/web build  # build du paquet web si nécessaire
+pnpm --filter @capydesign/web build  # build du paquet web si nécessaire
 ```
 
 Node `~24` et pnpm `10.33.x` sont requis. `nvm` / `fnm` sont optionnels ;
@@ -54,7 +54,7 @@ pour les pièges de configuration les plus courants.
 
 ## Configuration Docker
 
-Exécutez OpenDesign sans installer Node.js ou pnpm localement.
+Exécutez CapyDesign sans installer Node.js ou pnpm localement.
 
 ### Prérequis
 
@@ -64,7 +64,7 @@ Vérifiez que Docker Desktop et Compose v2 sont installés :
 docker compose version
 ```
 
-### Démarrer OpenDesign
+### Démarrer CapyDesign
 
 Depuis la racine du dépôt, préparez le fichier d'environnement :
 
@@ -214,7 +214,7 @@ leur numérotation. Utilisez des titres adaptés au système réel ; un package 
 
 Les product systems dérivés de l'upstream sont importés depuis [`VoltAgent/awesome-design-md`][acd2]
 via [`scripts/sync-design-systems.ts`](../../scripts/sync-design-systems.ts). Si votre
-marque appartient à cet upstream, **envoyez d'abord la PR là-bas** : OD le
+marque appartient à cet upstream, **envoyez d'abord la PR là-bas** : CapyDesign le
 récupérera au prochain sync. Le dossier `design-systems/` contient aussi des
 ajouts propres au projet qui ne rentrent pas upstream.
 
@@ -296,11 +296,11 @@ doit rester upstream.
 
 ## Maintenance des localisations
 
-L'allemand utilise le vouvoiement formel `Sie`, car OD s'adresse à des créateurs indépendants, des agences et des équipes d'ingénierie. Tant que les retours du projet ne justifient pas le tutoiement `du`, ce registre reste le choix par défaut le moins surprenant.
+L'allemand utilise le vouvoiement formel `Sie`, car CapyDesign s'adresse à des créateurs indépendants, des agences et des équipes d'ingénierie. Tant que les retours du projet ne justifient pas le tutoiement `du`, ce registre reste le choix par défaut le moins surprenant.
 
 Les PR de localisation doivent traduire les éléments d'interface, la documentation principale et les métadonnées de galerie destinées uniquement à l'affichage dans `apps/web/src/i18n/content.ts`. Elles ne doivent pas traduire `skills/`, `design-systems/` ni les corps de prompts exécutés par les agents. Ces prompts sont des entrées de workflow ; conserver une langue source commune évite de multiplier leur validation par langue.
 
-Lors de l'ajout ou du renommage d'un skill, d'un système de design ou d'un modèle de prompt, mettez à jour les métadonnées d'affichage allemandes et lancez `pnpm --filter @open-design/web test` : `content.test.ts` détecte les écarts de couverture en allemand. Les erreurs du daemon, les noms de fichiers exportés et les textes d'artefacts générés par les agents restent des limites connues, sauf si une PR les inclut explicitement.
+Lors de l'ajout ou du renommage d'un skill, d'un système de design ou d'un modèle de prompt, mettez à jour les métadonnées d'affichage allemandes et lancez `pnpm --filter @capydesign/web test` : `content.test.ts` détecte les écarts de couverture en allemand. Les erreurs du daemon, les noms de fichiers exportés et les textes d'artefacts générés par les agents restent des limites connues, sauf si une PR les inclut explicitement.
 
 Pour les étapes détaillées d'ajout d'une locale (dictionnaire UI, README,
 language switcher, terminologie régionale), voir [`TRANSLATIONS.md`](../../TRANSLATIONS.md).
@@ -396,7 +396,7 @@ afin de voir si la violation vient du modèle ou du prompt.
 
 Pour garder le projet focalisé, merci de ne pas ouvrir de PR qui :
 
-- **Vendor un runtime de modèle.** Tout le pari d'OD est "votre CLI existante
+- **Vendor un runtime de modèle.** Tout le pari d'CapyDesign est "votre CLI existante
   suffit". Nous ne livrons pas `pi-ai`, de clés OpenAI ou de model loaders.
 - **Réécrit le frontend hors de la stack actuelle sans discussion préalable.**
   Next.js 16 App Router + React 18 + TS est la ligne. Pas de réécriture Astro,

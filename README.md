@@ -19,13 +19,17 @@
 
 <p align="center"><b>English</b> · <a href="docs/i18n/README.es.md">Español</a> · <a href="docs/i18n/README.pt-BR.md">Português</a> · <a href="docs/i18n/README.de.md">Deutsch</a> · <a href="docs/i18n/README.fr.md">Français</a> · <a href="docs/i18n/README.zh-CN.md">简体中文</a> · <a href="docs/i18n/README.zh-TW.md">繁體中文</a> · <a href="docs/i18n/README.ko.md">한국어</a> · <a href="docs/i18n/README.ja-JP.md">日本語</a> · <a href="docs/i18n/README.ar.md">العربية</a> · <a href="docs/i18n/README.ru.md">Русский</a> · <a href="docs/i18n/README.uk.md">Українська</a> · <a href="docs/i18n/README.tr.md">Türkçe</a> · <a href="docs/i18n/README.th.md">ภาษาไทย</a></p>
 
+> CapyDesign is a derivative work of **Open Design** ([nexu-io/open-design](https://github.com/nexu-io/open-design)), Copyright 2026 Open Design contributors, licensed under Apache-2.0. CapyDesign is not affiliated with or endorsed by the Open Design project or nexu-io. Bundled third-party components remain under their own licenses — see [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md).
+>
+> Historical documents (`CHANGELOG.md`, `docs/CHANGELOG/**`, archived specs, dated announcements) retain the original product name because that is what they described at the time.
+
 ---
 
-## What is OpenDesign
+## What is CapyDesign
 
 🎨 **The open-source Claude Design alternative.** &nbsp;🖥️ **Local-first native desktop app for macOS and Windows.** &nbsp;⚡ **Composable skills, brand-grade `DESIGN.md` design systems, and ready-to-use plugins.** &nbsp;🖼️ Generates **web · desktop · mobile prototypes**, **live dashboards / artifacts**, **decks**, **images**, **video**, plus **HyperFrames** motion graphics. 🔒 Sandboxed iframe preview · HTML / PDF / PPTX / MP4 export. &nbsp;🤖 **Runs on DeepSeek Harness (`dsh`) · Claude Code · OpenClaw · Codex · Cursor · OpenCode · Qwen · Copilot · Amp · Hermes · Kimi · Antigravity and 27 distinct local CLI executables**, or any OpenAI-compatible endpoint via BYOK.
 
-OpenDesign is what you get when the **agent-native** loop Anthropic shipped with Claude Design — discover the brief, lock the direction, stream the artifact, critique, deliver — stops being closed and becomes a **filesystem of functional skills, rendering design templates, design systems, and plugins** that the coding agents already on your laptop can read, write, and remix. Your CLI becomes the design engine, your laptop becomes the studio, and your team's `DESIGN.md` becomes the brand contract.
+CapyDesign is what you get when the **agent-native** loop Anthropic shipped with Claude Design — discover the brief, lock the direction, stream the artifact, critique, deliver — stops being closed and becomes a **filesystem of functional skills, rendering design templates, design systems, and plugins** that the coding agents already on your laptop can read, write, and remix. Your CLI becomes the design engine, your laptop becomes the studio, and your team's `DESIGN.md` becomes the brand contract.
 
 It's also the **Figma alternative for the agent era** — instead of pushing pixels on a canvas, it delivers single-page artifacts in real CSS, real fonts, real components, exported straight to HTML / PDF / PPTX / MP4 — already shaped by your design system, already runnable inside the agent you use every day.
 
@@ -34,14 +38,14 @@ It's also the **Figma alternative for the agent era** — instead of pushing pix
 
 ## Product tour
 
-A quick look at the core OpenDesign workflow. Start from **Home** with a brief, explore reusable skills in **Plugins**, and turn brand references into a **Design System**. Then enter a project's **Studio** to create and refine prototypes, decks, mobile apps, images, documents, and HyperFrames in one place.
+A quick look at the core CapyDesign workflow. Start from **Home** with a brief, explore reusable skills in **Plugins**, and turn brand references into a **Design System**. Then enter a project's **Studio** to create and refine prototypes, decks, mobile apps, images, documents, and HyperFrames in one place.
 
 ### Core pages
 
 <table>
 <tr>
 <td valign="top">
-<img src="docs/screenshots/product-tour/home.png" alt="OpenDesign Home page with artifact types, brief composer, model picker, and examples" /><br/>
+<img src="docs/screenshots/product-tour/home.png" alt="CapyDesign Home page with artifact types, brief composer, model picker, and examples" /><br/>
 <sub><b>Home</b> — choose an artifact type, enter a brief, and set the design system, working directory, and model before you start.</sub>
 </td>
 </tr>
@@ -50,11 +54,11 @@ A quick look at the core OpenDesign workflow. Start from **Home** with a brief, 
 <table>
 <tr>
 <td width="50%" valign="top">
-<img src="docs/screenshots/product-tour/plugins.png" alt="OpenDesign Plugins page showing the official skills catalog" /><br/>
+<img src="docs/screenshots/product-tour/plugins.png" alt="CapyDesign Plugins page showing the official skills catalog" /><br/>
 <sub><b>Plugins</b> — browse official skills by category, search the catalog, and launch a workflow with <code>Try it</code>.</sub>
 </td>
 <td width="50%" valign="top">
-<img src="docs/screenshots/product-tour/design-system.png" alt="Shopify design system preview inside OpenDesign Studio" /><br/>
+<img src="docs/screenshots/product-tour/design-system.png" alt="Shopify design system preview inside CapyDesign Studio" /><br/>
 <sub><b>Design System</b> — extract and refine a brand's visual language, preview the result, and create with it in the same workspace.</sub>
 </td>
 </tr>
@@ -67,31 +71,31 @@ Inside a project's Studio, the conversation, generated files, and live preview s
 <table>
 <tr>
 <td width="50%" valign="top">
-<img src="docs/screenshots/product-tour/studio-prototype.png" alt="Web prototype preview in OpenDesign Studio" /><br/>
+<img src="docs/screenshots/product-tour/studio-prototype.png" alt="Web prototype preview in CapyDesign Studio" /><br/>
 <sub><b>Prototype</b> — generate or reconstruct web experiences, inspect the rendered page, and iterate with the agent in place.</sub>
 </td>
 <td width="50%" valign="top">
-<img src="docs/screenshots/product-tour/studio-deck.png" alt="Multi-slide deck preview in OpenDesign Studio" /><br/>
+<img src="docs/screenshots/product-tour/studio-deck.png" alt="Multi-slide deck preview in CapyDesign Studio" /><br/>
 <sub><b>Deck</b> — create multi-slide presentations, review thumbnails and speaker notes, and export when ready.</sub>
 </td>
 </tr>
 <tr>
 <td width="50%" valign="top">
-<img src="docs/screenshots/product-tour/studio-mobile-app.png" alt="Mobile app artifact preview in OpenDesign Studio" /><br/>
+<img src="docs/screenshots/product-tour/studio-mobile-app.png" alt="Mobile app artifact preview in CapyDesign Studio" /><br/>
 <sub><b>Mobile app</b> — generate and polish mobile interfaces in a device preview, with the conversation, output files, and next-step actions beside it.</sub>
 </td>
 <td width="50%" valign="top">
-<img src="docs/screenshots/product-tour/studio-image.png" alt="Generated image preview in OpenDesign Studio" /><br/>
+<img src="docs/screenshots/product-tour/studio-image.png" alt="Generated image preview in CapyDesign Studio" /><br/>
 <sub><b>Image</b> — generate visual assets from the project conversation, preview the result at full size, then download or open it.</sub>
 </td>
 </tr>
 <tr>
 <td width="50%" valign="top">
-<img src="docs/screenshots/product-tour/studio-document.png" alt="Multi-page document preview in OpenDesign Studio" /><br/>
+<img src="docs/screenshots/product-tour/studio-document.png" alt="Multi-page document preview in CapyDesign Studio" /><br/>
 <sub><b>Document</b> — create polished, multi-page guides and editorial documents, inspect the rendered layout, and export or share when ready.</sub>
 </td>
 <td width="50%" valign="top">
-<img src="docs/screenshots/product-tour/studio-hyperframe.png" alt="HyperFrame motion graphic preview in OpenDesign Studio" /><br/>
+<img src="docs/screenshots/product-tour/studio-hyperframe.png" alt="HyperFrame motion graphic preview in CapyDesign Studio" /><br/>
 <sub><b>HyperFrame</b> — build code-driven motion graphics, preview the animation inside Studio, and export the finished video.</sub>
 </td>
 </tr>
@@ -101,7 +105,7 @@ Inside a project's Studio, the conversation, generated files, and live preview s
 
 ## Platform Compatibility
 
-> OpenDesign connects to mainstream coding agents in two ways: **skills, CLI, and MCP** for agents that consume OD, plus **native runtime adapters** for agents that OD launches directly. DeepSeek Harness is a first-class native runtime through the official `dsh` CLI, with structured streaming, model discovery, cancellation, and session resume.
+> CapyDesign connects to mainstream coding agents in two ways: **skills, CLI, and MCP** for agents that consume CapyDesign, plus **native runtime adapters** for agents that CapyDesign launches directly. DeepSeek Harness is a first-class native runtime through the official `dsh` CLI, with structured streaming, model discovery, cancellation, and session resume.
 
 | Coding agent / platform &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Status &nbsp;&nbsp; | Quick setup &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
@@ -125,7 +129,7 @@ Inside a project's Studio, the conversation, generated files, and live preview s
 | [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Supported | `capt mcp install vibe` |
 | [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Supported | `capt mcp install hermes` |
 
-For DeepSeek Harness, install the official `dsh` CLI first, then select it in OpenDesign or run `capt agent setup deepseek-harness` to install/repair OD's connection component. For MCP integrations: `capt mcp install <agent> --print` for a dry-run preview · `--uninstall` to remove · full list with `capt mcp install --help`.
+For DeepSeek Harness, install the official `dsh` CLI first, then select it in CapyDesign or run `capt agent setup deepseek-harness` to install/repair CapyDesign's connection component. For MCP integrations: `capt mcp install <agent> --print` for a dry-run preview · `--uninstall` to remove · full list with `capt mcp install --help`.
 
 ¹ Automatic MCP configuration for Claude Desktop is currently supported on macOS and Windows only.
 
@@ -216,7 +220,7 @@ Every deck exports to **HTML** (single file, inlined assets), **PDF** (browser p
 
 ### 5 · Video & HyperFrames — agent-native motion graphics
 
-**[HyperFrames][hyperframes]** is HeyGen's open-source, agent-native video framework, integrated as a first-class citizen in OpenDesign. The agent writes HTML + CSS + GSAP, and HyperFrames renders it to a deterministic MP4 via headless Chrome + FFmpeg. Pair it with **Seedance 2.0** for cinematic t2v / i2v, **Veo 3 / Sora 2 / Kling 2** for routed model variants, and **Suno v5 / Lyria 2** for the audio layer.
+**[HyperFrames][hyperframes]** is HeyGen's open-source, agent-native video framework, integrated as a first-class citizen in CapyDesign. The agent writes HTML + CSS + GSAP, and HyperFrames renders it to a deterministic MP4 via headless Chrome + FFmpeg. Pair it with **Seedance 2.0** for cinematic t2v / i2v, **Veo 3 / Sora 2 / Kling 2** for routed model variants, and **Suno v5 / Lyria 2** for the audio layer.
 
 <table>
 <tr>
@@ -233,28 +237,28 @@ Every deck exports to **HTML** (single file, inlined assets), **PDF** (browser p
 </tr>
 </table>
 
-11 HyperFrames templates + 39 Seedance prompts ship with the repo. Catalog thumbnails © HeyGen; the framework is Apache-2.0. The OD-specific render workflow (composition cache, sandbox-exec workaround, MP4-as-chip) is detailed in [`design-templates/hyperframes/`](design-templates/hyperframes/).
+11 HyperFrames templates + 39 Seedance prompts ship with the repo. Catalog thumbnails © HeyGen; the framework is Apache-2.0. The CapyDesign-specific render workflow (composition cache, sandbox-exec workaround, MP4-as-chip) is detailed in [`design-templates/hyperframes/`](design-templates/hyperframes/).
 
 [hyperframes]: https://github.com/heygen-com/hyperframes
 
 ---
 
-## Why OpenDesign
+## Why CapyDesign
 
 > **In April 2026, Anthropic released Claude Design — the first time an LLM stopped writing prose and started delivering design artifacts directly.** It went viral. But it stayed closed-source, paid-only, cloud-only, locked to Anthropic's model, Anthropic's skills, Anthropic's surface. No checkout, no self-host, no Vercel deploy, no swap-in-your-own-agent.
 
-OpenDesign (OD) is the open-source alternative. Same loop, same artifact-first mental model, none of the lock-in:
+CapyDesign is the open-source alternative. Same loop, same artifact-first mental model, none of the lock-in:
 
 - 🤖 **Agent-native, model-agnostic.** We don't ship an agent. The `claude` / `codex` / `cursor-agent` / `copilot` / `hermes` / `kimi` already on your `PATH` are the design engine. Swap with one click.
 - 🧠 **Brand-grade by default.** Every render reads the active package's `DESIGN.md` as the core brand contract. 151 design-system packages ship with the repo; legacy packages may be `DESIGN.md`-only, while newer packages can add `manifest.json`, `tokens.css`, components, assets, and provenance. Drop a folder in, the picker finds it.
-- 🖥️ **Local-first, BYOK at every layer.** Native desktop apps for macOS (Apple Silicon + Intel) and Windows (x64). Linux desktop users can currently run OpenDesign [from source](#-run-from-source); the latest official release does not include a prebuilt Linux artifact. Product analytics and session replay are consent-gated; scrubbed safety and reliability telemetry is always on. Before describing daemon data paths, contributors and operators MUST read `AGENTS.md` → **Daemon data directory contract**. This README MUST NOT restate it.
+- 🖥️ **Local-first, BYOK at every layer.** Native desktop apps for macOS (Apple Silicon + Intel) and Windows (x64). Linux desktop users can currently run CapyDesign [from source](#-run-from-source); the latest official release does not include a prebuilt Linux artifact. Product analytics and session replay are consent-gated; scrubbed safety and reliability telemetry is always on. Before describing daemon data paths, contributors and operators MUST read `AGENTS.md` → **Daemon data directory contract**. This README MUST NOT restate it.
 - 🌍 **Composable on four planes.** **Plugins** carry runnable workflows · functional **skills** carry agent behavior · **design templates** carry rendering blueprints · **design systems** carry the brand. All four use portable, versionable directories that anyone can author and publish.
 - 🔁 **Refresh an existing codebase.** Hand a `git` repo + `DESIGN.md` to the agent and it refactors your real components to the brand spec. Dedicated plugins migrate Figma / Pencil workflows into React / Next.js / Vue code.
 - 🔒 **Privacy by conviction.** Everything runs where your data lives — your laptop, your team's server, your Vercel project. When the network is needed, the BYOK proxy is SSRF-guarded.
 
 ### Comparison
 
-| | Claude Design | Figma | Lovable / v0 / Bolt | **OpenDesign** |
+| | Claude Design | Figma | Lovable / v0 / Bolt | **CapyDesign** |
 |---|---|---|---|---|
 | Open source | ❌ | ❌ | ❌ | **✅ Apache-2.0** |
 | Self-host / desktop | ❌ | ❌ | ❌ | **✅ macOS + Windows + Docker + Vercel web** |
@@ -284,7 +288,7 @@ After install: the app auto-detects every coding-agent CLI on your `PATH`, loads
 
 ### 🤖 Install into your coding agent (no UI)
 
-You can use OpenDesign without ever opening the GUI — call it as a skill, plugin, or MCP server inside Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi, and more.
+You can use CapyDesign without ever opening the GUI — call it as a skill, plugin, or MCP server inside Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi, and more.
 
 If you installed the macOS desktop app via the DMG or Homebrew cask, your shell
 may still resolve `capt` to Apple's built-in `/usr/bin/od` octal-dump utility. In
@@ -305,7 +309,7 @@ MCP config next to the agent you point it at. There is no hosted installer to
 curl — if you are reading this in a packaged app, use **Settings → MCP server**.
 
 > **macOS / WSL2 users:** `/usr/bin/od` is a system octal-dump command and can
-> shadow OpenDesign's `capt` command. Desktop-app users should prefer the
+> shadow CapyDesign's `capt` command. Desktop-app users should prefer the
 > **Settings → MCP server** snippet; WSL2 users should follow the
 > [`WSL2 setup guide`](docs/wsl-setup.md) first.
 
@@ -315,7 +319,7 @@ Then, inside the agent:
 > Use open-design to generate a landing page with the Linear design system
 ```
 
-In a filesystem-backed local CLI run, the agent composes the selected functional skill or design template with your `DESIGN.md`, writes the canonical project files, and OpenDesign previews those files. A BYOK/plain-API run without filesystem tools instead returns one complete `<artifact>` block.
+In a filesystem-backed local CLI run, the agent composes the selected functional skill or design template with your `DESIGN.md`, writes the canonical project files, and CapyDesign previews those files. A BYOK/plain-API run without filesystem tools instead returns one complete `<artifact>` block.
 
 ### 🐳 Run with Docker
 
@@ -332,12 +336,6 @@ If the browser asks for credentials, use `open-design` as the username and the
 `OD_API_TOKEN` value from `deploy/.env` as the password. This keeps Docker bridge
 traffic authenticated without requiring host networking. API clients can keep
 using `Authorization: Bearer <OD_API_TOKEN>`.
-
-### 🚀 Deploy on Sealos
-
-[![Deploy on Sealos](https://sealos.io/Deploy-on-Sealos.svg)](https://sealos.io/products/app-store/open-design/)
-
-The Sealos App Store template runs the published OpenDesign Docker image with persistent workspace storage and Basic Auth on the public proxy. For custom public or shared Docker deployments, follow the reverse-proxy and `OPEN_DESIGN_ALLOWED_ORIGINS` guidance in [`deploy/README.md`](deploy/README.md#local-compose).
 
 ### 🧑‍💻 Run from source
 
@@ -360,13 +358,13 @@ Node `~24`, pnpm `10.33.x`. WSL2 users, see [`docs/wsl-setup.md`](docs/wsl-setup
 2. **A designer (or the agent) locks the direction.** No brand? Pick from 5 curated directions. Have a brand? Drop a screenshot / URL → the agent connects GitHub, imports Figma, and codifies a reusable `DESIGN.md`.
 3. **The agent creates the first deliverable.** Plugin + functional skill or design template + `DESIGN.md` are bound. Filesystem-backed CLI runs write canonical project files and the preview follows them; BYOK/plain-API runs without file tools return one complete `<artifact>` block.
 4. **Hand off to engineering.** The artifact is real HTML/CSS — drop it into Cursor, Codex, or Claude Code to keep building as code. Or export PPTX / PDF / MP4 straight to marketing.
-5. **OpenDesign gets smarter as you use it.** Your screenshots, fonts, palettes, and confirmed artifacts accumulate as defaults for the next session. Less rework, less drift.
+5. **CapyDesign gets smarter as you use it.** Your screenshots, fonts, palettes, and confirmed artifacts accumulate as defaults for the next session. Less rework, less drift.
 
 ---
 
-## Use OpenDesign from your coding agent
+## Use CapyDesign from your coding agent
 
-OpenDesign ships a **stdio MCP server** and per-agent **install scripts**. Any MCP-compatible agent in another repo can read files from your local OpenDesign projects directly — tokens CSS, JSX components, entry HTML — as a structured API queryable by name. The agent always sees the live file, not a stale export.
+CapyDesign ships a **stdio MCP server** and per-agent **install scripts**. Any MCP-compatible agent in another repo can read files from your local CapyDesign projects directly — tokens CSS, JSX components, entry HTML — as a structured API queryable by name. The agent always sees the live file, not a stale export.
 
 ```bash
 # One-line install (16+ CLIs supported):
@@ -500,7 +498,7 @@ Every command supports `--json`, so you can pipe it through `jq` / `xargs` into 
 
 ### Building a plugin
 
-An OpenDesign plugin requires `open-design.json` plus the payload required by its type. A workflow skill or scenario also includes `SKILL.md`; manifest-only template and design-system entries use their own payloads instead:
+An CapyDesign plugin requires `open-design.json` plus the payload required by its type. A workflow skill or scenario also includes `SKILL.md`; manifest-only template and design-system entries use their own payloads instead:
 
 ```
 my-plugin/
@@ -525,7 +523,7 @@ Full field set and runtime contract → [`plugins/spec/SPEC.md`](plugins/spec/SP
 
 ### Contributing a plugin
 
-1. Drop the plugin folder into [`plugins/community/`](plugins/community/) (third-party plugins), or — to ship it bundled with OpenDesign — into the matching tier of [`plugins/_official/`](plugins/_official/).
+1. Drop the plugin folder into [`plugins/community/`](plugins/community/) (third-party plugins), or — to ship it bundled with CapyDesign — into the matching tier of [`plugins/_official/`](plugins/_official/).
 2. Pass validation: `capt plugin validate`, `pnpm guard`, `pnpm --filter @capydesign/plugin-runtime typecheck`.
 3. Fill the PR using the template in [`plugins/spec/CONTRIBUTING.md`](plugins/spec/CONTRIBUTING.md) (ID, version, lane, mode, capabilities, trigger examples; attach a screenshot / preview for visual plugins).
 4. To publish to an external registry (skills.sh / ClawHub / standalone GitHub) → [`plugins/spec/PUBLISHING-REGISTRIES.md`](plugins/spec/PUBLISHING-REGISTRIES.md).
@@ -589,7 +587,7 @@ Full architecture → [`docs/architecture.md`](docs/architecture.md). Skill prot
 - [x] Sidecar protocol + Electron desktop + IPC automation
 - [x] Artifact lint API + 5-dim self-critique pre-emit gate
 - [x] **0.8.0** — plugin marketplace infrastructure (261 official plugins, manifest spec, per-agent install scripts)
-- [x] **0.9.0** — OpenDesign Cloud (official model service built into the app: zero config, one-click sign-in)
+- [x] **0.9.0** — OpenDesign Cloud (upstream's hosted model service, as it shipped at the time; removed in CapyDesign — this fork is local-only)
 - [x] **0.10.0** — the all-in-one design workspace: the whole craft loop in one window (references → material → interactive editing → motion → handoff)
 - [x] **0.11.0** — _The Bazaar_: built in the open — a community marketplace of plugins and design systems anyone can pick from and contribute to
 - [x] **0.12.0** — _Brand-backed Design System_: turn the brand you already own into a reusable, portable `DESIGN.md` system
@@ -621,7 +619,7 @@ The [`good-first-issue`](https://github.com/unfoldingdimensions/open-design/issu
 
 ## Contributing
 
-OpenDesign keeps moving because contributors — designers, engineers, prompt authors — keep showing up. Many of the most-used skills, design systems, and plugins were written by people outside the core team.
+CapyDesign keeps moving because contributors — designers, engineers, prompt authors — keep showing up. Many of the most-used skills, design systems, and plugins were written by people outside the core team.
 
 ### 🎯 Where to start (max leverage, min change)
 
@@ -669,7 +667,10 @@ way — open a PR.
 
 ## Maintainers
 
-They carry a lot of the load — daily maintenance, review, and community support.
+Open Design is maintained upstream by its core team — the people who built and
+keep building the project CapyDesign derives from. They carry a lot of the load
+— daily maintenance, review, and community support. CapyDesign's own maintainer
+roster is tracked in [`MAINTAINERS.md`](MAINTAINERS.md).
 
 <table>
   <tr>

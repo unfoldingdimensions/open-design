@@ -1,4 +1,4 @@
-<h1 align="center">OpenDesign : l'alternative open source à Claude Design</h1>
+<h1 align="center">CapyDesign : l'alternative open source à Claude Design</h1>
 
 <p align="center">
   <a href="https://github.com/unfoldingdimensions/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/unfoldingdimensions/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
@@ -10,11 +10,11 @@
 
 ---
 
-## Qu'est-ce qu'OpenDesign
+## Qu'est-ce qu'CapyDesign
 
 🎨 **L'alternative open source à Claude Design.** &nbsp;🖥️ **Application de bureau native et local-first pour macOS et Windows.** &nbsp;⚡ **Skills composables, systèmes de design `DESIGN.md` fidèles à votre marque et plugins prêts à l'emploi.** &nbsp;🖼️ Génère des **prototypes web · bureau · mobile**, des **tableaux de bord / artefacts en direct**, des **présentations**, des **images**, de la **vidéo**, ainsi que des motion graphics **HyperFrames**. 🔒 Aperçu en iframe sandboxée · export HTML / PDF / PPTX / MP4. &nbsp;🤖 **Fonctionne avec DeepSeek Harness (`dsh`) · Claude Code · OpenClaw · Codex · Cursor · OpenCode · Qwen · Copilot · Amp · Hermes · Kimi · Antigravity et 26 exécutables CLI locaux distincts**, ou tout point de terminaison compatible OpenAI via BYOK.
 
-OpenDesign ouvre la boucle **agent-native** proposée par Anthropic avec Claude Design — comprendre le brief, fixer la direction, générer l'artefact en continu, le critiquer et le livrer — en la transformant en un **système de fichiers de skills fonctionnels, de modèles de rendu, de systèmes de design et de plugins**. Les agents de code déjà installés sur votre ordinateur peuvent les lire, les écrire et les remixer. Votre CLI devient le moteur de design, votre ordinateur le studio et le `DESIGN.md` de votre équipe le contrat de marque.
+CapyDesign ouvre la boucle **agent-native** proposée par Anthropic avec Claude Design — comprendre le brief, fixer la direction, générer l'artefact en continu, le critiquer et le livrer — en la transformant en un **système de fichiers de skills fonctionnels, de modèles de rendu, de systèmes de design et de plugins**. Les agents de code déjà installés sur votre ordinateur peuvent les lire, les écrire et les remixer. Votre CLI devient le moteur de design, votre ordinateur le studio et le `DESIGN.md` de votre équipe le contrat de marque.
 
 C'est aussi l'**alternative à Figma pour l'ère des agents** — au lieu de déplacer des pixels sur un canevas, il livre des artefacts d'une seule page en CSS réel, en polices réelles, en composants réels, exportés directement en HTML / PDF / PPTX / MP4 — déjà façonnés par votre système de design, déjà exécutables au sein de l'agent que vous utilisez chaque jour.
 
@@ -22,14 +22,14 @@ C'est aussi l'**alternative à Figma pour l'ère des agents** — au lieu de dé
 
 ## Visite du produit
 
-Un aperçu rapide du workflow principal d'OpenDesign. Commencez sur **Home** avec un brief, explorez les skills réutilisables dans **Plugins** et transformez les références de marque en **Design System**. Entrez ensuite dans le **Studio** d'un projet pour créer et affiner prototypes, présentations, applications mobiles, images, documents et HyperFrames au même endroit.
+Un aperçu rapide du workflow principal d'CapyDesign. Commencez sur **Home** avec un brief, explorez les skills réutilisables dans **Plugins** et transformez les références de marque en **Design System**. Entrez ensuite dans le **Studio** d'un projet pour créer et affiner prototypes, présentations, applications mobiles, images, documents et HyperFrames au même endroit.
 
 ### Pages principales
 
 <table>
 <tr>
 <td valign="top">
-<img src="../../docs/screenshots/product-tour/home.png" alt="Page d’accueil OpenDesign avec types d’artefacts, champ de brief, sélecteur de modèle et exemples" /><br/>
+<img src="../../docs/screenshots/product-tour/home.png" alt="Page d’accueil CapyDesign avec types d’artefacts, champ de brief, sélecteur de modèle et exemples" /><br/>
 <sub><b>Home</b> — Choisissez un type d'artefact, saisissez un brief, puis définissez le système de design, le répertoire de travail et le modèle avant de commencer.</sub>
 </td>
 </tr>
@@ -38,11 +38,11 @@ Un aperçu rapide du workflow principal d'OpenDesign. Commencez sur **Home** ave
 <table>
 <tr>
 <td width="50%" valign="top">
-<img src="../../docs/screenshots/product-tour/plugins.png" alt="Page Plugins d’OpenDesign présentant le catalogue de skills officiels" /><br/>
+<img src="../../docs/screenshots/product-tour/plugins.png" alt="Page Plugins d’CapyDesign présentant le catalogue de skills officiels" /><br/>
 <sub><b>Plugins</b> — Parcourez les skills officiels par catégorie, recherchez dans le catalogue et lancez un workflow avec <code>Try it</code>.</sub>
 </td>
 <td width="50%" valign="top">
-<img src="../../docs/screenshots/product-tour/design-system.png" alt="Aperçu du système de design Shopify dans le Studio OpenDesign" /><br/>
+<img src="../../docs/screenshots/product-tour/design-system.png" alt="Aperçu du système de design Shopify dans le Studio CapyDesign" /><br/>
 <sub><b>Design System</b> — Extrayez et affinez le langage visuel d'une marque, prévisualisez le résultat et continuez à créer avec lui dans le même espace de travail.</sub>
 </td>
 </tr>
@@ -55,31 +55,31 @@ Dans le Studio d'un projet, la conversation, les fichiers générés et la prév
 <table>
 <tr>
 <td width="50%" valign="top">
-<img src="../../docs/screenshots/product-tour/studio-prototype.png" alt="Aperçu d’un prototype web dans le Studio OpenDesign" /><br/>
+<img src="../../docs/screenshots/product-tour/studio-prototype.png" alt="Aperçu d’un prototype web dans le Studio CapyDesign" /><br/>
 <sub><b>Prototype</b> — Générez ou reconstruisez des expériences web, inspectez la page rendue et itérez sur place avec l'agent.</sub>
 </td>
 <td width="50%" valign="top">
-<img src="../../docs/screenshots/product-tour/studio-deck.png" alt="Aperçu d’une présentation de plusieurs diapositives dans le Studio OpenDesign" /><br/>
+<img src="../../docs/screenshots/product-tour/studio-deck.png" alt="Aperçu d’une présentation de plusieurs diapositives dans le Studio CapyDesign" /><br/>
 <sub><b>Présentation</b> — Créez des présentations de plusieurs diapositives, examinez les miniatures et les notes du présentateur, puis exportez lorsqu'elles sont prêtes.</sub>
 </td>
 </tr>
 <tr>
 <td width="50%" valign="top">
-<img src="../../docs/screenshots/product-tour/studio-mobile-app.png" alt="Aperçu d’un artefact d’application mobile dans le Studio OpenDesign" /><br/>
+<img src="../../docs/screenshots/product-tour/studio-mobile-app.png" alt="Aperçu d’un artefact d’application mobile dans le Studio CapyDesign" /><br/>
 <sub><b>Application mobile</b> — Générez et peaufinez des interfaces mobiles dans un aperçu d'appareil, avec la conversation, les fichiers de sortie et les prochaines étapes à côté.</sub>
 </td>
 <td width="50%" valign="top">
-<img src="../../docs/screenshots/product-tour/studio-image.png" alt="Aperçu d’une image générée dans le Studio OpenDesign" /><br/>
+<img src="../../docs/screenshots/product-tour/studio-image.png" alt="Aperçu d’une image générée dans le Studio CapyDesign" /><br/>
 <sub><b>Image</b> — Générez des ressources visuelles depuis la conversation du projet, prévisualisez le résultat en taille réelle, puis téléchargez-le ou ouvrez-le.</sub>
 </td>
 </tr>
 <tr>
 <td width="50%" valign="top">
-<img src="../../docs/screenshots/product-tour/studio-document.png" alt="Aperçu d’un document multipage dans le Studio OpenDesign" /><br/>
+<img src="../../docs/screenshots/product-tour/studio-document.png" alt="Aperçu d’un document multipage dans le Studio CapyDesign" /><br/>
 <sub><b>Document</b> — Créez des guides multipages et des documents éditoriaux soignés, vérifiez la mise en page rendue, puis exportez ou partagez.</sub>
 </td>
 <td width="50%" valign="top">
-<img src="../../docs/screenshots/product-tour/studio-hyperframe.png" alt="Aperçu d’une animation HyperFrame dans le Studio OpenDesign" /><br/>
+<img src="../../docs/screenshots/product-tour/studio-hyperframe.png" alt="Aperçu d’une animation HyperFrame dans le Studio CapyDesign" /><br/>
 <sub><b>HyperFrame</b> — Créez des motion graphics pilotés par le code, prévisualisez l'animation dans Studio et exportez la vidéo finale.</sub>
 </td>
 </tr>
@@ -88,7 +88,7 @@ Dans le Studio d'un projet, la conversation, les fichiers générés et la prév
 
 ## Compatibilité des plateformes
 
-> OpenDesign se connecte aux principaux agents de code de deux façons : par des **skills, un CLI et un serveur MCP** pour les agents qui utilisent OD, et par des **adaptateurs de runtime natifs** pour les agents qu'OD lance directement. DeepSeek Harness est un runtime natif à part entière via la CLI officielle `dsh`, avec streaming structuré, découverte des modèles, annulation et reprise de session.
+> CapyDesign se connecte aux principaux agents de code de deux façons : par des **skills, un CLI et un serveur MCP** pour les agents qui utilisent CapyDesign, et par des **adaptateurs de runtime natifs** pour les agents qu'CapyDesign lance directement. DeepSeek Harness est un runtime natif à part entière via la CLI officielle `dsh`, avec streaming structuré, découverte des modèles, annulation et reprise de session.
 
 | Agent de code / plateforme &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Statut &nbsp;&nbsp; | Configuration rapide &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
@@ -112,7 +112,7 @@ Dans le Studio d'un projet, la conversation, les fichiers générés et la prév
 | [Mistral Vibe CLI](https://github.com/mistralai/mistral-vibe) | ✅ Pris en charge | `capt mcp install vibe` |
 | [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Pris en charge | `capt mcp install hermes` |
 
-Pour DeepSeek Harness, installez d'abord la CLI officielle `dsh`, puis sélectionnez-la dans OpenDesign ou lancez `capt agent setup deepseek-harness` pour installer ou réparer le composant de connexion d'OD. Pour les intégrations MCP : `capt mcp install <agent> --print` affiche un aperçu sans modification · `--uninstall` supprime l'intégration · `capt mcp install --help` donne la liste complète.
+Pour DeepSeek Harness, installez d'abord la CLI officielle `dsh`, puis sélectionnez-la dans CapyDesign ou lancez `capt agent setup deepseek-harness` pour installer ou réparer le composant de connexion d'CapyDesign. Pour les intégrations MCP : `capt mcp install <agent> --print` affiche un aperçu sans modification · `--uninstall` supprime l'intégration · `capt mcp install --help` donne la liste complète.
 
 ¹ La configuration automatique du serveur MCP pour Claude Desktop est actuellement prise en charge uniquement sur macOS et Windows.
 
@@ -203,7 +203,7 @@ Chaque présentation s'exporte en **HTML** (fichier unique, ressources intégré
 
 ### 5 · Vidéo et HyperFrames — motion graphics agent-native
 
-**[HyperFrames][hyperframes]** est le framework vidéo open source et agent-native de HeyGen, intégré comme citoyen de première classe dans OpenDesign. L'agent écrit du HTML + CSS + GSAP, et HyperFrames le rend en un MP4 déterministe via Chrome headless + FFmpeg. Associez-le à **Seedance 2.0** pour du t2v / i2v cinématographique, à **Veo 3 / Sora 2 / Kling 2** pour des variantes de modèles routées, et à **Suno v5 / Lyria 2** pour la couche audio.
+**[HyperFrames][hyperframes]** est le framework vidéo open source et agent-native de HeyGen, intégré comme citoyen de première classe dans CapyDesign. L'agent écrit du HTML + CSS + GSAP, et HyperFrames le rend en un MP4 déterministe via Chrome headless + FFmpeg. Associez-le à **Seedance 2.0** pour du t2v / i2v cinématographique, à **Veo 3 / Sora 2 / Kling 2** pour des variantes de modèles routées, et à **Suno v5 / Lyria 2** pour la couche audio.
 
 <table>
 <tr>
@@ -220,17 +220,17 @@ Chaque présentation s'exporte en **HTML** (fichier unique, ressources intégré
 </tr>
 </table>
 
-11 modèles HyperFrames + 39 prompts Seedance sont fournis avec le dépôt. Vignettes du catalogue © HeyGen ; le framework est sous Apache-2.0. Le workflow de rendu spécifique à OD (cache de composition, contournement sandbox-exec, MP4-en-chip) est détaillé dans [`design-templates/hyperframes/`](../../design-templates/hyperframes/).
+11 modèles HyperFrames + 39 prompts Seedance sont fournis avec le dépôt. Vignettes du catalogue © HeyGen ; le framework est sous Apache-2.0. Le workflow de rendu spécifique à CapyDesign (cache de composition, contournement sandbox-exec, MP4-en-chip) est détaillé dans [`design-templates/hyperframes/`](../../design-templates/hyperframes/).
 
 [hyperframes]: https://github.com/heygen-com/hyperframes
 
 ---
 
-## Pourquoi OpenDesign
+## Pourquoi CapyDesign
 
 > **En avril 2026, Anthropic a publié Claude Design — la première fois qu'un LLM cessait d'écrire de la prose pour livrer directement des artefacts de design.** C'est devenu viral. Mais c'est resté propriétaire, payant uniquement, dans le cloud uniquement, verrouillé sur le modèle d'Anthropic, les skills d'Anthropic, la surface d'Anthropic. Pas de paiement à l'usage, pas d'auto-hébergement, pas de déploiement Vercel, pas de remplacement par votre propre agent.
 
-OpenDesign (OD) est l'alternative open source. La même boucle, le même modèle mental orienté artefact, sans aucun verrouillage :
+CapyDesign (CapyDesign) est l'alternative open source. La même boucle, le même modèle mental orienté artefact, sans aucun verrouillage :
 
 - 🤖 **Agent-native, agnostique au modèle.** Nous ne livrons pas d'agent. Les `claude` / `codex` / `cursor-agent` / `copilot` / `hermes` / `kimi` déjà présents dans votre `PATH` sont le moteur de design. Changez-en d'un seul clic.
 - 🧠 **Qualité professionnelle par défaut.** Chaque rendu lit le `DESIGN.md` du package actif comme contrat de marque central. Le dépôt fournit 151 packages de systèmes de design ; les packages historiques peuvent ne contenir que `DESIGN.md`, tandis que les plus récents peuvent ajouter `manifest.json`, `tokens.css`, des composants, des assets et leur provenance. Déposez un dossier, le sélecteur le trouve.
@@ -241,7 +241,7 @@ OpenDesign (OD) est l'alternative open source. La même boucle, le même modèle
 
 ### Comparaison
 
-| | Claude Design | Figma | Lovable / v0 / Bolt | **OpenDesign** |
+| | Claude Design | Figma | Lovable / v0 / Bolt | **CapyDesign** |
 |---|---|---|---|---|
 | Open source | ❌ | ❌ | ❌ | **✅ Apache-2.0** |
 | Auto-hébergement / bureau | ❌ | ❌ | ❌ | **✅ macOS + Windows + Docker** |
@@ -258,13 +258,13 @@ OpenDesign (OD) est l'alternative open source. La même boucle, le même modèle
 
 ### 🖥️ Téléchargez l'application de bureau (recommandé — zéro configuration)
 
-Le moyen le plus rapide d'utiliser OpenDesign. Pas de Node, pas de pnpm, pas de clone.
+Le moyen le plus rapide d'utiliser CapyDesign. Pas de Node, pas de pnpm, pas de clone.
 
 Après l'installation : l'application détecte automatiquement chaque CLI d'agent de code présent dans votre `PATH`, charge plus de 100 skills fonctionnels, le catalogue séparé de modèles de rendu et 151 packages de systèmes de design, et vous permet de saisir un brief dans la vue d'entrée.
 
 ### 🤖 Installez-le dans votre agent de code (sans interface)
 
-Vous pouvez utiliser OpenDesign sans jamais ouvrir l'interface graphique — appelez-le en tant que skill, plugin ou serveur MCP à l'intérieur de Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi, et bien d'autres.
+Vous pouvez utiliser CapyDesign sans jamais ouvrir l'interface graphique — appelez-le en tant que skill, plugin ou serveur MCP à l'intérieur de Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi, et bien d'autres.
 
 Si vous avez installé l'application macOS via le DMG ou le cask Homebrew, votre shell peut encore associer `capt` à l'utilitaire système de représentation octale `/usr/bin/od`. Dans ce cas, ouvrez **Settings → MCP server** dans l'application et copiez l'extrait correspondant à votre client : il utilise des chemins absolus et ne dépend pas de la commande `capt` seule.
 
@@ -277,9 +277,9 @@ capt mcp install <agent>
 
 ```
 
-`install.sh` est un simple script d'enveloppe pour `capt mcp install` : l'URL hébergée renvoie ainsi un script shell plutôt que la page d'accueil HTML. Le script s'arrête immédiatement si le shell trouve un exécutable `capt` qui n'appartient pas à OpenDesign.
+`install.sh` est un simple script d'enveloppe pour `capt mcp install` : l'URL hébergée renvoie ainsi un script shell plutôt que la page d'accueil HTML. Le script s'arrête immédiatement si le shell trouve un exécutable `capt` qui n'appartient pas à CapyDesign.
 
-> **Utilisateurs de macOS / WSL2 :** la commande système `/usr/bin/od` peut masquer celle d'OpenDesign. Dans l'application de bureau, privilégiez l'extrait de **Settings → MCP server** ; sous WSL2, commencez par le [guide de configuration WSL2](../wsl-setup.md).
+> **Utilisateurs de macOS / WSL2 :** la commande système `/usr/bin/od` peut masquer celle d'CapyDesign. Dans l'application de bureau, privilégiez l'extrait de **Settings → MCP server** ; sous WSL2, commencez par le [guide de configuration WSL2](../wsl-setup.md).
 
 Ensuite, à l'intérieur de l'agent :
 
@@ -287,7 +287,7 @@ Ensuite, à l'intérieur de l'agent :
 > Use open-design to generate a landing page with the Linear design system
 ```
 
-Dans une exécution CLI locale avec système de fichiers, l'agent compose le skill fonctionnel ou le modèle choisi avec votre `DESIGN.md`, écrit les fichiers canoniques et OpenDesign les prévisualise. Une exécution BYOK/API sans outils de fichiers renvoie un unique bloc `<artifact>` complet.
+Dans une exécution CLI locale avec système de fichiers, l'agent compose le skill fonctionnel ou le modèle choisi avec votre `DESIGN.md`, écrit les fichiers canoniques et CapyDesign les prévisualise. Une exécution BYOK/API sans outils de fichiers renvoie un unique bloc `<artifact>` complet.
 
 ### 🐳 Exécutez avec Docker
 
@@ -306,7 +306,7 @@ Si le navigateur demande des identifiants, utilisez `open-design` comme nom d'ut
 
 [![Deploy on Sealos](https://sealos.io/Deploy-on-Sealos.svg)](https://sealos.io/products/app-store/open-design/)
 
-Le modèle Sealos App Store exécute l'image Docker publiée d'OpenDesign avec un stockage persistant pour l'espace de travail et une Basic Auth sur le proxy public. Pour les déploiements Docker publics ou partagés personnalisés, suivez les indications de proxy inverse et `OPEN_DESIGN_ALLOWED_ORIGINS` dans [`deploy/README.md`](../../deploy/README.md#local-compose).
+Le modèle Sealos App Store exécute l'image Docker publiée d'CapyDesign avec un stockage persistant pour l'espace de travail et une Basic Auth sur le proxy public. Pour les déploiements Docker publics ou partagés personnalisés, suivez les indications de proxy inverse et `OPEN_DESIGN_ALLOWED_ORIGINS` dans [`deploy/README.md`](../../deploy/README.md#local-compose).
 
 ### 🧑‍💻 Exécutez depuis les sources
 
@@ -329,13 +329,13 @@ Node `~24`, pnpm `10.33.x`. Sous WSL2, consultez le [guide WSL2](../wsl-setup.md
 2. **Un designer (ou l'agent) verrouille la direction.** Pas de marque ? Choisissez parmi 5 directions sélectionnées. Vous avez une marque ? Déposez une capture d'écran / une URL → l'agent se connecte à GitHub, importe Figma, et codifie un `DESIGN.md` réutilisable.
 3. **L'agent crée le premier livrable.** Le plugin, le skill fonctionnel ou le modèle de design et le `DESIGN.md` sont associés. Les exécutions CLI avec système de fichiers écrivent les fichiers canoniques du projet et l'aperçu suit leurs modifications ; les exécutions BYOK/API sans outils de fichiers renvoient un bloc `<artifact>` complet.
 4. **Transmettez à l'ingénierie.** L'artefact est du véritable HTML/CSS — déposez-le dans Cursor, Codex ou Claude Code pour continuer à construire en code. Ou exportez en PPTX / PDF / MP4 directement vers le marketing.
-5. **OpenDesign devient plus intelligent à mesure que vous l'utilisez.** Vos captures d'écran, polices, palettes et artefacts confirmés s'accumulent comme valeurs par défaut pour la session suivante. Moins de retouches, moins de dérive.
+5. **CapyDesign devient plus intelligent à mesure que vous l'utilisez.** Vos captures d'écran, polices, palettes et artefacts confirmés s'accumulent comme valeurs par défaut pour la session suivante. Moins de retouches, moins de dérive.
 
 ---
 
-## Utilisez OpenDesign depuis votre agent de code
+## Utilisez CapyDesign depuis votre agent de code
 
-OpenDesign livre un **serveur MCP en stdio** et des **scripts d'installation** par agent. Tout agent compatible MCP dans un autre dépôt peut lire directement des fichiers de vos projets OpenDesign locaux — tokens CSS, composants JSX, HTML d'entrée — comme une API structurée interrogeable par nom. L'agent voit toujours le fichier en direct, jamais un export périmé.
+CapyDesign livre un **serveur MCP en stdio** et des **scripts d'installation** par agent. Tout agent compatible MCP dans un autre dépôt peut lire directement des fichiers de vos projets CapyDesign locaux — tokens CSS, composants JSX, HTML d'entrée — comme une API structurée interrogeable par nom. L'agent voit toujours le fichier en direct, jamais un export périmé.
 
 ```bash
 # One-line install (16+ CLIs supported):
@@ -471,7 +471,7 @@ Chaque commande prend en charge `--json`, vous pouvez donc la canaliser via `jq`
 
 ### Construire un plugin
 
-Un plugin OpenDesign exige `open-design.json` et le payload de son type. Les skills et scénarios incluent aussi `SKILL.md` ; les autres types utilisent leur payload dédié :
+Un plugin CapyDesign exige `open-design.json` et le payload de son type. Les skills et scénarios incluent aussi `SKILL.md` ; les autres types utilisent leur payload dédié :
 
 ```
 my-plugin/
@@ -489,15 +489,15 @@ Champs principaux de `open-design.json` : `specVersion` (actuellement `1.0.0`), 
 ```bash
 capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
 capt plugin validate ./my-plugin                          # check manifest / file layout
-pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
+pnpm guard && pnpm --filter @capydesign/plugin-runtime typecheck
 ```
 
 Ensemble complet des champs et contrat d'exécution → [`plugins/spec/SPEC.md`](../../plugins/spec/SPEC.md) ; développer un plugin avec un agent de code → [`plugins/spec/AGENT-DEVELOPMENT.md`](../../plugins/spec/AGENT-DEVELOPMENT.md) ; modèles minimaux à copier-coller → [`plugins/spec/examples/`](../../plugins/spec/examples/).
 
 ### Contribuer un plugin
 
-1. Déposez le dossier du plugin dans [`plugins/community/`](../../plugins/community/) (plugins tiers), ou — pour le livrer empaqueté avec OpenDesign — dans le tier correspondant de [`plugins/_official/`](../../plugins/_official/).
-2. Passez la validation : `capt plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
+1. Déposez le dossier du plugin dans [`plugins/community/`](../../plugins/community/) (plugins tiers), ou — pour le livrer empaqueté avec CapyDesign — dans le tier correspondant de [`plugins/_official/`](../../plugins/_official/).
+2. Passez la validation : `capt plugin validate`, `pnpm guard`, `pnpm --filter @capydesign/plugin-runtime typecheck`.
 3. Remplissez la PR à l'aide du modèle dans [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) (ID, version, voie, mode, capacités, exemples de déclencheurs ; joignez une capture d'écran / un aperçu pour les plugins visuels).
 4. Pour publier sur un registre externe (skills.sh / ClawHub / GitHub autonome) → [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -560,7 +560,7 @@ Architecture complète → [`docs/architecture.md`](../../docs/architecture.md).
 - [x] Protocole sidecar + bureau Electron + automatisation IPC
 - [x] API de lint d'artefacts + portail d'auto-critique en 5 dimensions avant émission
 - [x] **0.8.0** — infrastructure de marketplace de plugins (261 plugins officiels, spec de manifeste, scripts d'installation par agent)
-- [x] **0.9.0** — OpenDesign Cloud (service de modèles officiel intégré à l'application : zéro configuration, connexion en un clic)
+- [x] **0.9.0** — OpenDesign Cloud (service de modèles officiel intégré à l'application : zéro configuration, connexion en un clic) — removed in CapyDesign, this fork is local-only
 - [x] **0.10.0** — le workspace de design tout-en-un : toute la boucle créative dans une fenêtre (références → matière → édition interactive → animation → transmission)
 - [x] **0.11.0** — _The Bazaar_ : une marketplace communautaire ouverte de plugins et de systèmes de design que chacun peut utiliser et enrichir
 - [x] **0.12.0** — _Brand-backed Design System_ : transformez votre marque existante en un système `DESIGN.md` réutilisable et portable
@@ -590,7 +590,7 @@ Les labels [`good-first-issue`](https://github.com/unfoldingdimensions/open-desi
 
 ## Contribuer
 
-OpenDesign continue d'avancer parce que des contributeurs — designers, ingénieurs, auteurs de prompts — continuent de se présenter. Beaucoup des skills, systèmes de design et plugins les plus utilisés ont été écrits par des personnes extérieures à l'équipe principale.
+CapyDesign continue d'avancer parce que des contributeurs — designers, ingénieurs, auteurs de prompts — continuent de se présenter. Beaucoup des skills, systèmes de design et plugins les plus utilisés ont été écrits par des personnes extérieures à l'équipe principale.
 
 ### 🎯 Par où commencer (effet de levier maximal, changement minimal)
 
@@ -620,7 +620,7 @@ gh issue develop <number>   # create a branch and worktree
 
 # 3. Make the change, run the checks
 pnpm guard && pnpm typecheck
-pnpm --filter @open-design/<package> test
+pnpm --filter @capydesign/<package> test
 
 # 4. Open the PR
 gh pr create --fill
@@ -628,7 +628,7 @@ gh pr create --fill
 
 Flux complet de contribution adapté aux agents, style de code et exigences pour les PR → [English](../../CONTRIBUTING.md) ([Deutsch](CONTRIBUTING.de.md) · [Français](CONTRIBUTING.fr.md) · [简体中文](CONTRIBUTING.zh-CN.md) · [日本語](CONTRIBUTING.ja-JP.md) · [한국어](CONTRIBUTING.ko.md) · [Português](CONTRIBUTING.pt-BR.md) · [ภาษาไทย](CONTRIBUTING.th.md)).
 
-### 🏅 Programme OpenDesign Fellow
+### 🏅 Programme CapyDesign Fellow
 
 ---
 
@@ -669,7 +669,7 @@ Règles des mainteneurs, critères de promotion et protocole de départ → [`MA
 Merci à toutes les personnes qui ont pris part — code, documentation, retours, une issue pertinente, un nouveau skill, un nouveau système de design.
 
 <a href="https://github.com/unfoldingdimensions/open-design/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="Contributeurs d'OpenDesign" />
+  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="Contributeurs d'CapyDesign" />
 </a>
 
 ---
@@ -698,7 +698,7 @@ Si cela vous a fait gagner trente minutes, mettez-lui une ★. Les étoiles ne p
 | [`multica-ai/multica`](https://github.com/multica-ai/multica) | L'architecture daemon + adaptateur — détection d'agents par scan du PATH, daemon local comme unique processus privilégié. |
 | [`VoltAgent/awesome-design-md`](https://github.com/VoltAgent/awesome-design-md) | Source historique du schéma `DESIGN.md` original en 9 sections et de 70 systèmes dérivés de l'upstream ; les packages actuels peuvent étendre cette base. |
 | [`bergside/awesome-design-skills`](https://github.com/bergside/awesome-design-skills) | Source des 57 skills de design ajoutés sous `design-systems/`. |
-| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | Le framework de motion graphics HTML→MP4, intégré comme `hyperframes-html` de première classe dans OpenDesign. |
+| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | Le framework de motion graphics HTML→MP4, intégré comme `hyperframes-html` de première classe dans CapyDesign. |
 | [Claude Code skills][skill] | La convention `SKILL.md` que nous adoptons telle quelle. |
 
 Provenance détaillée → [`docs/references.md`](../../docs/references.md).

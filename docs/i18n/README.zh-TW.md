@@ -1,4 +1,4 @@
-<h1 align="center">OpenDesign：開源的 Claude Design 替代方案</h1>
+<h1 align="center">CapyDesign：開源的 Claude Design 替代方案</h1>
 
 <p align="center">
   <a href="https://github.com/unfoldingdimensions/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/unfoldingdimensions/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
@@ -10,11 +10,11 @@
 
 ---
 
-## 什麼是 OpenDesign
+## 什麼是 CapyDesign
 
 🎨 **本地優先、開源的 Claude Design 替代方案。** &nbsp;🖥️ **macOS 與 Windows 的原生桌面應用程式。** &nbsp;⚡ **100+ 個功能 skills + 獨立渲染範本型錄** · ✨ **151 套品牌級設計系統套件** · 📦 **277 個開箱即用的外掛。** &nbsp;🖼️ 可生成 **網頁 · 桌面 · 行動裝置原型**、**即時儀表板／artifacts**、**簡報**、**圖片**、**影片**，外加 **HyperFrames** 動態圖像。🔒 沙箱化 iframe 預覽 · 支援 HTML / PDF / PPTX / MP4 匯出。 &nbsp;🤖 **可在 Claude Code · OpenClaw · Codex · Cursor · OpenCode · Qwen · Copilot · Hermes · Kimi · Antigravity 等 25 個不同的本地 CLI 可執行檔上執行**，或透過 BYOK 接上任何相容 OpenAI 的端點。
 
-OpenDesign 是這樣誕生的：當 Anthropic 隨 Claude Design 推出的那套 **agent 原生** 迴圈——釐清需求、鎖定方向、串流產出 artifact、評析、交付——不再封閉，而是化為一個由 **功能 skills、渲染設計範本、設計系統與外掛組成的檔案系統**，讓你筆電上既有的編碼 agent 都能讀取、寫入、再混搭。你的 CLI 成為設計引擎，你的筆電成為工作室，而你團隊的 `DESIGN.md` 則成為品牌契約。
+CapyDesign 是這樣誕生的：當 Anthropic 隨 Claude Design 推出的那套 **agent 原生** 迴圈——釐清需求、鎖定方向、串流產出 artifact、評析、交付——不再封閉，而是化為一個由 **功能 skills、渲染設計範本、設計系統與外掛組成的檔案系統**，讓你筆電上既有的編碼 agent 都能讀取、寫入、再混搭。你的 CLI 成為設計引擎，你的筆電成為工作室，而你團隊的 `DESIGN.md` 則成為品牌契約。
 
 它同時也是 **agent 時代的 Figma 替代方案**——不必在畫布上推動像素，而是以真實 CSS、真實字型、真實元件交付單頁 artifact，直接匯出成 HTML / PDF / PPTX / MP4——這些產出早已由你的設計系統塑形，也早已能在你每天使用的 agent 中執行。
 
@@ -22,7 +22,7 @@ OpenDesign 是這樣誕生的：當 Anthropic 隨 Claude Design 推出的那套 
 
 ## 產品導覽
 
-快速了解 OpenDesign 的核心工作流程：從 **Home** 輸入需求，在 **Plugins** 中探索可重複使用的技能，並把品牌參考資料沉澱為 **Design System**；進入任一專案的 **Studio** 後，即可在一處建立並迭代原型、簡報、行動應用程式、圖片、文件與 HyperFrame。
+快速了解 CapyDesign 的核心工作流程：從 **Home** 輸入需求，在 **Plugins** 中探索可重複使用的技能，並把品牌參考資料沉澱為 **Design System**；進入任一專案的 **Studio** 後，即可在一處建立並迭代原型、簡報、行動應用程式、圖片、文件與 HyperFrame。
 
 ### 核心頁面
 
@@ -88,7 +88,7 @@ OpenDesign 是這樣誕生的：當 Anthropic 隨 Claude Design 推出的那套 
 
 ## 平台相容性
 
-> OpenDesign 以 **skills、CLI 與 MCP server** 的形式發行，主流編碼 agent 都能原生使用。安裝 OD 後，只要一句 `capt mcp install <agent>` 就能把 MCP server 接進該 agent 的設定，你便能在任何 agent 內呼叫同一組工具。
+> CapyDesign 以 **skills、CLI 與 MCP server** 的形式發行，主流編碼 agent 都能原生使用。安裝 CapyDesign 後，只要一句 `capt mcp install <agent>` 就能把 MCP server 接進該 agent 的設定，你便能在任何 agent 內呼叫同一組工具。
 
 | 編碼 agent／平台 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 狀態 &nbsp;&nbsp; | 一行指令安裝 MCP server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
@@ -199,7 +199,7 @@ Runtime 定義位於 [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/ru
 
 ### 5 · 影片與 HyperFrames——agent 原生的動態圖像
 
-**[HyperFrames][hyperframes]** 是 HeyGen 開源、agent 原生的影片框架，在 OpenDesign 中以一等公民的身分整合。agent 撰寫 HTML + CSS + GSAP，HyperFrames 透過無頭 Chrome + FFmpeg 將其渲染成一支確定性的 MP4。搭配 **Seedance 2.0** 可做電影感的 t2v / i2v，**Veo 3 / Sora 2 / Kling 2** 提供路由後的模型變體，**Suno v5 / Lyria 2** 則負責音訊層。
+**[HyperFrames][hyperframes]** 是 HeyGen 開源、agent 原生的影片框架，在 CapyDesign 中以一等公民的身分整合。agent 撰寫 HTML + CSS + GSAP，HyperFrames 透過無頭 Chrome + FFmpeg 將其渲染成一支確定性的 MP4。搭配 **Seedance 2.0** 可做電影感的 t2v / i2v，**Veo 3 / Sora 2 / Kling 2** 提供路由後的模型變體，**Suno v5 / Lyria 2** 則負責音訊層。
 
 <table>
 <tr>
@@ -216,17 +216,17 @@ Runtime 定義位於 [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/ru
 </tr>
 </table>
 
-儲存庫隨附 11 套 HyperFrames 範本 + 39 組 Seedance prompt。型錄縮圖版權 © HeyGen；框架本身採 Apache-2.0。OD 專屬的渲染工作流程（composition cache、sandbox-exec 變通方案、MP4-as-chip）詳述於 [`design-templates/hyperframes/`](../../design-templates/hyperframes/)。
+儲存庫隨附 11 套 HyperFrames 範本 + 39 組 Seedance prompt。型錄縮圖版權 © HeyGen；框架本身採 Apache-2.0。CapyDesign 專屬的渲染工作流程（composition cache、sandbox-exec 變通方案、MP4-as-chip）詳述於 [`design-templates/hyperframes/`](../../design-templates/hyperframes/)。
 
 [hyperframes]: https://github.com/heygen-com/hyperframes
 
 ---
 
-## 為什麼選 OpenDesign
+## 為什麼選 CapyDesign
 
 > **2026 年 4 月，Anthropic 發表了 Claude Design——這是 LLM 首次不再撰寫散文，而是直接交付設計 artifact。** 它爆紅。但它始終封閉原始碼、僅限付費、僅限雲端，並被綁死在 Anthropic 的模型、Anthropic 的 skills、Anthropic 的介面上。無法結帳、無法自架、無法部署到 Vercel、無法換上你自己的 agent。
 
-OpenDesign（OD）就是那個開源的替代方案。同樣的迴圈、同樣以 artifact 為先的思維模式，卻沒有任何鎖定：
+CapyDesign（CapyDesign）就是那個開源的替代方案。同樣的迴圈、同樣以 artifact 為先的思維模式，卻沒有任何鎖定：
 
 - 🤖 **agent 原生、模型無關。** 我們不附帶 agent。你 `PATH` 上既有的 `claude` / `codex` / `cursor-agent` / `copilot` / `hermes` / `kimi` 就是設計引擎。一鍵即可切換。
 - 🧠 **預設即品牌級。** 每次渲染都把目前套件的 `DESIGN.md` 當作核心品牌契約讀取。儲存庫隨附 151 套設計系統套件；舊套件可以只含 `DESIGN.md`，新套件還可加入 `manifest.json`、`tokens.css`、元件、資產與來源資訊。放進資料夾，選擇器就會找到它。
@@ -237,7 +237,7 @@ OpenDesign（OD）就是那個開源的替代方案。同樣的迴圈、同樣�
 
 ### 比較
 
-| | Claude Design | Figma | Lovable / v0 / Bolt | **OpenDesign** |
+| | Claude Design | Figma | Lovable / v0 / Bolt | **CapyDesign** |
 |---|---|---|---|---|
 | 開源 | ❌ | ❌ | ❌ | **✅ Apache-2.0** |
 | 自架／桌面 | ❌ | ❌ | ❌ | **✅ macOS + Windows + Docker** |
@@ -254,13 +254,13 @@ OpenDesign（OD）就是那個開源的替代方案。同樣的迴圈、同樣�
 
 ### 🖥️ 下載桌面應用程式（推薦——零設定）
 
-使用 OpenDesign 最快的方式。無須 Node、無須 pnpm、無須 clone。
+使用 CapyDesign 最快的方式。無須 Node、無須 pnpm、無須 clone。
 
 安裝後：應用程式會自動偵測你 `PATH` 上的每一個編碼 agent CLI、載入 100+ 個功能 skills、獨立渲染範本型錄與 151 套設計系統套件，並讓你在入口視圖中輸入需求。
 
 ### 🤖 安裝進你的編碼 agent（無 UI）
 
-你完全不必打開 GUI 也能使用 OpenDesign——在 Claude Code、Codex、Cursor、Copilot、OpenClaw、Antigravity、Hermes、Kimi 等等之中，把它當成 skill、外掛或 MCP server 來呼叫。
+你完全不必打開 GUI 也能使用 CapyDesign——在 Claude Code、Codex、Cursor、Copilot、OpenClaw、Antigravity、Hermes、Kimi 等等之中，把它當成 skill、外掛或 MCP server 來呼叫。
 
 ```bash
 # One-line install into the agent you're using:
@@ -270,11 +270,11 @@ capt mcp install <agent>
 
 ```
 
-`install.sh` 是包在 `capt mcp install` 外的輕量 shell wrapper；它的用途是讓 hosted URL 回傳 shell 指令、而非 landing page 的 HTML fallback，並在你的 shell 解析到非 OpenDesign 的 `capt` 執行檔時快速失敗。
+`install.sh` 是包在 `capt mcp install` 外的輕量 shell wrapper；它的用途是讓 hosted URL 回傳 shell 指令、而非 landing page 的 HTML fallback，並在你的 shell 解析到非 CapyDesign 的 `capt` 執行檔時快速失敗。
 
 > **WSL2 使用者：** 若你的編碼 agent CLI 跑在 WSL2 內，請先依照
 > [`WSL2 設定指南`](../../docs/wsl-setup.md) 操作。Linux 的 `/usr/bin/od` 可能會
-> 遮蔽 OpenDesign 的 `capt` 指令。
+> 遮蔽 CapyDesign 的 `capt` 指令。
 
 接著，在 agent 內：
 
@@ -282,7 +282,7 @@ capt mcp install <agent>
 > Use open-design to generate a landing page with the Linear design system
 ```
 
-在具備檔案系統的本地 CLI 執行中，agent 會把選定的功能 skill 或設計範本與 `DESIGN.md` 組合、寫入標準專案檔案，OpenDesign 直接預覽這些檔案。沒有檔案系統工具的 BYOK／純 API 執行則回傳一個完整的 `<artifact>` 區塊。
+在具備檔案系統的本地 CLI 執行中，agent 會把選定的功能 skill 或設計範本與 `DESIGN.md` 組合、寫入標準專案檔案，CapyDesign 直接預覽這些檔案。沒有檔案系統工具的 BYOK／純 API 執行則回傳一個完整的 `<artifact>` 區塊。
 
 ### 🐳 以 Docker 執行
 
@@ -301,7 +301,7 @@ docker compose up -d
 
 [![Deploy on Sealos](https://sealos.io/Deploy-on-Sealos.svg)](https://sealos.io/products/app-store/open-design/)
 
-Sealos App Store 範本會執行已發布的 OpenDesign Docker 映像，提供持久化工作區儲存，並在公開代理層啟用 Basic Auth。自訂公開或共享 Docker 部署請遵循 [`deploy/README.md`](../../deploy/README.md#local-compose) 中的反向代理與 `OPEN_DESIGN_ALLOWED_ORIGINS` 指引。
+Sealos App Store 範本會執行已發布的 CapyDesign Docker 映像，提供持久化工作區儲存，並在公開代理層啟用 Basic Auth。自訂公開或共享 Docker 部署請遵循 [`deploy/README.md`](../../deploy/README.md#local-compose) 中的反向代理與 `OPEN_DESIGN_ALLOWED_ORIGINS` 指引。
 
 ### 🧑‍💻 從原始碼執行
 
@@ -324,13 +324,13 @@ Node `~24`、pnpm `10.33.x`。WSL2 使用者請參見 [`docs/wsl-setup.md`](../.
 2. **設計師（或 agent）鎖定方向。** 沒有品牌？從 5 個精選方向中挑一個。已有品牌？放進一張截圖／URL → agent 會連接 GitHub、匯入 Figma，並編寫出一份可重複使用的 `DESIGN.md`。
 3. **agent 建立第一份交付物。** 外掛 + 功能 skill 或設計範本 + `DESIGN.md` 都已綁定。具備檔案系統的 CLI 執行會寫入標準專案檔案，預覽隨檔案更新；沒有檔案工具的 BYOK／純 API 執行則回傳一個完整的 `<artifact>` 區塊。
 4. **交接給工程團隊。** 這份 artifact 是真實的 HTML/CSS——把它丟進 Cursor、Codex 或 Claude Code，就能以程式碼繼續開發。或直接匯出 PPTX / PDF / MP4 給行銷團隊。
-5. **OpenDesign 會隨著你的使用愈來愈聰明。** 你的截圖、字型、色票與確認過的 artifact 會累積成下一次工作階段的預設值。更少返工、更少偏移。
+5. **CapyDesign 會隨著你的使用愈來愈聰明。** 你的截圖、字型、色票與確認過的 artifact 會累積成下一次工作階段的預設值。更少返工、更少偏移。
 
 ---
 
-## 從你的編碼 agent 使用 OpenDesign
+## 從你的編碼 agent 使用 CapyDesign
 
-OpenDesign 隨附一個 **stdio MCP server** 與各 agent 專屬的 **安裝腳本**。任何在其他儲存庫中、相容 MCP 的 agent，都能直接讀取你本地 OpenDesign 專案的檔案——tokens CSS、JSX 元件、入口 HTML——當成一個可按名稱查詢的結構化 API。agent 看到的永遠是即時檔案，而非過期的匯出檔。
+CapyDesign 隨附一個 **stdio MCP server** 與各 agent 專屬的 **安裝腳本**。任何在其他儲存庫中、相容 MCP 的 agent，都能直接讀取你本地 CapyDesign 專案的檔案——tokens CSS、JSX 元件、入口 HTML——當成一個可按名稱查詢的結構化 API。agent 看到的永遠是即時檔案，而非過期的匯出檔。
 
 ```bash
 # One-line install (16+ CLIs supported):
@@ -462,7 +462,7 @@ capt plugin uninstall od-default       # uninstall
 
 ### 建立外掛
 
-OpenDesign 外掛必須包含 `open-design.json` 以及其類型所需的 payload。工作流程 skill 或 scenario 也包含 `SKILL.md`；僅 manifest 的範本與設計系統項目則使用各自的 payload：
+CapyDesign 外掛必須包含 `open-design.json` 以及其類型所需的 payload。工作流程 skill 或 scenario 也包含 `SKILL.md`；僅 manifest 的範本與設計系統項目則使用各自的 payload：
 
 ```
 my-plugin/
@@ -480,15 +480,15 @@ my-plugin/
 ```bash
 capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
 capt plugin validate ./my-plugin                          # check manifest / file layout
-pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
+pnpm guard && pnpm --filter @capydesign/plugin-runtime typecheck
 ```
 
 完整欄位集與執行期契約 → [`plugins/spec/SPEC.md`](../../plugins/spec/SPEC.md)；用編碼 agent 開發外掛 → [`plugins/spec/AGENT-DEVELOPMENT.md`](../../plugins/spec/AGENT-DEVELOPMENT.md)；可複製貼上的最小範本 → [`plugins/spec/examples/`](../../plugins/spec/examples/)。
 
 ### 貢獻一個外掛
 
-1. 把外掛資料夾放進 [`plugins/community/`](../../plugins/community/)（第三方外掛），或——若要讓它隨 OpenDesign 一同附帶——放進 [`plugins/_official/`](../../plugins/_official/) 中對應的層級。
-2. 通過驗證：`capt plugin validate`、`pnpm guard`、`pnpm --filter @open-design/plugin-runtime typecheck`。
+1. 把外掛資料夾放進 [`plugins/community/`](../../plugins/community/)（第三方外掛），或——若要讓它隨 CapyDesign 一同附帶——放進 [`plugins/_official/`](../../plugins/_official/) 中對應的層級。
+2. 通過驗證：`capt plugin validate`、`pnpm guard`、`pnpm --filter @capydesign/plugin-runtime typecheck`。
 3. 使用 [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) 中的範本填寫 PR（ID、版本、通道、mode、能力、觸發範例；視覺型外掛請附上截圖／預覽）。
 4. 若要發布到外部 registry（skills.sh / ClawHub / 獨立 GitHub）→ [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md)。
 
@@ -551,7 +551,7 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 - [x] Sidecar 協定 + Electron 桌面 + IPC 自動化
 - [x] Artifact lint API + 5 維自我評析的發出前閘門
 - [x] **0.8.0**——外掛市集基礎建設（261 個官方外掛、manifest 規格、各 agent 安裝腳本）
-- [x] **0.9.0**——OpenDesign Cloud（內建於應用程式的官方 Model Router：零設定、一鍵登入）
+- [x] **0.9.0**——OpenDesign Cloud（內建於應用程式的官方 Model Router：零設定、一鍵登入）—— removed in CapyDesign, this fork is local-only
 - [x] 打包的 Electron 建置——macOS（Apple Silicon + Intel）+ Windows（x64）+ Linux AppImage（選用通道）
 - [ ] 註解模式的精準編輯——部分完成；可靠的定點修補開發中
 - [ ] AI 發出的 tweaks 面板 UX——尚未實作
@@ -577,7 +577,7 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 
 ## 貢獻
 
-OpenDesign 之所以能持續前進，是因為貢獻者——設計師、工程師、prompt 作者——不斷現身。許多最常用的 skills、設計系統與外掛，都出自核心團隊以外的人之手。
+CapyDesign 之所以能持續前進，是因為貢獻者——設計師、工程師、prompt 作者——不斷現身。許多最常用的 skills、設計系統與外掛，都出自核心團隊以外的人之手。
 
 ### 🎯 從哪裡開始（最大槓桿、最小改動）
 
@@ -606,7 +606,7 @@ gh issue develop <number>   # create a branch and worktree
 
 # 3. Make the change, run the checks
 pnpm guard && pnpm typecheck
-pnpm --filter @open-design/<package> test
+pnpm --filter @capydesign/<package> test
 
 # 4. Open the PR
 gh pr create --fill
@@ -614,7 +614,7 @@ gh pr create --fill
 
 完整的 agent 友善貢獻流程、程式碼風格與 PR 標準 → [`CONTRIBUTING.md`](../../CONTRIBUTING.md)（[Deutsch](CONTRIBUTING.de.md) · [Français](CONTRIBUTING.fr.md) · [简体中文](CONTRIBUTING.zh-CN.md) · [日本語](CONTRIBUTING.ja-JP.md) · [Português](CONTRIBUTING.pt-BR.md)）。
 
-### 🏅 OpenDesign Fellow 計畫
+### 🏅 CapyDesign Fellow 計畫
 
 ---
 
@@ -648,7 +648,7 @@ gh pr create --fill
 感謝每一位參與過的人——程式碼、文件、回饋、一則犀利的 issue、一個新的 skill、一套新的設計系統。
 
 <a href="https://github.com/unfoldingdimensions/open-design/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="OpenDesign contributors" />
+  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="CapyDesign contributors" />
 </a>
 
 ---
@@ -677,7 +677,7 @@ gh pr create --fill
 | [`multica-ai/multica`](https://github.com/multica-ai/multica) | daemon + adapter 架構——PATH 掃描的 agent 偵測、把本地 daemon 作為唯一的特權程序。 |
 | [`VoltAgent/awesome-design-md`](https://github.com/VoltAgent/awesome-design-md) | 最初 9 段式 `DESIGN.md` schema 與 70 套上游衍生系統的歷史來源；目前套件可在此基礎上擴充。 |
 | [`bergside/awesome-design-skills`](https://github.com/bergside/awesome-design-skills) | `design-systems/` 之下新增的 57 個設計 skill 的來源。 |
-| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | HTML→MP4 動態圖像框架，在 OpenDesign 中整合為一等公民的 `hyperframes-html`。 |
+| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | HTML→MP4 動態圖像框架，在 CapyDesign 中整合為一等公民的 `hyperframes-html`。 |
 | [Claude Code skills][skill] | 我們原封不動採用的 `SKILL.md` 慣例。 |
 
 詳細出處 → [`docs/references.md`](../../docs/references.md)。

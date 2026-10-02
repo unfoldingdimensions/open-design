@@ -1,4 +1,4 @@
-<h1 align="center">OpenDesign: ทางเลือกโอเพนซอร์สแทน Claude Design</h1>
+<h1 align="center">CapyDesign: ทางเลือกโอเพนซอร์สแทน Claude Design</h1>
 
 <p align="center">
   <a href="https://github.com/unfoldingdimensions/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/unfoldingdimensions/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
@@ -10,11 +10,11 @@
 
 ---
 
-## OpenDesign คืออะไร
+## CapyDesign คืออะไร
 
 🎨 **ทางเลือก Claude Design แบบ local-first และโอเพนซอร์ส.** &nbsp;🖥️ **แอป desktop native สำหรับ macOS และ Windows.** &nbsp;⚡ **functional skills 100+ รายการ + rendering-template catalog แยกต่างหาก** · ✨ **design-system packages ระดับแบรนด์ 151 ชุด** · 📦 **plugin พร้อมใช้ 277 ตัว.** &nbsp;🖼️ สร้าง **prototype สำหรับ web · desktop · mobile**, **live dashboard / artifact**, **deck**, **image**, **video** และ motion graphics ด้วย **HyperFrames**. 🔒 preview ผ่าน sandboxed iframe · export เป็น HTML / PDF / PPTX / MP4. &nbsp;🤖 **รันบน Claude Code · OpenClaw · Codex · Cursor · OpenCode · Qwen · Copilot · Amp · Hermes · Kimi · Antigravity และ local CLI executable ที่ไม่ซ้ำกัน 25 ตัว**, หรือ endpoint ที่เข้ากันได้กับ OpenAI ผ่าน BYOK.
 
-OpenDesign คือสิ่งที่เกิดขึ้นเมื่อ loop แบบ **agent-native** ที่ Anthropic เปิดตัวกับ Claude Design — ค้นหา brief, ล็อก direction, stream artifact, critique, deliver — เลิกเป็นระบบปิด แล้วกลายเป็น **filesystem ของ functional skills, rendering design templates, design systems และ plugins** ที่ coding agent บน laptop ของคุณอ่าน เขียน และ remix ได้. CLI ของคุณกลายเป็น design engine, laptop ของคุณกลายเป็น studio, และ `DESIGN.md` ของทีมกลายเป็น brand contract.
+CapyDesign คือสิ่งที่เกิดขึ้นเมื่อ loop แบบ **agent-native** ที่ Anthropic เปิดตัวกับ Claude Design — ค้นหา brief, ล็อก direction, stream artifact, critique, deliver — เลิกเป็นระบบปิด แล้วกลายเป็น **filesystem ของ functional skills, rendering design templates, design systems และ plugins** ที่ coding agent บน laptop ของคุณอ่าน เขียน และ remix ได้. CLI ของคุณกลายเป็น design engine, laptop ของคุณกลายเป็น studio, และ `DESIGN.md` ของทีมกลายเป็น brand contract.
 
 มันยังเป็น **ทางเลือกแทน Figma สำหรับยุค agent** ด้วย แทนที่จะขยับ pixel บน canvas ระบบจะส่งมอบ artifact หน้าเดียวที่เป็น CSS จริง, font จริง, component จริง และ export ตรงเป็น HTML / PDF / PPTX / MP4 โดยถูก shape ด้วย design system ของคุณแล้ว และรันได้ใน agent ที่คุณใช้ทุกวัน.
 
@@ -22,7 +22,7 @@ OpenDesign คือสิ่งที่เกิดขึ้นเมื่อ
 
 ## ทัวร์ผลิตภัณฑ์
 
-ดู workflow หลักของ OpenDesign แบบรวดเร็ว เริ่มที่ **Home** ด้วย brief, ค้นหา skill ที่นำกลับมาใช้ซ้ำได้ใน **Plugins** และเปลี่ยนข้อมูลอ้างอิงแบรนด์ให้เป็น **Design System** จากนั้นเข้า **Studio** ของ project เพื่อสร้างและปรับปรุง prototype, deck, mobile app, image, document และ HyperFrame ได้ในที่เดียว
+ดู workflow หลักของ CapyDesign แบบรวดเร็ว เริ่มที่ **Home** ด้วย brief, ค้นหา skill ที่นำกลับมาใช้ซ้ำได้ใน **Plugins** และเปลี่ยนข้อมูลอ้างอิงแบรนด์ให้เป็น **Design System** จากนั้นเข้า **Studio** ของ project เพื่อสร้างและปรับปรุง prototype, deck, mobile app, image, document และ HyperFrame ได้ในที่เดียว
 
 ### หน้าหลัก
 
@@ -88,7 +88,7 @@ OpenDesign คือสิ่งที่เกิดขึ้นเมื่อ
 
 ## ความเข้ากันได้ของแพลตฟอร์ม
 
-> OpenDesign มาพร้อม **skills, CLI และ MCP server** ที่ coding agent กระแสหลักใช้งานได้แบบ native. เมื่อติดตั้ง OD แล้ว คำสั่งเดียว `capt mcp install <agent>` จะเชื่อม MCP server เข้ากับ config ของ agent นั้น และคุณเรียกใช้ tools เดียวกันจากใน agent ใดก็ได้.
+> CapyDesign มาพร้อม **skills, CLI และ MCP server** ที่ coding agent กระแสหลักใช้งานได้แบบ native. เมื่อติดตั้ง CapyDesign แล้ว คำสั่งเดียว `capt mcp install <agent>` จะเชื่อม MCP server เข้ากับ config ของ agent นั้น และคุณเรียกใช้ tools เดียวกันจากใน agent ใดก็ได้.
 
 | Coding agent / platform &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Status &nbsp;&nbsp; | One-line MCP server install &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
@@ -199,7 +199,7 @@ Live dashboard, decision room, KPI wall — artifact หน้าเดียว
 
 ### 5 · Video & HyperFrames — motion graphics แบบ agent-native
 
-**[HyperFrames][hyperframes]** คือ framework วิดีโอแบบโอเพนซอร์สและ agent-native ของ HeyGen ซึ่งผสานเป็น first-class citizen ใน OpenDesign. Agent เขียน HTML + CSS + GSAP แล้ว HyperFrames render เป็น MP4 ที่ deterministic ผ่าน headless Chrome + FFmpeg. ใช้คู่กับ **Seedance 2.0** สำหรับ cinematic t2v / i2v, **Veo 3 / Sora 2 / Kling 2** สำหรับ routed model variants และ **Suno v5 / Lyria 2** สำหรับ audio layer.
+**[HyperFrames][hyperframes]** คือ framework วิดีโอแบบโอเพนซอร์สและ agent-native ของ HeyGen ซึ่งผสานเป็น first-class citizen ใน CapyDesign. Agent เขียน HTML + CSS + GSAP แล้ว HyperFrames render เป็น MP4 ที่ deterministic ผ่าน headless Chrome + FFmpeg. ใช้คู่กับ **Seedance 2.0** สำหรับ cinematic t2v / i2v, **Veo 3 / Sora 2 / Kling 2** สำหรับ routed model variants และ **Suno v5 / Lyria 2** สำหรับ audio layer.
 
 <table>
 <tr>
@@ -216,17 +216,17 @@ Live dashboard, decision room, KPI wall — artifact หน้าเดียว
 </tr>
 </table>
 
-ใน repo มี HyperFrames templates 11 รายการ + Seedance prompts 39 รายการ. Catalog thumbnails © HeyGen; framework เป็น Apache-2.0. Workflow render เฉพาะของ OD (composition cache, sandbox-exec workaround, MP4-as-chip) อธิบายไว้ใน [`design-templates/hyperframes/`](../../design-templates/hyperframes/).
+ใน repo มี HyperFrames templates 11 รายการ + Seedance prompts 39 รายการ. Catalog thumbnails © HeyGen; framework เป็น Apache-2.0. Workflow render เฉพาะของ CapyDesign (composition cache, sandbox-exec workaround, MP4-as-chip) อธิบายไว้ใน [`design-templates/hyperframes/`](../../design-templates/hyperframes/).
 
 [hyperframes]: https://github.com/heygen-com/hyperframes
 
 ---
 
-## ทำไมต้อง OpenDesign
+## ทำไมต้อง CapyDesign
 
 > **ในเดือนเมษายน 2026, Anthropic เปิดตัว Claude Design — ครั้งแรกที่ LLM หยุดแค่เขียนข้อความ และเริ่มส่งมอบ design artifacts โดยตรง.** มัน viral มาก แต่ยังเป็น closed-source, paid-only, cloud-only, ผูกกับโมเดลของ Anthropic, skills ของ Anthropic และ surface ของ Anthropic. ไม่มี checkout, ไม่มี self-host, ไม่มี Vercel deploy, ไม่มีการสลับ agent ของคุณเอง.
 
-OpenDesign (OD) คือทางเลือกโอเพนซอร์ส. Loop เดียวกัน, mental model แบบ artifact-first เดียวกัน, แต่ไม่มี lock-in:
+CapyDesign (CapyDesign) คือทางเลือกโอเพนซอร์ส. Loop เดียวกัน, mental model แบบ artifact-first เดียวกัน, แต่ไม่มี lock-in:
 
 - 🤖 **Agent-native, model-agnostic.** เราไม่ได้ ship agent. `claude` / `codex` / `cursor-agent` / `copilot` / `hermes` / `kimi` ที่มีอยู่แล้วบน `PATH` ของคุณคือ design engine. สลับได้ในคลิกเดียว.
 - 🧠 **Brand-grade เป็นค่าเริ่มต้น.** ทุก render อ่าน `DESIGN.md` ของ package ที่ active เป็น brand contract หลัก. Repo ship design-system packages 151 ชุด; package รุ่นเก่าอาจมีแค่ `DESIGN.md` ส่วน package รุ่นใหม่เพิ่ม `manifest.json`, `tokens.css`, components, assets และ provenance ได้. วาง folder เข้าไป picker ก็หาเจอ.
@@ -237,7 +237,7 @@ OpenDesign (OD) คือทางเลือกโอเพนซอร์ส.
 
 ### เปรียบเทียบ
 
-| | Claude Design | Figma | Lovable / v0 / Bolt | **OpenDesign** |
+| | Claude Design | Figma | Lovable / v0 / Bolt | **CapyDesign** |
 |---|---|---|---|---|
 | Open source | ❌ | ❌ | ❌ | **✅ Apache-2.0** |
 | Self-host / desktop | ❌ | ❌ | ❌ | **✅ macOS + Windows + Docker** |
@@ -254,13 +254,13 @@ OpenDesign (OD) คือทางเลือกโอเพนซอร์ส.
 
 ### 🖥️ ดาวน์โหลด desktop app (แนะนำ — ไม่ต้องตั้งค่า)
 
-วิธีที่เร็วที่สุดในการใช้ OpenDesign. ไม่ต้องมี Node, ไม่ต้องมี pnpm, ไม่ต้อง clone.
+วิธีที่เร็วที่สุดในการใช้ CapyDesign. ไม่ต้องมี Node, ไม่ต้องมี pnpm, ไม่ต้อง clone.
 
 หลังติดตั้ง: แอปจะ auto-detect coding-agent CLI ทุกตัวบน `PATH`, โหลด functional skills 100+ รายการ, rendering-template catalog ที่แยกต่างหาก และ design-system packages 151 ชุด แล้วให้คุณพิมพ์ brief ใน entry view ได้ทันที.
 
 ### 🤖 ติดตั้งเข้า coding agent ของคุณ (ไม่ใช้ UI)
 
-คุณใช้ OpenDesign ได้โดยไม่ต้องเปิด GUI เลย — เรียกใช้เป็น skill, plugin หรือ MCP server ใน Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi และอื่น ๆ.
+คุณใช้ CapyDesign ได้โดยไม่ต้องเปิด GUI เลย — เรียกใช้เป็น skill, plugin หรือ MCP server ใน Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi และอื่น ๆ.
 
 ```bash
 # One-line install into the agent you're using:
@@ -274,7 +274,7 @@ OpenDesign (OD) คือทางเลือกโอเพนซอร์ส.
 > Use open-design to generate a landing page with the Linear design system
 ```
 
-ใน local CLI run ที่มี filesystem, agent จะ compose functional skill หรือ design template ที่เลือกกับ `DESIGN.md`, เขียน canonical project files และ OpenDesign preview ไฟล์เหล่านั้น. BYOK/plain-API run ที่ไม่มี filesystem tools จะคืน `<artifact>` block ที่สมบูรณ์หนึ่งก้อนแทน.
+ใน local CLI run ที่มี filesystem, agent จะ compose functional skill หรือ design template ที่เลือกกับ `DESIGN.md`, เขียน canonical project files และ CapyDesign preview ไฟล์เหล่านั้น. BYOK/plain-API run ที่ไม่มี filesystem tools จะคืน `<artifact>` block ที่สมบูรณ์หนึ่งก้อนแทน.
 
 ### 🐳 รันด้วย Docker
 
@@ -310,13 +310,13 @@ Node `~24`, pnpm `10.33.x`. ผู้ใช้ Windows ดู [`docs/windows-tro
 2. **Designer (หรือ agent) ล็อก direction.** ยังไม่มี brand? เลือกจาก 5 direction ที่ curate ไว้. มี brand แล้ว? วาง screenshot / URL → agent เชื่อม GitHub, import Figma และ codify เป็น `DESIGN.md` ที่ reusable.
 3. **Agent สร้าง deliverable แรก.** Plugin + functional skill หรือ design template + `DESIGN.md` ถูก bind แล้ว. CLI run ที่มี filesystem เขียน canonical project files และ preview ตามไฟล์; BYOK/plain-API run ที่ไม่มี file tools คืน `<artifact>` block ที่สมบูรณ์หนึ่งก้อน.
 4. **ส่งต่อให้ engineering.** Artifact คือ HTML/CSS จริง — วางเข้า Cursor, Codex หรือ Claude Code เพื่อ build ต่อเป็น code. หรือ export PPTX / PDF / MP4 ตรงไป marketing.
-5. **OpenDesign ฉลาดขึ้นเมื่อคุณใช้มัน.** Screenshot, font, palette และ artifact ที่ confirm แล้วจะสะสมเป็น default สำหรับ session ถัดไป. งานซ้ำน้อยลง, drift น้อยลง.
+5. **CapyDesign ฉลาดขึ้นเมื่อคุณใช้มัน.** Screenshot, font, palette และ artifact ที่ confirm แล้วจะสะสมเป็น default สำหรับ session ถัดไป. งานซ้ำน้อยลง, drift น้อยลง.
 
 ---
 
-## ใช้ OpenDesign จาก coding agent ของคุณ
+## ใช้ CapyDesign จาก coding agent ของคุณ
 
-OpenDesign ship **stdio MCP server** และ **install scripts** สำหรับแต่ละ agent. Agent ที่รองรับ MCP ใน repo อื่นสามารถอ่านไฟล์จาก project OpenDesign local ของคุณได้โดยตรง — tokens CSS, JSX components, entry HTML — ในรูปแบบ structured API ที่ query ตามชื่อได้. Agent เห็นไฟล์ live เสมอ ไม่ใช่ stale export.
+CapyDesign ship **stdio MCP server** และ **install scripts** สำหรับแต่ละ agent. Agent ที่รองรับ MCP ใน repo อื่นสามารถอ่านไฟล์จาก project CapyDesign local ของคุณได้โดยตรง — tokens CSS, JSX components, entry HTML — ในรูปแบบ structured API ที่ query ตามชื่อได้. Agent เห็นไฟล์ live เสมอ ไม่ใช่ stale export.
 
 ```bash
 # One-line install (รองรับ 16+ CLIs):
@@ -447,7 +447,7 @@ capt plugin uninstall od-default       # uninstall
 
 ### การสร้าง plugin
 
-OpenDesign plugin ต้องมี `open-design.json` พร้อม payload ที่ type นั้นกำหนด. Workflow skill หรือ scenario มี `SKILL.md` เพิ่ม; manifest-only template และ design-system entry ใช้ payload ของตัวเอง:
+CapyDesign plugin ต้องมี `open-design.json` พร้อม payload ที่ type นั้นกำหนด. Workflow skill หรือ scenario มี `SKILL.md` เพิ่ม; manifest-only template และ design-system entry ใช้ payload ของตัวเอง:
 
 ```
 my-plugin/
@@ -465,15 +465,15 @@ Scaffold + validate ในเครื่อง:
 ```bash
 capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
 capt plugin validate ./my-plugin                          # check manifest / file layout
-pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
+pnpm guard && pnpm --filter @capydesign/plugin-runtime typecheck
 ```
 
 Field set และ runtime contract เต็ม → [`plugins/spec/SPEC.md`](../../plugins/spec/SPEC.md); พัฒนา plugin ด้วย coding agent → [`plugins/spec/AGENT-DEVELOPMENT.md`](../../plugins/spec/AGENT-DEVELOPMENT.md); template ขั้นต่ำแบบ copy-paste → [`plugins/spec/examples/`](../../plugins/spec/examples/).
 
 ### การ contribute plugin
 
-1. วาง plugin folder ใน [`plugins/community/`](../../plugins/community/) (third-party plugins), หรือ — ถ้าจะ ship bundled กับ OpenDesign — วางใน tier ที่ตรงกันของ [`plugins/_official/`](../../plugins/_official/).
-2. ผ่าน validation: `capt plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
+1. วาง plugin folder ใน [`plugins/community/`](../../plugins/community/) (third-party plugins), หรือ — ถ้าจะ ship bundled กับ CapyDesign — วางใน tier ที่ตรงกันของ [`plugins/_official/`](../../plugins/_official/).
+2. ผ่าน validation: `capt plugin validate`, `pnpm guard`, `pnpm --filter @capydesign/plugin-runtime typecheck`.
 3. กรอก PR ด้วย template ใน [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) (ID, version, lane, mode, capabilities, trigger examples; แนบ screenshot / preview สำหรับ visual plugins).
 4. ถ้าจะ publish ไป registry ภายนอก (skills.sh / ClawHub / standalone GitHub) → [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -536,7 +536,7 @@ Architecture เต็ม → [`docs/architecture.md`](../../docs/architecture.m
 - [x] Sidecar protocol + Electron desktop + IPC automation
 - [x] Artifact lint API + 5-dim self-critique pre-emit gate
 - [x] **0.8.0** — plugin marketplace infrastructure (official plugins 261 ตัว, manifest spec, per-agent install scripts)
-- [x] **0.9.0** — OpenDesign Cloud (official Model Router ในตัวแอป: zero config, one-click sign-in)
+- [x] **0.9.0** — OpenDesign Cloud (official Model Router ในตัวแอป: zero config, one-click sign-in) — removed in CapyDesign, this fork is local-only
 - [x] Packaged Electron builds — macOS (Apple Silicon + Intel) + Windows (x64) + Linux AppImage (optional lane)
 - [ ] Comment-mode surgical edits — ship บางส่วนแล้ว; reliable targeted patching กำลังทำอยู่
 - [ ] AI-emitted tweaks panel UX — ยังไม่ implement
@@ -562,7 +562,7 @@ Label [`good-first-issue`](https://github.com/unfoldingdimensions/open-design/is
 
 ## Contributing
 
-OpenDesign เดินหน้าได้เพราะ contributors — designers, engineers, prompt authors — กลับมา contribute อย่างต่อเนื่อง. Skills, design systems และ plugins ที่ถูกใช้มากที่สุดหลายตัวเขียนโดยคนนอก core team.
+CapyDesign เดินหน้าได้เพราะ contributors — designers, engineers, prompt authors — กลับมา contribute อย่างต่อเนื่อง. Skills, design systems และ plugins ที่ถูกใช้มากที่สุดหลายตัวเขียนโดยคนนอก core team.
 
 ### 🎯 เริ่มตรงไหนดี (impact สูง, change น้อย)
 
@@ -591,7 +591,7 @@ gh issue develop <number>   # create a branch and worktree
 
 # 3. Make the change, run the checks
 pnpm guard && pnpm typecheck
-pnpm --filter @open-design/<package> test
+pnpm --filter @capydesign/<package> test
 
 # 4. Open the PR
 gh pr create --fill
@@ -599,7 +599,7 @@ gh pr create --fill
 
 Contribution flow สำหรับ agent, code style และ PR bar แบบเต็ม → [`CONTRIBUTING.th.md`](CONTRIBUTING.th.md) ([Deutsch](CONTRIBUTING.de.md) · [Français](CONTRIBUTING.fr.md) · [简体中文](CONTRIBUTING.zh-CN.md) · [日本語](CONTRIBUTING.ja-JP.md) · [한국어](CONTRIBUTING.ko.md) · [Português](CONTRIBUTING.pt-BR.md)).
 
-### 🏅 OpenDesign Fellow program
+### 🏅 CapyDesign Fellow program
 
 ---
 
@@ -640,7 +640,7 @@ Contribution flow สำหรับ agent, code style และ PR bar แบ�
 ขอบคุณทุกคนที่มีส่วนร่วม — code, docs, feedback, issue ที่คม, skill ใหม่, design system ใหม่.
 
 <a href="https://github.com/unfoldingdimensions/open-design/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="OpenDesign contributors" />
+  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="CapyDesign contributors" />
 </a>
 
 ---
@@ -669,7 +669,7 @@ SVG ด้านบน regenerate ทุกวันโดย [`.github/workflow
 | [`multica-ai/multica`](https://github.com/multica-ai/multica) | สถาปัตยกรรม daemon + adapter — PATH-scan agent detection, local daemon เป็น privileged process เพียงตัวเดียว. |
 | [`VoltAgent/awesome-design-md`](https://github.com/VoltAgent/awesome-design-md) | แหล่งที่มาในอดีตของ schema `DESIGN.md` 9 section รุ่นแรกและ systems ที่ derive จาก upstream 70 ชุด; package ปัจจุบันขยาย baseline นี้ได้. |
 | [`bergside/awesome-design-skills`](https://github.com/bergside/awesome-design-skills) | แหล่งที่มาของ design skills 57 ชุดที่เพิ่มไว้ใต้ `design-systems/`. |
-| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | Framework motion-graphics HTML→MP4 ที่ integrate เป็น `hyperframes-html` แบบ first-class ใน OpenDesign. |
+| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | Framework motion-graphics HTML→MP4 ที่ integrate เป็น `hyperframes-html` แบบ first-class ใน CapyDesign. |
 | [Claude Code skills][skill] | Convention `SKILL.md` ที่เรารับมาใช้ตรง ๆ. |
 
 Provenance แบบละเอียด → [`docs/references.md`](../../docs/references.md).

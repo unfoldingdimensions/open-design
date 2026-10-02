@@ -1,6 +1,6 @@
-# Contribuindo com o OpenDesign
+# Contribuindo com o CapyDesign
 
-Obrigado por considerar contribuir. O OD é pequeno de propósito — a maior parte do valor mora em **arquivos** (skills, design systems, fragmentos de prompt) e não em código de framework. Isso significa que as contribuições com maior alavancagem geralmente são uma pasta, um arquivo Markdown ou um adapter do tamanho de um PR.
+Obrigado por considerar contribuir. O CapyDesign é pequeno de propósito — a maior parte do valor mora em **arquivos** (skills, design systems, fragmentos de prompt) e não em código de framework. Isso significa que as contribuições com maior alavancagem geralmente são uma pasta, um arquivo Markdown ou um adapter do tamanho de um PR.
 
 Este guia diz exatamente onde olhar para cada tipo de contribuição e qual a barra que um PR precisa atingir antes do merge.
 
@@ -12,9 +12,9 @@ Este guia diz exatamente onde olhar para cada tipo de contribuição e qual a ba
 
 | Se você quer… | Você está adicionando | Onde mora | Tamanho da entrega |
 |---|---|---|---|
-| Fazer o OD renderizar um novo tipo de artifact (uma nota fiscal, uma tela de Settings do iOS, um one-pager…) | um **design template** | [`design-templates/<seu-template>/`](../../design-templates/) | uma pasta com `SKILL.md` e assets de renderização |
+| Fazer o CapyDesign renderizar um novo tipo de artifact (uma nota fiscal, uma tela de Settings do iOS, um one-pager…) | um **design template** | [`design-templates/<seu-template>/`](../../design-templates/) | uma pasta com `SKILL.md` e assets de renderização |
 | Adicionar uma capacidade funcional que agentes invocam durante uma tarefa | uma **Skill** | [`skills/<sua-skill>/`](../../skills/) | uma pasta com `SKILL.md` e recursos opcionais |
-| Fazer o OD falar a linguagem visual de uma nova marca | um **Design System** | [`design-systems/<marca>/`](../../design-systems/) | um pacote: `manifest.json`, `DESIGN.md` e `tokens.css` |
+| Fazer o CapyDesign falar a linguagem visual de uma nova marca | um **Design System** | [`design-systems/<marca>/`](../../design-systems/) | um pacote: `manifest.json`, `DESIGN.md` e `tokens.css` |
 | Plugar um novo CLI de agente de código | um **Adapter de agente** | [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/runtimes/defs/) | uma definição e uma entrada no registro |
 | Adicionar uma feature, corrigir um bug, trazer um padrão de UX do [`open-codesign`][ocod] | código | `apps/web/src/`, `apps/daemon/` | PR normal |
 | Melhorar docs, traduzir uma seção para Français / Deutsch / 中文, corrigir typos | docs | `README.md`, `README.fr.md`, `README.de.md`, `README.zh-CN.md`, `docs/`, `QUICKSTART.md` | um PR |
@@ -34,12 +34,12 @@ corepack enable           # selects the pinned pnpm from packageManager
 pnpm install
 pnpm tools-dev run web    # daemon + web foreground loop
 pnpm typecheck            # tsc -b --noEmit
-pnpm --filter @open-design/web build  # build do pacote web quando necessário
+pnpm --filter @capydesign/web build  # build do pacote web quando necessário
 ```
 
 Node `~24` e pnpm `10.33.x` são obrigatórios. `nvm` / `fnm` são opcionais; use `nvm install 24 && nvm use 24` ou `fnm install 24 && fnm use 24` se preferir gerenciar Node assim. macOS, Linux e WSL2 são os caminhos principais. Windows nativo é suportado; veja [`docs/windows-troubleshooting.md`](../../docs/windows-troubleshooting.md) para os tropeços de configuração mais comuns.
 
-Você não precisa de nenhum CLI de agente no `PATH` para desenvolver o próprio OD — o daemon dirá "no agents found" e cairá no caminho **Anthropic API · BYOK**, que é o loop de dev mais rápido de qualquer jeito.
+Você não precisa de nenhum CLI de agente no `PATH` para desenvolver o próprio CapyDesign — o daemon dirá "no agents found" e cairá no caminho **Anthropic API · BYOK**, que é o loop de dev mais rápido de qualquer jeito.
 
 ---
 
@@ -64,7 +64,7 @@ design-templates/your-template/
 
 ### Frontmatter do `SKILL.md`
 
-As três primeiras chaves são a base spec do Claude Code — `name`, `description`, `triggers`. Tudo sob `od:` é específico do OD e opcional, mas **`od.mode`** decide em qual grupo o template aparece (Prototype / Deck / Template / Design system).
+As três primeiras chaves são a base spec do Claude Code — `name`, `description`, `triggers`. Tudo sob `od:` é específico do CapyDesign e opcional, mas **`od.mode`** decide em qual grupo o template aparece (Prototype / Deck / Template / Design system).
 
 ```yaml
 ---
@@ -228,7 +228,7 @@ A tabela OVERRIDES em `maxTokens.ts` é para o caso raro em que o LiteLLM está 
 
 ## Manutenção de localização
 
-Alemão usa o formal `Sie` porque o OD fala com uma audiência mista de criadores solo, agências e times de engenharia; até feedback do projeto mostrar que uma voz informal `du` se encaixa melhor, alemão formal é o default menos surpreendente. PRs de locale devem traduzir chrome de UI, docs principais e metadados visuais de galeria em `apps/web/src/i18n/content.ts`, mas não devem traduzir `skills/`, `design-systems/` nem corpos de prompt que os agentes executam. Esses prompts-fonte são mantidos como entradas de workflow, e manter um único idioma de fonte evita multiplicar QA de prompt entre locales. Ao adicionar ou renomear uma skill, design system ou prompt template, atualize os metadados de display em alemão e rode `pnpm --filter @open-design/web test`; o `content.test.ts` falha se a cobertura de display em alemão sair de sincronia. Erros do daemon, nomes de arquivos exportados e texto de artifact gerado pelo agente são limitações conhecidas, a menos que um PR explicitamente os englobe.
+Alemão usa o formal `Sie` porque o CapyDesign fala com uma audiência mista de criadores solo, agências e times de engenharia; até feedback do projeto mostrar que uma voz informal `du` se encaixa melhor, alemão formal é o default menos surpreendente. PRs de locale devem traduzir chrome de UI, docs principais e metadados visuais de galeria em `apps/web/src/i18n/content.ts`, mas não devem traduzir `skills/`, `design-systems/` nem corpos de prompt que os agentes executam. Esses prompts-fonte são mantidos como entradas de workflow, e manter um único idioma de fonte evita multiplicar QA de prompt entre locales. Ao adicionar ou renomear uma skill, design system ou prompt template, atualize os metadados de display em alemão e rode `pnpm --filter @capydesign/web test`; o `content.test.ts` falha se a cobertura de display em alemão sair de sincronia. Erros do daemon, nomes de arquivos exportados e texto de artifact gerado pelo agente são limitações conhecidas, a menos que um PR explicitamente os englobe.
 
 Para instruções passo a passo sobre adicionar um novo locale (dicionário de UI, README, language switcher, terminologia regional), veja [`TRANSLATIONS.md`](../../TRANSLATIONS.md).
 
@@ -294,7 +294,7 @@ Para bugs da pilha de prompt ("o agente emitiu um hero com gradiente roxo, a bla
 
 Para manter o projeto focado, por favor não abra PRs que:
 
-- **Embutam um runtime de modelo.** Toda a aposta do OD é "seu CLI existente já basta". Não despachamos `pi-ai`, chaves OpenAI nem loaders de modelo.
+- **Embutam um runtime de modelo.** Toda a aposta do CapyDesign é "seu CLI existente já basta". Não despachamos `pi-ai`, chaves OpenAI nem loaders de modelo.
 - **Reescrevam o frontend para fora da stack atual sem discussão prévia.** Next.js 16 App Router + React 18 + TS é a linha. Sem Astro, Solid, Svelte ou outras reescritas de framework a menos que mantenedores explicitamente queiram essa migração.
 - **Substituam o daemon por uma função serverless.** O ponto inteiro do daemon é ter um `cwd` real e spawnar um CLI real. Deploy do SPA na Vercel está ok; o daemon continua daemon.
 - **Adicionem telemetria ou coleta externa de dados fora do contrato de privacidade.** Analytics de produto e replay de sessão mascarado dependem de consentimento; telemetria sanitizada de segurança/confiabilidade fica sempre ativa em builds configurados. Todo novo evento, campo ou destino deve preservar os limites de consentimento, minimização e sanitização descritos em [`PRIVACY.md`](../../PRIVACY.md).

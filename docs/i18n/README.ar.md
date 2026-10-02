@@ -1,6 +1,6 @@
 <div dir="rtl">
 
-<h1 align="center">OpenDesign: البديل مفتوح المصدر لـ Claude Design</h1>
+<h1 align="center">CapyDesign: البديل مفتوح المصدر لـ Claude Design</h1>
 
 <p align="center">
   <a href="https://github.com/unfoldingdimensions/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/unfoldingdimensions/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
@@ -12,11 +12,11 @@
 
 ---
 
-## ما هو OpenDesign
+## ما هو CapyDesign
 
 🎨 **البديل مفتوح المصدر القائم على الجهاز المحلي أولًا لـ Claude Design.** &nbsp;🖥️ **تطبيق سطح مكتب أصلي لنظامي macOS وWindows.** &nbsp;⚡ **أكثر من 100 مهارة وظيفية + كتالوج منفصل لقوالب التصيير** · ✨ **151 حزمة نظام تصميم** · 📦 **277 إضافة جاهزة للاستخدام.** &nbsp;🖼️ يولّد **نماذج أولية للويب · سطح المكتب · الجوال**، و**لوحات معلومات / مخرجات حية**، و**عروضًا تقديمية**، و**صورًا**، و**فيديو**، إضافة إلى رسوميات حركية بـ **HyperFrames**. 🔒 معاينة iframe معزولة · تصدير بصيغ HTML / PDF / PPTX / MP4. &nbsp;🤖 **يعمل على 25 ملف CLI تنفيذيًا محليًا متميزًا**، أو أي نقطة نهاية متوافقة مع OpenAI عبر BYOK.
 
-‏OpenDesign يحوّل الحلقة إلى **نظام ملفات من المهارات الوظيفية وقوالب التصيير وأنظمة التصميم والإضافات** يستطيع الوكلاء قراءته والكتابة عليه وإعادة مزجه.
+‏CapyDesign يحوّل الحلقة إلى **نظام ملفات من المهارات الوظيفية وقوالب التصيير وأنظمة التصميم والإضافات** يستطيع الوكلاء قراءته والكتابة عليه وإعادة مزجه.
 
 كما أنه **بديل Figma لعصر الوكلاء** — فبدلًا من تحريك البكسلات على لوحة رسم، يسلّم مخرجات من صفحة واحدة بـ CSS حقيقي وخطوط حقيقية ومكونات حقيقية، تُصدَّر مباشرة إلى HTML / PDF / PPTX / MP4 — مصاغة مسبقًا وفق نظام التصميم لديك، وقابلة للتشغيل مباشرة داخل الوكيل الذي تستخدمه كل يوم.
 
@@ -24,7 +24,7 @@
 
 ## جولة في المنتج
 
-نظرة سريعة على سير العمل الأساسي في OpenDesign. ابدأ بموجز من **الصفحة الرئيسية**، واستكشف المهارات القابلة لإعادة الاستخدام في **الإضافات**، وحوّل مراجع العلامة التجارية إلى **نظام تصميم**. ثم ادخل إلى **الاستوديو** في أي مشروع لإنشاء النماذج الأولية والعروض التقديمية وتطبيقات الجوال والصور والمستندات وHyperFrames وتحسينها في مكان واحد.
+نظرة سريعة على سير العمل الأساسي في CapyDesign. ابدأ بموجز من **الصفحة الرئيسية**، واستكشف المهارات القابلة لإعادة الاستخدام في **الإضافات**، وحوّل مراجع العلامة التجارية إلى **نظام تصميم**. ثم ادخل إلى **الاستوديو** في أي مشروع لإنشاء النماذج الأولية والعروض التقديمية وتطبيقات الجوال والصور والمستندات وHyperFrames وتحسينها في مكان واحد.
 
 ### الصفحات الأساسية
 
@@ -90,7 +90,7 @@
 
 ## توافق المنصات
 
-> يُشحَن OpenDesign على هيئة **مهارات وواجهة CLI وخادم MCP** تستهلكها وكلاء البرمجة السائدة بشكل أصلي. بمجرد تثبيت OD، يربط أمر واحد `capt mcp install <agent>` خادم MCP في إعدادات ذلك الوكيل، فتستدعي الأدوات نفسها من داخل أي وكيل.
+> يُشحَن CapyDesign على هيئة **مهارات وواجهة CLI وخادم MCP** تستهلكها وكلاء البرمجة السائدة بشكل أصلي. بمجرد تثبيت CapyDesign، يربط أمر واحد `capt mcp install <agent>` خادم MCP في إعدادات ذلك الوكيل، فتستدعي الأدوات نفسها من داخل أي وكيل.
 
 | وكيل البرمجة / المنصة &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | الحالة &nbsp;&nbsp; | تثبيت خادم MCP بأمر واحد &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
@@ -201,7 +201,7 @@
 
 ### 5 · الفيديو وHyperFrames — رسوميات حركية أصيلة للوكلاء
 
-**[HyperFrames][hyperframes]** هو إطار عمل الفيديو مفتوح المصدر والأصيل للوكلاء من HeyGen، مدمج كمواطن من الدرجة الأولى في OpenDesign. يكتب الوكيل HTML + CSS + GSAP، وتصيّره HyperFrames إلى ملف MP4 حتمي عبر Chrome بدون واجهة + FFmpeg. اقرنه بـ **Seedance 2.0** لتحويل النص إلى فيديو / الصورة إلى فيديو السينمائي، و**Veo 3 / Sora 2 / Kling 2** للنماذج المُوجَّهة المتنوعة، و**Suno v5 / Lyria 2** لطبقة الصوت.
+**[HyperFrames][hyperframes]** هو إطار عمل الفيديو مفتوح المصدر والأصيل للوكلاء من HeyGen، مدمج كمواطن من الدرجة الأولى في CapyDesign. يكتب الوكيل HTML + CSS + GSAP، وتصيّره HyperFrames إلى ملف MP4 حتمي عبر Chrome بدون واجهة + FFmpeg. اقرنه بـ **Seedance 2.0** لتحويل النص إلى فيديو / الصورة إلى فيديو السينمائي، و**Veo 3 / Sora 2 / Kling 2** للنماذج المُوجَّهة المتنوعة، و**Suno v5 / Lyria 2** لطبقة الصوت.
 
 <table>
 <tr>
@@ -218,17 +218,17 @@
 </tr>
 </table>
 
-يُشحَن مع المستودع 11 قالب HyperFrames + 39 موجّه Seedance. الصور المصغّرة للكتالوج © HeyGen؛ والإطار مرخَّص بـ Apache-2.0. سير عمل التصيير الخاص بـ OD (تخزين التركيب المؤقت، حل sandbox-exec البديل، MP4-as-chip) موضَّح بالتفصيل في [`design-templates/hyperframes/`](../../design-templates/hyperframes/).
+يُشحَن مع المستودع 11 قالب HyperFrames + 39 موجّه Seedance. الصور المصغّرة للكتالوج © HeyGen؛ والإطار مرخَّص بـ Apache-2.0. سير عمل التصيير الخاص بـ CapyDesign (تخزين التركيب المؤقت، حل sandbox-exec البديل، MP4-as-chip) موضَّح بالتفصيل في [`design-templates/hyperframes/`](../../design-templates/hyperframes/).
 
 [hyperframes]: https://github.com/heygen-com/hyperframes
 
 ---
 
-## لماذا OpenDesign
+## لماذا CapyDesign
 
 > **في أبريل 2026، أطلقت Anthropic Claude Design — وهي المرة الأولى التي يتوقف فيها نموذج لغوي كبير عن كتابة النثر ويبدأ في تسليم مخرجات تصميم مباشرة.** انتشر بسرعة كبيرة. لكنه ظل مغلق المصدر، مدفوعًا فقط، سحابيًا فقط، مقيَّدًا بنموذج Anthropic ومهارات Anthropic وسطح Anthropic. لا دفع، ولا استضافة ذاتية، ولا نشر على Vercel، ولا إمكانية تبديل بوكيلك الخاص.
 
-‏OpenDesign (OD) هو البديل مفتوح المصدر. الحلقة نفسها، والنموذج الذهني نفسه القائم على المخرجات أولًا، دون أي تقييد:
+‏CapyDesign (CapyDesign) هو البديل مفتوح المصدر. الحلقة نفسها، والنموذج الذهني نفسه القائم على المخرجات أولًا، دون أي تقييد:
 
 - 🤖 **أصيل للوكلاء، محايد تجاه النموذج.** نحن لا نشحن وكيلًا. أدوات `claude` / `codex` / `cursor-agent` / `copilot` / `hermes` / `kimi` الموجودة أصلًا في `PATH` لديك هي محرك التصميم. بدّلها بنقرة واحدة.
 - 🧠 **بجودة العلامة التجارية افتراضيًا.** تقرأ كل عملية تصيير `DESIGN.md` من الحزمة النشطة بوصفه عقد العلامة الأساسي. يُشحَن مع المستودع 151 حزمة نظام تصميم؛ قد تقتصر الحزم القديمة على `DESIGN.md`، بينما يمكن للأحدث إضافة `manifest.json` و`tokens.css` والمكوّنات والأصول وبيانات المصدر. أسقِط مجلدًا، فيعثر عليه المُنتقي.
@@ -239,7 +239,7 @@
 
 ### مقارنة
 
-| | Claude Design | Figma | Lovable / v0 / Bolt | **OpenDesign** |
+| | Claude Design | Figma | Lovable / v0 / Bolt | **CapyDesign** |
 |---|---|---|---|---|
 | مفتوح المصدر | ❌ | ❌ | ❌ | **✅ Apache-2.0** |
 | استضافة ذاتية / سطح مكتب | ❌ | ❌ | ❌ | **✅ macOS + Windows + Docker** |
@@ -256,13 +256,13 @@
 
 ### 🖥️ تنزيل تطبيق سطح المكتب (موصى به — بلا إعداد)
 
-أسرع طريقة لاستخدام OpenDesign. لا Node، ولا pnpm، ولا استنساخ.
+أسرع طريقة لاستخدام CapyDesign. لا Node، ولا pnpm، ولا استنساخ.
 
 بعد التثبيت: يكتشف التطبيق تلقائيًا كل واجهة CLI لوكلاء البرمجة في `PATH` لديك، ويحمّل أكثر من 100 مهارة وظيفية وكتالوج قوالب التصيير المنفصل و151 حزمة نظام تصميم، ويتيح لك كتابة موجز في واجهة الدخول.
 
 ### 🤖 التثبيت داخل وكيل البرمجة لديك (دون واجهة مستخدم)
 
-يمكنك استخدام OpenDesign دون فتح الواجهة الرسومية أبدًا — استدعِه كمهارة أو إضافة أو خادم MCP داخل Claude Code وCodex وCursor وCopilot وOpenClaw وAntigravity وHermes وKimi والمزيد.
+يمكنك استخدام CapyDesign دون فتح الواجهة الرسومية أبدًا — استدعِه كمهارة أو إضافة أو خادم MCP داخل Claude Code وCodex وCursor وCopilot وOpenClaw وAntigravity وHermes وKimi والمزيد.
 
 ```bash
 # One-line install into the agent you're using:
@@ -277,7 +277,7 @@ capt mcp install <agent>
 > Use open-design to generate a landing page with the Linear design system
 ```
 
-في تشغيل CLI محلي مدعوم بنظام الملفات، يركّب الوكيل المهارة الوظيفية أو قالب التصميم المختار مع `DESIGN.md` ويكتب ملفات المشروع الأساسية ليعاينها OpenDesign. أما تشغيل BYOK/API بلا أدوات ملفات فيُرجع كتلة `<artifact>` كاملة واحدة.
+في تشغيل CLI محلي مدعوم بنظام الملفات، يركّب الوكيل المهارة الوظيفية أو قالب التصميم المختار مع `DESIGN.md` ويكتب ملفات المشروع الأساسية ليعاينها CapyDesign. أما تشغيل BYOK/API بلا أدوات ملفات فيُرجع كتلة `<artifact>` كاملة واحدة.
 
 ### 🐳 التشغيل باستخدام Docker
 
@@ -294,7 +294,7 @@ docker compose up -d
 
 [![Deploy on Sealos](https://sealos.io/Deploy-on-Sealos.svg)](https://sealos.io/products/app-store/open-design/)
 
-يشغّل قالب Sealos App Store صورة Docker المنشورة لـ OpenDesign مع تخزين دائم لمساحة العمل وBasic Auth على الوكيل العام. لعمليات نشر Docker العامة أو المشتركة المخصصة، اتبع إرشادات الوكيل العكسي و`OPEN_DESIGN_ALLOWED_ORIGINS` في [`deploy/README.md`](../../deploy/README.md#local-compose).
+يشغّل قالب Sealos App Store صورة Docker المنشورة لـ CapyDesign مع تخزين دائم لمساحة العمل وBasic Auth على الوكيل العام. لعمليات نشر Docker العامة أو المشتركة المخصصة، اتبع إرشادات الوكيل العكسي و`OPEN_DESIGN_ALLOWED_ORIGINS` في [`deploy/README.md`](../../deploy/README.md#local-compose).
 
 ### 🧑‍💻 التشغيل من المصدر
 
@@ -317,13 +317,13 @@ pnpm tools-dev run web
 2. **يثبّت مصمم (أو الوكيل) الاتجاه.** لا علامة تجارية؟ اختر من 5 اتجاهات منسّقة. لديك علامة تجارية؟ أسقِط لقطة شاشة / رابطًا ← يربط الوكيل GitHub، ويستورد Figma، ويصوغ ملف `DESIGN.md` قابلًا لإعادة الاستخدام.
 3. **ينشئ الوكيل أول تسليم.** تشغيلات CLI ذات نظام الملفات تكتب الملفات الأساسية؛ وتشغيلات BYOK/API بلا أدوات ملفات تُرجع كتلة `<artifact>` كاملة.
 4. **سلّم إلى الهندسة.** المخرَج هو HTML/CSS حقيقي — أسقِطه في Cursor أو Codex أو Claude Code لمواصلة البناء كشفرة. أو صدّر PPTX / PDF / MP4 مباشرة إلى التسويق.
-5. **يصبح OpenDesign أذكى كلما استخدمته.** تتراكم لقطات شاشتك وخطوطك ولوحات ألوانك ومخرجاتك المؤكَّدة كقيم افتراضية للجلسة التالية. عمل معاد أقل، وانحراف أقل.
+5. **يصبح CapyDesign أذكى كلما استخدمته.** تتراكم لقطات شاشتك وخطوطك ولوحات ألوانك ومخرجاتك المؤكَّدة كقيم افتراضية للجلسة التالية. عمل معاد أقل، وانحراف أقل.
 
 ---
 
-## استخدام OpenDesign من وكيل البرمجة لديك
+## استخدام CapyDesign من وكيل البرمجة لديك
 
-يشحن OpenDesign **خادم MCP عبر stdio** و**سكربتات تثبيت** لكل وكيل. يستطيع أي وكيل متوافق مع MCP في مستودع آخر قراءة الملفات من مشاريع OpenDesign المحلية لديك مباشرة — رموز CSS، ومكونات JSX، وHTML الدخول — كواجهة API مهيكلة قابلة للاستعلام بالاسم. يرى الوكيل دائمًا الملف الحي، لا تصديرًا قديمًا.
+يشحن CapyDesign **خادم MCP عبر stdio** و**سكربتات تثبيت** لكل وكيل. يستطيع أي وكيل متوافق مع MCP في مستودع آخر قراءة الملفات من مشاريع CapyDesign المحلية لديك مباشرة — رموز CSS، ومكونات JSX، وHTML الدخول — كواجهة API مهيكلة قابلة للاستعلام بالاسم. يرى الوكيل دائمًا الملف الحي، لا تصديرًا قديمًا.
 
 ```bash
 # One-line install (16+ CLIs supported):
@@ -455,7 +455,7 @@ capt plugin uninstall od-default       # uninstall
 
 ### بناء إضافة
 
-تتطلب إضافة OpenDesign ملف `open-design.json` وحمولة نوعها. تتضمن المهارات والسيناريوهات أيضًا `SKILL.md`؛ وتستخدم الأنواع الأخرى حمولتها الخاصة:
+تتطلب إضافة CapyDesign ملف `open-design.json` وحمولة نوعها. تتضمن المهارات والسيناريوهات أيضًا `SKILL.md`؛ وتستخدم الأنواع الأخرى حمولتها الخاصة:
 
 ```
 my-plugin/
@@ -473,15 +473,15 @@ my-plugin/
 ```bash
 capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
 capt plugin validate ./my-plugin                          # check manifest / file layout
-pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
+pnpm guard && pnpm --filter @capydesign/plugin-runtime typecheck
 ```
 
 مجموعة الحقول الكاملة وعقد وقت التشغيل ← [`plugins/spec/SPEC.md`](../../plugins/spec/SPEC.md)؛ تطوير إضافة بوكيل برمجة ← [`plugins/spec/AGENT-DEVELOPMENT.md`](../../plugins/spec/AGENT-DEVELOPMENT.md)؛ قوالب دنيا جاهزة للصق ← [`plugins/spec/examples/`](../../plugins/spec/examples/).
 
 ### المساهمة بإضافة
 
-1. أسقِط مجلد الإضافة في [`plugins/community/`](../../plugins/community/) (الإضافات الخارجية)، أو — لشحنها مجمَّعة مع OpenDesign — في المستوى المطابق ضمن [`plugins/_official/`](../../plugins/_official/).
-2. اجتز التحقق: `capt plugin validate` و`pnpm guard` و`pnpm --filter @open-design/plugin-runtime typecheck`.
+1. أسقِط مجلد الإضافة في [`plugins/community/`](../../plugins/community/) (الإضافات الخارجية)، أو — لشحنها مجمَّعة مع CapyDesign — في المستوى المطابق ضمن [`plugins/_official/`](../../plugins/_official/).
+2. اجتز التحقق: `capt plugin validate` و`pnpm guard` و`pnpm --filter @capydesign/plugin-runtime typecheck`.
 3. املأ الـ PR باستخدام القالب في [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) (المعرّف، الإصدار، المسار، الوضع، القدرات، أمثلة التشغيل؛ أرفِق لقطة شاشة / معاينة للإضافات البصرية).
 4. للنشر على سجل خارجي (skills.sh / ClawHub / GitHub مستقل) ← [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -543,7 +543,7 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 - [x] بروتوكول جانبي + سطح مكتب Electron + أتمتة IPC
 - [x] واجهة API لفحص المخرجات + بوابة نقد ذاتي بخمسة أبعاد قبل الإصدار
 - [x] **0.8.0** — بنية تحتية لسوق الإضافات (261 إضافة رسمية، مواصفة البيان، سكربتات تثبيت لكل وكيل)
-- [x] **0.9.0** — OpenDesign Cloud (Model Router الرسمي مدمج في التطبيق: بلا إعداد، تسجيل دخول بنقرة واحدة)
+- [x] **0.9.0** — OpenDesign Cloud (Model Router الرسمي مدمج في التطبيق: بلا إعداد، تسجيل دخول بنقرة واحدة) — removed in CapyDesign, this fork is local-only
 - [x] إصدارات Electron مجمَّعة — macOS (Apple Silicon + Intel) + Windows (x64) + Linux AppImage (مسار اختياري)
 - [ ] تعديلات جراحية في وضع التعليق — مشحونة جزئيًا؛ الترقيع المستهدف الموثوق قيد التنفيذ
 - [ ] تجربة استخدام لوحة تعديلات يصدرها الذكاء الاصطناعي — لم تُنفَّذ بعد
@@ -569,7 +569,7 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 
 ## المساهمة
 
-يظل OpenDesign يتحرك لأن المساهمين — مصممين ومهندسين ومؤلفي موجّهات — يواصلون الحضور. الكثير من أكثر المهارات وأنظمة التصميم والإضافات استخدامًا كتبها أشخاص خارج الفريق الأساسي.
+يظل CapyDesign يتحرك لأن المساهمين — مصممين ومهندسين ومؤلفي موجّهات — يواصلون الحضور. الكثير من أكثر المهارات وأنظمة التصميم والإضافات استخدامًا كتبها أشخاص خارج الفريق الأساسي.
 
 ### 🎯 من أين تبدأ (أقصى أثر، أقل تغيير)
 
@@ -598,7 +598,7 @@ gh issue develop <number>   # create a branch and worktree
 
 # 3. Make the change, run the checks
 pnpm guard && pnpm typecheck
-pnpm --filter @open-design/<package> test
+pnpm --filter @capydesign/<package> test
 
 # 4. Open the PR
 gh pr create --fill
@@ -606,7 +606,7 @@ gh pr create --fill
 
 سير المساهمة الكامل الصديق للوكلاء، وأسلوب الشفرة، ومستوى الـ PR ← [`CONTRIBUTING.md`](../../CONTRIBUTING.md) ([Deutsch](CONTRIBUTING.de.md) · [Français](CONTRIBUTING.fr.md) · [简体中文](CONTRIBUTING.zh-CN.md) · [日本語](CONTRIBUTING.ja-JP.md) · [Português](CONTRIBUTING.pt-BR.md)).
 
-### 🏅 برنامج OpenDesign Fellow
+### 🏅 برنامج CapyDesign Fellow
 
 ---
 
@@ -640,7 +640,7 @@ gh pr create --fill
 شكرًا لكل من شارك — شفرة، وثائق، ملاحظات، مشكلة دقيقة، مهارة جديدة، نظام تصميم جديد.
 
 <a href="https://github.com/unfoldingdimensions/open-design/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="OpenDesign contributors" />
+  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="CapyDesign contributors" />
 </a>
 
 ---
@@ -669,7 +669,7 @@ gh pr create --fill
 | [`multica-ai/multica`](https://github.com/multica-ai/multica) | بنية الـ daemon + المحوّل — اكتشاف الوكلاء بمسح PATH، الـ daemon المحلي بصفته العملية المميَّزة الوحيدة. |
 | [`VoltAgent/awesome-design-md`](https://github.com/VoltAgent/awesome-design-md) | المصدر التاريخي لمخطط `DESIGN.md` الأصلي ذي الأقسام التسعة و70 نظامًا مشتقًا من المصدر؛ ويمكن للحزم الحالية توسيع هذا الأساس. |
 | [`bergside/awesome-design-skills`](https://github.com/bergside/awesome-design-skills) | مصدر مهارات التصميم الـ 57 المضافة ضمن `design-systems/`. |
-| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | إطار الرسوميات الحركية HTML→MP4، مدمج بصفته `hyperframes-html` من الدرجة الأولى في OpenDesign. |
+| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | إطار الرسوميات الحركية HTML→MP4، مدمج بصفته `hyperframes-html` من الدرجة الأولى في CapyDesign. |
 | [Claude Code skills][skill] | اصطلاح `SKILL.md` الذي نعتمده حرفيًا. |
 
 النَّسَب التفصيلي ← [`docs/references.md`](../../docs/references.md).

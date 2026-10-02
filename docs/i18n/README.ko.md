@@ -1,4 +1,4 @@
-<h1 align="center">OpenDesign: 오픈소스 Claude Design 대안</h1>
+<h1 align="center">CapyDesign: 오픈소스 Claude Design 대안</h1>
 
 <p align="center">
   <a href="https://github.com/unfoldingdimensions/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/unfoldingdimensions/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
@@ -10,11 +10,11 @@
 
 ---
 
-## OpenDesign란
+## CapyDesign란
 
 🎨 **로컬 우선의 오픈소스 Claude Design 대안.** &nbsp;🖥️ **macOS와 Windows용 네이티브 데스크톱 앱.** &nbsp;⚡ **100개 이상의 기능 스킬 + 별도 렌더링 템플릿 카탈로그** · ✨ **151개의 디자인 시스템 패키지** · 📦 **바로 쓸 수 있는 277개의 플러그인.** &nbsp;🖼️ **웹 · 데스크톱 · 모바일 프로토타입**, **라이브 대시보드 / 아티팩트**, **덱**, **이미지**, **비디오**, 그리고 **HyperFrames** 모션 그래픽을 생성합니다. 🔒 샌드박스 iframe 미리보기 · HTML / PDF / PPTX / MP4 내보내기. &nbsp;🤖 **25개의 고유한 로컬 CLI 실행 파일에서 실행**되며, BYOK를 통해 OpenAI 호환 엔드포인트라면 무엇이든 사용할 수 있습니다.
 
-OpenDesign는 그 루프를 에이전트가 읽고 쓸 수 있는 **기능 스킬 · 렌더링 디자인 템플릿 · 디자인 시스템 · 플러그인의 파일시스템**으로 만듭니다.
+CapyDesign는 그 루프를 에이전트가 읽고 쓸 수 있는 **기능 스킬 · 렌더링 디자인 템플릿 · 디자인 시스템 · 플러그인의 파일시스템**으로 만듭니다.
 
 또한 이것은 **에이전트 시대를 위한 Figma 대안**입니다 — 캔버스 위에서 픽셀을 밀어 옮기는 대신, 실제 CSS, 실제 폰트, 실제 컴포넌트로 된 단일 페이지 아티팩트를 HTML / PDF / PPTX / MP4로 곧바로 내보내 전달합니다 — 이미 당신의 디자인 시스템으로 빚어졌고, 이미 당신이 매일 쓰는 에이전트 안에서 실행 가능한 상태로요.
 
@@ -22,7 +22,7 @@ OpenDesign는 그 루프를 에이전트가 읽고 쓸 수 있는 **기능 스�
 
 ## 제품 둘러보기
 
-OpenDesign의 핵심 워크플로를 빠르게 살펴봅니다. **Home**에서 브리프를 입력하고, **Plugins**에서 재사용 가능한 스킬을 찾고, 브랜드 참고 자료를 **Design System**으로 전환하세요. 그런 다음 프로젝트의 **Studio**에서 프로토타입, 덱, 모바일 앱, 이미지, 문서, HyperFrame을 한곳에서 만들고 다듬을 수 있습니다.
+CapyDesign의 핵심 워크플로를 빠르게 살펴봅니다. **Home**에서 브리프를 입력하고, **Plugins**에서 재사용 가능한 스킬을 찾고, 브랜드 참고 자료를 **Design System**으로 전환하세요. 그런 다음 프로젝트의 **Studio**에서 프로토타입, 덱, 모바일 앱, 이미지, 문서, HyperFrame을 한곳에서 만들고 다듬을 수 있습니다.
 
 ### 핵심 페이지
 
@@ -88,7 +88,7 @@ OpenDesign의 핵심 워크플로를 빠르게 살펴봅니다. **Home**에서 �
 
 ## 플랫폼 호환성
 
-> OpenDesign는 주류 코딩 에이전트가 네이티브로 사용하는 **스킬, CLI, MCP 서버**로 제공됩니다. OD를 설치한 뒤 `capt mcp install <agent>` 한 번이면 MCP 서버가 해당 에이전트의 설정에 연결되고, 어떤 에이전트 안에서든 동일한 도구를 호출할 수 있습니다.
+> CapyDesign는 주류 코딩 에이전트가 네이티브로 사용하는 **스킬, CLI, MCP 서버**로 제공됩니다. OD를 설치한 뒤 `capt mcp install <agent>` 한 번이면 MCP 서버가 해당 에이전트의 설정에 연결되고, 어떤 에이전트 안에서든 동일한 도구를 호출할 수 있습니다.
 
 | 코딩 에이전트 / 플랫폼 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 상태 &nbsp;&nbsp; | 한 줄 MCP 서버 설치 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
@@ -199,7 +199,7 @@ Runtime 정의는 [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/runti
 
 ### 5 · 비디오 & HyperFrames — 에이전트 네이티브 모션 그래픽
 
-**[HyperFrames][hyperframes]**는 HeyGen의 오픈소스, 에이전트 네이티브 비디오 프레임워크로, OpenDesign에 일급 시민으로 통합되어 있습니다. 에이전트가 HTML + CSS + GSAP를 작성하면 HyperFrames가 헤드리스 Chrome + FFmpeg를 통해 결정론적 MP4로 렌더링합니다. 시네마틱 t2v / i2v를 위한 **Seedance 2.0**, 라우팅된 모델 변형을 위한 **Veo 3 / Sora 2 / Kling 2**, 오디오 레이어를 위한 **Suno v5 / Lyria 2**와 함께 사용하세요.
+**[HyperFrames][hyperframes]**는 HeyGen의 오픈소스, 에이전트 네이티브 비디오 프레임워크로, CapyDesign에 일급 시민으로 통합되어 있습니다. 에이전트가 HTML + CSS + GSAP를 작성하면 HyperFrames가 헤드리스 Chrome + FFmpeg를 통해 결정론적 MP4로 렌더링합니다. 시네마틱 t2v / i2v를 위한 **Seedance 2.0**, 라우팅된 모델 변형을 위한 **Veo 3 / Sora 2 / Kling 2**, 오디오 레이어를 위한 **Suno v5 / Lyria 2**와 함께 사용하세요.
 
 <table>
 <tr>
@@ -216,17 +216,17 @@ Runtime 정의는 [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/runti
 </tr>
 </table>
 
-11개의 HyperFrames 템플릿 + 39개의 Seedance 프롬프트가 저장소와 함께 제공됩니다. 카탈로그 썸네일 © HeyGen; 프레임워크는 Apache-2.0입니다. OD 특화 렌더 워크플로(컴포지션 캐시, sandbox-exec 우회, MP4-as-chip)는 [`design-templates/hyperframes/`](../../design-templates/hyperframes/)에 자세히 설명되어 있습니다.
+11개의 HyperFrames 템플릿 + 39개의 Seedance 프롬프트가 저장소와 함께 제공됩니다. 카탈로그 썸네일 © HeyGen; 프레임워크는 Apache-2.0입니다. CapyDesign 특화 렌더 워크플로(컴포지션 캐시, sandbox-exec 우회, MP4-as-chip)는 [`design-templates/hyperframes/`](../../design-templates/hyperframes/)에 자세히 설명되어 있습니다.
 
 [hyperframes]: https://github.com/heygen-com/hyperframes
 
 ---
 
-## 왜 OpenDesign인가
+## 왜 CapyDesign인가
 
 > **2026년 4월, Anthropic은 Claude Design을 출시했습니다 — LLM이 산문 작성을 멈추고 디자인 아티팩트를 직접 전달하기 시작한 최초의 순간이었습니다.** 그것은 입소문을 탔습니다. 그러나 그것은 닫힌 소스로, 유료 전용으로, 클라우드 전용으로 머물렀고, Anthropic의 모델, Anthropic의 스킬, Anthropic의 표면에 묶여 있었습니다. 결제도, 셀프 호스트도, Vercel 배포도, 자신의 에이전트로 교체하는 것도 없었습니다.
 
-OpenDesign(OD)는 그 오픈소스 대안입니다. 같은 루프, 같은 아티팩트 우선의 사고방식, 잠금은 전혀 없이:
+CapyDesign(CapyDesign)는 그 오픈소스 대안입니다. 같은 루프, 같은 아티팩트 우선의 사고방식, 잠금은 전혀 없이:
 
 - 🤖 **에이전트 네이티브, 모델에 구애받지 않음.** 우리는 에이전트를 제공하지 않습니다. 이미 당신의 `PATH`에 있는 `claude` / `codex` / `cursor-agent` / `copilot` / `hermes` / `kimi`가 디자인 엔진입니다. 한 번의 클릭으로 교체하세요.
 - 🧠 **기본부터 브랜드급.** 모든 렌더는 활성 패키지의 `DESIGN.md`를 핵심 브랜드 계약으로 읽습니다. 151개 디자인 시스템 패키지가 제공되며, 레거시 패키지는 `DESIGN.md`만 포함할 수 있고 새 패키지는 `manifest.json`, `tokens.css`, 컴포넌트, 에셋, 출처 정보를 더할 수 있습니다. 폴더 하나만 넣으면 피커가 찾아냅니다.
@@ -237,7 +237,7 @@ OpenDesign(OD)는 그 오픈소스 대안입니다. 같은 루프, 같은 아티
 
 ### 비교
 
-| | Claude Design | Figma | Lovable / v0 / Bolt | **OpenDesign** |
+| | Claude Design | Figma | Lovable / v0 / Bolt | **CapyDesign** |
 |---|---|---|---|---|
 | 오픈소스 | ❌ | ❌ | ❌ | **✅ Apache-2.0** |
 | 셀프 호스트 / 데스크톱 | ❌ | ❌ | ❌ | **✅ macOS + Windows + Docker** |
@@ -254,13 +254,13 @@ OpenDesign(OD)는 그 오픈소스 대안입니다. 같은 루프, 같은 아티
 
 ### 🖥️ 데스크톱 앱 다운로드 (권장 — 설정 불필요)
 
-OpenDesign를 사용하는 가장 빠른 방법입니다. Node도, pnpm도, 클론도 필요 없습니다.
+CapyDesign를 사용하는 가장 빠른 방법입니다. Node도, pnpm도, 클론도 필요 없습니다.
 
 설치 후: 앱이 당신의 `PATH`에 있는 모든 코딩 에이전트 CLI를 자동으로 감지하고, 100개 이상의 기능 스킬과 별도 렌더링 템플릿 카탈로그, 151개의 디자인 시스템 패키지를 불러오며, entry view에서 브리프를 입력할 수 있게 합니다.
 
 ### 🤖 코딩 에이전트에 설치 (UI 없이)
 
-GUI를 한 번도 열지 않고도 OpenDesign를 사용할 수 있습니다 — Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi 등의 내부에서 스킬, 플러그인, 또는 MCP 서버로 호출하세요.
+GUI를 한 번도 열지 않고도 CapyDesign를 사용할 수 있습니다 — Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi 등의 내부에서 스킬, 플러그인, 또는 MCP 서버로 호출하세요.
 
 ```bash
 # One-line install into the agent you're using:
@@ -275,7 +275,7 @@ capt mcp install <agent>
 > Use open-design to generate a landing page with the Linear design system
 ```
 
-파일시스템 기반 로컬 CLI 실행에서 에이전트는 선택한 기능 스킬 또는 디자인 템플릿과 `DESIGN.md`를 합성해 정규 프로젝트 파일을 쓰고 OpenDesign이 이를 미리 봅니다. 파일 도구가 없는 BYOK/API 실행은 완전한 `<artifact>` 블록 하나를 반환합니다.
+파일시스템 기반 로컬 CLI 실행에서 에이전트는 선택한 기능 스킬 또는 디자인 템플릿과 `DESIGN.md`를 합성해 정규 프로젝트 파일을 쓰고 CapyDesign이 이를 미리 봅니다. 파일 도구가 없는 BYOK/API 실행은 완전한 `<artifact>` 블록 하나를 반환합니다.
 
 ### 🐳 Docker로 실행
 
@@ -292,7 +292,7 @@ docker compose up -d
 
 [![Deploy on Sealos](https://sealos.io/Deploy-on-Sealos.svg)](https://sealos.io/products/app-store/open-design/)
 
-Sealos App Store 템플릿은 게시된 OpenDesign Docker 이미지를 영구 워크스페이스 스토리지 및 공개 프록시의 Basic Auth와 함께 실행합니다. 사용자 지정 공개 또는 공유 Docker 배포에서는 [`deploy/README.md`](../../deploy/README.md#local-compose)의 리버스 프록시와 `OPEN_DESIGN_ALLOWED_ORIGINS` 안내를 따르세요.
+Sealos App Store 템플릿은 게시된 CapyDesign Docker 이미지를 영구 워크스페이스 스토리지 및 공개 프록시의 Basic Auth와 함께 실행합니다. 사용자 지정 공개 또는 공유 Docker 배포에서는 [`deploy/README.md`](../../deploy/README.md#local-compose)의 리버스 프록시와 `OPEN_DESIGN_ALLOWED_ORIGINS` 안내를 따르세요.
 
 ### 🧑‍💻 소스에서 실행
 
@@ -315,13 +315,13 @@ Node `~24`, pnpm `10.33.x`. Windows 사용자는 [`docs/windows-troubleshooting.
 2. **디자이너(또는 에이전트)가 방향을 확정합니다.** 브랜드가 없나요? 엄선된 5가지 방향 중에서 고르세요. 브랜드가 있나요? 스크린샷 / URL을 넣으면 → 에이전트가 GitHub에 연결하고, Figma를 가져오고, 재사용 가능한 `DESIGN.md`로 코드화합니다.
 3. **에이전트가 첫 결과물을 만듭니다.** 파일시스템 기반 CLI 실행은 정규 파일을 쓰고, 파일 도구가 없는 BYOK/API 실행은 완전한 `<artifact>` 블록을 반환합니다.
 4. **엔지니어링으로 넘깁니다.** 아티팩트는 실제 HTML/CSS입니다 — Cursor, Codex, 또는 Claude Code에 넣어 코드로 계속 빌드하세요. 또는 PPTX / PDF / MP4를 마케팅으로 곧바로 내보내세요.
-5. **OpenDesign는 사용할수록 더 똑똑해집니다.** 당신의 스크린샷, 폰트, 팔레트, 확정된 아티팩트가 다음 세션의 기본값으로 쌓입니다. 재작업도 줄고, 표류도 줄어듭니다.
+5. **CapyDesign는 사용할수록 더 똑똑해집니다.** 당신의 스크린샷, 폰트, 팔레트, 확정된 아티팩트가 다음 세션의 기본값으로 쌓입니다. 재작업도 줄고, 표류도 줄어듭니다.
 
 ---
 
-## 코딩 에이전트에서 OpenDesign 사용하기
+## 코딩 에이전트에서 CapyDesign 사용하기
 
-OpenDesign는 **stdio MCP 서버**와 에이전트별 **설치 스크립트**를 제공합니다. 다른 저장소에 있는 MCP 호환 에이전트라면 무엇이든 당신의 로컬 OpenDesign 프로젝트에서 파일을 직접 읽을 수 있습니다 — 토큰 CSS, JSX 컴포넌트, entry HTML — 이름으로 질의 가능한 구조화된 API로요. 에이전트는 언제나 오래된 내보내기가 아니라 살아 있는 파일을 봅니다.
+CapyDesign는 **stdio MCP 서버**와 에이전트별 **설치 스크립트**를 제공합니다. 다른 저장소에 있는 MCP 호환 에이전트라면 무엇이든 당신의 로컬 CapyDesign 프로젝트에서 파일을 직접 읽을 수 있습니다 — 토큰 CSS, JSX 컴포넌트, entry HTML — 이름으로 질의 가능한 구조화된 API로요. 에이전트는 언제나 오래된 내보내기가 아니라 살아 있는 파일을 봅니다.
 
 ```bash
 # One-line install (16+ CLIs supported):
@@ -453,7 +453,7 @@ capt plugin uninstall od-default       # uninstall
 
 ### 플러그인 만들기
 
-OpenDesign 플러그인에는 `open-design.json`과 타입별 payload가 필요합니다. 스킬과 시나리오는 `SKILL.md`도 포함하고 다른 타입은 자체 payload를 사용합니다:
+CapyDesign 플러그인에는 `open-design.json`과 타입별 payload가 필요합니다. 스킬과 시나리오는 `SKILL.md`도 포함하고 다른 타입은 자체 payload를 사용합니다:
 
 ```
 my-plugin/
@@ -471,15 +471,15 @@ my-plugin/
 ```bash
 capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
 capt plugin validate ./my-plugin                          # check manifest / file layout
-pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
+pnpm guard && pnpm --filter @capydesign/plugin-runtime typecheck
 ```
 
 전체 필드 집합과 런타임 계약 → [`plugins/spec/SPEC.md`](../../plugins/spec/SPEC.md); 코딩 에이전트로 플러그인 개발하기 → [`plugins/spec/AGENT-DEVELOPMENT.md`](../../plugins/spec/AGENT-DEVELOPMENT.md); 복사해 붙여넣을 최소 템플릿 → [`plugins/spec/examples/`](../../plugins/spec/examples/).
 
 ### 플러그인 기여하기
 
-1. 플러그인 폴더를 [`plugins/community/`](../../plugins/community/)(서드파티 플러그인)에 넣거나 — OpenDesign와 함께 번들로 제공하려면 — [`plugins/_official/`](../../plugins/_official/)의 알맞은 티어에 넣으세요.
-2. 검증 통과: `capt plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
+1. 플러그인 폴더를 [`plugins/community/`](../../plugins/community/)(서드파티 플러그인)에 넣거나 — CapyDesign와 함께 번들로 제공하려면 — [`plugins/_official/`](../../plugins/_official/)의 알맞은 티어에 넣으세요.
+2. 검증 통과: `capt plugin validate`, `pnpm guard`, `pnpm --filter @capydesign/plugin-runtime typecheck`.
 3. [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md)의 템플릿을 사용해 PR을 작성하세요(ID, 버전, 레인, 모드, 기능, 트리거 예시; 비주얼 플러그인에는 스크린샷 / 미리보기 첨부).
 4. 외부 레지스트리(skills.sh / ClawHub / 독립 GitHub)에 게시하려면 → [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -541,7 +541,7 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 - [x] 사이드카 프로토콜 + Electron 데스크톱 + IPC 자동화
 - [x] 아티팩트 린트 API + 5차원 자가 비평 내보내기 전 게이트
 - [x] **0.8.0** — 플러그인 마켓플레이스 인프라(261개 공식 플러그인, 매니페스트 사양, 에이전트별 설치 스크립트)
-- [x] **0.9.0** — OpenDesign Cloud(앱에 내장된 공식 Model Router: 설정 불필요, 원클릭 로그인)
+- [x] **0.9.0** — OpenDesign Cloud(앱에 내장된 공식 Model Router: 설정 불필요, 원클릭 로그인) — removed in CapyDesign, this fork is local-only
 - [x] 패키징된 Electron 빌드 — macOS(Apple Silicon + Intel) + Windows(x64) + Linux AppImage(선택적 레인)
 - [ ] 코멘트 모드 정밀 편집 — 부분 출시됨; 안정적인 타깃 패칭 진행 중
 - [ ] AI가 내보내는 tweaks 패널 UX — 아직 구현되지 않음
@@ -567,7 +567,7 @@ pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
 
 ## 기여하기
 
-OpenDesign가 계속 나아가는 것은 기여자들 — 디자이너, 엔지니어, 프롬프트 작성자 — 이 계속 모습을 드러내기 때문입니다. 가장 많이 쓰이는 스킬, 디자인 시스템, 플러그인의 상당수는 핵심 팀 바깥의 사람들이 작성했습니다.
+CapyDesign가 계속 나아가는 것은 기여자들 — 디자이너, 엔지니어, 프롬프트 작성자 — 이 계속 모습을 드러내기 때문입니다. 가장 많이 쓰이는 스킬, 디자인 시스템, 플러그인의 상당수는 핵심 팀 바깥의 사람들이 작성했습니다.
 
 ### 🎯 어디서 시작할까 (최대 레버리지, 최소 변경)
 
@@ -596,7 +596,7 @@ gh issue develop <number>   # create a branch and worktree
 
 # 3. Make the change, run the checks
 pnpm guard && pnpm typecheck
-pnpm --filter @open-design/<package> test
+pnpm --filter @capydesign/<package> test
 
 # 4. Open the PR
 gh pr create --fill
@@ -604,7 +604,7 @@ gh pr create --fill
 
 전체 에이전트 친화적 기여 흐름, 코드 스타일, PR 기준 → [`CONTRIBUTING.ko.md`](CONTRIBUTING.ko.md) ([Deutsch](CONTRIBUTING.de.md) · [Français](CONTRIBUTING.fr.md) · [简体中文](CONTRIBUTING.zh-CN.md) · [日本語](CONTRIBUTING.ja-JP.md) · [Português](CONTRIBUTING.pt-BR.md)).
 
-### 🏅 OpenDesign Fellow 프로그램
+### 🏅 CapyDesign Fellow 프로그램
 
 ---
 
@@ -638,7 +638,7 @@ gh pr create --fill
 참여해 주신 모든 분께 감사드립니다 — 코드, 문서, 피드백, 날카로운 이슈, 새 스킬, 새 디자인 시스템.
 
 <a href="https://github.com/unfoldingdimensions/open-design/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="OpenDesign contributors" />
+  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="CapyDesign contributors" />
 </a>
 
 ---
@@ -667,7 +667,7 @@ gh pr create --fill
 | [`multica-ai/multica`](https://github.com/multica-ai/multica) | 데몬 + 어댑터 아키텍처 — PATH 스캔 에이전트 감지, 유일한 특권 프로세스로서의 로컬 데몬. |
 | [`VoltAgent/awesome-design-md`](https://github.com/VoltAgent/awesome-design-md) | 원래 9개 섹션 `DESIGN.md` 스키마와 업스트림에서 파생된 70개 시스템의 역사적 출처이며, 현재 패키지는 이 기반을 확장할 수 있습니다. |
 | [`bergside/awesome-design-skills`](https://github.com/bergside/awesome-design-skills) | `design-systems/` 아래에 추가된 57개 디자인 스킬의 출처. |
-| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | HTML→MP4 모션 그래픽 프레임워크로, OpenDesign에 일급 `hyperframes-html`로 통합됨. |
+| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | HTML→MP4 모션 그래픽 프레임워크로, CapyDesign에 일급 `hyperframes-html`로 통합됨. |
 | [Claude Code skills][skill] | 우리가 그대로 채택한 `SKILL.md` 관례. |
 
 자세한 출처 → [`docs/references.md`](../../docs/references.md).
