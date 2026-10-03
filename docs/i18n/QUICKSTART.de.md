@@ -180,7 +180,7 @@ OPEN_DESIGN_MEM_LIMIT=384m
 OPEN_DESIGN_ALLOWED_ORIGINS=https://yourdomain.com
 
 # Docker-Image-Tag
-OPEN_DESIGN_IMAGE=ghcr.io/nexu-io/od:latest
+OPEN_DESIGN_IMAGE=ghcr.io/unfoldingdimensions/od:latest
 
 # Erforderliches API-Token für die Daemon-Sicherheit
 # Erzeugen Sie eines mit: openssl rand -hex 32

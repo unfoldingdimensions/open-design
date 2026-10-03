@@ -19,7 +19,7 @@ Guide นี้บอกชัด ๆ ว่า contribution แต่ละป�
 | เพิ่ม feature, แก้ bug, ยก UX pattern จาก [`open-codesign`][ocod] | code | `apps/web/src/`, `apps/daemon/` | PR ปกติ |
 | ปรับ docs, port section เป็น Français / Deutsch / 中文, แก้ typo | docs | `README.md`, `docs/i18n/README.fr.md`, `docs/i18n/README.de.md`, `docs/i18n/README.zh-CN.md`, `docs/`, `QUICKSTART.md` | หนึ่ง PR |
 
-ถ้ายังไม่แน่ใจว่า idea ของคุณอยู่ bucket ไหน ให้ [เปิด discussion / issue ก่อน](https://github.com/nexu-io/open-design/issues/new) แล้วเราจะชี้ surface ที่ถูกให้.
+ถ้ายังไม่แน่ใจว่า idea ของคุณอยู่ bucket ไหน ให้ [เปิด discussion / issue ก่อน](https://github.com/unfoldingdimensions/open-design/issues/new) แล้วเราจะชี้ surface ที่ถูกให้.
 
 ---
 
@@ -28,7 +28,7 @@ Guide นี้บอกชัด ๆ ว่า contribution แต่ละป�
 Setup แบบหน้าเดียวเต็มอยู่ใน [`QUICKSTART.th.md`](QUICKSTART.th.md). TL;DR สำหรับ contributors:
 
 ```bash
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design
 corepack enable           # selects the pinned pnpm from packageManager
 pnpm install
@@ -284,7 +284,7 @@ Table OVERRIDES ใน `maxTokens.ts` มีไว้สำหรับกรณ
 
 ## Asking questions
 
-- คำถาม architecture, design, "นี่คือ bug หรือ misuse" → [GitHub Discussions](https://github.com/nexu-io/open-design/discussions) (preferred — searchable สำหรับคนถัดไป).
+- คำถาม architecture, design, "นี่คือ bug หรือ misuse" → [GitHub Discussions](https://github.com/unfoldingdimensions/open-design/discussions) (preferred — searchable สำหรับคนถัดไป).
 - "จะเขียน skill ที่ทำ X ได้อย่างไร" → เปิด discussion. เราจะตอบและเปลี่ยนคำตอบเป็น [`docs/skills-protocol.md`](../../docs/skills-protocol.md) ถ้ามันเป็น pattern ที่ยังขาดอยู่.
 
 ---
@@ -314,7 +314,7 @@ Table OVERRIDES ใน `maxTokens.ts` มีไว้สำหรับกรณ
 
 tl;dr: ship PR ดี ๆ, review อย่างใส่ใจ, อยู่ใน [Discussions][discussions], แล้วที่เหลือจะตามมาเอง.
 
-[discussions]: https://github.com/nexu-io/open-design/discussions
+[discussions]: https://github.com/unfoldingdimensions/open-design/discussions
 
 ---
 

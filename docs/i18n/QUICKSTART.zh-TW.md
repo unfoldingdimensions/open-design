@@ -180,7 +180,7 @@ OPEN_DESIGN_MEM_LIMIT=384m
 OPEN_DESIGN_ALLOWED_ORIGINS=https://yourdomain.com
 
 # Docker 映像檔標籤
-OPEN_DESIGN_IMAGE=ghcr.io/nexu-io/od:latest
+OPEN_DESIGN_IMAGE=ghcr.io/unfoldingdimensions/od:latest
 
 # Daemon 安全所需的 API 令牌
 # 使用以下命令產生：openssl rand -hex 32
