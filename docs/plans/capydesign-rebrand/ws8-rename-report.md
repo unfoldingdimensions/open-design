@@ -1,13 +1,12 @@
 # WS8 slice 1 — docs + README family rename report
 
-Status: **slice 1 complete** (README family, `docs/` active prose, root guides,
-`AGENTS.md` files, deploy-script identity, clipper store listing).
-**Slice 2 complete**: `plugins/`, `skills/`, `design-templates/`, `craft/`.
-**Slice 3 complete**: `specs/` (classification-heavy; see its section below).
+Status: **WS8 COMPLETE — all four slices landed.**
+**Slice 1**: README family, `docs/` active prose, root guides, `AGENTS.md`
+files, deploy-script identity, clipper listing. **Slice 2**: `plugins/`,
+`skills/`, `design-templates/`, `craft/`. **Slice 3**: `specs/`.
+**Slice 4**: `design-systems/` (see its section below).
 Branch: `rebrand/ws7-upstream-links-and-infra` (branched from the WS7 tip per the
 WS8 dependency rule: after WS3/WS5/WS7).
-
-Slices still open: `design-systems/` (1,813 — the third-party trap, last).
 
 ## WS1 coordination finding
 
@@ -192,3 +191,47 @@ appropriate and deletion is out of WS8's scope):
 `workspace-scope-model.md` — specs describing the AMR/wallet/collab surfaces
 WS6 removed. Options: archive under a dated dir, or delete with the WS6
 residue sweep.
+
+## Slice 4 — design-systems (the trap that wasn't)
+
+The plan estimated 1,813 product-name hits and warned most were third-party
+brand prose. The live count was **1,975 across 4,011 files (md/json/html/css)**,
+and the per-line audit found the opposite of the fear: **every distinct line
+containing the product token is first-party**. The third-party brands'
+`DESIGN.md` prose (airbnb, nike, ferrari, …) simply does not mention
+OpenDesign. All 304 unique HTML lines, 170 unique md/json lines, and 4 CSS
+lines were reviewed before executing a verified-safe token-level swap:
+
+- The formulaic boilerplate: `"origin": "OpenDesign curated bundled fixture"`
+  (×151), "Design System 2.0 backfill/guide" lines (×300), "Bundled
+  OpenDesign package for <Brand>" leads and descriptions (×~1,050 across
+  components.html locales and manifests), the components.html portability
+  reviewer sentence (×150), and the fixture footer wordmark.
+- The Cloudflare Kumo curated-integration prose (compatibility bindings,
+  shared token contract) and the tw93/kami adaptation note — Cloudflare/
+  kami/Refero credits inside them kept verbatim.
+- `docs/design-systems.md:37` (deferred in slice 1) renamed in the same
+  commit, restoring doc/data agreement on the `origin` literal.
+
+Verification: all 152 manifests + all other design-systems JSON re-validated
+with `JSON.parse` (one sample check initially flagged a nonexistent
+`kumo/manifest.json` — the directory is `cloudflare-kumo`; no real invalids).
+`pnpm guard`'s full design-system battery passes: 152 manifests valid,
+token-fixture sync 152/152, A1/A2/B-slot tokens, package quality 100. Guard
+exit stays 1 on the documented seedream notices only.
+
+## WS8 closing residue classification (all owned areas, md/json)
+
+562 remaining hits, zero of class `missed`:
+
+| Class | Where | Hits |
+|---|---|---|
+| `history` | `docs/CHANGELOG/**`, `docs/plans/**` (incl. the rebrand prompts), `docs/superpowers/**`, `docs/spec.md`, `docs/roadmap.md`, v0.8.0 announcements, `docs/whats-new.json` (dated hackathon promo for the old Discord/Feishu — kept as a dated record), `docs/design/run-errors/**`, `docs/testing/syntax-acceptance.md`, `docs/design-system-tracking-spec.md`, `specs/current+change+2026-04-29/**` | 539 |
+| `attribution` | README + i18n historical "OpenDesign Cloud" roadmap lines, provenance blocks, upstream maintainer credit | 14 |
+| `WS3-owned` | `plugins/_official/scenarios/od-next-strategy/assets/**` | 4 |
+| `deferred: HTML pass` | example/preview `.html` outputs (third-party-verbatim bundles must not be renamed; first-party demos should be regenerated from compose scripts) | 476 in .html |
+
+Open handoffs for the human / other workstreams: PRIVACY.md AMR section
+(WS6 privacy-truth item), four stale AMR/wallet/collab specs in
+`specs/current/`, CONTEXT.md AMR/cloud glossary entries, the stale-content
+testing/deployment docs listed in slice 1, and the HTML example pass.
