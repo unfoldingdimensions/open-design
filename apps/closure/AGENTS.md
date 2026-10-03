@@ -1,6 +1,6 @@
 # Closure app guide
 
-This app owns OpenDesign Closure content and its distribution contribution.
+This app owns CapyDesign Closure content and its distribution contribution.
 
 - The cold-start fixture must remain independent from Web, daemon, Sidecar, and shell code.
 - Emit only public `@capydesign/standalone` contribution shapes.

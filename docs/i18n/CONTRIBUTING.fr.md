@@ -25,7 +25,7 @@ une PR doit atteindre avant d’être mergée.
 | Améliorer la doc, porter une section en Français / Deutsch / 中文, corriger une faute | documentation | `README.md`, `docs/i18n/README.fr.md`, `docs/i18n/README.de.md`, `docs/i18n/README.zh-CN.md`, `docs/`, `QUICKSTART.md` | une PR |
 
 Si vous ne savez pas dans quelle catégorie tombe votre idée, [ouvrez d'abord
-une discussion ou une issue](https://github.com/nexu-io/open-design/issues/new)
+une discussion ou une issue](https://github.com/unfoldingdimensions/open-design/issues/new)
 et nous vous orienterons vers la bonne surface.
 
 ---
@@ -36,7 +36,7 @@ Le setup complet en une page se trouve dans [`QUICKSTART.fr.md`](QUICKSTART.fr.m
 TL;DR pour contribuer :
 
 ```bash
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design
 corepack enable           # sélectionne la version de pnpm définie par packageManager
 pnpm install
@@ -107,7 +107,7 @@ Ajustez ces valeurs dans `deploy/.env` en conservant votre `OD_API_TOKEN` :
 OPEN_DESIGN_PORT=7456
 OPEN_DESIGN_MEM_LIMIT=384m
 OPEN_DESIGN_ALLOWED_ORIGINS=https://yourdomain.com
-OPEN_DESIGN_IMAGE=ghcr.io/nexu-io/od:latest
+OPEN_DESIGN_IMAGE=ghcr.io/unfoldingdimensions/od:latest
 ```
 
 Les projets et la base de données sont persistés dans des volumes Docker. Pour les règles de stockage du daemon, consultez la section **Daemon data directory contract** du fichier [`AGENTS.md`](../../AGENTS.md#daemon-data-directory-contract) à la racine.
@@ -384,7 +384,7 @@ afin de voir si la violation vient du modèle ou du prompt.
 ## Poser des questions
 
 - Question d'architecture, question de design, "bug ou mauvaise utilisation ?" →
-  [GitHub Discussions](https://github.com/nexu-io/open-design/discussions)
+  [GitHub Discussions](https://github.com/unfoldingdimensions/open-design/discussions)
   (préféré, car searchable pour la personne suivante).
 - "Comment écrire un Skill qui fait X ?" → ouvrez une discussion. Nous y
   répondrons et transformerons la réponse en ajout dans
@@ -444,7 +444,7 @@ Le tl;dr : livrez de bonnes PR, faites des reviews réfléchies, traînez
 dans les [Discussions][discussions] / sur [Discord][discord], et le reste
 se fait tout seul.
 
-[discussions]: https://github.com/nexu-io/open-design/discussions
+[discussions]: https://github.com/unfoldingdimensions/open-design/discussions
 
 ---
 

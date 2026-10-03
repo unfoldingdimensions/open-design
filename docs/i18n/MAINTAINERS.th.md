@@ -2,7 +2,7 @@
 
 <p align="center"><a href="../../MAINTAINERS.md">English</a> · <a href="MAINTAINERS.pt-BR.md">Português (Brasil)</a> · <a href="MAINTAINERS.de.md">Deutsch</a> · <a href="MAINTAINERS.fr.md">Français</a> · <a href="MAINTAINERS.zh-CN.md">简体中文</a> · <a href="MAINTAINERS.ja-JP.md">日本語</a> · <a href="MAINTAINERS.ko.md">한국어</a> · <b>ภาษาไทย</b></p>
 
-เอกสารนี้กำหนดกติกาสำหรับการเป็น, การทำหน้าที่ และการ step down จากบทบาท Maintainer ของ `nexu-io/open-design`. รายชื่อรายบุคคลของ Core Team ถูก maintain ภายในและไม่ได้ enumerate ไว้ที่นี่ — สิ่งที่สำคัญต่อสาธารณะคือกติกาที่ทุกคนเล่นตาม.
+เอกสารนี้กำหนดกติกาสำหรับการเป็น, การทำหน้าที่ และการ step down จากบทบาท Maintainer ของ `unfoldingdimensions/open-design`. รายชื่อรายบุคคลของ Core Team ถูก maintain ภายในและไม่ได้ enumerate ไว้ที่นี่ — สิ่งที่สำคัญต่อสาธารณะคือกติกาที่ทุกคนเล่นตาม.
 
 > **Status**: v1, drafted 2026-05-11. เป็น companion ของ [`CONTRIBUTING.th.md`](CONTRIBUTING.th.md#becoming-a-maintainer) — ไฟล์นั้นชี้ contributors มาที่นี่เพื่อดูกติกาเต็ม.
 
@@ -46,7 +46,7 @@ Approval ของ Maintainer คือ path ที่ PR ส่วนใหญ�
 
 ### 1. Contribution volume
 
-- **≥ 20 merged PRs** ไปยัง `nexu-io/open-design`.
+- **≥ 20 merged PRs** ไปยัง `unfoldingdimensions/open-design`.
 
 นี่เป็น soft floor ไม่ใช่ตั๋วอัตโนมัติ. แตะ 20 PRs แล้วเข้าสู่การพิจารณา; ไม่ได้ guarantee role.
 
@@ -66,7 +66,7 @@ Approval ของ Maintainer คือ path ที่ PR ส่วนใหญ�
 
 #### Early-project waiver (auto-expires เมื่อ repo อายุครบ 6 เดือน)
 
-ขณะที่ `nexu-io/open-design` ยังอายุน้อยกว่าหกเดือนจาก initial commit, veto ด้าน **cross-project activity** (#6) อาจ waive ได้โดย Core Team consensus เมื่อ:
+ขณะที่ `unfoldingdimensions/open-design` ยังอายุน้อยกว่าหกเดือนจาก initial commit, veto ด้าน **cross-project activity** (#6) อาจ waive ได้โดย Core Team consensus เมื่อ:
 
 - Dimensions 1, 2, 3 และ 5 สูงกว่า admission line อย่างชัดเจน; **และ**
 - Core Team judge ว่า PR quality ของ candidate ใน repo นี้สูงจาก hands-on review.

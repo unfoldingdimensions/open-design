@@ -18,7 +18,7 @@ docs/whats-new.json
 daemon reads:
 
 ```
-https://whatsnew.open-design.ai/whats-new.json
+https://<whats-new-origin>/whats-new.json (operator-supplied origin, WS11)
 ```
 
 Changing the card is therefore an ordinary pull request — no local Cloudflare
@@ -62,14 +62,14 @@ down is an explicit act rather than something a typo can do for you.
   "id": "0.13.0",
   "title": "Design system sync",
   "body": "Import, edit and sync design systems with cleaner release highlights on Home.",
-  "imageUrl": "https://whatsnew.open-design.ai/0.13.0.png",
-  "linkUrl": "https://github.com/nexu-io/open-design/releases/tag/open-design-v0.13.0",
+  "imageUrl": "https://<whats-new-origin>/0.13.0.png",
+  "linkUrl": "https://github.com/unfoldingdimensions/open-design/releases/tag/open-design-v0.13.0",
   "ctaLabel": "View release notes",
   "locales": {
     "zh-CN": {
       "title": "设计系统同步",
       "body": "在首页导入、编辑并同步设计系统，发布亮点更清晰。",
-      "linkUrl": "https://open-design.ai/zh/blog/0-13-0/",
+      "linkUrl": "https://<site-origin>/zh/blog/0-13-0/",
       "ctaLabel": "查看更新说明"
     }
   }
@@ -105,7 +105,7 @@ parser rather than trusting review:
    error, it just makes the card disappear.
 3. On merge to `main`, `whats-new-publish.yml` uploads the file
    (`application/json`, `cache-control: public, max-age=300`) and then reads it
-   back from `https://whatsnew.open-design.ai/whats-new.json` with the edge
+   back from `https://<whats-new-origin>/whats-new.json (operator-supplied origin, WS11)` with the edge
    cache bypassed. The job fails unless the bytes served match the bytes
    uploaded — an exit code from the upload alone is not treated as proof.
 
@@ -113,10 +113,10 @@ To publish release copy, run **whats-new-publish** manually
 (`workflow_dispatch`) against the corresponding `release/vX.Y.Z` branch:
 
 ```bash
-gh workflow run whats-new-publish.yml --repo nexu-io/open-design \
+gh workflow run whats-new-publish.yml --repo unfoldingdimensions/open-design \
   --ref release/v0.22.0 -f dry_run=true
 # After reviewing the proposed document and id:
-gh workflow run whats-new-publish.yml --repo nexu-io/open-design \
+gh workflow run whats-new-publish.yml --repo unfoldingdimensions/open-design \
   --ref release/v0.22.0 -f dry_run=false
 ```
 

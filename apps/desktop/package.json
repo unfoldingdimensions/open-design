@@ -1,5 +1,6 @@
 {
   "name": "@capydesign/desktop",
+  "productName": "CapyDesign",
   "version": "0.22.1",
   "private": true,
   "type": "module",

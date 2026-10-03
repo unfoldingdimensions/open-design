@@ -19,7 +19,7 @@ Este guia diz exatamente onde olhar para cada tipo de contribuição e qual a ba
 | Adicionar uma feature, corrigir um bug, trazer um padrão de UX do [`open-codesign`][ocod] | código | `apps/web/src/`, `apps/daemon/` | PR normal |
 | Melhorar docs, traduzir uma seção para Français / Deutsch / 中文, corrigir typos | docs | `README.md`, `README.fr.md`, `README.de.md`, `README.zh-CN.md`, `docs/`, `QUICKSTART.md` | um PR |
 
-Se você não tem certeza em qual balde sua ideia se encaixa, [abra primeiro uma discussion / issue](https://github.com/nexu-io/open-design/issues/new) e te apontamos para a superfície certa.
+Se você não tem certeza em qual balde sua ideia se encaixa, [abra primeiro uma discussion / issue](https://github.com/unfoldingdimensions/open-design/issues/new) e te apontamos para a superfície certa.
 
 ---
 
@@ -28,7 +28,7 @@ Se você não tem certeza em qual balde sua ideia se encaixa, [abra primeiro uma
 O setup completo numa página mora em [`QUICKSTART.pt-BR.md`](QUICKSTART.pt-BR.md). O TL;DR para contribuidores:
 
 ```bash
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design
 corepack enable           # selects the pinned pnpm from packageManager
 pnpm install
@@ -285,7 +285,7 @@ Para bugs da pilha de prompt ("o agente emitiu um hero com gradiente roxo, a bla
 
 ## Fazendo perguntas
 
-- Pergunta de arquitetura, pergunta de design, "isso é bug ou mau uso" → [GitHub Discussions](https://github.com/nexu-io/open-design/discussions) (preferido — pesquisável para o próximo).
+- Pergunta de arquitetura, pergunta de design, "isso é bug ou mau uso" → [GitHub Discussions](https://github.com/unfoldingdimensions/open-design/discussions) (preferido — pesquisável para o próximo).
 - "Como escrevo uma skill que faz X" → Abra uma discussion. Respondemos e transformamos a resposta em [`docs/skills-protocol.md`](../../docs/skills-protocol.md) se for um padrão faltante.
 
 ---
@@ -316,7 +316,7 @@ Se você vem contribuindo de forma consistente e quer saber como é o caminho pa
 
 O tl;dr: mande bons PRs, revise com cuidado, apareça nas [Discussions][discussions] / no [Discord][discord], e o resto se resolve sozinho.
 
-[discussions]: https://github.com/nexu-io/open-design/discussions
+[discussions]: https://github.com/unfoldingdimensions/open-design/discussions
 
 ---
 
