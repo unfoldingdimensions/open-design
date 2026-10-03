@@ -2,13 +2,12 @@
 
 Status: **slice 1 complete** (README family, `docs/` active prose, root guides,
 `AGENTS.md` files, deploy-script identity, clipper store listing).
-**Slice 2 complete** (see the section at the bottom): `plugins/`, `skills/`,
-`design-templates/`, `craft/`.
+**Slice 2 complete**: `plugins/`, `skills/`, `design-templates/`, `craft/`.
+**Slice 3 complete**: `specs/` (classification-heavy; see its section below).
 Branch: `rebrand/ws7-upstream-links-and-infra` (branched from the WS7 tip per the
 WS8 dependency rule: after WS3/WS5/WS7).
 
-Slices still open: `specs/` (39) and `design-systems/` (1,813 — the third-party
-trap, last).
+Slices still open: `design-systems/` (1,813 — the third-party trap, last).
 
 ## WS1 coordination finding
 
@@ -155,3 +154,41 @@ Deliberately kept (classified):
 Contract tokens untouched throughout: `open-design.json` filename,
 `open-design-marketplace.json`, `od-*` scenario ids, `od:` manifest namespace,
 `od://` scheme, `scripts/od-preview-rewrite.mjs`.
+
+## Slice 3 — specs
+
+The plan estimated 39 hits; the live count is **218 across 39 files**. The
+slice is dominated by Rule-2 protected history, so the actual rename surface
+was one file:
+
+- **`specs/od-clipper.md` — renamed (the only specs file outside the dated
+  directories, and a living spec: its todo phases carry `status: pending`).**
+  `OpenDesign` → CapyDesign; feature prose names "OD Library" → "CapyDesign
+  Library", "OD Clipper" → "CapyDesign Clipper" (coherent with the clipper
+  store listing renamed in slice 1); standalone prose "OD" → CapyDesign
+  ("OD 网页 project" etc.). Identifier namespace untouched by construction:
+  `od_library_token` (×3), the `od-clipper.md` filename, the `clipper/`
+  directory, `POST /api/library/*` routes.
+
+Protected history kept verbatim, classified:
+
+| Area | Hits | Class |
+|---|---|---|
+| `specs/current/**` | 148 | `history` — dated decision records per WS8 Rule 2 |
+| `specs/change/**` | 66 | `history` — dated change specs |
+| `specs/2026-04-29-live-artifacts/` (incl. example fixtures) | 3 (+0 in fixtures) | `history` — dated spec dir, same principle |
+
+Inside the protected set (all kept as history): 154 `@open-design/*` package
+references, 12 `open-design.ai` URLs, 27 `nexu-io` references, 0 stale
+`od …` command tokens. The one hit in the load-bearing
+`specs/current/chat-panel-next.md` is the code identifier
+`onShareToOpenDesign` inside a ⚠️ pending-product-decision note — a real
+symbol in the web codebase, not prose.
+
+Flagged for a human call (content is stale post-WS6; renaming was not
+appropriate and deletion is out of WS8's scope):
+`specs/current/amr-wallet-balance-display.md` (34 hits),
+`amr-wallet-balance-vela-handoff.md` (18), `collab-sse-vela-push.md`,
+`workspace-scope-model.md` — specs describing the AMR/wallet/collab surfaces
+WS6 removed. Options: archive under a dated dir, or delete with the WS6
+residue sweep.
