@@ -30,7 +30,7 @@ jobs:
     # fingerprint does not match.
     if: >-
       ${{
-        github.repository == 'nexu-io/open-design'
+        github.repository == 'unfoldingdimensions/open-design'
         && github.event.workflow_run.name == 'ci'
         && github.event.workflow_run.conclusion != 'success'
         && github.event.workflow_run.conclusion != 'skipped'

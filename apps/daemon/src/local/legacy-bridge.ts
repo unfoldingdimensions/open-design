@@ -109,15 +109,13 @@ export interface AmrAccountFailureSignal {
   stderrTail?: unknown;
 }
 
-/** Retained so the recharge action link keeps its historical shape. */
-export const DEFAULT_AMR_RECHARGE_URL =
-  'https://open-design.ai/amr/dashboard?source=open_design';
-
 const AMR_AUTH_REQUIRED_MESSAGE =
   'AMR sign-in is required. Sign in to AMR Cloud again, then retry this run.';
 
 const AMR_INSUFFICIENT_BALANCE_MESSAGE =
-  `AMR Cloud reported insufficient balance for this model. Top up your AMR balance at ${DEFAULT_AMR_RECHARGE_URL} and retry this run.`;
+  // CapyDesign is local-only and the AMR service is gone: there is no balance
+  // to top up and nowhere to top it up, so the card carries no action link.
+  'This model needs an AMR Cloud balance, which a local-only CapyDesign build does not use. Pick a different model and retry this run.';
 
 const AMR_TIER_UPGRADE_REQUIRED_MESSAGE =
   'Your current AMR plan does not include this model or request type. Upgrade your AMR plan, or switch to an available model.';
@@ -229,7 +227,6 @@ export function classifyAccountFailureDetails(details: unknown): AmrAccountFailu
       code: 'AMR_INSUFFICIENT_BALANCE',
       message: AMR_INSUFFICIENT_BALANCE_MESSAGE,
       action: 'recharge',
-      actionUrl: DEFAULT_AMR_RECHARGE_URL,
     };
   }
 
@@ -293,7 +290,6 @@ export function classifyAccountFailure(text: string): AmrAccountFailure | null {
       code: 'AMR_INSUFFICIENT_BALANCE',
       message: AMR_INSUFFICIENT_BALANCE_MESSAGE,
       action: 'recharge',
-      actionUrl: DEFAULT_AMR_RECHARGE_URL,
     };
   }
 

@@ -48,7 +48,7 @@ permissions:
 jobs:
   finalize:
     if: >-
-      github.repository == 'nexu-io/open-design' &&
+      github.repository == 'unfoldingdimensions/open-design' &&
       (github.event_name == 'workflow_dispatch' ||
        github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
@@ -74,9 +74,9 @@ jobs:
           if [ "$EVENT" = "workflow_dispatch" ]; then
             req="$INPUT_TAG"
             case "$req" in open-design-v*) : ;; *) req="open-design-v$req" ;; esac   # allow a bare X.Y.Z
-            state=$(gh release view "$req" --repo nexu-io/open-design --json tagName,isDraft,isPrerelease 2>/dev/null || echo '')
+            state=$(gh release view "$req" --repo unfoldingdimensions/open-design --json tagName,isDraft,isPrerelease 2>/dev/null || echo '')
           else
-            state=$(gh release view --repo nexu-io/open-design --json tagName,isDraft,isPrerelease 2>/dev/null || echo '')
+            state=$(gh release view --repo unfoldingdimensions/open-design --json tagName,isDraft,isPrerelease 2>/dev/null || echo '')
           fi
           if [ -z "$state" ]; then
             echo "No release to finalize (no published stable / dry-run / not shipped)."
@@ -124,8 +124,8 @@ jobs:
         run: |
           set -euo pipefail
           label="backport release/v$VERSION"
-          if gh label list --repo nexu-io/open-design --json name --jq '.[].name' | grep -qxF "$label"; then
-            gh label delete "$label" --repo nexu-io/open-design --yes
+          if gh label list --repo unfoldingdimensions/open-design --json name --jq '.[].name' | grep -qxF "$label"; then
+            gh label delete "$label" --repo unfoldingdimensions/open-design --yes
             echo "Deleted label: $label"
           else
             echo "Label '$label' not present; nothing to delete."
@@ -191,14 +191,14 @@ jobs:
             "The \`backport release/v$VERSION\` label was already deleted by this same run." \
             "" \
             "**Needs one core-maintainer approval:** this touches CODEOWNERS-owned release manifests, so \`main\`'s code-owner rule requires a human review (a bot approval can't satisfy it). The merge queue is already armed — approve and it squashes in automatically.")
-          pr=$(gh pr create --repo nexu-io/open-design --base main --head "$BRANCH" \
+          pr=$(gh pr create --repo unfoldingdimensions/open-design --base main --head "$BRANCH" \
             --title "chore(release): bump main to $NEXT ahead of stable $VERSION" \
             --body "$body")
           echo "Opened $pr"
           # Request the code owners who must approve (best-effort; never fail finalize on a hiccup).
-          gh pr edit "$pr" --repo nexu-io/open-design --add-reviewer nexu-io/core-maintainers || \
+          gh pr edit "$pr" --repo unfoldingdimensions/open-design --add-reviewer nexu-io/core-maintainers || \
             echo "::warning::could not request nexu-io/core-maintainers review on $pr"
           # main is a squash merge queue; --auto arms enqueue-on-green (proven by
           # bake-plugin-previews-automerge — allow_auto_merge=false does not block the queue).
           # --match-head-commit pins the armed SHA so a later push isn't merged untested.
-          gh pr merge "$pr" --repo nexu-io/open-design --squash --auto --match-head-commit "$head_sha"
+          gh pr merge "$pr" --repo unfoldingdimensions/open-design --squash --auto --match-head-commit "$head_sha"

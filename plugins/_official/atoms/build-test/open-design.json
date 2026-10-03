@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "build-test",
   "title": "Build test",
@@ -8,10 +7,10 @@
   "description": "Run the project's build / typecheck / lint / test commands and emit build.passing + tests.passing signals.",
   "license": "MIT",
   "author": {
-    "name": "OpenDesign",
+    "name": "CapyDesign",
     "url": "https://github.com/nexu-io"
   },
-  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/atoms/build-test",
+  "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/_official/atoms/build-test",
   "tags": [
     "atom",
     "first-party",

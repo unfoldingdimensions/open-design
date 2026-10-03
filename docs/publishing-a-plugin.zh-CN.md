@@ -1,6 +1,6 @@
-# 发布 OpenDesign 插件
+# 发布 CapyDesign 插件
 
-OpenDesign registry v1 复用 GitHub 作为后端。CLI 是 canonical workflow；
+CapyDesign registry v1 复用 GitHub 作为后端。CLI 是 canonical workflow；
 产品 UI 和 agent 创建流程只是包装这些命令。
 
 ## 1. 创建
@@ -29,7 +29,7 @@ capt plugin login
 capt plugin whoami --json
 ```
 
-这两个命令包装 GitHub CLI。token 留在 `gh`，OpenDesign 不保存 GitHub
+这两个命令包装 GitHub CLI。token 留在 `gh`，CapyDesign 不保存 GitHub
 凭据。
 
 ## 4. 发布

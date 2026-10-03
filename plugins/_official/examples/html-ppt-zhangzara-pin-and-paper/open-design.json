@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "example-html-ppt-zhangzara-pin-and-paper",
   "title": "Turn a Field-Study Capstone into a Defense Deck like a Star Biology Major",
@@ -18,10 +17,10 @@
   },
   "license": "MIT",
   "author": {
-    "name": "OpenDesign",
+    "name": "CapyDesign",
     "url": "https://github.com/nexu-io"
   },
-  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-pin-and-paper",
+  "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/_official/examples/html-ppt-zhangzara-pin-and-paper",
   "tags": [
     "example",
     "first-party",

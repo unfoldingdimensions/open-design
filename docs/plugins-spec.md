@@ -1,42 +1,42 @@
-# OpenDesign Plugin & Marketplace Spec (v1)
+# CapyDesign Plugin & Marketplace Spec (v1)
 
-> **In one sentence:** OpenDesign plugins turn portable `SKILL.md` capabilities into marketplace-ready, one-click design workflows while preserving compatibility with existing agent skill catalogs, headless CLI use, and self-hosted deployment.
+> **In one sentence:** CapyDesign plugins turn portable `SKILL.md` capabilities into marketplace-ready, one-click design workflows while preserving compatibility with existing agent skill catalogs, headless CLI use, and self-hosted deployment.
 
 **Parent:** [`spec.md`](spec.md) · **Siblings:** [`skills-protocol.md`](skills-protocol.md) · [`architecture.md`](architecture.md) · [`agent-adapters.md`](agent-adapters.md) · [`modes.md`](modes.md)
 
-A **Plugin** is the unit of distribution for OpenDesign. Where a [Skill](skills-protocol.md) describes a single capability that an agent can run, a Plugin is the shippable bundle around it: one or more skills, an optional design system reference, optional craft rules, optional Claude-plugin assets, a preview, a use-case query, an asset folder, and a small machine-readable sidecar that powers OD's marketplace surface. A plugin is always anchored to a portable `SKILL.md` so it is publishable to every existing skill catalog without modification.
+A **Plugin** is the unit of distribution for CapyDesign. Where a [Skill](skills-protocol.md) describes a single capability that an agent can run, a Plugin is the shippable bundle around it: one or more skills, an optional design system reference, optional craft rules, optional Claude-plugin assets, a preview, a use-case query, an asset folder, and a small machine-readable sidecar that powers CapyDesign's marketplace surface. A plugin is always anchored to a portable `SKILL.md` so it is publishable to every existing skill catalog without modification.
 
-> **Compatibility promise (extends [`skills-protocol.md`](skills-protocol.md)):** Any plugin folder that ships a `SKILL.md` works as a plain agent skill in Claude Code, Cursor, Codex, Gemini CLI, OpenClaw, Hermes, etc. Adding `open-design.json` is purely additive — it unlocks OD's marketplace card, preview, one-click "use" flow, and typed context-chip strip, but it never changes how the underlying skill runs. **One repo, two consumption modes.**
+> **Compatibility promise (extends [`skills-protocol.md`](skills-protocol.md)):** Any plugin folder that ships a `SKILL.md` works as a plain agent skill in Claude Code, Cursor, Codex, Gemini CLI, OpenClaw, Hermes, etc. Adding `open-design.json` is purely additive — it unlocks CapyDesign's marketplace card, preview, one-click "use" flow, and typed context-chip strip, but it never changes how the underlying skill runs. **One repo, two consumption modes.**
 
 ## Executive map for readers
 
-This is an **agent-era plugin system**, not a Figma-era UI extension system. A plugin does not directly mount inside the canvas, own a local panel lifecycle, or talk to the app through bespoke `postMessage` / RPC channels. Instead, the plugin is a packaged intent and context layer that the user, UI, CLI, or another agent can select; OD resolves it into a query, context chips, assets, design-system references, MCP/tool capabilities, and run metadata; then the selected code agent consumes that package through the same project/run pipeline as any other OD task.
+This is an **agent-era plugin system**, not a Figma-era UI extension system. A plugin does not directly mount inside the canvas, own a local panel lifecycle, or talk to the app through bespoke `postMessage` / RPC channels. Instead, the plugin is a packaged intent and context layer that the user, UI, CLI, or another agent can select; CapyDesign resolves it into a query, context chips, assets, design-system references, MCP/tool capabilities, and run metadata; then the selected code agent consumes that package through the same project/run pipeline as any other CapyDesign task.
 
 The shortest mental model:
 
-1. **Plugin author ships portable capability.** `SKILL.md` remains the executable agent contract; `open-design.json` adds OD marketplace metadata, input fields, defaults, previews, and context wiring.
+1. **Plugin author ships portable capability.** `SKILL.md` remains the executable agent contract; `open-design.json` adds CapyDesign marketplace metadata, input fields, defaults, previews, and context wiring.
 2. **User or agent picks a workflow.** The selection can happen from the marketplace, inline in the home input, inside an existing project chat, from CLI, or from CI.
-3. **OD applies the plugin without making the plugin a UI process.** Apply returns a hydrated brief, typed context chips, assets, and capability requirements. It does not start a hidden plugin runtime.
+3. **CapyDesign applies the plugin without making the plugin a UI process.** Apply returns a hydrated brief, typed context chips, assets, and capability requirements. It does not start a hidden plugin runtime.
 4. **Agent drives generation.** The daemon creates or updates a project, starts a run, streams events over SSE / CLI ND-JSON, and records artifacts.
 5. **UI is a collaboration surface.** The web/desktop UI can show forms, previews, direction pickers, critique panels, and live artifacts, but the same flow must work headlessly through `capt`.
 
 ### Figma-era vs agent-era boundary
 
-| Question | Figma-era plugin assumption | OpenDesign v1 answer |
+| Question | Figma-era plugin assumption | CapyDesign v1 answer |
 | --- | --- | --- |
-| Who consumes the plugin? | The host UI runtime. | A code agent through OD's project/run pipeline. |
+| Who consumes the plugin? | The host UI runtime. | A code agent through CapyDesign's project/run pipeline. |
 | Does the plugin need a live UI lifecycle? | Usually yes: mount panel, listen to messages, mutate document. | No. The plugin is static files plus manifest; the agent run is the active process. |
-| Is there a plugin-to-app RPC protocol? | Often yes. | Not as the primary contract. OD uses HTTP internally, CLI for agents, MCP where useful, and SSE/ND-JSON for run events. |
+| Is there a plugin-to-app RPC protocol? | Often yes. | Not as the primary contract. CapyDesign uses HTTP internally, CLI for agents, MCP where useful, and SSE/ND-JSON for run events. |
 | What does "Use plugin" do? | Opens or runs a UI extension. | Hydrates a query, context chips, assets, inputs, and capability gates, then starts or continues an agent run. |
-| What is persisted? | Host document mutations. | OD project metadata, artifacts, conversation/run history, and plugin provenance. |
+| What is persisted? | Host document mutations. | CapyDesign project metadata, artifacts, conversation/run history, and plugin provenance. |
 
 ### Core interaction sequence
 
 ```mermaid
 sequenceDiagram
   participant U as User or Agent
-  participant S as OD Surface<br/>(Web, Desktop, CLI, CI)
-  participant D as OD Daemon
+  participant S as CapyDesign Surface<br/>(Web, Desktop, CLI, CI)
+  participant D as CapyDesign Daemon
   participant P as Plugin Manifest<br/>(SKILL.md + open-design.json)
   participant A as Code Agent
   participant R as Project Runtime<br/>(files + artifacts)
@@ -69,18 +69,18 @@ The important product shift: **plugins are not local UI addons; they are reusabl
 
 ### One-click long-task delivery, atomic pipelines, and devloop
 
-OD's core unit is not "one prompt, one output" — it is a **long-running design agent task**: a single run typically spans discovery → direction picking → generation → critique → secondary refinement, sometimes lasting tens of minutes to hours. A plugin's job is to **slice that long-running task into a shippable unit** that a user, UI, CLI, or another agent can launch with one click.
+CapyDesign's core unit is not "one prompt, one output" — it is a **long-running design agent task**: a single run typically spans discovery → direction picking → generation → critique → secondary refinement, sometimes lasting tens of minutes to hours. A plugin's job is to **slice that long-running task into a shippable unit** that a user, UI, CLI, or another agent can launch with one click.
 
 Concretely, this spec promotes the existing "first-party atoms" from a flat capability list into an **atomic pipeline that plugins assemble**:
 
-- **Atom (§10):** a named capability exposed by the OD daemon and first-party tools (discovery-question-form, direction-picker, todo-write, file-read/write, research-search, media-image, live-artifact, critique-theater, etc.).
+- **Atom (§10):** a named capability exposed by the CapyDesign daemon and first-party tools (discovery-question-form, direction-picker, todo-write, file-read/write, research-search, media-image, live-artifact, critique-theater, etc.).
 - **Pipeline (§5 / §10.1):** the plugin uses `od.pipeline` to compose atoms into ordered stages. The spec ships a default reference pipeline of `discovery → plan → generate → critique`; plugins can add, reorder, or loop over any stage.
 - **Devloop (§10.2):** when a stage is marked `repeat: true` with an `until` termination condition (critique score, user confirmation, preview load success, etc.), the agent automatically iterates on the previous artifact until the condition holds or the user explicitly cancels.
-- **Generative UI (§10.3):** when a stage needs human-in-the-loop input (information, authorization, direction picking, optimization confirmation), the agent triggers a surface that the plugin **declares ahead of time** in its manifest's `od.genui.surfaces[]`. The daemon broadcasts the request through OD's native event stream, which can also be projected into AG-UI canonical events for external clients. Once the user answers, the daemon writes the answer back to the project; the surface's `persist` field decides whether the answer is remembered at run / conversation / project tier so that multi-turn chats do not pester the user with the same question twice.
+- **Generative UI (§10.3):** when a stage needs human-in-the-loop input (information, authorization, direction picking, optimization confirmation), the agent triggers a surface that the plugin **declares ahead of time** in its manifest's `od.genui.surfaces[]`. The daemon broadcasts the request through CapyDesign's native event stream, which can also be projected into AG-UI canonical events for external clients. Once the user answers, the daemon writes the answer back to the project; the surface's `persist` field decides whether the answer is remembered at run / conversation / project tier so that multi-turn chats do not pester the user with the same question twice.
 
 In one sentence: **a plugin describes "what this long-running task's pipeline looks like and which GenUI surfaces it needs to collaborate with the user", the daemon supplies atoms and the surface bus, the agent runs a devloop on the pipeline, and artifacts carry provenance (§11.5) recording every plugin that touched the task.**
 
-**Current implementation clarification:** `discovery -> plan -> generate -> critique` is a reference pipeline shape, not a fixed hard-coded wizard. A plugin snapshot can carry `od.pipeline.stages[].atoms[]`; the daemon resolves that snapshot, injects the active plugin block plus active stage atom blocks into the system prompt, emits stage events, and lets the agent work through the pipeline. When the user has not explicitly selected a plugin, OD still does **not** launch a generic naked agent: the base OpenDesign designer prompt and discovery rules are always present. Product entry points bind sensible defaults on top of that base: Home free-form input routes through the bundled, hidden `od-default` scenario, while typed New Project flows choose the default bundled scenario for the project kind. `od-default` is a router and task-shaper; it should guide the run into the normal design pipeline, not be treated as a standalone "make it beautiful" aesthetic engine.
+**Current implementation clarification:** `discovery -> plan -> generate -> critique` is a reference pipeline shape, not a fixed hard-coded wizard. A plugin snapshot can carry `od.pipeline.stages[].atoms[]`; the daemon resolves that snapshot, injects the active plugin block plus active stage atom blocks into the system prompt, emits stage events, and lets the agent work through the pipeline. When the user has not explicitly selected a plugin, CapyDesign still does **not** launch a generic naked agent: the base CapyDesign designer prompt and discovery rules are always present. Product entry points bind sensible defaults on top of that base: Home free-form input routes through the bundled, hidden `od-default` scenario, while typed New Project flows choose the default bundled scenario for the project kind. `od-default` is a router and task-shaper; it should guide the run into the normal design pipeline, not be treated as a standalone "make it beautiful" aesthetic engine.
 
 ### Four product scenarios
 
@@ -89,7 +89,7 @@ In one sentence: **a plugin describes "what this long-running task's pipeline lo
 | `new-generation` | A one-line brief or a marketplace pick | Workflow + design-system suggestion + craft + starter assets | discovery → direction-picker → generate → critique |
 | `code-migration` | An existing repo / local path | Source-code ingest atom + design-token extraction + rewrite plan + diff preview | code-import → design-extract → rewrite-plan → generate → diff-review |
 | `figma-migration` | Figma file URL / screenshots | figma-extract atom + token mapping + high-fidelity web implementation strategy | figma-extract → token-map → generate → critique |
-| `tune-collab` | An existing OD project + artifact | Critique-tune, brand swap, A/B variants, stakeholder review on top of an existing artifact | direction-picker → patch-edit → critique → handoff |
+| `tune-collab` | An existing CapyDesign project + artifact | Critique-tune, brand swap, A/B variants, stakeholder review on top of an existing artifact | direction-picker → patch-edit → critique → handoff |
 
 All four scenarios share the same `ApplyResult`, the same run pipeline, and the same artifact provenance contract (§11.5); only the inputs shape, the initial assets, and the pipeline starting point differ.
 
@@ -116,11 +116,11 @@ All four scenarios share the same `ApplyResult`, the same run pipeline, and the 
 16. [Phased implementation plan](#16-phased-implementation-plan)
 17. [Examples](#17-examples)
 18. [Risks and open questions](#18-risks-and-open-questions)
-19. [Why this is a meaningful step for OpenDesign](#19-why-this-is-a-meaningful-step-for-opendesign)
+19. [Why this is a meaningful step for CapyDesign](#19-why-this-is-a-meaningful-step-for-capydesign)
 20. [Post-v1 extensibility — artifact taxonomy, evaluators, and production handoff](#20-post-v1-extensibility--artifact-taxonomy-evaluators-and-production-handoff)
 21. [Scenario coverage matrix and delivery roadmap](#21-scenario-coverage-matrix-and-delivery-roadmap)
 22. [Authoring extension points: building uncovered scenarios on top of v1 substrate](#22-authoring-extension-points-building-uncovered-scenarios-on-top-of-v1-substrate)
-23. [Self-bootstrapping: OD's hard flow as first-party plugins](#23-self-bootstrapping-ods-hard-flow-as-first-party-plugins)
+23. [Self-bootstrapping: CapyDesign's hard flow as first-party plugins](#23-self-bootstrapping-capydesigns-hard-flow-as-first-party-plugins)
 
 ---
 
@@ -133,7 +133,7 @@ All four scenarios share the same `ApplyResult`, the same run pipeline, and the 
 
 ## 1. Vision
 
-OpenDesign becomes a **server + CLI + atomic core engine + plugin/marketplace system**. The product surface inverts: instead of "click a button, fill a form", users open a marketplace, click a plugin, and the input box hydrates with a query plus a typed strip of context chips above it. The same plugin folder is also a valid agent skill for Claude Code, Cursor, Codex, Gemini CLI, OpenClaw, Hermes, and is publishable as a standalone GitHub repo to:
+CapyDesign becomes a **server + CLI + atomic core engine + plugin/marketplace system**. The product surface inverts: instead of "click a button, fill a form", users open a marketplace, click a plugin, and the input box hydrates with a query plus a typed strip of context chips above it. The same plugin folder is also a valid agent skill for Claude Code, Cursor, Codex, Gemini CLI, OpenClaw, Hermes, and is publishable as a standalone GitHub repo to:
 
 - [`anthropics/skills`](https://github.com/anthropics/skills)
 - [`anthropics/claude-code/plugins`](https://github.com/anthropics/claude-code/tree/main/plugins)
@@ -143,39 +143,39 @@ OpenDesign becomes a **server + CLI + atomic core engine + plugin/marketplace sy
 
 Each catalog needs a different listing format, but all of them index `SKILL.md`-shaped folders. By keeping `SKILL.md` canonical and `open-design.json` strictly sidecar, a single repo lands in every catalog without per-target rewrites.
 
-A second axis of the same vision: **the CLI is the canonical agent-facing API for OpenDesign.** Code agents (Claude Code, Cursor, Codex, OpenClaw, Hermes, in-house orchestrators) drive OD by shelling out `od …`, not by hitting `/api/*` directly. The CLI wraps every server capability — project creation, conversation/run lifecycle, plugin apply, file system operations on a project, design library introspection, daemon control — behind a stable subcommand contract. The HTTP server is an implementation detail that backs the desktop UI and the CLI itself; agents that talk HTTP are bypassing the contract.
+A second axis of the same vision: **the CLI is the canonical agent-facing API for CapyDesign.** Code agents (Claude Code, Cursor, Codex, OpenClaw, Hermes, in-house orchestrators) drive CapyDesign by shelling out `capt …`, not by hitting `/api/*` directly. The CLI wraps every server capability — project creation, conversation/run lifecycle, plugin apply, file system operations on a project, design library introspection, daemon control — behind a stable subcommand contract. The HTTP server is an implementation detail that backs the desktop UI and the CLI itself; agents that talk HTTP are bypassing the contract.
 
-A third axis, derived from the second: **OD runs fully headless; the UI is a productivity layer, not a runtime dependency.** A user with nothing but Claude Code (or Cursor, Codex, Gemini CLI) and `capt` installed can browse the marketplace, install a plugin, create a project, run a task, and consume the produced artifacts end-to-end without ever launching the desktop app. The desktop UI is exactly the same value-add Cursor's IDE adds on top of `cursor-agent` CLI: faster discovery, live artifact preview, chat/canvas side-by-side, marketplace browsing, direction-picker GUI, critique-theater panel — all sugar on the same primitives. Every UI feature is implementable as a CLI subcommand or a streaming event first; the UI consumes those primitives and adds presentation. The decoupling is enforced architecturally (§11.7).
+A third axis, derived from the second: **CapyDesign runs fully headless; the UI is a productivity layer, not a runtime dependency.** A user with nothing but Claude Code (or Cursor, Codex, Gemini CLI) and `capt` installed can browse the marketplace, install a plugin, create a project, run a task, and consume the produced artifacts end-to-end without ever launching the desktop app. The desktop UI is exactly the same value-add Cursor's IDE adds on top of `cursor-agent` CLI: faster discovery, live artifact preview, chat/canvas side-by-side, marketplace browsing, direction-picker GUI, critique-theater panel — all sugar on the same primitives. Every UI feature is implementable as a CLI subcommand or a streaming event first; the UI consumes those primitives and adds presentation. The decoupling is enforced architecturally (§11.7).
 
-A fourth axis, the foundation for ecosystem reach and commercial viability: **OD is one Docker image, deployable to any cloud.** Because the headless mode of (3) has no electron and no GUI dependencies, a single multi-arch container image (`linux/amd64` + `linux/arm64`) brings up the full daemon + CLI + web UI on AWS, Google Cloud, Azure, Alibaba, Tencent, Huawei, or any self-hosted Kubernetes / docker-compose / k3s setup, with no per-cloud rewrite. Self-hosted enterprises can run a private marketplace; partners can embed OD inside their stack; CI pipelines can spin up ephemeral OD containers for "generate slides for the daily report"-shaped tasks. The technical contract is in §15.
+A fourth axis, the foundation for ecosystem reach and commercial viability: **CapyDesign is one Docker image, deployable to any cloud.** Because the headless mode of (3) has no electron and no GUI dependencies, a single multi-arch container image (`linux/amd64` + `linux/arm64`) brings up the full daemon + CLI + web UI on AWS, Google Cloud, Azure, Alibaba, Tencent, Huawei, or any self-hosted Kubernetes / docker-compose / k3s setup, with no per-cloud rewrite. Self-hosted enterprises can run a private marketplace; partners can embed CapyDesign inside their stack; CI pipelines can spin up ephemeral CapyDesign containers for "generate slides for the daily report"-shaped tasks. The technical contract is in §15.
 
-A fifth axis is the product-shape co-evolution with the agent: **UI is requested by the agent but rendered by controlled product components (Generative UI), not by arbitrary agent-authored frontend code.** While running a long-horizon design pipeline, the agent will need to ask the user for information (figma OAuth, target-audience confirmation, etc.), seek authorization (approving an expensive media generation run), pick a direction (one of three critique alternatives), or fill missing content (a missing brand asset). These UIs are **not** pre-shipped marketplace chip strips; they are **declared by the plugin** in its manifest, **triggered by the agent** during the run, and **published by the daemon** through OD-native events that the web / desktop / CLI can render and external clients can consume through the AG-UI adapter (see §10.3). OD v1 ships four built-in surface kinds (`form` / `choice` / `confirmation` / `oauth-prompt`) as the minimum set; custom plugin-bundled React components stay behind the `genui:custom-component` capability gate and sandbox. Tied to this axis, the project record persists a layer of **GenUI surface state**: an authorization or confirmation the user once gave is reused across multi-turn conversations and runs in the same project, instead of re-asking. This is the natural landing point of "plugin = long-horizon task wrapper" plus "project = long-lived work artifact".
+A fifth axis is the product-shape co-evolution with the agent: **UI is requested by the agent but rendered by controlled product components (Generative UI), not by arbitrary agent-authored frontend code.** While running a long-horizon design pipeline, the agent will need to ask the user for information (figma OAuth, target-audience confirmation, etc.), seek authorization (approving an expensive media generation run), pick a direction (one of three critique alternatives), or fill missing content (a missing brand asset). These UIs are **not** pre-shipped marketplace chip strips; they are **declared by the plugin** in its manifest, **triggered by the agent** during the run, and **published by the daemon** through CapyDesign-native events that the web / desktop / CLI can render and external clients can consume through the AG-UI adapter (see §10.3). CapyDesign v1 ships four built-in surface kinds (`form` / `choice` / `confirmation` / `oauth-prompt`) as the minimum set; custom plugin-bundled React components stay behind the `genui:custom-component` capability gate and sandbox. Tied to this axis, the project record persists a layer of **GenUI surface state**: an authorization or confirmation the user once gave is reused across multi-turn conversations and runs in the same project, instead of re-asking. This is the natural landing point of "plugin = long-horizon task wrapper" plus "project = long-lived work artifact".
 
 ## 2. Goals and non-goals
 
 **Goals**
 
-1. Every runnable, distributable OD plugin is a valid agent skill (`SKILL.md`- or `.claude-plugin/plugin.json`-anchored). No fork of the skill spec.
-2. A vanilla skill or claude-plugin repo becomes an OD plugin by adding an optional `open-design.json` sidecar — no rename, no body changes.
+1. Every runnable, distributable CapyDesign plugin is a valid agent skill (`SKILL.md`- or `.claude-plugin/plugin.json`-anchored). No fork of the skill spec.
+2. A vanilla skill or claude-plugin repo becomes an CapyDesign plugin by adding an optional `open-design.json` sidecar — no rename, no body changes.
 3. Three install sources: local folder, GitHub repo (with optional ref/subpath), arbitrary HTTPS archive, plus federated `open-design-marketplace.json` indexes.
 4. One-click "use" auto-fills the brief input and a strip of `ContextItem` chips above it (skills, design-system, craft, assets, MCP, claude-plugin, atom).
 5. Tiered trust by default; capability scoping is declarative and optional.
-6. The OD core engine, atomic capabilities, and plugin runtime are all reachable from CLI so any code agent can drive OpenDesign headlessly.
-7. **A plugin is a long-task wrapper.** Each plugin targets exactly one of the four product scenarios (new-generation / code-migration / figma-migration / tune-collab) and uses `od.pipeline` to assemble OD's first-party atoms into ordered stages plus an optional devloop (§10).
+6. The CapyDesign core engine, atomic capabilities, and plugin runtime are all reachable from CLI so any code agent can drive CapyDesign headlessly.
+7. **A plugin is a long-task wrapper.** Each plugin targets exactly one of the four product scenarios (new-generation / code-migration / figma-migration / tune-collab) and uses `od.pipeline` to assemble CapyDesign's first-party atoms into ordered stages plus an optional devloop (§10).
 8. **Reproducible + auditable.** Every apply persists an immutable `AppliedPluginSnapshot` (§8.2.1); runs and artifacts back-reference the snapshot id. A plugin upgrade never breaks an old run's prompt reconstruction.
 9. **Same artifact, many surfaces.** The artifact manifest (§11.5.1) records plugin provenance plus the export and deploy history across downstream surfaces (cli / other code agents / cloud / desktop) so subsequent tuning, migration, and collaboration always pick up the same artifact.
-10. **Generative UI is a first-class plugin output.** Plugins declare `od.genui.surfaces[]` (§10.3) in the manifest; at runtime the agent emits form / choice / confirmation / oauth-prompt requests through OD's controlled event stream, and the product renderer owns the visual style; the user's answer lands in project metadata at `run` / `conversation` / `project` persist tier and is reused across subsequent multi-turn chats and runs in the same project. External AG-UI clients consume the same run through the adapter, not by replacing OD's internal renderer.
+10. **Generative UI is a first-class plugin output.** Plugins declare `od.genui.surfaces[]` (§10.3) in the manifest; at runtime the agent emits form / choice / confirmation / oauth-prompt requests through CapyDesign's controlled event stream, and the product renderer owns the visual style; the user's answer lands in project metadata at `run` / `conversation` / `project` persist tier and is reused across subsequent multi-turn chats and runs in the same project. External AG-UI clients consume the same run through the adapter, not by replacing CapyDesign's internal renderer.
 
 **Non-goals (v1)**
 
-- Replacing SKILL.md / claude-plugin spec — OD never forks.
-- Hosting plugin binaries — OD points to GitHub / CDN URLs; storage is the publisher's responsibility.
+- Replacing SKILL.md / claude-plugin spec — CapyDesign never forks.
+- Hosting plugin binaries — CapyDesign points to GitHub / CDN URLs; storage is the publisher's responsibility.
 - A signing/PKI ecosystem — capability gating relies on user consent, not signatures.
-- A web-hosted SaaS marketplace running OD agents on behalf of users — local-first only in v1.
+- A web-hosted SaaS marketplace running CapyDesign agents on behalf of users — local-first only in v1.
 
 ## 3. Compatibility matrix — what makes a folder a valid plugin for whom
 
-| File present                                                       | OD installs    | Claude Code / Cursor / Codex / Gemini CLI | OpenClaw / Hermes | awesome-agent-skills | clawhub | skills.sh |
+| File present                                                       | CapyDesign installs    | Claude Code / Cursor / Codex / Gemini CLI | OpenClaw / Hermes | awesome-agent-skills | clawhub | skills.sh |
 | ------------------------------------------------------------------ | -------------- | ----------------------------------------- | ----------------- | -------------------- | ------- | --------- |
 | `SKILL.md` only                                                    | yes            | yes                                       | yes               | yes                  | yes     | yes       |
 | `.claude-plugin/plugin.json` only                                  | yes            | yes (claude)                              | partial           | listable             | listable| listable  |
@@ -184,9 +184,9 @@ A fifth axis is the product-shape co-evolution with the agent: **UI is requested
 | `.claude-plugin/...` + `open-design.json`                          | enriched       | yes (claude)                              | partial           | listable             | listable| listable  |
 | `SKILL.md` + `.claude-plugin/...` + `open-design.json`             | fully enriched | yes                                       | yes               | yes                  | yes     | yes       |
 
-The takeaway: **`SKILL.md` is the lowest common denominator**. Every plugin recommended for distribution should ship a `SKILL.md` so it lands cleanly in every major catalog, then add `open-design.json` to gain OD's product surface.
+The takeaway: **`SKILL.md` is the lowest common denominator**. Every plugin recommended for distribution should ship a `SKILL.md` so it lands cleanly in every major catalog, then add `open-design.json` to gain CapyDesign's product surface.
 
-A folder that contains only `open-design.json` is not a runnable plugin in v1; it is a **metadata-only preset**. OD may read it to show a marketplace card, aggregate remote references, or act as a future install stub, but it cannot trigger an agent run and cannot be listed in cross-agent catalogs. `capt plugin doctor` must mark this shape as `metadata-only` and prompt the author to add `SKILL.md` or `.claude-plugin/plugin.json` before publishing it as a runnable plugin.
+A folder that contains only `open-design.json` is not a runnable plugin in v1; it is a **metadata-only preset**. CapyDesign may read it to show a marketplace card, aggregate remote references, or act as a future install stub, but it cannot trigger an agent run and cannot be listed in cross-agent catalogs. `capt plugin doctor` must mark this shape as `metadata-only` and prompt the author to add `SKILL.md` or `.claude-plugin/plugin.json` before publishing it as a runnable plugin.
 
 ## 4. Plugin folder shape
 
@@ -195,9 +195,9 @@ my-plugin/
 ├── SKILL.md                          # required for portability; anchors agent behavior
 ├── .claude-plugin/                   # optional: claude-plugin compat (commands/agents/hooks/.mcp.json)
 │   └── plugin.json
-├── open-design.json                  # optional sidecar — unlocks OD product surface
+├── open-design.json                  # optional sidecar — unlocks CapyDesign product surface
 ├── README.md                         # standard catalog readme
-├── preview/                          # OD preview assets
+├── preview/                          # CapyDesign preview assets
 │   ├── index.html
 │   ├── poster.png
 │   └── demo.mp4
@@ -212,16 +212,15 @@ my-plugin/
 
 Rules of authorship:
 
-- `SKILL.md` body never carries OD-specific metadata; it stays clean and portable.
+- `SKILL.md` body never carries CapyDesign-specific metadata; it stays clean and portable.
 - `open-design.json` only ever **points** at SKILL.md / DESIGN.md / craft files; it never duplicates their bodies.
-- Existing OD-specific frontmatter on SKILL.md (the `od:` namespace already documented in [`skills-protocol.md`](skills-protocol.md) and used in [`design-templates/blog-post/SKILL.md`](../design-templates/blog-post/SKILL.md)) is honored as a fallback for plugins without `open-design.json`. We do not deprecate it; we layer over it.
-- A runnable v1 plugin must contain at least one of `SKILL.md` or `.claude-plugin/plugin.json`. `open-design.json` does not define agent behavior by itself; it only tells OD how to display, resolve, and apply that behavior.
+- Existing CapyDesign-specific frontmatter on SKILL.md (the `od:` namespace already documented in [`skills-protocol.md`](skills-protocol.md) and used in [`design-templates/blog-post/SKILL.md`](../design-templates/blog-post/SKILL.md)) is honored as a fallback for plugins without `open-design.json`. We do not deprecate it; we layer over it.
+- A runnable v1 plugin must contain at least one of `SKILL.md` or `.claude-plugin/plugin.json`. `open-design.json` does not define agent behavior by itself; it only tells CapyDesign how to display, resolve, and apply that behavior.
 
 ## 5. `open-design.json` — schema v1
 
 ```json
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "make-a-deck",
   "title": "Make a deck",
@@ -232,7 +231,7 @@ Rules of authorship:
     "en": "Generate a 12-slide investor deck from a one-line brief.",
     "zh-CN": "根据一句 brief 生成 12 页投资人 deck。"
   },
-  "author":   { "name": "OpenDesign", "url": "https://open-design.ai" },
+  "author":   { "name": "CapyDesign", "url": "https://example.com" },
   "license":  "MIT",
   "homepage": "https://github.com/open-design/plugins/make-a-deck",
   "icon":     "./icon.svg",
@@ -352,8 +351,8 @@ Rules of authorship:
 
 ### 5.1 Field reference
 
-- `compat.*` — relative paths to inherited files. The loader concatenates their content into the OD prompt stack assembled by [`composeSystemPrompt()`](../apps/daemon/src/prompts/system.ts).
-- `specVersion` — the OpenDesign plugin spec version used to interpret the manifest. This is distinct from plugin `version` and is frozen into apply snapshots for replay.
+- `compat.*` — relative paths to inherited files. The loader concatenates their content into the CapyDesign prompt stack assembled by [`composeSystemPrompt()`](../apps/daemon/src/prompts/system.ts).
+- `specVersion` — the CapyDesign plugin spec version used to interpret the manifest. This is distinct from plugin `version` and is frozen into apply snapshots for replay.
 - `version` — the plugin package version. Bump it whenever behavior, metadata, pipeline, inputs, or bundled assets change in a way users may need to audit.
 - `publishedAt` — optional ISO 8601 timestamp of when the plugin was first published to its catalog. The Community gallery's "Newest" sort ranks bundled catalog records by it, so recency survives fresh installs (local install timestamps tie across a whole first-boot seed); user-installed plugins keep ranking by local install/update recency regardless of this field. Required for bundled first-party plugins (enforced by `e2e/tests/plugin-published-at.test.ts`); stamp the authoring time and do not move it on later edits.
 - `title_i18n` / `description_i18n` — optional localized display metadata. Keep `title` and `description` as English fallbacks; UI surfaces resolve requested locale, base language, English, then the first available value.
@@ -400,13 +399,13 @@ Lives in a new `packages/contracts/src/plugins/context.ts` (TypeScript-only, no 
 
 Capabilities are not isolated strings; the resolver must compute **implied capabilities**:
 
-- Declaring `mcp` with any command that is not an OD built-in stdio tool implies `subprocess`.
+- Declaring `mcp` with any command that is not an CapyDesign built-in stdio tool implies `subprocess`.
 - MCP commands that use `npx`, `uvx`, `pipx`, remote URLs, or package-manager installs imply `network`.
 - Declaring `.claude-plugin` hooks implies `subprocess`; if a hook reads bundled assets, it also requires `fs:read`.
 - `bash` and `subprocess` are elevated capabilities: once granted, a plugin can effectively bypass fine-grained `fs:*` / `network` limits. The UI and CLI must present them as elevated capabilities and must not preselect them in a low-risk "Grant all" path.
 - Declaring `od.connectors.required[]` implies a `connector:<id>` for each `required[].id`; the resolver appends any missing `connector:<id>` to `capabilitiesRequired`, and `restricted` plugins fail with exit 66 / §9.1 unless the user grants them.
 - `connector:<id>` does **not** imply `network`: connector calls always go through the daemon's HTTP path, so the plugin itself never opens an outbound socket. The coarse `connector` capability, on the other hand, is treated as elevated (any connected provider becomes reachable) and must be confirmed explicitly in UI/CLI.
-- Provider credentials are not a v1 capability. Plugins cannot directly declare access to `ANTHROPIC_API_KEY`, media provider keys, or connector secrets. Capabilities that need credentials must go through OD-owned first-party atoms / tools.
+- Provider credentials are not a v1 capability. Plugins cannot directly declare access to `ANTHROPIC_API_KEY`, media provider keys, or connector secrets. Capabilities that need credentials must go through CapyDesign-owned first-party atoms / tools.
 
 ### 5.4 `SKILL.md` frontmatter to `PluginManifest` mapping
 
@@ -425,7 +424,7 @@ When a plugin has no `open-design.json`, but its `SKILL.md` already contains the
 | `od.outputs` | `projectMetadata` hints | Used for artifact bookkeeping and preview defaults, not surfaced as user-editable inputs |
 | `od.capabilities_required` | `od.capabilities` | Map only capabilities that can be expressed; unknown capabilities are kept in `compatWarnings[]`, and `capt plugin doctor` must surface them |
 
-If `open-design.json` and `SKILL.md` frontmatter both exist, `open-design.json` wins, but the loader must preserve adapter warnings. Authors can migrate incrementally: first keep the old skill runnable as-is, then add OD marketplace metadata.
+If `open-design.json` and `SKILL.md` frontmatter both exist, `open-design.json` wins, but the loader must preserve adapter warnings. Authors can migrate incrementally: first keep the old skill runnable as-is, then add CapyDesign marketplace metadata.
 
 ## 6. `open-design-marketplace.json` — federated catalog
 
@@ -433,11 +432,10 @@ Mirrors [`anthropics/skills/.claude-plugin/marketplace.json`](https://raw.github
 
 ```json
 {
-  "$schema": "https://open-design.ai/schemas/marketplace.v1.json",
   "specVersion": "1.0.0",
   "name": "open-design-official",
   "version": "1.0.0",
-  "owner":    { "name": "OpenDesign", "url": "https://open-design.ai" },
+  "owner":    { "name": "CapyDesign", "url": "https://example.com" },
   "metadata": { "description": "First-party plugins", "version": "1.0.0" },
   "plugins": [
     { "name": "make-a-deck", "version": "1.0.0", "source": "github:open-design/plugins/make-a-deck", "tags": ["deck"] },
@@ -676,7 +674,7 @@ flowchart LR
   P1 & P2 & P3 & P4 & P5 --> R[run agent]
 ```
 
-A `restricted` plugin can never reach P3/P4/P5 unless the user grants the capability — either through `capt plugin trust <id>` or "Grant capabilities" on the detail page. Only two sources are trusted by default: repo-bundled first-party plugins and the official OD marketplace. User-added third-party marketplaces are discovery sources; plugins from them still install as `restricted` unless the marketplace itself is explicitly trusted, or an individual plugin is granted capabilities by id + version + capability.
+A `restricted` plugin can never reach P3/P4/P5 unless the user grants the capability — either through `capt plugin trust <id>` or "Grant capabilities" on the detail page. Only two sources are trusted by default: repo-bundled first-party plugins and the official CapyDesign marketplace. User-added third-party marketplaces are discovery sources; plugins from them still install as `restricted` unless the marketplace itself is explicitly trusted, or an individual plugin is granted capabilities by id + version + capability.
 
 **Connector capability gate.** Plugin calls into Composio connectors travel through daemon HTTP (`/api/tools/connectors/execute`, served by [`apps/daemon/src/tool-tokens.ts`](../apps/daemon/src/tool-tokens.ts) issuing scoped tool tokens) — a different path from MCP. A `restricted` plugin granted `mcp` does **not** automatically gain connector access; it must hold either the coarse `connector` capability or the specific `connector:<id>`. When the daemon issues a tool token for a plugin run, it embeds the `applied_plugin_snapshot_id` and the current `capabilitiesGranted`; on each `/api/tools/connectors/execute` call, the daemon re-checks that the requested `connector_id` is on the granted list (a `trusted` plugin implicitly carries `connector:*`). Otherwise the call returns `403`. The daemon module that owns this check is `apps/daemon/src/plugins/connector-gate.ts` (§11.3).
 
@@ -742,7 +740,7 @@ Neither permanent `--capabilities` grants nor per-call `--grant-caps` grants sup
 
 ### 9.2 Preview sandbox
 
-Plugin previews may come from untrusted GitHub repos or archives, so they cannot run with the same privileges as the OD app. `od.preview.entry` HTML previews must follow these constraints:
+Plugin previews may come from untrusted GitHub repos or archives, so they cannot run with the same privileges as the CapyDesign app. `od.preview.entry` HTML previews must follow these constraints:
 
 - Preview iframes start with `sandbox="allow-scripts"` only. They do not get `allow-same-origin`, `allow-forms`, `allow-popups`, or `allow-downloads` by default. If a first-party preview needs an extra flag, it must declare that in the manifest and `capt plugin doctor` must mark it as an elevated preview.
 - Preview content is served through a read-only daemon preview endpoint. It cannot read `/api/*`, cannot attach `Authorization` headers, cannot access provider credentials, and cannot access the project filesystem.
@@ -752,7 +750,7 @@ Plugin previews may come from untrusted GitHub repos or archives, so they cannot
 
 ## 10. First-party atoms — the atomic pipeline plugins assemble
 
-Promote what already exists in [`apps/daemon/src/prompts/system.ts`](../apps/daemon/src/prompts/system.ts) and the daemon-backed bash tools into **named, declarative, plugin-assemblable** atoms. An atom is not a standalone capability tag — it is a node in OD's long-running design-agent pipeline that plugins can compose into ordered stages and loop over via devloop. v1 is still **declarative**: the daemon already knows how to emit prompt fragments and tool gating for each atom; plugins only declare pipeline topology.
+Promote what already exists in [`apps/daemon/src/prompts/system.ts`](../apps/daemon/src/prompts/system.ts) and the daemon-backed bash tools into **named, declarative, plugin-assemblable** atoms. An atom is not a standalone capability tag — it is a node in CapyDesign's long-running design-agent pipeline that plugins can compose into ordered stages and loop over via devloop. v1 is still **declarative**: the daemon already knows how to emit prompt fragments and tool gating for each atom; plugins only declare pipeline topology.
 
 | Atom id | Source today | What it does | taskKind fit |
 | --- | --- | --- | --- |
@@ -817,13 +815,13 @@ Two hard constraints on devloop:
 
 Each devloop iteration writes the round's artifact diff, critique output, and consumed tokens into `runs.devloop_iterations` (§11.4 SQLite extension), which feeds audit and a future per-iteration pricing model.
 
-`GET /api/atoms` returns atoms plus the known reference pipelines. The current implementation has already started the self-hosting path: first-party atom plugins live under `plugins/_official/atoms/**`, bundled scenario plugins live under `plugins/_official/scenarios/**`, and `renderActiveStageBlock(stageId, bodies)` injects the active stage's atom bodies into the prompt. The system prompt is therefore pipeline-aware today, but not yet fully data-driven: the base OpenDesign designer prompt, discovery philosophy, and some entry-point defaults still live in daemon/product code. That is enough to ground the "plugins assemble the core pipeline" claim without pretending every byte of behavior has moved into plugins.
+`GET /api/atoms` returns atoms plus the known reference pipelines. The current implementation has already started the self-hosting path: first-party atom plugins live under `plugins/_official/atoms/**`, bundled scenario plugins live under `plugins/_official/scenarios/**`, and `renderActiveStageBlock(stageId, bodies)` injects the active stage's atom bodies into the prompt. The system prompt is therefore pipeline-aware today, but not yet fully data-driven: the base CapyDesign designer prompt, discovery philosophy, and some entry-point defaults still live in daemon/product code. That is enough to ground the "plugins assemble the core pipeline" claim without pretending every byte of behavior has moved into plugins.
 
 ### 10.3 Generative UI: AG-UI–inspired surfaces
 
-OD adopts the useful part of [CopilotKit / the AG-UI protocol](https://github.com/CopilotKit/CopilotKit): an agent can ask for interactive UI during a run. OD does **not** let the agent freely invent app UI or styling in the main product surface. v1 ships our own `GenUISurface*` discriminated union and reuses the existing `PersistedAgentEvent` SSE / ND-JSON channel; `@open-design/agui-adapter` projects those events into AG-UI canonical events for external clients.
+CapyDesign adopts the useful part of [CopilotKit / the AG-UI protocol](https://github.com/CopilotKit/CopilotKit): an agent can ask for interactive UI during a run. CapyDesign does **not** let the agent freely invent app UI or styling in the main product surface. v1 ships our own `GenUISurface*` discriminated union and reuses the existing `PersistedAgentEvent` SSE / ND-JSON channel; `@capydesign/agui-adapter` projects those events into AG-UI canonical events for external clients.
 
-The product rule is: **agent/plugin output is data; OD owns the renderer.** A plugin can declare a `form`, `choice`, `confirmation`, or `oauth-prompt` surface, with schema and prompt data. The web / desktop / CLI renderer decides layout, typography, controls, validation affordances, accessibility, and persistence UX. This keeps plugin UI extensible across scenarios while preserving a coherent product system. Arbitrary visual or code output belongs in generated artifacts, or behind the separate custom-component sandbox and `genui:custom-component` capability gate; it does not replace the built-in renderer for core collaboration UI.
+The product rule is: **agent/plugin output is data; CapyDesign owns the renderer.** A plugin can declare a `form`, `choice`, `confirmation`, or `oauth-prompt` surface, with schema and prompt data. The web / desktop / CLI renderer decides layout, typography, controls, validation affordances, accessibility, and persistence UX. This keeps plugin UI extensible across scenarios while preserving a coherent product system. Arbitrary visual or code output belongs in generated artifacts, or behind the separate custom-component sandbox and `genui:custom-component` capability gate; it does not replace the built-in renderer for core collaboration UI.
 
 #### 10.3.1 Four built-in surface kinds (v1)
 
@@ -949,14 +947,14 @@ Repeat `prefill` for each surface. It writes rows in `resolved` state; when the 
 
 #### 10.3.5 Alignment roadmap with the AG-UI protocol
 
-| Dimension | v1 (OD-native) | AG-UI adapter / external compatibility |
+| Dimension | v1 (CapyDesign-native) | AG-UI adapter / external compatibility |
 | --- | --- | --- |
-| Wire format | OD-native `PersistedAgentEvent` over SSE / ND-JSON | Also emit AG-UI canonical events (`agent.message`, `tool_call`, `state_update`, `ui.surface_requested`, `ui.surface_responded`) |
-| Surface kinds | Four built-ins + plugin-declared in manifest | Keep OD's built-ins as the product source of truth; custom plugin React paths require the `genui:custom-component` gate and sandbox |
-| Shared state | `genui_surfaces` table + `genui_state_synced` event | Map persisted OD state onto AG-UI's `state` channel for external consumers |
-| Frontend SDK compatibility | OD desktop / web with built-in renderer | `@open-design/agui-adapter` lets CopilotKit / other AG-UI clients consume an OD run unchanged |
+| Wire format | CapyDesign-native `PersistedAgentEvent` over SSE / ND-JSON | Also emit AG-UI canonical events (`agent.message`, `tool_call`, `state_update`, `ui.surface_requested`, `ui.surface_responded`) |
+| Surface kinds | Four built-ins + plugin-declared in manifest | Keep CapyDesign's built-ins as the product source of truth; custom plugin React paths require the `genui:custom-component` gate and sandbox |
+| Shared state | `genui_surfaces` table + `genui_state_synced` event | Map persisted CapyDesign state onto AG-UI's `state` channel for external consumers |
+| Frontend SDK compatibility | CapyDesign desktop / web with built-in renderer | `@capydesign/agui-adapter` lets CopilotKit / other AG-UI clients consume an CapyDesign run unchanged |
 
-The adapter is an interoperability surface, not the internal UI source of truth. OD should not add CopilotKit as a required product dependency unless a separate external embed/demo/client explicitly needs it. v1 plugins need no change to be consumable inside the AG-UI ecosystem because the adapter is a projection of OD's own events.
+The adapter is an interoperability surface, not the internal UI source of truth. CapyDesign should not add CopilotKit as a required product dependency unless a separate external embed/demo/client explicitly needs it. v1 plugins need no change to be consumable inside the AG-UI ecosystem because the adapter is a projection of CapyDesign's own events.
 
 ## 11. Architecture — what changes in the existing repo
 
@@ -987,7 +985,7 @@ Pure TypeScript, no Next/Express/SQLite/browser deps:
 | New `apps/daemon/src/plugins/pipeline.ts` | Parses `od.pipeline` (including the `until` expression evaluator), schedules stages, and drives §10.2 devloop (with `OD_MAX_DEVLOOP_ITERATIONS` ceiling and break signaling). |
 | New `apps/daemon/src/genui/{registry,events,store}.ts` | §10.3 GenUI: registers surfaces from `od.genui.surfaces[]`, publishes `genui_surface_*` events, reads/writes the cross-conversation persisted state, and serializes the AG-UI–inspired event union. |
 | New `apps/daemon/src/plugins/connector-gate.ts` | §9 connector capability gate: (a) `apply.ts` calls into it to resolve `od.connectors.required[]` against `connectorService.listAll()`, populating `connectorsResolved` and deriving the implicit `oauth-prompt` GenUI surface (§10.3.1) for any not-yet-connected required connector; (b) before [`apps/daemon/src/tool-tokens.ts`](../apps/daemon/src/tool-tokens.ts) issues a connector tool token, this module validates plugin trust × `connector:<id>` capability (a `trusted` plugin implicitly carries `connector:*`; a `restricted` plugin must list each id explicitly); (c) `/api/tools/connectors/execute` re-validates on every call, so a token replacement attack never bypasses the gate. This module is the runtime landing point for the P5 path in §9. |
-| [`apps/daemon/src/prompts/system.ts`](../apps/daemon/src/prompts/system.ts) `composeSystemPrompt()` | Assembles the base OD designer/discovery prompt, optional design system/craft/skill blocks, snapshot-derived `renderPluginBlock(snapshot)`, and active-stage atom blocks from `renderActiveStageBlock(stageId, bodies)`. Existing layer order remains intentional; plugin-driven fallback mode is still rejected per §11.8 even though the plugin-block renderer now lives in contracts. |
+| [`apps/daemon/src/prompts/system.ts`](../apps/daemon/src/prompts/system.ts) `composeSystemPrompt()` | Assembles the base CapyDesign designer/discovery prompt, optional design system/craft/skill blocks, snapshot-derived `renderPluginBlock(snapshot)`, and active-stage atom blocks from `renderActiveStageBlock(stageId, bodies)`. Existing layer order remains intentional; plugin-driven fallback mode is still rejected per §11.8 even though the plugin-block renderer now lives in contracts. |
 | New SQLite migration | `installed_plugins`, `plugin_marketplaces`, `applied_plugin_snapshots`, `run_devloop_iterations`, plus `applied_plugin_snapshot_id` ALTERs on `runs` / `conversations` / `projects` (§11.4). |
 | [`apps/daemon/src/server.ts`](../apps/daemon/src/server.ts) | Mount new endpoints (§11.5); `POST /api/projects` and `POST /api/runs` accept optional `pluginId` / `pluginInputs` / `appliedPluginSnapshotId`; new `GET /api/applied-plugins/:snapshotId`, `POST /api/runs/:runId/replay`, `GET /api/runs/:runId/devloop-iterations`. |
 | [`apps/daemon/src/cli.ts`](../apps/daemon/src/cli.ts) | New `plugin`, `marketplace`, `project`, `run`, and `files` subcommand routers (Phase 1 ships plugin verbs plus the headless MVP project/run/files loop; §16). |
@@ -1053,7 +1051,7 @@ CREATE INDEX idx_snapshots_run     ON applied_plugin_snapshots(run_id);
 CREATE INDEX idx_snapshots_plugin  ON applied_plugin_snapshots(plugin_id, plugin_version);
 
 -- Optional pointers from runs / conversations / projects to the snapshot in force.
--- OD primary keys unchanged; backwards compatible.
+-- CapyDesign primary keys unchanged; backwards compatible.
 ALTER TABLE runs          ADD COLUMN applied_plugin_snapshot_id TEXT REFERENCES applied_plugin_snapshots(id);
 ALTER TABLE conversations ADD COLUMN applied_plugin_snapshot_id TEXT REFERENCES applied_plugin_snapshots(id);
 ALTER TABLE projects      ADD COLUMN applied_plugin_snapshot_id TEXT REFERENCES applied_plugin_snapshots(id);
@@ -1132,7 +1130,7 @@ Migrations are additive only; existing `projects` / `runs` / `conversations` col
 | POST | `/api/projects/:projectId/genui/:surfaceId/revoke` | flip a row to `invalidated` (OAuth logout etc.) |
 | POST | `/api/projects/:projectId/genui/prefill` | bulk pre-answer surfaces; body `{ pluginId, values }` |
 
-> **Transport equivalence (rule of thumb).** Every endpoint above is also exposed as a CLI subcommand and, where it fits MCP semantics, as an MCP tool. Code agents should use the CLI; only the desktop web app and `od …` itself use HTTP directly. See §12 for the full CLI surface.
+> **Transport equivalence (rule of thumb).** Every endpoint above is also exposed as a CLI subcommand and, where it fits MCP semantics, as an MCP tool. Code agents should use the CLI; only the desktop web app and `capt …` itself use HTTP directly. See §12 for the full CLI surface.
 
 #### 11.5.1 ArtifactManifest extension: plugin provenance
 
@@ -1220,7 +1218,7 @@ Both surfaces share `ContextChipStrip`, `PluginInputsForm`, `InlinePluginsRail` 
 
 ### 11.7 Headless and UI: a clean decoupling
 
-OD runs in three operating modes that share **one** daemon, **one** CLI, and **one** plugin runtime. The differences are purely presentational. This is the same shape Cursor uses: `cursor-agent` (CLI) is sufficient on its own; the IDE is sugar.
+CapyDesign runs in three operating modes that share **one** daemon, **one** CLI, and **one** plugin runtime. The differences are purely presentational. This is the same shape Cursor uses: `cursor-agent` (CLI) is sufficient on its own; the IDE is sugar.
 
 | Mode                | What runs                                              | When to use                                          | Entry                                            |
 | ------------------- | ------------------------------------------------------ | ---------------------------------------------------- | ------------------------------------------------ |
@@ -1243,16 +1241,16 @@ In practice this means:
 
 What this unlocks:
 
-- A user with **only Claude Code** (or any code agent) plus `npm i -g @open-design/cli` plus a running headless daemon can do the entire user journey: install plugin → create project → run → consume artifacts. No OD desktop required.
-- The OD desktop UI installs the same daemon and the same CLI; it just adds a window. Users who later install the desktop find the same projects, plugins, and history that the headless flow produced — there is no "headless project format" vs. "desktop project format". This spec MUST NOT define daemon data paths; read root `AGENTS.md` → **Daemon data directory contract** before changing or documenting shared storage.
-- CI is a first-class citizen: a GitHub Action can `npm i -g @open-design/cli && capt daemon start --headless && capt plugin install … && capt run start --project … --follow`. No display, no electron, no per-step UI scripting.
-- External products can embed OD by spawning a headless daemon and shelling out — `capt` is the public surface, internals are free to evolve.
+- A user with **only Claude Code** (or any code agent) plus `npm i -g @capydesign/cli` plus a running headless daemon can do the entire user journey: install plugin → create project → run → consume artifacts. No CapyDesign desktop required.
+- The CapyDesign desktop UI installs the same daemon and the same CLI; it just adds a window. Users who later install the desktop find the same projects, plugins, and history that the headless flow produced — there is no "headless project format" vs. "desktop project format". This spec MUST NOT define daemon data paths; read root `AGENTS.md` → **Daemon data directory contract** before changing or documenting shared storage.
+- CI is a first-class citizen: a GitHub Action can `npm i -g @capydesign/cli && capt daemon start --headless && capt plugin install … && capt run start --project … --follow`. No display, no electron, no per-step UI scripting.
+- External products can embed CapyDesign by spawning a headless daemon and shelling out — `capt` is the public surface, internals are free to evolve.
 
 The cost: a small handful of `capt daemon` flags and one new lifecycle subcommand (`capt daemon start/stop/status` with `--headless` / `--serve-web`). Implementation lands in Phase 2 alongside the CLI parity slice.
 
 ### 11.8 Prompt composition: v1 plugin runs go through the daemon, no fork
 
-OD already has **two** `composeSystemPrompt()` implementations:
+CapyDesign already has **two** `composeSystemPrompt()` implementations:
 
 - [`apps/daemon/src/prompts/system.ts`](../apps/daemon/src/prompts/system.ts) — daemon-side composer with access to design library / craft / project metadata.
 - [`packages/contracts/src/prompts/system.ts`](../packages/contracts/src/prompts/system.ts) — used by the web API-fallback mode where the browser talks to the provider directly. Pure-TS, contracts-bounded.
@@ -1263,13 +1261,13 @@ If the `## Active plugin` block is added only to the daemon composer, web API-fa
 2. **Phase 2A lifts the plugin block renderer into contracts.** The pure function `renderPluginBlock(snapshot: AppliedPluginSnapshot): string` lives in [`packages/contracts/src/prompts/plugin-block.ts`](../packages/contracts/src/prompts/plugin-block.ts) and is imported by both `apps/daemon/src/prompts/system.ts` and `packages/contracts/src/prompts/system.ts`. The daemon composer calls it; the contracts composer holds the import but does not call it under the v1 fallback rejection rule (1). This eliminates the byte-equality drift class entirely — there is one definition of the plugin block, not two — at the cost of half a day of refactor, while preserving the v1 fallback rejection in (1).
 3. **Phase 4 turns on fallback support for plugins.** With the renderer already in contracts, enabling fallback-mode plugin runs is a one-line wiring change inside the contracts composer plus removal of the 409 in the web sidecar. No prompt-shape work; no new CI guards. (Originally the lift was scheduled for Phase 4 itself, with a Phase 1–4 byte-equality CI fixture between the two composers; the plan in `docs/plans/plugins-implementation.md` PB1 pulled the lift into Phase 2A so the fixture is never needed.)
 
-The consequence: of the three consumption modes in §14.2 (skill-only / headless OD / full OD), only the latter two ever carry plugin context in v1 — consistent with §1, where a plugin is a wrapper around a long-running task that needs the daemon (or its headless equivalent) to assemble. Phase 4 closes that gap if and when fallback-mode plugin support is wanted.
+The consequence: of the three consumption modes in §14.2 (skill-only / headless CapyDesign / full CapyDesign), only the latter two ever carry plugin context in v1 — consistent with §1, where a plugin is a wrapper around a long-running task that needs the daemon (or its headless equivalent) to assemble. Phase 4 closes that gap if and when fallback-mode plugin support is wanted.
 
-This also answers the "no plugin selected" path: a run without an applied plugin still receives the base OD prompt stack (`DISCOVERY_AND_PHILOSOPHY`, the official designer instructions, project metadata, active design system/craft when present, and any default scenario routing chosen by the entry point). Plugin context is additive. Selecting a plugin adds the snapshot-derived `## Active plugin`, `## Plugin inputs`, and active-stage atom blocks; it does not turn a non-design agent into a design agent from scratch.
+This also answers the "no plugin selected" path: a run without an applied plugin still receives the base CapyDesign prompt stack (`DISCOVERY_AND_PHILOSOPHY`, the official designer instructions, project metadata, active design system/craft when present, and any default scenario routing chosen by the entry point). Plugin context is additive. Selecting a plugin adds the snapshot-derived `## Active plugin`, `## Plugin inputs`, and active-stage atom blocks; it does not turn a non-design agent into a design agent from scratch.
 
 ## 12. CLI surface
 
-The CLI (`capt …`) is **the canonical agent-facing API** for OpenDesign. Plugin verbs are one slice of it; the rest of the CLI wraps the daemon's core capabilities — projects, conversations, runs, file operations, design library introspection, daemon control — so that any code agent can drive OD end-to-end through shell calls. This is the "natural-language project + task creation through CLI" path: a code agent reads a user's request, then issues a sequence of `od …` calls instead of speaking HTTP.
+The CLI (`capt …`) is **the canonical agent-facing API** for CapyDesign. Plugin verbs are one slice of it; the rest of the CLI wraps the daemon's core capabilities — projects, conversations, runs, file operations, design library introspection, daemon control — so that any code agent can drive CapyDesign end-to-end through shell calls. This is the "natural-language project + task creation through CLI" path: a code agent reads a user's request, then issues a sequence of `capt …` calls instead of speaking HTTP.
 
 ### 12.1 Three transports of one logical API
 
@@ -1341,7 +1339,7 @@ capt files delete <projectId> <relpath>
 capt files diff   <projectId> <relpath>                   # vs. last committed version (when imported from git)
 ```
 
-A code agent typically uses `capt files read` / `capt files write` instead of native file ops when targeting OD-managed projects, because the daemon owns artifact bookkeeping (`ArtifactManifest.sourceSkillId`, etc. in [`packages/contracts/src/api/registry.ts`](../packages/contracts/src/api/registry.ts)).
+A code agent typically uses `capt files read` / `capt files write` instead of native file ops when targeting CapyDesign-managed projects, because the daemon owns artifact bookkeeping (`ArtifactManifest.sourceSkillId`, etc. in [`packages/contracts/src/api/registry.ts`](../packages/contracts/src/api/registry.ts)).
 
 #### Plugin verbs
 
@@ -1462,7 +1460,7 @@ When `--json` is set, structured error output is `{ "error": { "code": "<short-c
 
 ### 12.5 Authoring patterns for code agents
 
-A code agent driving OpenDesign through the CLI typically does:
+A code agent driving CapyDesign through the CLI typically does:
 
 ```bash
 # 1. (Optional) Inspect what's available.
@@ -1495,13 +1493,12 @@ Every group above is additive to [`apps/daemon/src/cli.ts`](../apps/daemon/src/c
 
 > **Implementation rule:** if a code agent can do something through the desktop UI, it MUST be doable through `capt …` with the same arguments and equivalent output. No silent UI-only capabilities.
 
-## 13. Public web surface (open-design.ai/marketplace)
+## 13. Public web surface (upstream design; not hosted by CapyDesign)
 
-The product site already lives at [open-design.ai](https://open-design.ai). The public marketplace ships as a path on that same site — `open-design.ai/marketplace` (canonical) with `open-design.ai/plugins` as an alias — not as a separate domain. It is a static-rendered catalog rendered from the official `open-design-marketplace.json` index, with plugin detail pages backed by the same `open-design.json` files inside each listed repo. Visually it mirrors what [`skills.sh`](https://skills.sh/) does for skills, but its detail pages render OD-specific previews (the `od.preview.entry` HTML, sample outputs, the use-case query, the chip preview).
+Upstream hosts the product site at open-design.ai; **CapyDesign ships no hosted site** — this section records upstream's public-marketplace design and is out of scope here. In the upstream design, the public marketplace ships as a path on that same site — `open-design.ai/marketplace` (canonical) with `open-design.ai/plugins` as an alias — not as a separate domain. It is a static-rendered catalog rendered from the official `open-design-marketplace.json` index, with plugin detail pages backed by the same `open-design.json` files inside each listed repo. Visually it mirrors what [`skills.sh`](https://skills.sh/) does for skills, but its detail pages render CapyDesign-specific previews (the `od.preview.entry` HTML, sample outputs, the use-case query, the chip preview).
 
 The site shares one source of truth with the in-app marketplace:
 
-- Same JSON Schemas (`https://open-design.ai/schemas/plugin.v1.json`, `https://open-design.ai/schemas/marketplace.v1.json`).
 - Same federated listing format (`open-design-marketplace.json`).
 - Same plugin manifests (`open-design.json` inside each repo).
 
@@ -1509,8 +1506,8 @@ Two consumption surfaces, one substrate:
 
 | Surface                                                | Audience                       | Primary CTA                                                                                                       |
 | ------------------------------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| In-app marketplace (`/marketplace`, §11.6)             | Logged-in OD users             | "Use this plugin" → applies in place                                                                              |
-| Public marketplace (`open-design.ai/marketplace`)      | Anonymous visitors, SEO, share | Deep-link `od://plugins/<id>?apply=1` (auto-installs and applies in the desktop app), plus "Copy install command" |
+| In-app marketplace (`/marketplace`, §11.6)             | Logged-in CapyDesign users             | "Use this plugin" → applies in place                                                                              |
+| Public marketplace (upstream design; not hosted here) | Anonymous visitors, SEO, share | Deep-link `od://plugins/<id>?apply=1` (auto-installs and applies in the desktop app), plus "Copy install command" |
 
 Deep-link contract (Phase 4 deliverable, scoped here so the schema supports it):
 
@@ -1518,7 +1515,7 @@ Deep-link contract (Phase 4 deliverable, scoped here so the schema supports it):
 - `od://plugins/<id>?apply=1[&input.k=v...]` — install if missing, then apply with the supplied inputs.
 - `od://marketplace/add?url=<urlencoded>` — register a new federated catalog.
 
-The desktop app registers the `od://` URL scheme; clicking a button on `open-design.ai/marketplace` either launches the desktop or, if it is not installed, falls back to a "How to install OpenDesign" flow.
+The desktop app registers the `od://` URL scheme; clicking an install button on the public marketplace site either launches the desktop or, if it is not installed, falls back to a "How to install CapyDesign" flow.
 
 **Status: out of scope for the v1 implementation,** but the JSON shapes and the URL scheme are locked here so the in-app marketplace and the public site can be developed independently without divergence.
 
@@ -1537,32 +1534,32 @@ A single GitHub repo per plugin, simultaneously usable across every catalog the 
 
 ### 14.1 Author tooling
 
-- `capt plugin scaffold` — writes a starter folder containing both `SKILL.md` (industry-standard, with `od:` frontmatter for backward compat) and `open-design.json` (OD enrichment with `compat.agentSkills` pointing at the SKILL.md).
+- `capt plugin scaffold` — writes a starter folder containing both `SKILL.md` (industry-standard, with `od:` frontmatter for backward compat) and `open-design.json` (CapyDesign enrichment with `compat.agentSkills` pointing at the SKILL.md).
 - `capt plugin doctor` — runs the JSON Schema, the SKILL.md frontmatter parser, and a "does this look listable on awesome-agent-skills / clawhub / skills.sh?" lint that checks for README presence, license file, and frontmatter completeness.
 - `capt plugin publish --to <catalog>` (Phase 4) — opens a browser to the catalog's PR template with a pre-filled row.
 
 ### 14.2 Cross-agent consumption
 
-Any code agent that consumes a folder via `SKILL.md` works without OD installed. The plugin is one repo with three valid consumption modes:
+Any code agent that consumes a folder via `SKILL.md` works without CapyDesign installed. The plugin is one repo with three valid consumption modes:
 
-1. **Skill-only consumption (no OD).** A Cursor user runs `npx skills add open-design/make-a-deck`. Cursor reads `SKILL.md` and runs the workflow. No OD CLI, no OD daemon. The plugin's marketplace polish (`open-design.json`) is ignored — Cursor sees a vanilla skill.
-2. **Headless OD (CLI + code agent, no OD UI).** A power user keeps using their preferred code agent — Claude Code, Cursor, Codex, etc. — but adds OD as a side service to gain plugin context resolution, project bookkeeping, design library injection, and artifact tracking. No browser, no electron. See §14.3 below for the concrete pipeline.
-3. **Full OD (CLI + code agent + OD UI).** Same as (2) plus the desktop or web UI for live preview, marketplace browsing, chat/canvas split-view, etc.
+1. **Skill-only consumption (no CapyDesign).** A Cursor user runs `npx skills add open-design/make-a-deck`. Cursor reads `SKILL.md` and runs the workflow. No CapyDesign CLI, no CapyDesign daemon. The plugin's marketplace polish (`open-design.json`) is ignored — Cursor sees a vanilla skill.
+2. **Headless CapyDesign (CLI + code agent, no CapyDesign UI).** A power user keeps using their preferred code agent — Claude Code, Cursor, Codex, etc. — but adds CapyDesign as a side service to gain plugin context resolution, project bookkeeping, design library injection, and artifact tracking. No browser, no electron. See §14.3 below for the concrete pipeline.
+3. **Full CapyDesign (CLI + code agent + CapyDesign UI).** Same as (2) plus the desktop or web UI for live preview, marketplace browsing, chat/canvas split-view, etc.
 
 The plugin author writes the SKILL.md once. All three modes consume it.
 
-### 14.3 Concrete headless pipeline (Claude Code + `capt` CLI, no OD UI)
+### 14.3 Concrete headless pipeline (Claude Code + `capt` CLI, no CapyDesign UI)
 
-This mirrors what cursor-agent + scripts can do for Cursor — code agent does the thinking, OD CLI provides the project / plugin / artifact substrate.
+This mirrors what cursor-agent + scripts can do for Cursor — code agent does the thinking, CapyDesign CLI provides the project / plugin / artifact substrate.
 
 ```bash
-# One-time setup: install the OD CLI as an npm global (publishable as @open-design/cli).
-npm install -g @open-design/cli
+# One-time setup: install the CapyDesign CLI as an npm global (publishable as @capydesign/cli).
+npm install -g @capydesign/cli
 
 # Start the daemon in headless mode — no web bundle, no electron, no browser.
 capt daemon start --headless --port 17456
 
-# Install the OD plugin you want to drive (or an upstream agent skill — both work).
+# Install the CapyDesign plugin you want to drive (or an upstream agent skill — both work).
 capt plugin install github:open-design/plugins/make-a-deck
 
 # Create a project bound to the plugin. Inputs are templated into the brief.
@@ -1577,12 +1574,12 @@ PID=$(capt project create \
 capt run start --project "$PID" --plugin make-a-deck \
              --agent claude --follow
 
-# Path B — drive Claude Code directly inside the project cwd; OD only provides
+# Path B — drive Claude Code directly inside the project cwd; CapyDesign only provides
 # context resolution and artifact bookkeeping. Useful when the user's existing
 # code-agent setup is opinionated.
 CWD=$(capt project info "$PID" --json | jq -r .cwd)
 cd "$CWD"
-# OD has already staged the merged SKILL.md / DESIGN.md / craft / atoms into
+# CapyDesign has already staged the merged SKILL.md / DESIGN.md / craft / atoms into
 # The skill staging directory is inside the cwd, exactly as the desktop run would prepare it.
 claude code "Read the staged skill context and produce the deliverables the active plugin describes."
 
@@ -1595,25 +1592,25 @@ open slides.html      # or however the user wants to view the file
 What this proves:
 
 - The full marketplace -> plugin -> apply -> run -> artifact pipeline is reachable from a terminal in <10 lines.
-- The OD daemon does not need to render anything; it acts as a project + plugin + artifact server.
-- The same project, when later opened in the OD desktop UI, shows the full conversation history, files, and artifacts produced by the headless run. This spec MUST NOT define daemon data paths; read root `AGENTS.md` → **Daemon data directory contract** before changing or documenting shared storage.
+- The CapyDesign daemon does not need to render anything; it acts as a project + plugin + artifact server.
+- The same project, when later opened in the CapyDesign desktop UI, shows the full conversation history, files, and artifacts produced by the headless run. This spec MUST NOT define daemon data paths; read root `AGENTS.md` → **Daemon data directory contract** before changing or documenting shared storage.
 
-### 14.4 Analogy: Cursor vs `cursor-agent`, OD desktop vs `capt` CLI
+### 14.4 Analogy: Cursor vs `cursor-agent`, CapyDesign desktop vs `capt` CLI
 
 The mental model:
 
-| Layer                 | Cursor                                       | OpenDesign                                          |
+| Layer                 | Cursor                                       | CapyDesign                                          |
 | --------------------- | -------------------------------------------- | ---------------------------------------------------- |
 | Headless agent CLI    | `cursor-agent` (drives the agent loop)       | `capt run start --agent claude --follow` + `capt plugin run` |
-| Local services / db   | Cursor's background indexing / state         | OD daemon-managed state. Storage paths are governed only by root `AGENTS.md` → **Daemon data directory contract**. |
-| GUI productivity layer| Cursor IDE                                   | OD desktop / web UI (`apps/web` + `apps/desktop`)    |
+| Local services / db   | Cursor's background indexing / state         | CapyDesign daemon-managed state. Storage paths are governed only by root `AGENTS.md` → **Daemon data directory contract**. |
+| GUI productivity layer| Cursor IDE                                   | CapyDesign desktop / web UI (`apps/web` + `apps/desktop`)    |
 | Plugin / skill format | `.cursor/rules/`, MCP servers                | `SKILL.md` + `open-design.json` + atoms              |
 
 Both products are decoupled the same way: the terminal flow is sufficient; the IDE/desktop is the productivity multiplier. **Plugin authors never have to choose** — they write one SKILL.md plus optional sidecar, and reach all three consumption modes.
 
 ## 15. Deployment and portability — Docker, any cloud
 
-OD ships as a single multi-arch Docker image so the full plugin/marketplace system can be brought up with one command and run unchanged on every major cloud. This is the substrate for the ecosystem and commercial story: a partner self-hosts inside their VPC; an enterprise runs a private marketplace; a CI job spins up a per-job OD daemon. The image is the headless mode of §11.7 packaged for ops, optionally serving the web UI from §11.6 when `--serve-web` is set.
+CapyDesign ships as a single multi-arch Docker image so the full plugin/marketplace system can be brought up with one command and run unchanged on every major cloud. This is the substrate for the ecosystem and commercial story: a partner self-hosts inside their VPC; an enterprise runs a private marketplace; a CI job spins up a per-job CapyDesign daemon. The image is the headless mode of §11.7 packaged for ops, optionally serving the web UI from §11.6 when `--serve-web` is set.
 
 ### 15.1 Image shape
 
@@ -1696,7 +1693,7 @@ The image is deliberately cloud-agnostic. One container image runs on every majo
 | Huawei Cloud       | CCE / CCI                                  | SFS, OBS adapter            | KMS                    |
 | Self-hosted        | docker-compose, Docker Swarm, k3s, k0s     | Bind mounts, NFS, Longhorn  | env / SOPS / Vault     |
 
-Two reference manifests ship with OD and are versioned alongside the image:
+Two reference manifests ship with CapyDesign and are versioned alongside the image:
 
 - New `tools/pack/docker-compose.yml` — daemon + optional reverse proxy + optional Postgres for §15.6.
 - New `tools/pack/helm/` — Helm chart with values presets for each cloud's volume + secret patterns. The chart deliberately stays generic — cloud-specific bootstrap (CloudFormation / Deployment Manager / ARM / Aliyun ROS / Tencent TIC / Huawei RFS) lives in a separate `open-design/deploy` repo so it can move at its own cadence.
@@ -1727,10 +1724,10 @@ Defaults shift toward safer behavior when the daemon runs in a container:
 
 ### 15.8 What this unlocks (ecosystem motions)
 
-1. **Self-hosted enterprise.** A company hosts a private OD instance, registers an internal `open-design-marketplace.json` (`capt marketplace add https://internal/...`), restricting plugins to internally vetted ones. Their designers and PMs use the desktop client locally; their CI uses `docker exec od capt …`.
-2. **Partner integrations.** Vendors (CMS, design tools, BI platforms, SaaS dashboards) embed OD inside their stack to add design generation. One image, no per-vendor port.
-3. **Cloud-native CI.** "Generate slides for the daily report" becomes a GitHub Action / GitLab pipeline / Tekton task that spins up an ephemeral OD container, applies a plugin, drops artifacts to S3 / OSS / COS / OBS.
-4. **Sovereign-cloud reach.** OD runs unchanged on Aliyun / Tencent / Huawei for customers in regulated regions — no rewrite, no separate distribution channel.
+1. **Self-hosted enterprise.** A company hosts a private CapyDesign instance, registers an internal `open-design-marketplace.json` (`capt marketplace add https://internal/...`), restricting plugins to internally vetted ones. Their designers and PMs use the desktop client locally; their CI uses `docker exec od capt …`.
+2. **Partner integrations.** Vendors (CMS, design tools, BI platforms, SaaS dashboards) embed CapyDesign inside their stack to add design generation. One image, no per-vendor port.
+3. **Cloud-native CI.** "Generate slides for the daily report" becomes a GitHub Action / GitLab pipeline / Tekton task that spins up an ephemeral CapyDesign container, applies a plugin, drops artifacts to S3 / OSS / COS / OBS.
+4. **Sovereign-cloud reach.** CapyDesign runs unchanged on Aliyun / Tencent / Huawei for customers in regulated regions — no rewrite, no separate distribution channel.
 
 ## 16. Phased implementation plan
 
@@ -1741,7 +1738,7 @@ Defaults shift toward safer behavior when the daemon runs in a container:
 - Pure-TS contracts at `packages/contracts/src/plugins/{manifest,context,apply,marketplace,installed}.ts`.
 - Migration note: existing `skills/`, `design-systems/`, `craft/` are 100% backward compatible. SKILL.md frontmatter unchanged.
 
-Validation: `pnpm guard`, `pnpm typecheck`, `pnpm --filter @open-design/contracts test`.
+Validation: `pnpm guard`, `pnpm typecheck`, `pnpm --filter @capydesign/contracts test`.
 
 ### Phase 1 — Loader, installer, persistence + headless MVP CLI loop (5–7 days)
 
@@ -1759,8 +1756,8 @@ Phase 1 contents (merges the original Phase 1 with the minimum subset of the ori
 
 Validation:
 
-- `pnpm --filter @open-design/plugin-runtime test` (parser fixtures: pure SKILL.md, pure claude plugin, metadata-only open-design.json, all three combined, SKILL frontmatter mapping).
-- `pnpm --filter @open-design/daemon test`. `pnpm guard`, `pnpm typecheck`.
+- `pnpm --filter @capydesign/plugin-runtime test` (parser fixtures: pure SKILL.md, pure claude plugin, metadata-only open-design.json, all three combined, SKILL frontmatter mapping).
+- `pnpm --filter @capydesign/daemon test`. `pnpm guard`, `pnpm typecheck`.
 - **End-to-end headless smoke** (equivalent to the §12.5 walkthrough): `capt plugin install ./fixtures/sample-plugin` → `capt project create --plugin <id> --json` → `capt run start --project <pid> --plugin <id> --follow` → `capt files read <pid> <artifact>`. The produced artifact bytes must match exactly what the same plugin produces under the Phase 2A UI flow.
 - **Apply purity smoke:** after `capt plugin apply <id>` followed by cancel-before-send, the project cwd is empty of staged assets, no `.mcp.json` is generated, but the `applied_plugin_snapshots` row exists (unreferenced from any run/project).
 
@@ -1797,7 +1794,7 @@ Validation: e2e in `e2e/`:
 
 (c) `capt plugin replay <runId> --snapshot-id <snapshotId>` returns the **exact same immutable snapshot and rerun bundle** even after the source plugin has been upgraded via `capt plugin upgrade <id>`; the caller then re-applies and starts the run explicitly.
 
-(d) In web API-fallback mode (OD daemon stopped, browser talking provider directly), the inline rail still renders plugin cards but clicking "Use" pops a daemon-required notice; resuming the daemon restores normal behavior.
+(d) In web API-fallback mode (CapyDesign daemon stopped, browser talking provider directly), the inline rail still renders plugin cards but clicking "Use" pops a daemon-required notice; resuming the daemon restores normal behavior.
 
 (e) A plugin declares both `oauth-prompt` and `confirmation` surfaces: after conversation A completes them, conversation B (same project) re-applies the plugin. In the new run the `oauth-prompt` (`persist=project`) is served from cache; the `confirmation` (`persist=run`) re-asks. After `capt ui revoke`, the next run re-asks the `oauth-prompt`.
 
@@ -1847,12 +1844,12 @@ Validation: install plugin from a local mock marketplace.json, rotate ref, unins
 - **Remaining CLI parity:** `capt conversation list/new/info`, `capt skills/design-systems/craft/atoms list/show`, `capt status/doctor/version`, `capt config get/set/list`, `capt marketplace search`. All purely CLI work — endpoints exist or are trivial.
 - Optional: extract atoms into `skills/_official/<atom>/SKILL.md`. Only after Phases 1–3 are stable.
 - **§10.3.5 full AG-UI alignment:**
-  - New package `@open-design/agui-adapter` — bidirectionally maps OD's `PersistedAgentEvent` + `GenUIEvent` onto AG-UI canonical events (`agent.message`, `tool_call`, `state_update`, `ui.surface_requested`, `ui.surface_responded`).
-  - Daemon adds an optional `/api/runs/:runId/agui` SSE endpoint that emits AG-UI canonical events so CopilotKit / other AG-UI clients can consume an OD run unchanged.
+  - New package `@capydesign/agui-adapter` — bidirectionally maps CapyDesign's `PersistedAgentEvent` + `GenUIEvent` onto AG-UI canonical events (`agent.message`, `tool_call`, `state_update`, `ui.surface_requested`, `ui.surface_responded`).
+  - Daemon adds an optional `/api/runs/:runId/agui` SSE endpoint that emits AG-UI canonical events so CopilotKit / other AG-UI clients can consume an CapyDesign run unchanged.
   - Plugin manifest upgrade allows `od.genui.surfaces[].component` — a relative path to a plugin-bundled React component (capability gate `genui:custom-component`), loaded by the desktop / web renderer inside a sandbox.
   - Open-Ended (MCP-Apps / Open-JSON) mode: plugins push arbitrary JSON UI trees through an MCP server, rendered by desktop / web under a constrained schema.
 
-Validation: (a) install a published plugin → export from a real project that used it → diff the produced manifest against the original. (b) "UI vs CLI parity test": pick 5 desktop-UI workflows, replay each one through `od …` only, compare produced artifacts byte-for-byte (per the §12.6 implementation rule).
+Validation: (a) install a published plugin → export from a real project that used it → diff the produced manifest against the original. (b) "UI vs CLI parity test": pick 5 desktop-UI workflows, replay each one through `capt …` only, compare produced artifacts byte-for-byte (per the §12.6 implementation rule).
 
 ### Phase 5 — Cloud deployment + pluggable storage (parallel, splittable)
 
@@ -1876,7 +1873,7 @@ Validation:
 
 ### 17.1 Minimum-viable plugin (just SKILL.md)
 
-OD reads it as a plugin via the existing `od:` frontmatter loader documented in [`skills-protocol.md`](skills-protocol.md). No `open-design.json` needed — the plugin lacks marketplace polish but is fully runnable.
+CapyDesign reads it as a plugin via the existing `od:` frontmatter loader documented in [`skills-protocol.md`](skills-protocol.md). No `open-design.json` needed — the plugin lacks marketplace polish but is fully runnable.
 
 ```
 my-plugin/
@@ -1895,7 +1892,7 @@ od:
 Workflow steps...
 ```
 
-### 17.2 Enriched plugin (cross-catalog publishable, full OD product surface)
+### 17.2 Enriched plugin (cross-catalog publishable, full CapyDesign product surface)
 
 ```
 my-plugin/
@@ -1931,11 +1928,11 @@ The installer fans out nested skills/design-systems/craft into the registry unde
 
 | Risk                                                        | Mitigation                                                                                          |
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Schema drift between OD plugin and the broader skill spec   | `open-design.json` is sidecar-only; it never modifies SKILL.md. CI tests run against the public anthropics/skills repo. |
+| Schema drift between CapyDesign plugin and the broader skill spec   | `open-design.json` is sidecar-only; it never modifies SKILL.md. CI tests run against the public anthropics/skills repo. |
 | Arbitrary GitHub install = supply-chain risk                | `restricted` default; capability prompt mandatory before bash/hooks/MCP; pinned-ref recording.       |
 | `composeSystemPrompt()` is already 200+ lines               | The `## Active plugin` block is appended in the existing place; no reordering of layers.             |
 | ExamplesTab vs Marketplace overlap                          | Phase 2 keeps ExamplesTab as is; Phase 3 folds it into Marketplace as a "Local skills" tab.         |
-| Atoms-as-plugins is large                                   | Entry slice shipped: bundled atom SKILL.md bodies + `renderActiveStageBlock()` exist, while the base OD designer/discovery prompt remains in daemon code until the remaining §23 migration is complete. |
+| Atoms-as-plugins is large                                   | Entry slice shipped: bundled atom SKILL.md bodies + `renderActiveStageBlock()` exist, while the base CapyDesign designer/discovery prompt remains in daemon code until the remaining §23 migration is complete. |
 | Project-local plugins committed to user repos | Discovery only at `<projectCwd>/.open-design/plugins/`; opt-in via `capt plugin install --project`. |
 | Trust model leaves community plugins half-functional by default | Detail page surfaces a clear capability checklist with a one-click "Grant all" action; restricted-mode behavior is explicit, not silent. |
 | Plugins shipping their own MCP servers may fail to start | `capt plugin doctor` runs a dry-launch of declared MCP commands; failures surfaced before "Use". |
@@ -1947,7 +1944,7 @@ The installer fans out nested skills/design-systems/craft into the registry unde
 | Sovereign-cloud customers (Aliyun / Tencent / Huawei) need provider-specific secret + storage integrations | S3-compatible adapter covers all three for blob storage (Phase 5); env-var-based secrets work everywhere; cloud-specific KMS integrations are non-blocking (post-v1). |
 | Multi-cloud testing matrix is large                         | Phase 5 ships a single canonical compose smoke (one cloud), then adds clouds incrementally; per-cloud one-click templates live in `open-design/deploy` and can move at their own cadence (§15.5). |
 | Malicious plugins phishing the user via GenUI surfaces      | `od.genui.surfaces[]` must be declared in the manifest and pass `capt plugin doctor`; runtime rejects undeclared surface kinds / surface ids; `oauth-prompt` and `confirmation` always show "from plugin <id>, vetted by marketplace <id>"; restricted plugins must explicitly grant `network` before raising an `oauth-prompt` (§9). |
-| AG-UI ecosystem may evolve, drifting OD's wire format from canonical AG-UI | OD-native `GenUIEvent` remains the internal source of truth. `@open-design/agui-adapter` is an external projection layer, so upstream protocol revs do not couple to the daemon or web renderer release cadence. |
+| AG-UI ecosystem may evolve, drifting CapyDesign's wire format from canonical AG-UI | CapyDesign-native `GenUIEvent` remains the internal source of truth. `@capydesign/agui-adapter` is an external projection layer, so upstream protocol revs do not couple to the daemon or web renderer release cadence. |
 | Cross-conversation reuse via `genui_surfaces` may make users "forget what they authorized" | The web `GenUIInbox` and `capt ui list --project <id>` must enumerate every `persist=project` resolved row with revoke entry points; hosted mode can default-expire via `OD_GENUI_PROJECT_TTL_DAYS`; revoke writes an audit log entry. |
 
 Open questions worth confirming before code lands:
@@ -1965,11 +1962,11 @@ Open questions worth confirming before code lands:
 - **Whether `od.taskKind` becomes a first-class marketplace filter** — does the existing `kind` / `mode` / `scenario` UI need a reorder to surface the new `taskKind`? (Default: marketplace adds a top-level `taskKind` tab; existing filters drop to a secondary tier.)
 - ~~**Should `od.genui.surfaces[].component` ship in v1?**~~ — **resolved as a gated extension path.** The manifest schema accepts the field and `capt plugin doctor` enforces `genui:custom-component` plus traversal guards. The built-in product renderer remains the default for `form` / `choice` / `confirmation` / `oauth-prompt`; custom components are sandboxed add-ons, not a replacement for core collaboration UI.
 - **Coupling between GenUI persisted state and `AppliedPluginSnapshot`** — when a plugin upgrades and `surface.schema` changes, old rows auto-`invalidate`; should we additionally **force a re-apply** (generating a new `AppliedPluginSnapshot`) or allow the surface to invalidate while leaving the snapshot untouched? (Default: surface only; `capt plugin doctor` flags schema drift; replay still uses the old snapshot.)
-- ~~**Timing of AG-UI protocol adoption**~~ — **resolved.** `@open-design/agui-adapter` and `GET /api/runs/:runId/agui` have shipped as optional interoperability. OD-native GenUI remains the internal renderer and CopilotKit is not a required product dependency.
+- ~~**Timing of AG-UI protocol adoption**~~ — **resolved.** `@capydesign/agui-adapter` and `GET /api/runs/:runId/agui` have shipped as optional interoperability. CapyDesign-native GenUI remains the internal renderer and CopilotKit is not a required product dependency.
 
-## 19. Why this is a meaningful step for OpenDesign
+## 19. Why this is a meaningful step for CapyDesign
 
-- **Inherited supply.** Every public agent skill on `anthropics/skills`, `awesome-agent-skills`, `clawhub`, and `skills.sh` is one optional `open-design.json` away from being an OD plugin — and reciprocally, every OD plugin is publishable to all four catalogs without modification.
+- **Inherited supply.** Every public agent skill on `anthropics/skills`, `awesome-agent-skills`, `clawhub`, and `skills.sh` is one optional `open-design.json` away from being an CapyDesign plugin — and reciprocally, every CapyDesign plugin is publishable to all four catalogs without modification.
 - **Boundary-clean.** New code lives in two pure-TS packages (`packages/plugin-runtime`, `packages/contracts/src/plugins/*`) and one daemon module group (`apps/daemon/src/plugins/`); no cross-app coupling, no contracts package leaks, no SKILL.md fork. Honors every constraint in the root [`AGENTS.md`](../AGENTS.md).
 - **Reversible refactors.** Existing loaders ([`apps/daemon/src/skills.ts`](../apps/daemon/src/skills.ts) etc.) and `composeSystemPrompt()` keep their public shape; Phase 1 is a drop-in delegate, Phase 2 only **appends** a prompt block.
 - **CLI from day 1.** Every new endpoint has a matching `capt plugin …` subcommand, so the same surface is reachable from any code agent without the desktop app.
@@ -1986,7 +1983,7 @@ Every artifact produced by a plugin should eventually carry three orthogonal lab
 | Field | Meaning | Initial values |
 | --- | --- | --- |
 | `artifactKind` | What the artifact is as a product object | `html-prototype`, `deck`, `interactive-video`, `design-system`, `code-diff`, `production-app`, `asset-pack` |
-| `renderKind` | How OD previews or opens it | `html`, `jsx`, `pptx`, `markdown`, `video`, `image`, `diff`, `repo` |
+| `renderKind` | How CapyDesign previews or opens it | `html`, `jsx`, `pptx`, `markdown`, `video`, `image`, `diff`, `repo` |
 | `handoffKind` | What downstream delivery promise it makes | `design-only`, `implementation-plan`, `patch`, `deployable-app` |
 
 The v1 `ArtifactManifest` extension in §11.5.1 already reserves these optional fields. v1 producers may infer them conservatively; v1 consumers must preserve unknown values. This prevents later phases from relying on filename sniffing (`index.html`, `slides.json`, `diff.patch`) or overloading `od.mode` for export and handoff decisions.
@@ -2020,7 +2017,7 @@ The runtime can now promote a handoff to `deployable-app` only when diff review 
 
 This section is the **honest accounting** between the four product scenarios already declared in §1 ("Four product scenarios": `new-generation` / `code-migration` / `figma-migration` / `tune-collab`) and the current implementation. It retains the original v1 baseline while recording the later Phase 6–8 entry slices, so historical rollout language is not mistaken for current runtime status.
 
-The four "core agent-native design problems" the OD product targets, restated to make this section navigable:
+The four "core agent-native design problems" the CapyDesign product targets, restated to make this section navigable:
 
 1. **Existing Figma → HTML / artifact migration**, then code-driven tuning, design-system consistency, and collaboration on top of the migrated artifact.
 2. **Existing-codebase refresh** — make an old codebase look better while staying patch-safe.
@@ -2046,7 +2043,7 @@ The original v1 stopped at scenario 3 in terms of native completeness, but its s
 2. **`od.pipeline` + devloop convergence** (§10.1, §10.2). `repeat: true` + `until` is the convergence mechanism scenarios 1, 2, 3 all need: scenario 3 converges on critique score, scenario 1 converges on token-map fidelity, scenario 2 converges on `build-test` passing. The same loop primitive works for all three; only the `until` signal differs.
 3. **GenUI cross-conversation persisted state** (§10.3, `genui_surfaces` table in §11.4). One-time Figma OAuth, brand confirmation, target stack confirmation, and direction picks are remembered at `project` / `conversation` / `run` tier and reused across subsequent multi-turn chats. Scenarios 1 (Figma OAuth) and 2 (target stack confirmation) depend on this primitive; without it, every new conversation re-asks and the experience collapses.
 4. **`AppliedPluginSnapshot` immutability + replay** (§8.2.1). Reproducibility across plugin upgrades is what makes scenarios 1 and 2 auditable six months later — "which figma file → which token map → which generated diff" is recoverable from one snapshot row. Scenario 3 benefits less but pays no cost.
-5. **CLI-first headless mode** (§11.7, §14.3). This was the v1 fallback path for scenario 4 and remains supported: OD stages SKILL.md / DESIGN.md / craft / generated artifacts into a project cwd; Cursor / Claude Code / Codex can act as the patch-applying code agent in that cwd.
+5. **CLI-first headless mode** (§11.7, §14.3). This was the v1 fallback path for scenario 4 and remains supported: CapyDesign stages SKILL.md / DESIGN.md / craft / generated artifacts into a project cwd; Cursor / Claude Code / Codex can act as the patch-applying code agent in that cwd.
 
 Original v1 gaps and their current disposition:
 
@@ -2070,7 +2067,7 @@ Original v1 gaps and their current disposition:
 **Post-v1 implementation status:**
 
 - `figma-extract` now fetches and walks the Figma file through REST, writing the extracted tree, tokens, and assets under the run cwd.
-- `token-map` now maps either Figma- or code-extracted tokens onto the active OD design system.
+- `token-map` now maps either Figma- or code-extracted tokens onto the active CapyDesign design system.
 - `plugins/_official/scenarios/od-figma-migration/open-design.json` supplies the bundled reference pipeline.
 
 **Why this was the easiest of the three original gaps to land:**
@@ -2101,7 +2098,7 @@ Original v1 gaps and their current disposition:
 - Output is a repo patch with build evidence; patch-safety is on the critical path.
 - Build and test convergence is native; objective visual-diff convergence remains a separate future evaluator.
 
-**Original v1 fallback (still supported, also documented in §21.5):** OD can generate a `html-prototype` or `implementation-plan` artifact and hand it to Cursor / Claude Code in the user's repo cwd. Phase 7 added the native reference pipeline; it did not remove this external-agent path.
+**Original v1 fallback (still supported, also documented in §21.5):** CapyDesign can generate a `html-prototype` or `implementation-plan` artifact and hand it to Cursor / Claude Code in the user's repo cwd. Phase 7 added the native reference pipeline; it did not remove this external-agent path.
 
 #### 21.3.3 Scenario 3: 0→1 design (`new-generation`)
 
@@ -2127,7 +2124,7 @@ Original v1 gaps and their current disposition:
 
 **v1 contract (lock this in, see §21.5):**
 
-- "Design → production code" in v1 is a **two-product handoff**: OD owns the design substrate (SKILL.md / DESIGN.md / craft / generated artifacts staged into project cwd, plus `capt files`-managed artifact bookkeeping); the user's existing code agent (Cursor / Claude Code / Codex / Gemini CLI) owns the actual repo patch in the user's repo cwd.
+- "Design → production code" in v1 is a **two-product handoff**: CapyDesign owns the design substrate (SKILL.md / DESIGN.md / craft / generated artifacts staged into project cwd, plus `capt files`-managed artifact bookkeeping); the user's existing code agent (Cursor / Claude Code / Codex / Gemini CLI) owns the actual repo patch in the user's repo cwd.
 - The handoff surface is the §14.3 headless pipeline plus `capt files read` / `capt files watch` for the code agent to consume artifacts inline.
 
 **What remains beyond the entry slice:**
@@ -2153,18 +2150,18 @@ The §16 phased plan stays as-is. The table retains the original sequencing deci
 
 Phases 6, 7, and 8 were deliberately enumerated **after** the existing §16 Phase 5 (cloud deployment) so they did not interleave with the headless / Docker stabilization story. Their implementation preserved that dependency: Phase 7 supplied the build/review evidence consumed by the Phase 8 handoff entry slice.
 
-### 21.5 OD ↔ code-agent handoff as the v1 production-code path
+### 21.5 CapyDesign ↔ code-agent handoff as the v1 production-code path
 
 Before the Phase 6–8 slices landed, the production-code experience followed the §14.3 headless pipeline. This subsection retains that v1 contract because external code-agent integrations remain supported alongside the native migration/review path.
 
 The contract has four locked points:
 
-1. **OD stages the design substrate into a project cwd.** Per §14.3, the daemon writes SKILL.md / DESIGN.md / craft into a staged skill-context directory and generated artifacts into the project cwd via `capt files`. The cwd is discoverable via `capt project info <id> --json | jq -r .cwd`.
-2. **The user's code agent operates in that cwd or in their own repo cwd.** OD does not run inside the IDE; it runs as a daemon next to the IDE. Cursor / Claude Code / Codex / Gemini CLI are the patch-applying surface.
-3. **Bookkeeping stays in OD.** `ArtifactManifest` (§11.5.1) records `sourcePluginSnapshotId`, `sourceTaskKind: 'tune-collab' | 'code-migration'`, and the handoff tier; `capt files` tracks every artifact byte. Even when an external code agent does the patch, OD remains the audit log.
-4. **Re-entry into OD is single-step.** The user can reapply any plugin (or a different plugin) on top of the same project at any time via the inline rail (§8) or `capt plugin apply ... --project <id>`. `parentArtifactId` chaining (§11.5.1) preserves the lineage across the OD ↔ code-agent boundary.
+1. **CapyDesign stages the design substrate into a project cwd.** Per §14.3, the daemon writes SKILL.md / DESIGN.md / craft into a staged skill-context directory and generated artifacts into the project cwd via `capt files`. The cwd is discoverable via `capt project info <id> --json | jq -r .cwd`.
+2. **The user's code agent operates in that cwd or in their own repo cwd.** CapyDesign does not run inside the IDE; it runs as a daemon next to the IDE. Cursor / Claude Code / Codex / Gemini CLI are the patch-applying surface.
+3. **Bookkeeping stays in CapyDesign.** `ArtifactManifest` (§11.5.1) records `sourcePluginSnapshotId`, `sourceTaskKind: 'tune-collab' | 'code-migration'`, and the handoff tier; `capt files` tracks every artifact byte. Even when an external code agent does the patch, CapyDesign remains the audit log.
+4. **Re-entry into CapyDesign is single-step.** The user can reapply any plugin (or a different plugin) on top of the same project at any time via the inline rail (§8) or `capt plugin apply ... --project <id>`. `parentArtifactId` chaining (§11.5.1) preserves the lineage across the CapyDesign ↔ code-agent boundary.
 
-For the original v1 question "can I use this plugin system to deliver business code?", the answer was OD substrate + external-code-agent handoff. The current runtime also has native migration, review, and guarded handoff-promotion slices, but generic one-click export/deploy is still not implied.
+For the original v1 question "can I use this plugin system to deliver business code?", the answer was CapyDesign substrate + external-code-agent handoff. The current runtime also has native migration, review, and guarded handoff-promotion slices, but generic one-click export/deploy is still not implied.
 
 ### 21.6 Reader contract
 
@@ -2172,7 +2169,7 @@ This section is the **single source of truth for "what is shipped vs. what is re
 
 ## 22. Authoring extension points: building uncovered scenarios on top of v1 substrate
 
-§21 records what OD ships natively. This section records the **other half of the openness story**: on the original v1 substrate, third-party authors could build scenarios 1, 2, and 4 before the Phase 6 / 7 / 8 slices landed. Those extension paths remain valid even though scenarios 1 and 2 now have first-party reference pipelines and scenario 4 has a native review/handoff entry slice.
+§21 records what CapyDesign ships natively. This section records the **other half of the openness story**: on the original v1 substrate, third-party authors could build scenarios 1, 2, and 4 before the Phase 6 / 7 / 8 slices landed. Those extension paths remain valid even though scenarios 1 and 2 now have first-party reference pipelines and scenario 4 has a native review/handoff entry slice.
 
 ### 22.1 Substrate vs implementation
 
@@ -2189,9 +2186,9 @@ What plugin authors actually reach for to fill missing first-party behavior:
 
 | Plugin author need | v1 primitive that fills it | Spec reference |
 | --- | --- | --- |
-| Call a tool OD does not provide (Figma REST, AST parsing, SVG conversion, etc.) | Bundle an MCP server in `od.context.mcp[]` | §5 / §5.3 (`mcp` + `subprocess` + `network`) |
+| Call a tool CapyDesign does not provide (Figma REST, AST parsing, SVG conversion, etc.) | Bundle an MCP server in `od.context.mcp[]` | §5 / §5.3 (`mcp` + `subprocess` + `network`) |
 | Call a third-party API (Slack / Notion / GitHub / Figma / Drive) | `od.connectors.required[]` riding the existing Composio subsystem | §5 / §9 / §10.3.1 `oauth.route='connector'` |
-| Operate on the user's real repo | `capt project import <path>` brings the repo into OD's project model; `capt files` and agent file ops then work in-place | §12 / §11.7 / §14.3 |
+| Operate on the user's real repo | `capt project import <path>` brings the repo into CapyDesign's project model; `capt files` and agent file ops then work in-place | §12 / §11.7 / §14.3 |
 | Run arbitrary build / test / lint / scripts | `bash` / `subprocess` capabilities | §5.3 |
 | Drive a third-party OAuth flow | GenUI `oauth-prompt` surface, route `connector` or `mcp` | §10.3.1 |
 | Custom HITL form / picker / confirmation | GenUI `form` / `choice` / `confirmation` surface declaration | §10.3 |
@@ -2201,7 +2198,7 @@ What plugin authors actually reach for to fill missing first-party behavior:
 | Reproducible replay months later | `AppliedPluginSnapshot` immutable + `capt plugin replay` | §8.2.1 / §12 |
 | Teach the agent a domain workflow | `SKILL.md` body injected into prompt + `od.context.assets[]` reference materials | §11.3 `composeSystemPrompt()` |
 
-Phrased as a rule: **OD-native atom missing → plugin authors compose `MCP server + bash + SKILL.md` to substitute**. The cost is ergonomics (each plugin re-invents its own naming and prompt fragments), not capability.
+Phrased as a rule: **CapyDesign-native atom missing → plugin authors compose `MCP server + bash + SKILL.md` to substitute**. The cost is ergonomics (each plugin re-invents its own naming and prompt fragments), not capability.
 
 ### 22.3 Worked examples
 
@@ -2266,7 +2263,7 @@ Two ergonomic gaps in the original v1 fallback, both closed by the Phase 7 entry
 
 Phase 7 promoted `build-test` and `diff-review` into first-party atoms and added the `build.passing` / `tests.passing` convergence signals. The broader arbitrary atom-declared-signal contract remains future work.
 
-#### 22.3.3 Design → production code via OD ↔ code-agent handoff
+#### 22.3.3 Design → production code via CapyDesign ↔ code-agent handoff
 
 Plugin authors should not try to do the full handoff in v1. The right shape is:
 
@@ -2274,7 +2271,7 @@ Plugin authors should not try to do the full handoff in v1. The right shape is:
 - Last stage emits a `confirmation` GenUI surface: "ready to apply? Open the project cwd in Cursor / Claude Code / Codex and run the included instructions."
 - `capt files` retains audit; `parentArtifactId` chains the patch artifact to the design artifact.
 
-This is exactly the §21.5 contract; the plugin author writes the SKILL.md that drives the agent toward producing handoff-shaped artifacts and stops short of running the patch inside OD.
+This is exactly the §21.5 contract; the plugin author writes the SKILL.md that drives the agent toward producing handoff-shaped artifacts and stops short of running the patch inside CapyDesign.
 
 ### 22.4 Real substrate-level limits (plugin authors cannot work around these in v1)
 
@@ -2297,15 +2294,15 @@ The recommended pattern for closing each gap, generalized from §21.3.1's Figma 
 
 This is how the spec stays honest: the absence of a first-party atom is never a permanent gap, it is a "pre-promotion" state of community work that has not been distilled yet.
 
-## 23. Self-bootstrapping: OD's hard flow as first-party plugins
+## 23. Self-bootstrapping: CapyDesign's hard flow as first-party plugins
 
-§22 establishes that **third-party** plugins can extend OD on the v1 substrate. This section establishes the symmetric property: **OD's own hard-coded flow can be re-expressed as first-party plugins running on the same substrate**, with no privileged path that third parties cannot reach. The plugin substrate is genuinely the floor; OD-the-product is just one configuration of it.
+§22 establishes that **third-party** plugins can extend CapyDesign on the v1 substrate. This section establishes the symmetric property: **CapyDesign's own hard-coded flow can be re-expressed as first-party plugins running on the same substrate**, with no privileged path that third parties cannot reach. The plugin substrate is genuinely the floor; CapyDesign-the-product is just one configuration of it.
 
 §10.2 originally foreshadowed this for atoms; the current implementation has now landed the entry slice. Bundled atom plugins exist under `plugins/_official/atoms/**`, bundled scenario plugins exist under `plugins/_official/scenarios/**`, and active stage blocks can be rendered from atom bodies. This section keeps the kernel/userspace boundary explicit and records what remains before the prompt and entrypoint selection are fully self-hosted.
 
 ### 23.1 Kernel/userspace boundary
 
-Three categories cover everything OD does today:
+Three categories cover everything CapyDesign does today:
 
 | Category | Where it lives after self-hosting | Examples from today's daemon |
 | --- | --- | --- |
@@ -2326,9 +2323,9 @@ Category C is the half v1 has shipped, and the first pieces of category A have a
 - The active design system + craft injection that drives "consistency" in §1's product brief is already a plugin-substrate read: there is no privileged path for first-party DESIGN.md vs. third-party DESIGN.md.
 - First-party atom plugins under `plugins/_official/atoms/**` carry atom SKILL.md bodies and manifest metadata; `packages/contracts/src/prompts/atom-block.ts` renders active stage blocks from those bodies.
 - Bundled scenario plugins under `plugins/_official/scenarios/**` carry default pipeline shapes, including `od-default` for Home free-form routing and task shaping. `packages/plugin-runtime/src/pipeline-fallback.ts` resolves an applied pipeline through these bundled scenarios when a plugin omits `od.pipeline`.
-- `@open-design/agui-adapter` and `/api/runs/:runId/agui` provide external AG-UI event projection without changing OD's internal GenUI renderer.
+- `@capydesign/agui-adapter` and `/api/runs/:runId/agui` provide external AG-UI event projection without changing CapyDesign's internal GenUI renderer.
 
-This is why §22 holds: the substrate is already self-hosting for plugin artifacts, snapshots, GenUI declarations, pipeline declarations, bundled scenarios, and the first atom-body injection path. The remaining hard-coded parts are narrower and more product-shaped: the base OD designer/discovery prompt, some stage-entry selection logic, Home's curated scenario rail, and the closed signal / surface vocabularies listed in §22.4.
+This is why §22 holds: the substrate is already self-hosting for plugin artifacts, snapshots, GenUI declarations, pipeline declarations, bundled scenarios, and the first atom-body injection path. The remaining hard-coded parts are narrower and more product-shaped: the base CapyDesign designer/discovery prompt, some stage-entry selection logic, Home's curated scenario rail, and the closed signal / surface vocabularies listed in §22.4.
 
 ### 23.3 What v1 still hard-codes (the work to finish self-hosting)
 
@@ -2361,7 +2358,7 @@ Bundled scenario plugins and the pipeline fallback resolver now exist. The remai
 
 Each ships only an `od.pipeline` and (optionally) some default `od.genui.surfaces[]` for that scenario. Daemon resolution becomes: "no `od.pipeline` provided + has `taskKind` → look up the bundled scenario plugin matching that `taskKind` → use its `od.pipeline`."
 
-After this patch, replacing or forking `od-new-generation` is the canonical way to ship a different OD-flavor product.
+After this patch, replacing or forking `od-new-generation` is the canonical way to ship a different CapyDesign-flavor product.
 
 #### 23.3.4 Patch 4 — New `bundled` trust tier
 
@@ -2413,7 +2410,7 @@ There is no behavioral content inside this function. All behavioral content live
 
 Three concrete payoffs justify the patch sequence:
 
-1. **Audit surface convergence.** Every byte that enters the agent system prompt is reachable from a plugin manifest + SKILL.md. Reading `plugins/_official/...` gives a complete answer to "what is OD telling the agent to do today?"; no codebase grep needed.
+1. **Audit surface convergence.** Every byte that enters the agent system prompt is reachable from a plugin manifest + SKILL.md. Reading `plugins/_official/...` gives a complete answer to "what is CapyDesign telling the agent to do today?"; no codebase grep needed.
 2. **Replaceable taste.** Enterprise deployments, vertical editions (real-estate / gaming / legal / financial-reporting), and partner integrations can ship their own `plugins/_official/scenarios/od-<taskKind>` without forking the daemon. The product taste — discovery questioning style, critique axes, default pipeline shape — becomes a content concern, not a code concern.
 3. **First-party work runs the same path as third-party.** The Phase 6 / 7 scenarios and Phase 8 entry slice (§21.4) landed as first-party plugins and atom workers under `plugins/_official/`, exercising the same loader, resolver, snapshot, and GenUI runtime that community plugins use. If first-party hits an ergonomics wall, third-party will hit it harder; this is the strongest dogfooding pressure available.
 
@@ -2423,9 +2420,9 @@ Together the three sections answer "what is the plugin system, who can use it, a
 
 | Section | Question answered | Audience |
 | --- | --- | --- |
-| §21 | What does OD ship natively in v1? Which scenarios are covered, partial, or post-v1? | Maintainers planning the §16 phased rollout |
-| §22 | Without waiting for OD to ship more native atoms, how far can a third-party plugin author go on the v1 substrate? | Plugin authors and integrators evaluating the platform |
-| §23 | Can OD's own hard-coded flow be re-expressed inside the plugin substrate? Where is the kernel boundary? | Architects and reviewers ensuring no privileged backdoors |
+| §21 | What does CapyDesign ship natively in v1? Which scenarios are covered, partial, or post-v1? | Maintainers planning the §16 phased rollout |
+| §22 | Without waiting for CapyDesign to ship more native atoms, how far can a third-party plugin author go on the v1 substrate? | Plugin authors and integrators evaluating the platform |
+| §23 | Can CapyDesign's own hard-coded flow be re-expressed inside the plugin substrate? Where is the kernel boundary? | Architects and reviewers ensuring no privileged backdoors |
 
 Future spec patches that add atoms, evaluators, scenarios, or kernel responsibilities must update the corresponding section in the same patch. §21 records what shipped, §22 records what's reachable from the outside, §23 records what's reachable from the inside; together they form the spec's openness contract.
 

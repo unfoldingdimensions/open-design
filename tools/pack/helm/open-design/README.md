@@ -25,9 +25,12 @@ values-self.yaml     persistence.backend=hostPath  secrets.backend=env
 
 ## Installing
 
+CapyDesign publishes no hosted Helm chart repository yet — install straight
+from this checkout:
+
 ```bash
-helm repo add open-design https://open-design.ai/charts
-helm install od open-design/open-design \
+cd tools/pack/helm/open-design
+helm install od . \
   --set image.tag=edge \
   --set secrets.apiToken="$(openssl rand -hex 32)" \
   -f values-aws.yaml      # one of the cloud overrides above

@@ -1,6 +1,6 @@
-# การ contribute ให้ OpenDesign
+# การ contribute ให้ CapyDesign
 
-ขอบคุณที่คิดจะ contribute. OD ตั้งใจให้เล็ก — คุณค่าส่วนใหญ่อยู่ใน **ไฟล์** (skills, design systems, prompt fragments) มากกว่า framework code. นั่นแปลว่า contribution ที่คุ้มที่สุดมักเป็น folder เดียว, Markdown file เดียว หรือ adapter ขนาดพอดี PR เดียว.
+ขอบคุณที่คิดจะ contribute. CapyDesign ตั้งใจให้เล็ก — คุณค่าส่วนใหญ่อยู่ใน **ไฟล์** (skills, design systems, prompt fragments) มากกว่า framework code. นั่นแปลว่า contribution ที่คุ้มที่สุดมักเป็น folder เดียว, Markdown file เดียว หรือ adapter ขนาดพอดี PR เดียว.
 
 Guide นี้บอกชัด ๆ ว่า contribution แต่ละประเภทควรเริ่มดูตรงไหน และ PR ต้องผ่าน bar อะไรก่อนที่เราจะ merge.
 
@@ -12,9 +12,9 @@ Guide นี้บอกชัด ๆ ว่า contribution แต่ละป�
 
 | ถ้าคุณอยาก… | สิ่งที่คุณเพิ่มจริง ๆ | อยู่ที่ไหน | ขนาดงาน |
 |---|---|---|---|
-| ทำให้ OD render artifact ชนิดใหม่ (invoice, iOS Settings screen, one-pager…) | **Design template** | [`design-templates/<your-template>/`](../../design-templates/) | folder ที่มี `SKILL.md` และ rendering assets |
+| ทำให้ CapyDesign render artifact ชนิดใหม่ (invoice, iOS Settings screen, one-pager…) | **Design template** | [`design-templates/<your-template>/`](../../design-templates/) | folder ที่มี `SKILL.md` และ rendering assets |
 | เพิ่ม functional capability ที่ agent เรียกใช้ระหว่าง task | **Skill** | [`skills/<your-skill>/`](../../skills/) | folder ที่มี `SKILL.md` และ resources แบบ optional |
-| ทำให้ OD พูด visual language ของ brand ใหม่ | **Design System** | [`design-systems/<brand>/`](../../design-systems/) | package เดียว: `manifest.json`, `DESIGN.md` และ `tokens.css` |
+| ทำให้ CapyDesign พูด visual language ของ brand ใหม่ | **Design System** | [`design-systems/<brand>/`](../../design-systems/) | package เดียว: `manifest.json`, `DESIGN.md` และ `tokens.css` |
 | ต่อ coding-agent CLI ใหม่ | **Agent adapter** | [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/runtimes/defs/) | definition หนึ่งชุดและ registry entry |
 | เพิ่ม feature, แก้ bug, ยก UX pattern จาก [`open-codesign`][ocod] | code | `apps/web/src/`, `apps/daemon/` | PR ปกติ |
 | ปรับ docs, port section เป็น Français / Deutsch / 中文, แก้ typo | docs | `README.md`, `docs/i18n/README.fr.md`, `docs/i18n/README.de.md`, `docs/i18n/README.zh-CN.md`, `docs/`, `QUICKSTART.md` | หนึ่ง PR |
@@ -34,14 +34,14 @@ corepack enable           # selects the pinned pnpm from packageManager
 pnpm install
 pnpm tools-dev run web    # daemon + web foreground loop
 pnpm typecheck            # tsc -b --noEmit
-pnpm --filter @open-design/web build  # web package build when needed
+pnpm --filter @capydesign/web build  # web package build when needed
 ```
 
 ต้องใช้ Node `~24` และ pnpm `10.33.x`. `nvm` / `fnm` เป็น optional; ใช้ `nvm install 24 && nvm use 24` หรือ `fnm install 24 && fnm use 24` ถ้าคุณชอบจัดการ Node ด้วยวิธีนั้น. macOS, Linux และ WSL2 เป็น path หลัก. Windows native รองรับด้วย; ดู gotchas การ setup ที่พบบ่อยใน [`docs/windows-troubleshooting.md`](../../docs/windows-troubleshooting.md).
 
 ## Docker Setup
 
-รัน OpenDesign โดยไม่ต้องติดตั้ง Node.js หรือ pnpm.
+รัน CapyDesign โดยไม่ต้องติดตั้ง Node.js หรือ pnpm.
 
 ### Prerequisites
 
@@ -51,7 +51,7 @@ pnpm --filter @open-design/web build  # web package build when needed
 docker compose version
 ```
 
-### Start OpenDesign
+### Start CapyDesign
 
 ```bash
 cd deploy
@@ -228,7 +228,7 @@ Table OVERRIDES ใน `maxTokens.ts` มีไว้สำหรับกรณ
 
 ## Localization maintenance
 
-ภาษา German ใช้ formal `Sie` เพราะ OD พูดกับ audience ผสมทั้ง solo creators, agencies และ engineering teams; จนกว่า feedback ของ project จะบอกว่า informal `du` fit กว่า formal German เป็น default ที่ surprise น้อยที่สุด. Locale PRs ควรแปล UI chrome, core docs และ display-only gallery metadata ใน `apps/web/src/i18n/content.ts`, แต่ไม่ควรแปล `skills/`, `design-systems/` หรือ prompt bodies ที่ agents execute. Source prompts เหล่านั้นถูก maintain ในฐานะ workflow inputs และการคง source language เดียวช่วยเลี่ยงการคูณ prompt QA ไปตาม locales. เมื่อเพิ่มหรือ rename skill, design system หรือ prompt template ให้ update German display metadata และรัน `pnpm --filter @open-design/web test`; `content.test.ts` จะ fail ถ้า German display coverage drift. Daemon errors, export filenames และ agent-generated artifact text เป็น known limitations เว้นแต่ PR จะ scope เรื่องนั้นโดยตรง.
+ภาษา German ใช้ formal `Sie` เพราะ CapyDesign พูดกับ audience ผสมทั้ง solo creators, agencies และ engineering teams; จนกว่า feedback ของ project จะบอกว่า informal `du` fit กว่า formal German เป็น default ที่ surprise น้อยที่สุด. Locale PRs ควรแปล UI chrome, core docs และ display-only gallery metadata ใน `apps/web/src/i18n/content.ts`, แต่ไม่ควรแปล `skills/`, `design-systems/` หรือ prompt bodies ที่ agents execute. Source prompts เหล่านั้นถูก maintain ในฐานะ workflow inputs และการคง source language เดียวช่วยเลี่ยงการคูณ prompt QA ไปตาม locales. เมื่อเพิ่มหรือ rename skill, design system หรือ prompt template ให้ update German display metadata และรัน `pnpm --filter @capydesign/web test`; `content.test.ts` จะ fail ถ้า German display coverage drift. Daemon errors, export filenames และ agent-generated artifact text เป็น known limitations เว้นแต่ PR จะ scope เรื่องนั้นโดยตรง.
 
 สำหรับขั้นตอนทีละขั้นในการเพิ่ม locale ใหม่ (UI dictionary, README, language switcher, regional terminology), ดู [`TRANSLATIONS.md`](../../TRANSLATIONS.md).
 
@@ -293,7 +293,7 @@ Table OVERRIDES ใน `maxTokens.ts` มีไว้สำหรับกรณ
 
 เพื่อให้ project focused โปรดอย่าเปิด PR ที่:
 
-- **Vendor model runtime.** Bet ทั้งหมดของ OD คือ "CLI ที่คุณมีอยู่แล้วก็พอ". เราไม่ ship `pi-ai`, OpenAI keys หรือ model loaders.
+- **Vendor model runtime.** Bet ทั้งหมดของ CapyDesign คือ "CLI ที่คุณมีอยู่แล้วก็พอ". เราไม่ ship `pi-ai`, OpenAI keys หรือ model loaders.
 - **Rewrite frontend ออกจาก stack ปัจจุบันโดยไม่คุยก่อน.** Next.js 16 App Router + React 18 + TS คือเส้น. ไม่มี Astro, Solid, Svelte หรือ framework rewrites อื่น เว้นแต่ maintainers ต้องการ migration นั้นชัดเจน.
 - **แทน daemon ด้วย serverless function.** จุดประสงค์ทั้งหมดของ daemon คือถือ `cwd` จริงและ spawn CLI จริง. Vercel deployment ของ SPA ทำได้; daemon ยังเป็น daemon.
 - **เพิ่ม telemetry หรือการเก็บข้อมูลภายนอกนอกสัญญาความเป็นส่วนตัว.** Product analytics และ session replay ที่ปกปิดข้อมูลต้องได้รับ consent; telemetry ด้านความปลอดภัย/ความเสถียรที่ scrub แล้วจะเปิดตลอดใน build ที่ตั้งค่าไว้. Event, field หรือปลายทางใหม่ต้องรักษาขอบเขต consent, data minimization และ scrubbing ตาม [`PRIVACY.md`](../../PRIVACY.md).
@@ -312,10 +312,9 @@ Table OVERRIDES ใน `maxTokens.ts` มีไว้สำหรับกรณ
 - **ไม่มี quotas, ไม่มี SLAs, ไม่มี fixed term.** Stepping down ง่ายและ reversible (Emeritus → กลับมาเมื่อชีวิตนิ่งขึ้น).
 - Thresholds ทั้งหมด, nomination flow, step-down rules และ early-project waiver อยู่ใน [`MAINTAINERS.md`](../../MAINTAINERS.md). อ่านเอกสารนั้นถ้าสนใจข้อใดข้างต้น.
 
-tl;dr: ship PR ดี ๆ, review อย่างใส่ใจ, อยู่ใน [Discussions][discussions] / [Discord][discord], แล้วที่เหลือจะตามมาเอง.
+tl;dr: ship PR ดี ๆ, review อย่างใส่ใจ, อยู่ใน [Discussions][discussions], แล้วที่เหลือจะตามมาเอง.
 
 [discussions]: https://github.com/nexu-io/open-design/discussions
-[discord]: https://discord.gg/qhbcCH8Am4
 
 ---
 

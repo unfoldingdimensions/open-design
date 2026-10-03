@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "example-html-ppt-taste-brutalist",
   "title": "Html Ppt Taste Brutalist",
@@ -48,10 +47,10 @@
   },
   "license": "MIT",
   "author": {
-    "name": "OpenDesign",
+    "name": "CapyDesign",
     "url": "https://github.com/nexu-io"
   },
-  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/examples/html-ppt-taste-brutalist",
+  "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/_official/examples/html-ppt-taste-brutalist",
   "tags": [
     "example",
     "first-party",

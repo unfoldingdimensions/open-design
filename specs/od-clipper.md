@@ -1,6 +1,6 @@
 ---
-name: OD Library and Clipper
-overview: 为 OpenDesign 新增一个全局资源库（OD Library，全系统统一资产登记中心）与 Chrome MV3 浏览器采集插件（OD Clipper）。资源库记录所有来源的资产（插件采集 / 手动上传 / Agent 任务上传或生成 / 设计系统提取），每条资产带来源标识与回链（可跳回对应 Agent 任务或设计系统），打通「采集/入库 → 可视化标记 → 语义检索 → 一键应用到设计稿 → 沉淀设计系统 → 一键产出 PPT/落地页/海报等材料」的持续积累闭环，遵循 HTTP + CLI + Web UI 三轨闭环与 daemon 数据目录契约。
+name: CapyDesign Library and Clipper
+overview: 为 CapyDesign 新增一个全局资源库（CapyDesign Library，全系统统一资产登记中心）与 Chrome MV3 浏览器采集插件（CapyDesign Clipper）。资源库记录所有来源的资产（插件采集 / 手动上传 / Agent 任务上传或生成 / 设计系统提取），每条资产带来源标识与回链（可跳回对应 Agent 任务或设计系统），打通「采集/入库 → 可视化标记 → 语义检索 → 一键应用到设计稿 → 沉淀设计系统 → 一键产出 PPT/落地页/海报等材料」的持续积累闭环，遵循 HTTP + CLI + Web UI 三轨闭环与 daemon 数据目录契约。
 todos:
   - id: phase0
     content: Phase 0 地基：在 packages/contracts/src/api/library.ts 定义 DTO（含 storage/sources/LibrarySourceKind）；在 apps/daemon/src/db.ts 新增 library_assets/library_asset_sources/library_embeddings/library_tasks/library_tokens/library_digests 表；新增 LIBRARY_DIR 解析（派生自 RUNTIME_DATA_DIR）与内容寻址存储 helper；实现集中索引函数 registerLibraryAsset（按 content_hash 幂等合并 + 追加来源）；搭建富化任务骨架（仿 media-tasks.ts）。
@@ -9,7 +9,7 @@ todos:
     content: Phase 1 采集→入库→语义搜索 + 统一登记中心：实现 registerLibraryRoutes 的 ingest/assets(含 sources 回链与 source/project/designSystem 过滤)/search/raw/tasks-wait + SSE；把 registerLibraryAsset 接入现有入库点（project upload/files、media generateMedia 完成、设计系统 staging），落来源标识与回链；富化管线（调色板/caption/OCR/embedding via BYOK media-config provider，缺失则降级）；capt library list/get/import/search/apply CLI；apps/web 新增 Library tab（网格+过滤+语义搜索+来源徽标+跳回深链）。
     status: pending
   - id: phase2
-    content: Phase 2 OD Clipper（Chrome MV3）：新建 clipper/ 子项目（background/content/popup）；浮动工具条三模式（Capture page 整页 / Select element 选元素 / 批量篮 Copy all + 打标签）；两个高价值出口——POST /api/library/capture/page（整页/区块→新建可编辑 HTML artifact project 并 open）与 /capture/compose（批量元素→合成 OD 网页 project），资源同步 registerLibraryAsset 带回链；实现配对流（/api/library/pair + confirm）与 od_library_token；扩展 origin-validation 支持持久化 extension origin allowlist；Settings → Browser Extension 配对 UI。
+    content: Phase 2 CapyDesign Clipper（Chrome MV3）：新建 clipper/ 子项目（background/content/popup）；浮动工具条三模式（Capture page 整页 / Select element 选元素 / 批量篮 Copy all + 打标签）；两个高价值出口——POST /api/library/capture/page（整页/区块→新建可编辑 HTML artifact project 并 open）与 /capture/compose（批量元素→合成 CapyDesign 网页 project），资源同步 registerLibraryAsset 带回链；实现配对流（/api/library/pair + confirm）与 od_library_token；扩展 origin-validation 支持持久化 extension origin allowlist；Settings → Browser Extension 配对 UI。
     status: pending
   - id: phase3
     content: Phase 3 原型增强：FileViewer srcDoc bridge 新增 Insert from Library 图片插入桥；POST /api/library/assets/:id/apply 拷贝进 project 并更新 <img src>；新增 /api/tools/library/search 与 apply（tool-token）供 chat agent 调用；skills/library-curator 技能。
@@ -26,7 +26,7 @@ todos:
 isProject: false
 ---
 
-# OD Library + OD Clipper Spec
+# CapyDesign Library + CapyDesign Clipper Spec
 
 一个持续积累的设计资源库（全局、跨项目）+ Chrome 采集插件。决策已定：Chrome MV3 优先、插件直连 daemon + 配对 token、BYOK provider 做 embedding + SQLite 存向量、完整 spec 分阶段落地。
 
@@ -34,7 +34,7 @@ isProject: false
 
 - 资源库是**全系统统一的资产登记中心**：不只是插件采集，凡是进入系统的资源都自动入库——插件采集、手动上传、Agent 任务里上传或生成的图片、设计系统提取时上传的素材，全部出现在同一个资源库。
 - 每条资产带**来源标识**（clipper 采集 / 手动上传 / agent 任务 / 设计系统 / AI 生成）与**回链**：点一条资产能跳回它来源的 Agent 任务会话或设计系统；当天上传/采集形成每日归档记录。
-- 用户装上 OD Clipper 后，在任意网页一键识别并高亮图片/配色/字体/区块，选中即采集入库。
+- 用户装上 CapyDesign Clipper 后，在任意网页一键识别并高亮图片/配色/字体/区块，选中即采集入库。
 - 入库时自动做可视化标记（调色板、caption、OCR、标签），之后用自然语言语义搜索；搜索结果可一键应用到设计稿，也可在任意 Agent 任务和设计系统里反向引用。
 - 资源库形成每日归档（日报流），可对当天内容问答；可一键提炼设计系统，再一键产出 PPT/落地页/表单/Poster/Newsletter/Email。
 - **终态形态 = Brand Kit（品牌套件）**：把一个品牌/网页抽取并聚合成结构化套件——IDENTITY / LOGO / TYPOGRAPHY / PALETTE / VOICE & TONE / IMAGERY & LAYOUT / IMAGES / 设计系统（组件 kit + tokens）/ BRAND ASSETS（Landing page、Pitch deck、Poster、Email、Newsletter、Form page）。抽取方式三选一/组合：程序化自动识别、AI 增强、用户手动选元素或整页 capture（见 §10）。
@@ -79,11 +79,11 @@ isProject: false
 ## 4. HTTP API（`apps/daemon/src/routes/library.ts` → `registerLibraryRoutes`）
 
 入库/管理：
-- `POST /api/library/pair`（loopback-only `requireLocalDaemonRequest`，OD UI 触发，返回配对码）
+- `POST /api/library/pair`（loopback-only `requireLocalDaemonRequest`，CapyDesign UI 触发，返回配对码）
 - `POST /api/library/pair/confirm`（插件用配对码换 `od_library_token`，同时登记 extension origin 进 allowlist）
 - `POST /api/library/ingest`（library-token 鉴权；JSON + multipart；返回 `assetId` + 富化 `taskId`）
 - `POST /api/library/capture/page`（整页/区块快照 → 新建 project 的可编辑 HTML artifact，资源同步入库；返回 `projectId`）
-- `POST /api/library/capture/compose`（采集篮多元素/资源 → 合成一个 OD 网页 project，按标签组织；返回 `projectId`）
+- `POST /api/library/capture/compose`（采集篮多元素/资源 → 合成一个 CapyDesign 网页 project，按标签组织；返回 `projectId`）
 - `GET /api/library/assets`（filter：kind/tag/domain/date/q/`source`/`projectId`/`designSystemId`）、`GET/DELETE /api/library/assets/:id`（详情含 `sources[]` 回链）、`GET /api/library/assets/:id/raw`
 - `POST /api/library/tasks/:id/wait`（长轮询富化进度）
 
@@ -129,7 +129,7 @@ Agent 工具轨（tool-token，供 chat 内 agent 调用，实现「平台连通
 - 每日归档 digest = 一条 `RoutineService` 定时 routine（仿 Orbit），每天汇总当天资源成 Live Artifact 日报。
 - 「一键输出材料」：资源库 → 生成设计系统（复用现有 DS 创建链）→ 用现有 `design-templates/`（deck/landing/poster…）+ 该设计系统创建 project。Phase 6 只做「一键」按钮接线，渲染能力已存在。
 
-## 9. 浏览器插件 OD Clipper（新目录 `clipper/`，Chrome MV3）
+## 9. 浏览器插件 CapyDesign Clipper（新目录 `clipper/`，Chrome MV3）
 
 对标 Figma Chrome 扩展（截图参考：`Capture page` / `Select an element` / `Copy all` + 打标签）。页面内浮动工具条提供三个采集模式 + 两个「立马有价值」的转化出口。
 
@@ -143,10 +143,10 @@ Agent 工具轨（tool-token，供 chat 内 agent 调用，实现「平台连通
 - **Select an element（选元素）**：hover 高亮、点选某个区块，仅采集该子树 + 其样式与资源。
 - **Multi-select / Copy all（批量篮）**：跨页持续把多个 element/asset 加入「采集篮」，每个可打标签（仿 Figma 的 "Pick some tags"），最后一键 `Copy all` 批量入库 + 转化。
 
-### 9.2 高价值转化出口（采集后一键转成 OD）
+### 9.2 高价值转化出口（采集后一键转成 CapyDesign）
 
-- **出口 A：整页/区块 → 可编辑的 OD 页面**：采集的快照经 `POST /api/library/capture/page` 落地为一个新 project 的 HTML artifact（可编辑原型），自动 open 进编辑器；页面里的图片/字体等资源同步 `registerLibraryAsset`（source `clipper`）。用户/agent 可立即在上面增改（复用现有 HTML artifact 编辑 + srcDoc 桥 + agent surgical edit）。这是「把我喜欢的页面一键变成 OD 界面，并在上面快速编辑」。
-- **出口 B：批量 element/asset → 合成一个 OD 网页**：采集篮里的多个元素/资源经 `POST /api/library/capture/compose` 生成一个新 OD 网页 project——把选中的 block/图片按标签组织成一张可编辑画布/落地页骨架，资源全部入库并带回链。这是「批量采集多个 asset/element → 转成 OD 网页」。
+- **出口 A：整页/区块 → 可编辑的 CapyDesign 页面**：采集的快照经 `POST /api/library/capture/page` 落地为一个新 project 的 HTML artifact（可编辑原型），自动 open 进编辑器；页面里的图片/字体等资源同步 `registerLibraryAsset`（source `clipper`）。用户/agent 可立即在上面增改（复用现有 HTML artifact 编辑 + srcDoc 桥 + agent surgical edit）。这是「把我喜欢的页面一键变成 CapyDesign 界面，并在上面快速编辑」。
+- **出口 B：批量 element/asset → 合成一个 CapyDesign 网页**：采集篮里的多个元素/资源经 `POST /api/library/capture/compose` 生成一个新 CapyDesign 网页 project——把选中的 block/图片按标签组织成一张可编辑画布/落地页骨架，资源全部入库并带回链。这是「批量采集多个 asset/element → 转成 CapyDesign 网页」。
 
 ### 9.3 落地复用
 
@@ -193,7 +193,7 @@ Brand Kit 是资源库 + 设计系统 + 生成材料的**统一聚合实体与 U
 
 - Phase 0 地基：contracts + db 表（含 `library_asset_sources`）+ `LIBRARY_DIR` + `registerLibraryAsset` 集中钩子 + 富化任务骨架。
 - Phase 1 采集→入库→语义搜索 + **统一入库钩子接入所有现有入库点**（project 上传/文件写入、media 生成、DS staging），来源标识与回链落库（HTTP+CLI+Library tab，先用本地 import/CLI/已有上传验证，不依赖插件）。
-- Phase 2 OD Clipper（Chrome MV3）+ 配对鉴权 + origin allowlist；含工具条三模式（Capture page / Select element / 批量篮+标签）与两个高价值出口（整页→可编辑 OD 页面、批量元素→合成 OD 网页）。
+- Phase 2 CapyDesign Clipper（Chrome MV3）+ 配对鉴权 + origin allowlist；含工具条三模式（Capture page / Select element / 批量篮+标签）与两个高价值出口（整页→可编辑 CapyDesign 页面、批量元素→合成 CapyDesign 网页）。
 - Phase 3 原型增强（Insert from Library）+ apply-to-design + agent tool 端点。
 - Phase 4 Brand Kit 抽取 + 设计系统：程序化抽取（palette/typography/logo/layout/identity/images）+ 可选 AI 增强 + 手动采用选择；从 Brand Kit/资源库选材生成设计系统。`POST /api/library/brand-kits` + `capt brand-kit extract` + Brand Kit tab。
 - Phase 5 每日归档流 + 日报 digest routine + 问答。

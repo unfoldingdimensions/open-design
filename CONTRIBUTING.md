@@ -1,8 +1,10 @@
-# Contributing to OpenDesign
+# Contributing to CapyDesign
 
-Thanks for thinking about contributing. OD is small on purpose — most of the value lives in **files** (skills, design systems, prompt fragments) rather than framework code. That means the highest-leverage contributions are usually one folder, one Markdown file, or one PR-sized adapter.
+Thanks for thinking about contributing. CapyDesign is small on purpose — most of the value lives in **files** (skills, design systems, prompt fragments) rather than framework code. That means the highest-leverage contributions are usually one folder, one Markdown file, or one PR-sized adapter.
 
 This guide tells you exactly where to look for each type of contribution and what bar a PR has to clear before we merge it.
+
+> CapyDesign is a derivative work of **Open Design** ([nexu-io/open-design](https://github.com/nexu-io/open-design)), Copyright 2026 Open Design contributors, licensed under Apache-2.0. CapyDesign is not affiliated with or endorsed by the Open Design project or nexu-io. Bundled third-party components remain under their own licenses — see [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md).
 
 <p align="center"><b>English</b> · <a href="docs/i18n/CONTRIBUTING.pt-BR.md">Português (Brasil)</a> · <a href="docs/i18n/CONTRIBUTING.de.md">Deutsch</a> · <a href="docs/i18n/CONTRIBUTING.fr.md">Français</a> · <a href="docs/i18n/CONTRIBUTING.zh-CN.md">简体中文</a> · <a href="docs/i18n/CONTRIBUTING.ja-JP.md">日本語</a> · <a href="docs/i18n/CONTRIBUTING.ko.md">한국어</a> · <a href="docs/i18n/CONTRIBUTING.th.md">ภาษาไทย</a></p>
 
@@ -12,14 +14,14 @@ This guide tells you exactly where to look for each type of contribution and wha
 
 | If you want to… | You're really adding | Where it lives | Ship size |
 |---|---|---|---|
-| Make OD render a new kind of artifact (an invoice, an iOS Settings screen, a one-pager…) | a **Design template** | [`design-templates/<your-template>/`](design-templates/) | one folder with `SKILL.md` plus its rendering assets |
+| Make CapyDesign render a new kind of artifact (an invoice, an iOS Settings screen, a one-pager…) | a **Design template** | [`design-templates/<your-template>/`](design-templates/) | one folder with `SKILL.md` plus its rendering assets |
 | Add a functional capability agents invoke during a task | a **Skill** | [`skills/<your-skill>/`](skills/) | one folder with `SKILL.md` and optional resources |
-| Make OD speak a new brand's visual language | a **Design System** | [`design-systems/<brand>/`](design-systems/) | one package: `manifest.json`, `DESIGN.md`, and `tokens.css` |
+| Make CapyDesign speak a new brand's visual language | a **Design System** | [`design-systems/<brand>/`](design-systems/) | one package: `manifest.json`, `DESIGN.md`, and `tokens.css` |
 | Hook up a new coding-agent CLI | an **Agent adapter** | [`apps/daemon/src/runtimes/defs/`](apps/daemon/src/runtimes/defs/) | one definition plus a registry entry |
 | Add a feature, fix a bug, lift a UX pattern from [`open-codesign`][ocod] | code | `apps/web/src/`, `apps/daemon/` | normal PR |
 | Improve docs, port a section to Français / Deutsch / 中文, fix typos | docs | `README.md`, `docs/i18n/README.fr.md`, `docs/i18n/README.de.md`, `docs/i18n/README.zh-CN.md`, `docs/`, `QUICKSTART.md` | one PR |
 
-If you're not sure which bucket your idea is in, [open a discussion / issue first](https://github.com/nexu-io/open-design/issues/new) and we'll point you at the right surface.
+If you're not sure which bucket your idea is in, [open a discussion / issue first](https://github.com/unfoldingdimensions/open-design/issues/new) and we'll point you at the right surface.
 
 ---
 
@@ -28,7 +30,7 @@ If you're not sure which bucket your idea is in, [open a discussion / issue firs
 The full one-page setup lives in [`QUICKSTART.md`](QUICKSTART.md). The TL;DR for contributors:
 
 ```bash
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design
 corepack enable           # selects the pinned pnpm from packageManager
 pnpm install
@@ -41,7 +43,7 @@ Node `~24` and pnpm `10.33.x` are required. `nvm` / `fnm` are optional; use `nvm
 
 ## Docker Setup
 
-Run OpenDesign without installing Node.js or pnpm.
+Run CapyDesign without installing Node.js or pnpm.
 
 ### Prerequisites
 
@@ -51,7 +53,7 @@ Make sure Docker Desktop with Compose v2 is installed:
 docker compose version
 ```
 
-### Start OpenDesign
+### Start CapyDesign
 
 ```bash
 cd deploy
@@ -89,7 +91,7 @@ Create a `deploy/.env` file:
 OPEN_DESIGN_PORT=7456
 OPEN_DESIGN_MEM_LIMIT=384m
 OPEN_DESIGN_ALLOWED_ORIGINS=https://yourdomain.com
-OPEN_DESIGN_IMAGE=ghcr.io/nexu-io/od:latest
+OPEN_DESIGN_IMAGE=ghcr.io/unfoldingdimensions/od:latest
 ```
 
 > Projects and database data are persisted automatically using Docker volumes.
@@ -228,7 +230,7 @@ The OVERRIDES table in `maxTokens.ts` is for the rare case where LiteLLM is miss
 
 ## Localization maintenance
 
-German uses formal `Sie` because OD speaks to a mixed audience of solo creators, agencies, and engineering teams; until project feedback shows that an informal `du` voice fits better, formal German is the least surprising default. Locale PRs should translate UI chrome, core docs, and display-only gallery metadata in `apps/web/src/i18n/content.ts`, but should not translate `skills/`, `design-systems/`, or prompt bodies that agents execute. Those source prompts are maintained as workflow inputs, and keeping one source language avoids multiplying prompt QA across locales. When adding or renaming a skill, design system, or prompt template, update the German display metadata and run `pnpm --filter @capydesign/web test`; `content.test.ts` fails if German display coverage drifts. Daemon errors, export filenames, and agent-generated artifact text are known limitations unless a PR explicitly scopes them.
+German uses formal `Sie` because CapyDesign speaks to a mixed audience of solo creators, agencies, and engineering teams; until project feedback shows that an informal `du` voice fits better, formal German is the least surprising default. Locale PRs should translate UI chrome, core docs, and display-only gallery metadata in `apps/web/src/i18n/content.ts`, but should not translate `skills/`, `design-systems/`, or prompt bodies that agents execute. Those source prompts are maintained as workflow inputs, and keeping one source language avoids multiplying prompt QA across locales. When adding or renaming a skill, design system, or prompt template, update the German display metadata and run `pnpm --filter @capydesign/web test`; `content.test.ts` fails if German display coverage drifts. Daemon errors, export filenames, and agent-generated artifact text are known limitations unless a PR explicitly scopes them.
 
 For step-by-step instructions on adding a new locale (UI dictionary, README, language switcher, regional terminology), see [`TRANSLATIONS.md`](TRANSLATIONS.md).
 
@@ -283,7 +285,7 @@ For prompt-stack bugs ("the agent emitted a purple gradient hero, the slop black
 
 ## Asking questions
 
-- Architecture question, design question, "is this a bug or a misuse" → [GitHub Discussions](https://github.com/nexu-io/open-design/discussions) (preferred — searchable for the next person).
+- Architecture question, design question, "is this a bug or a misuse" → [GitHub Discussions](https://github.com/unfoldingdimensions/open-design/discussions) (preferred — searchable for the next person).
 - "How do I write a skill that does X" → Open a discussion. We'll answer it and turn the answer into [`docs/skills-protocol.md`](docs/skills-protocol.md) if it's a missing pattern.
 
 ---
@@ -292,7 +294,7 @@ For prompt-stack bugs ("the agent emitted a purple gradient hero, the slop black
 
 To keep the project focused, please don't open PRs that:
 
-- **Vendor a model runtime.** OD's whole bet is "your existing CLI is enough". We don't ship `pi-ai`, OpenAI keys, or model loaders.
+- **Vendor a model runtime.** CapyDesign's whole bet is "your existing CLI is enough". We don't ship `pi-ai`, OpenAI keys, or model loaders.
 - **Rewrite the frontend away from the current stack without prior discussion.** Next.js 16 App Router + React 18 + TS is the line. No Astro, Solid, Svelte, or other framework rewrites unless maintainers explicitly want that migration.
 - **Replace the daemon with a serverless function.** The daemon's whole point is owning a real `cwd` and spawning a real CLI. Vercel deployment of the SPA is fine; the daemon stays a daemon.
 - **Add telemetry or outbound data collection outside the privacy contract.**
@@ -315,10 +317,9 @@ If you've been contributing consistently and want to know what the path to becom
 - There are **no quotas, no SLAs, and no fixed term.** Stepping down is easy and reversible (Emeritus → return when life calms down).
 - All the thresholds, the nomination flow, the step-down rules, and the early-project waiver are in [`MAINTAINERS.md`](MAINTAINERS.md). Read that document if any of the above interests you.
 
-The tl;dr: ship good PRs, review thoughtfully, hang out in [Discussions][discussions] / [Discord][discord], and the rest takes care of itself.
+The tl;dr: ship good PRs, review thoughtfully, hang out in [Discussions][discussions], and the rest takes care of itself.
 
-[discussions]: https://github.com/nexu-io/open-design/discussions
-[discord]: https://discord.gg/mHAjSMV6gz
+[discussions]: https://github.com/unfoldingdimensions/open-design/discussions
 
 ---
 

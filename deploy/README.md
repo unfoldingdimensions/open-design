@@ -27,12 +27,12 @@ Before starting:
 Then pull and start the service:
 
 ```bash
-OPEN_DESIGN_IMAGE=ghcr.io/nexu-io/od:latest docker compose pull
-OPEN_DESIGN_IMAGE=ghcr.io/nexu-io/od:latest docker compose up -d --no-build
+OPEN_DESIGN_IMAGE=ghcr.io/unfoldingdimensions/od:latest docker compose pull
+OPEN_DESIGN_IMAGE=ghcr.io/unfoldingdimensions/od:latest docker compose up -d --no-build
 ```
 
-Use `ghcr.io/nexu-io/od:latest` for the latest stable image, or
-`ghcr.io/nexu-io/od:<version>` to pin a supported release.
+Use `ghcr.io/unfoldingdimensions/od:latest` for the latest stable image, or
+`ghcr.io/unfoldingdimensions/od:<version>` to pin a supported release.
 
 Open `http://127.0.0.1:7456`. When Docker's bridge makes the browser appear as a
 non-loopback peer, the browser displays its native sign-in dialog. Enter
@@ -41,7 +41,7 @@ password. The browser reuses those credentials for same-origin API requests;
 CLI clients and reverse proxies can continue to send
 `Authorization: Bearer <OD_API_TOKEN>`.
 
-The published `ghcr.io/nexu-io/od` package must be public for anonymous
+The published `ghcr.io/unfoldingdimensions/od` package must be public for anonymous
 `docker pull`, Docker Compose, and Dokploy installs to work. If GHCR returns an
 authentication or access-denied error for this image, an organization maintainer
 must open GitHub -> Packages -> `od` -> Package settings and change visibility
@@ -86,7 +86,7 @@ Compose variable maps to daemon env `OD_DISABLE_API_AUTH`.
 Pin a specific published image with a digest instead of the mutable `latest` tag:
 
 ```bash
-OPEN_DESIGN_IMAGE=ghcr.io/nexu-io/od@sha256:<digest> docker compose up -d --no-build
+OPEN_DESIGN_IMAGE=ghcr.io/unfoldingdimensions/od@sha256:<digest> docker compose up -d --no-build
 ```
 The image intentionally does not bundle Claude/Codex/Gemini CLI binaries. Keep
 those outside the image, or build a separate private runtime layer if a server
@@ -124,41 +124,6 @@ Common install paths:
 | Claude Code | `~/.local/bin/claude` (symlink) + `~/.local/share/claude` (binaries) |
 | opencode | `~/.opencode/bin/opencode` |
 | Codex | `~/.local/bin/codex` |
-| Vela / AMR | npm package `@powerformer/vela-cli`; [Open Design AMR](https://open-design.ai/amr) is the browser account/wallet page |
-
-Vela is published as the `@powerformer/vela-cli` npm package. The Open Design
-AMR URL above is not a shell installer. For Linux Docker, install Vela under a
-dedicated prefix so its launcher and platform package can be mounted together:
-
-```bash
-VELA_PREFIX="$HOME/.local/share/vela"
-npm install --global --prefix "$VELA_PREFIX" @powerformer/vela-cli
-export PATH="$VELA_PREFIX/bin:$PATH"
-which vela
-vela --version
-```
-
-Mount that complete prefix into the container, then expose its `bin` directory
-through `PATH` (or set `VELA_BIN` to the container-visible launcher):
-
-```yaml
-environment:
-  PATH: /mnt/host-vela/bin:/mnt/host-local-bin:/mnt/host-opencode:/usr/local/bin:/usr/bin:/bin
-  VELA_BIN: /mnt/host-vela/bin/vela
-volumes:
-  - ${HOME}/.local/share/vela:/mnt/host-vela:ro
-```
-
-Once the container is running, inspect both `PATH` discovery and any explicit
-Vela override:
-
-```bash
-docker compose exec open-design sh -lc 'which vela; echo "$VELA_BIN"'
-```
-
-Use either a `vela` launcher discoverable on `PATH` or a `VELA_BIN` path that
-exists inside the container. `VELA_BIN` is optional when `vela` is discoverable
-on `PATH`.
 
 The daemon auto-detects any CLI that is visible in `PATH` at startup — no extra
 configuration needed. For another CLI installed in a non-standard path, mount
@@ -220,7 +185,7 @@ deploy/scripts/publish-images.sh --image ghcr.io/your-org/od:0.1.0
 
 The script defaults to:
 
-- `ghcr.io/nexu-io/od:<tag>`
+- `ghcr.io/unfoldingdimensions/od:<tag>`
 - `linux/amd64,linux/arm64`
 - `skopeo` push strategy with registry credentials read from `~/.docker/config.json`
 - preloading base images through `skopeo` to reduce Docker Hub pull flakiness

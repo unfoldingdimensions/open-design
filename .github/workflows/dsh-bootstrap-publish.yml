@@ -30,7 +30,7 @@ concurrency:
 jobs:
   publish:
     name: Publish DeepSeek Harness bootstrap installers
-    if: github.repository == 'nexu-io/open-design' && github.ref == 'refs/heads/main'
+    if: github.repository == 'unfoldingdimensions/open-design' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

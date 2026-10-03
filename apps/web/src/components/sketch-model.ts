@@ -67,7 +67,10 @@ const DEFAULT_SKETCH_SHAPE_SIZE = 2;
 const DEFAULT_SKETCH_TEXT_SIZE = 16;
 const DEFAULT_SKETCH_VERSION = 1;
 const EXCALIDRAW_DOCUMENT_VERSION = 2;
-const OPEN_DESIGN_EXCALIDRAW_SOURCE = 'https://open-design.ai/sketch';
+// Provenance written into saved Excalidraw documents. CapyDesign is local-only,
+// so this names the fork repo rather than a hosted app URL; nothing fetches it.
+const OPEN_DESIGN_EXCALIDRAW_SOURCE =
+  'https://github.com/unfoldingdimensions/open-design';
 
 export function parseSketchDocument(text: string | null): SketchItem[] {
   return parseSketchWorkspaceDocument(text).items;

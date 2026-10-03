@@ -1,6 +1,6 @@
-# 贡献指南 · Contributing to OpenDesign
+# 贡献指南 · Contributing to CapyDesign
 
-谢谢你愿意参与。OD 是有意做小的 —— 大部分价值在 **文件** 里（skill、design system、提示词片段），而不是框架代码。这意味着收益最高的贡献往往就是一个文件夹、一份 Markdown，或者一个 PR 大小的 adapter。
+谢谢你愿意参与。CapyDesign 是有意做小的 —— 大部分价值在 **文件** 里（skill、design system、提示词片段），而不是框架代码。这意味着收益最高的贡献往往就是一个文件夹、一份 Markdown，或者一个 PR 大小的 adapter。
 
 这份指南会告诉你：每种贡献该往哪里看、合并之前 PR 需要过哪些线。
 
@@ -12,9 +12,9 @@
 
 | 你想要…… | 你其实在加的是 | 它住在哪 | 体量 |
 |---|---|---|---|
-| 让 OD 渲染一种新的 artifact（一份发票、一个 iOS 设置页、一张 one-pager……） | 一个**设计模板** | [`design-templates/<your-template>/`](../../design-templates/) | 一个包含 `SKILL.md` 与渲染资源的文件夹 |
+| 让 CapyDesign 渲染一种新的 artifact（一份发票、一个 iOS 设置页、一张 one-pager……） | 一个**设计模板** | [`design-templates/<your-template>/`](../../design-templates/) | 一个包含 `SKILL.md` 与渲染资源的文件夹 |
 | 添加一项 agent 在任务中调用的功能能力 | 一个 **Skill** | [`skills/<your-skill>/`](../../skills/) | 一个包含 `SKILL.md` 与可选资源的文件夹 |
-| 让 OD 说一种新品牌的视觉语言 | 一套 **Design System** | [`design-systems/<brand>/`](../../design-systems/) | 一个包：`manifest.json`、`DESIGN.md` 和 `tokens.css` |
+| 让 CapyDesign 说一种新品牌的视觉语言 | 一套 **Design System** | [`design-systems/<brand>/`](../../design-systems/) | 一个包：`manifest.json`、`DESIGN.md` 和 `tokens.css` |
 | 接入一个新的 coding-agent CLI | 一个 **Agent adapter** | [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/runtimes/defs/) | 一个定义和一条注册项 |
 | 加功能、修 bug、从 [`open-codesign`][ocod] 移植一个 UX 模式 | 代码 | `apps/web/src/`、`apps/daemon/` | 普通 PR |
 | 改文档、补法语 / 德语 / 中文翻译、修错别字 | 文档 | `README.md`、`README.fr.md`、`README.de.md`、`README.zh-CN.md`、`docs/`、`QUICKSTART.zh-CN.md` | 一个 PR |
@@ -34,12 +34,12 @@ corepack enable           # 使用 packageManager 固定的 pnpm
 pnpm install
 pnpm tools-dev run web    # daemon + web 前台闭环
 pnpm typecheck            # tsc -b --noEmit
-pnpm --filter @open-design/web build  # 需要时构建 web package
+pnpm --filter @capydesign/web build  # 需要时构建 web package
 ```
 
 要求 Node `~24` 和 pnpm `10.33.x`。`nvm` / `fnm` 是可选路径；如果你习惯用它们，先执行 `nvm install 24 && nvm use 24` 或 `fnm install 24 && fnm use 24`。macOS、Linux、WSL2 是主要路径。Windows 原生已支持；常见的安装与配置坑请参见 [`docs/windows-troubleshooting.md`](../../docs/windows-troubleshooting.md)。
 
-**开发 OD 本身不需要在 `PATH` 上装任何 agent CLI** —— daemon 会告诉你「找不到 agent」并落到 **Anthropic API · BYOK** 路径，反而是最快的开发循环。
+**开发 CapyDesign 本身不需要在 `PATH` 上装任何 agent CLI** —— daemon 会告诉你「找不到 agent」并落到 **Anthropic API · BYOK** 路径，反而是最快的开发循环。
 
 ---
 
@@ -64,7 +64,7 @@ design-templates/your-template/
 
 ### `SKILL.md` 的 frontmatter
 
-前三个字段是 Claude Code 的基础规范 —— `name`、`description`、`triggers`。`od:` 下面所有字段都是 OD 特有的、可选的，但 **`od.mode`** 决定模板出现在哪一组（Prototype / Deck / Template / Design system）。
+前三个字段是 Claude Code 的基础规范 —— `name`、`description`、`triggers`。`od:` 下面所有字段都是 CapyDesign 特有的、可选的，但 **`od.mode`** 决定模板出现在哪一组（Prototype / Deck / Template / Design system）。
 
 ```yaml
 ---
@@ -283,7 +283,7 @@ node --experimental-strip-types scripts/sync-litellm-models.ts
 
 为了保持项目聚焦，请不要发以下类型的 PR：
 
-- **Vendor 一个模型运行时。** OD 整个赌注就是「你已有的 CLI 就够了」。我们不带 `pi-ai`、不带 OpenAI key、不带模型加载器。
+- **Vendor 一个模型运行时。** CapyDesign 整个赌注就是「你已有的 CLI 就够了」。我们不带 `pi-ai`、不带 OpenAI key、不带模型加载器。
 - **未经讨论不要把前端重写到别的栈。** Next.js 16 App Router + React 18 + TS 是当前底线。不要随手改成 Astro / Solid / Svelte 或其他框架。
 - **把 daemon 换成 serverless function。** Daemon 的存在意义就是拥有真实的 `cwd` 和 spawn 真实的 CLI。SPA 部署 Vercel 没问题，daemon 仍然是 daemon。
 - **在隐私契约之外增加 telemetry 或对外数据收集。** 产品分析与经过遮罩的 session replay 需要用户同意；在已配置的构建中，经过脱敏的安全性/可靠性 telemetry 始终启用。任何新事件、字段或目标都必须遵守 [`PRIVACY.md`](../../PRIVACY.md) 规定的同意、最小化与脱敏边界。
@@ -302,10 +302,9 @@ node --experimental-strip-types scripts/sync-litellm-models.ts
 - **没有 quota，没有 SLA，没有固定任期。** 退出很容易也可逆（Emeritus → 生活忙完后回归）。
 - 全部门槛阈值、提名流程、退出规则、早期项目例外条款都在 [`MAINTAINERS.md`](../../MAINTAINERS.md)——上面任何一条勾起兴趣的话，去读那份文档。
 
-tl;dr：好好提 PR、认真 review、在 [Discussions][discussions] / [Discord][discord] 多冒泡，剩下的自然会发生。
+tl;dr：好好提 PR、认真 review、在 [Discussions][discussions] 多冒泡，剩下的自然会发生。
 
 [discussions]: https://github.com/nexu-io/open-design/discussions
-[discord]: https://discord.gg/mHAjSMV6gz
 
 ---
 

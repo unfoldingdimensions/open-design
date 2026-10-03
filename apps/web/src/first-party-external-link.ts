@@ -1,4 +1,7 @@
-const FIRST_PARTY_HOSTS = new Set(['open-design.ai', 'www.open-design.ai', 'staging.open-design.ai']);
+// No first-party site origin is configured for CapyDesign — the fork ships no
+// hosted site, and a build must not treat another vendor's domain as its own.
+// The click bridge stays wired (App.tsx) but is inert until an origin is listed.
+const FIRST_PARTY_HOSTS = new Set<string>();
 
 export function openFirstPartyExternalLinkFromClick(event: MouseEvent, openExternal: (url: string) => void): void {
   if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;

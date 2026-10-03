@@ -4,7 +4,7 @@
 
 > Want to read the shared `SKILL.md` protocol instead? See [`skills-protocol.md`](skills-protocol.md). This file is the **how-to** for shipping a rendering template upstream — what to write, how to run it locally, and what we'll send back at review.
 
-A design template is the most leverage you can ship into OpenDesign without writing framework code. One folder, one Markdown file with frontmatter, a hand-built example, and the Templates gallery shows it. This guide covers rendering templates (`prototype`, `deck`, `template`, `image`, `video`, and `audio`). Functional skills that do work on user input belong in [`skills/`](../skills/); read [`design-templates/AGENTS.md`](../design-templates/AGENTS.md) for the ownership rule.
+A design template is the most leverage you can ship into CapyDesign without writing framework code. One folder, one Markdown file with frontmatter, a hand-built example, and the Templates gallery shows it. This guide covers rendering templates (`prototype`, `deck`, `template`, `image`, `video`, and `audio`). Functional skills that do work on user input belong in [`skills/`](../skills/); read [`design-templates/AGENTS.md`](../design-templates/AGENTS.md) for the ownership rule.
 
 If you only have ten seconds, the picture is:
 
@@ -61,7 +61,7 @@ A design template is a **packaged shape for producing one kind of artifact**. It
 
 **No:**
 - A wrapper around a third-party API (Stripe, Alipay, Slack API, GitHub API). That's a feature; submit it via the agent / daemon path, not as a design template.
-- A model loader, vendor SDK bundle, or "BYOK for `<provider>`". OD's bet is "your existing CLI is enough."
+- A model loader, vendor SDK bundle, or "BYOK for `<provider>`". CapyDesign's bet is "your existing CLI is enough."
 - A brand-promotion bundle for a sponsor or product launch. Design templates are reusable artifact recipes, not campaigns.
 - A duplicate of an existing template with marginal differentiation. Before opening, search `design-templates/` and read the descriptions of the closest 2–3 — if you can't articulate the differentiator in one sentence, fold your work into the existing template instead.
 - A template whose only output is a static screenshot or pre-rendered video. The artifact has to be generated from a prompt, not merely shipped in `assets/`.
@@ -88,7 +88,7 @@ design-templates/<your-template>/
 
 ### `SKILL.md` frontmatter cheat sheet
 
-The first three keys (`name`, `description`, `triggers`) are the [Claude Code base spec](https://docs.anthropic.com/en/docs/claude-code/skills) — the bundle remains readable as a plain agent skill. Everything under `od:` is OD-specific and optional, but **`od.mode`** decides which gallery surface indexes the template.
+The first three keys (`name`, `description`, `triggers`) are the [Claude Code base spec](https://docs.anthropic.com/en/docs/claude-code/skills) — the bundle remains readable as a plain agent skill. Everything under `od:` is CapyDesign-specific and optional, but **`od.mode`** decides which gallery surface indexes the template.
 
 ```yaml
 ---
@@ -200,7 +200,7 @@ For a non-featured template, the cheap path is to keep the source metadata compl
 
 - [ ] **Ensure `SKILL.md` has complete English display copy**: title/name, description, example prompt, and any picker metadata required by the skill schema. The localized runtime uses these fields as the fallback display path.
 - [ ] **Use optional localized display fields when useful**: `en_name` / `zh_name`, `en_description` / `zh_description`, and `od.example_prompt_i18n.<locale>`. Keep `description` and `od.example_prompt` in English because those are the fallback fields for every locale without localized copy.
-- [ ] **Run `pnpm --filter @open-design/web test` and `pnpm --filter @open-design/e2e test tests/localized-content.test.ts`** locally before pushing. These suites catch undisplayable discovered resources and verify localized fallback behavior.
+- [ ] **Run `pnpm --filter @capydesign/web test` and `pnpm --filter @capydesign/e2e test tests/localized-content.test.ts`** locally before pushing. These suites catch undisplayable discovered resources and verify localized fallback behavior.
 
 ### Featured templates (optional path)
 
@@ -243,7 +243,7 @@ they don't cover this case. If you can't, fold into the existing template instea
 - [ ] Verified export works (PPTX / PDF / etc.) if the mode supports it
 - [ ] Ran `pnpm typecheck`
 - [ ] Verified `SKILL.md` has complete English display copy for localized fallback — **required for every template**
-- [ ] Ran `pnpm --filter @open-design/web test` and `pnpm --filter @open-design/e2e test tests/localized-content.test.ts`; localized-content coverage is green
+- [ ] Ran `pnpm --filter @capydesign/web test` and `pnpm --filter @capydesign/e2e test tests/localized-content.test.ts`; localized-content coverage is green
 
 ## Screenshot
 (Required if `od.featured` is set. Otherwise nice-to-have.)

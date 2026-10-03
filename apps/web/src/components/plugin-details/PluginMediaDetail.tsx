@@ -25,7 +25,7 @@ import {
   type PreviewView,
 } from '../PreviewModal';
 import { PluginMetaSections } from './PluginMetaSections';
-import { buildPluginShareUrl, PluginShareMenu } from './PluginShareMenu';
+import { PluginShareMenu } from './PluginShareMenu';
 import { buildPluginUseMenu, pluginUsePrimaryAction } from './pluginUseMenu';
 import type { PluginUseAction } from '../plugins-home/useActions';
 
@@ -236,7 +236,8 @@ export function PluginMediaDetail({
       shareTarget={{
         title: localizedTitle,
         description: description || undefined,
-        url: buildPluginShareUrl(record),
+        // CapyDesign is local-only: there is no public plugin detail URL.
+        url: null,
       }}
       onClose={onClose}
       sidebar={{

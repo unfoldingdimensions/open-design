@@ -546,14 +546,10 @@ test('detectAgents includes sanitized install and docs metadata from split runti
       process.env.OD_AGENT_HOME = dir;
 
       const agents = await detectAgents();
-      const amr = agents.find((agent) => agent.id === 'amr');
       const qoder = agents.find((agent) => agent.id === 'qoder');
       const deepseek = agents.find((agent) => agent.id === 'deepseek');
       const kimi = agents.find((agent) => agent.id === 'kimi');
 
-      assert.ok(amr);
-      assert.equal(amr.available, false);
-      assert.equal(amr.installUrl, 'https://open-design.ai/amr');
       assert.ok(qoder);
       assert.equal(qoder.available, false);
       assert.equal(qoder.installUrl, 'https://qoder.com/download');

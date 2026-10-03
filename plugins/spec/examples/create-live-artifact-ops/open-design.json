@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "create-live-artifact-ops",
   "title": "Example Live Ops Artifact",
@@ -7,10 +6,10 @@
   "description": "Spec example plugin for a refreshable live operations artifact with seeded data fallback.",
   "license": "MIT",
   "author": {
-    "name": "OpenDesign Spec Examples",
-    "url": "https://github.com/nexu-io/open-design"
+    "name": "CapyDesign Spec Examples",
+    "url": "https://github.com/unfoldingdimensions/open-design"
   },
-  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/spec/examples/create-live-artifact-ops",
+  "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/spec/examples/create-live-artifact-ops",
   "tags": ["create", "live-artifact", "operations", "dashboard"],
   "compat": {
     "agentSkills": [{ "path": "./SKILL.md" }]

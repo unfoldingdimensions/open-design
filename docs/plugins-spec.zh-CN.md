@@ -1,42 +1,42 @@
-# OpenDesign 插件与 Marketplace 规范（v1）
+# CapyDesign 插件与 Marketplace 规范（v1）
 
-> **一句话总结：** OpenDesign 插件把可移植的 `SKILL.md` 能力包装成 marketplace 可发现、一键可用的设计工作流，同时保留对现有 agent skill 生态、headless CLI 使用方式和自托管部署的兼容性。
+> **一句话总结：** CapyDesign 插件把可移植的 `SKILL.md` 能力包装成 marketplace 可发现、一键可用的设计工作流，同时保留对现有 agent skill 生态、headless CLI 使用方式和自托管部署的兼容性。
 
 **父文档：** [`spec.md`](spec.md) · **同级文档：** [`skills-protocol.md`](skills-protocol.md) · [`architecture.md`](architecture.md) · [`agent-adapters.md`](agent-adapters.md) · [`modes.md`](modes.md)
 
-**Plugin（插件）** 是 OpenDesign 的分发单元。[Skill](skills-protocol.md) 描述的是 agent 可以执行的一项能力，而 Plugin 是围绕这项能力形成的可发布包：一个或多个 skills、可选 design system 引用、可选 craft 规则、可选 Claude-plugin 资产、预览、use-case query、资产文件夹，以及一个用于驱动 OD marketplace 表面的轻量机器可读 sidecar。插件始终以可移植的 `SKILL.md` 为锚点，因此可以不经修改地发布到现有 agent skill 生态。
+**Plugin（插件）** 是 CapyDesign 的分发单元。[Skill](skills-protocol.md) 描述的是 agent 可以执行的一项能力，而 Plugin 是围绕这项能力形成的可发布包：一个或多个 skills、可选 design system 引用、可选 craft 规则、可选 Claude-plugin 资产、预览、use-case query、资产文件夹，以及一个用于驱动 CapyDesign marketplace 表面的轻量机器可读 sidecar。插件始终以可移植的 `SKILL.md` 为锚点，因此可以不经修改地发布到现有 agent skill 生态。
 
-> **兼容性承诺（扩展 [`skills-protocol.md`](skills-protocol.md)）：** 任何包含 `SKILL.md` 的插件文件夹，都可以作为普通 agent skill 在 Claude Code、Cursor、Codex、Gemini CLI、OpenClaw、Hermes 等工具中运行。添加 `open-design.json` 只是纯增量能力：它会解锁 OD 的 marketplace 卡片、预览、一键「使用」流程、类型化 context-chip strip，但不会改变底层 skill 的运行方式。**一个 repo，两种消费模式。**
+> **兼容性承诺（扩展 [`skills-protocol.md`](skills-protocol.md)）：** 任何包含 `SKILL.md` 的插件文件夹，都可以作为普通 agent skill 在 Claude Code、Cursor、Codex、Gemini CLI、OpenClaw、Hermes 等工具中运行。添加 `open-design.json` 只是纯增量能力：它会解锁 CapyDesign 的 marketplace 卡片、预览、一键「使用」流程、类型化 context-chip strip，但不会改变底层 skill 的运行方式。**一个 repo，两种消费模式。**
 
 ## 给读者的全局梳理
 
-这是一套 **agent 时代的插件系统**，不是 Figma 时代的 UI extension system。插件不会直接挂载到 canvas 里，不拥有本地面板生命周期，也不通过一套专用 `postMessage` / RPC 协议和宿主应用通信。插件本质上是一组可打包的意图与上下文：用户、UI、CLI 或另一个 agent 选中它之后，OD 把它解析成 query、context chips、assets、design-system 引用、MCP/tool capabilities 和 run metadata；之后由选定的 code agent 通过 OD 统一的 project/run pipeline 消费这些信息。
+这是一套 **agent 时代的插件系统**，不是 Figma 时代的 UI extension system。插件不会直接挂载到 canvas 里，不拥有本地面板生命周期，也不通过一套专用 `postMessage` / RPC 协议和宿主应用通信。插件本质上是一组可打包的意图与上下文：用户、UI、CLI 或另一个 agent 选中它之后，CapyDesign 把它解析成 query、context chips、assets、design-system 引用、MCP/tool capabilities 和 run metadata；之后由选定的 code agent 通过 CapyDesign 统一的 project/run pipeline 消费这些信息。
 
 最短心智模型：
 
-1. **插件作者发布可移植能力。** `SKILL.md` 仍然是可执行的 agent contract；`open-design.json` 增加 OD marketplace 元数据、输入字段、默认值、预览和上下文 wiring。
+1. **插件作者发布可移植能力。** `SKILL.md` 仍然是可执行的 agent contract；`open-design.json` 增加 CapyDesign marketplace 元数据、输入字段、默认值、预览和上下文 wiring。
 2. **用户或 agent 选择一个工作流。** 选择入口可以是 marketplace、首页输入框、已有 project chat、CLI，或者 CI。
-3. **OD apply 插件，但插件不是 UI 进程。** Apply 返回 hydrated brief、类型化 context chips、assets 和 capability requirements；它不会启动隐藏的插件 runtime。
+3. **CapyDesign apply 插件，但插件不是 UI 进程。** Apply 返回 hydrated brief、类型化 context chips、assets 和 capability requirements；它不会启动隐藏的插件 runtime。
 4. **agent 驱动生成。** daemon 创建或更新 project，启动 run，通过 SSE / CLI ND-JSON streaming events 输出过程，并记录 artifacts。
 5. **UI 是协作表面。** Web/desktop UI 可以展示表单、预览、direction picker、critique panel 和 live artifacts，但同一个流程必须可以通过 `capt` headless 完成。
 
 ### Figma 时代与 agent 时代的边界
 
-| 问题 | Figma 时代插件假设 | OpenDesign v1 的答案 |
+| 问题 | Figma 时代插件假设 | CapyDesign v1 的答案 |
 | --- | --- | --- |
-| 谁消费插件？ | 宿主 UI runtime。 | code agent 通过 OD project/run pipeline 消费。 |
+| 谁消费插件？ | 宿主 UI runtime。 | code agent 通过 CapyDesign project/run pipeline 消费。 |
 | 插件需要 live UI lifecycle 吗？ | 通常需要：挂载 panel、监听消息、修改 document。 | 不需要。插件是静态文件加 manifest；活跃进程是 agent run。 |
-| 是否需要插件到 app 的 RPC 协议？ | 经常需要。 | 不是 primary contract。OD 内部用 HTTP，agent 用 CLI，合适的场景用 MCP，run events 用 SSE/ND-JSON。 |
+| 是否需要插件到 app 的 RPC 协议？ | 经常需要。 | 不是 primary contract。CapyDesign 内部用 HTTP，agent 用 CLI，合适的场景用 MCP，run events 用 SSE/ND-JSON。 |
 | 「Use plugin」会发生什么？ | 打开或运行一个 UI extension。 | Hydrate query、context chips、assets、inputs 和 capability gates，然后创建或继续一次 agent run。 |
-| 什么会被持久化？ | 宿主 document mutations。 | OD project metadata、artifacts、conversation/run history 和 plugin provenance。 |
+| 什么会被持久化？ | 宿主 document mutations。 | CapyDesign project metadata、artifacts、conversation/run history 和 plugin provenance。 |
 
 ### 核心交互时序
 
 ```mermaid
 sequenceDiagram
   participant U as 用户或 Agent
-  participant S as OD 表面<br/>(Web, Desktop, CLI, CI)
-  participant D as OD Daemon
+  participant S as CapyDesign 表面<br/>(Web, Desktop, CLI, CI)
+  participant D as CapyDesign Daemon
   participant P as Plugin Manifest<br/>(SKILL.md + open-design.json)
   participant A as Code Agent
   participant R as Project Runtime<br/>(files + artifacts)
@@ -69,18 +69,18 @@ sequenceDiagram
 
 ### 长程任务一键交付、原子管线与 devloop
 
-OD 的核心不是「一次 prompt 一次输出」，而是 **long-running design agent 任务**：单个 run 通常经过 discovery → 方向选择 → 生成 → critique → 二次调优等多步，可能跨越数十分钟到数小时。插件的本质是把这条长程任务**切成可发布的单元**，让用户、UI、CLI 或另一个 agent 一键启动。
+CapyDesign 的核心不是「一次 prompt 一次输出」，而是 **long-running design agent 任务**：单个 run 通常经过 discovery → 方向选择 → 生成 → critique → 二次调优等多步，可能跨越数十分钟到数小时。插件的本质是把这条长程任务**切成可发布的单元**，让用户、UI、CLI 或另一个 agent 一键启动。
 
 围绕这一点，spec 把已有的「一方 atoms」从扁平的 capability 列表升级为**可被插件组装的原子管线**：
 
-- **Atom（§10）**：OD daemon 与 first-party tools 暴露的具名能力（discovery-question-form、direction-picker、todo-write、file-read/write、research-search、media-image、live-artifact、critique-theater 等）。
+- **Atom（§10）**：CapyDesign daemon 与 first-party tools 暴露的具名能力（discovery-question-form、direction-picker、todo-write、file-read/write、research-search、media-image、live-artifact、critique-theater 等）。
 - **Pipeline（§5 / §10.1）**：插件通过 `od.pipeline` 把若干 atoms 组装成有序 stages；spec 默认提供一条「discovery → plan → generate → critique」的 reference pipeline，插件可以增删、重排或循环其中任何一步。
 - **Devloop（§10.2）**：当一条 stage 标记 `repeat: true` 并附带 `until` 终止条件（critique score、用户确认、preview 加载成功等）时，agent 基于上一轮 artifact 自动进入下一轮，直到条件满足或显式取消。
-- **Generative UI（§10.3）**：pipeline 的某个 stage 需要人类介入（提供信息、授权、方向选择、优化确认）时，agent 触发插件预先在 manifest `od.genui.surfaces[]` 中**声明**过的 surface；daemon 通过 OD 原生事件流广播给所有协作面（web / desktop / CLI / 其他 code agent），并可投影成 AG-UI canonical events 供外部 client 使用。用户回应后 daemon 把答案写回 project，run 继续。Surface 的 `persist` 字段决定答案在 run / conversation / project 三个层级中哪个层级被记住，让多轮对话不会反复打扰用户。
+- **Generative UI（§10.3）**：pipeline 的某个 stage 需要人类介入（提供信息、授权、方向选择、优化确认）时，agent 触发插件预先在 manifest `od.genui.surfaces[]` 中**声明**过的 surface；daemon 通过 CapyDesign 原生事件流广播给所有协作面（web / desktop / CLI / 其他 code agent），并可投影成 AG-UI canonical events 供外部 client 使用。用户回应后 daemon 把答案写回 project，run 继续。Surface 的 `persist` 字段决定答案在 run / conversation / project 三个层级中哪个层级被记住，让多轮对话不会反复打扰用户。
 
 一句话：**插件描述「这次长程任务的 pipeline 该长什么样、需要哪些 GenUI surface 与用户协作」，daemon 提供 atoms 与 surface 总线，agent 在 pipeline 上跑 devloop，artifact 带 provenance（§11.5）记录这条长程任务跑过谁。**
 
-**当前实现澄清：** `discovery -> plan -> generate -> critique` 是 reference pipeline 形态，不是一套写死的 wizard。插件 snapshot 可以携带 `od.pipeline.stages[].atoms[]`；daemon 解析 snapshot 后，把 active plugin block 与 active stage atom blocks 注入 system prompt，同时发出 stage events，让 agent 按 pipeline 推进。如果用户没有显式选择插件，OD 也**不是**启动一个通用裸 agent：OpenDesign 基础 designer prompt 与 discovery 规则始终存在。产品入口会在此基础上绑定合理默认值：Home 自由输入走内置隐藏的 `od-default` scenario，按类型创建新 project 时走对应 project kind 的 bundled scenario。`od-default` 是 router / task shaper；它的职责是把请求导回正常设计 pipeline，不应被理解成一个独立的「美化生成器」。
+**当前实现澄清：** `discovery -> plan -> generate -> critique` 是 reference pipeline 形态，不是一套写死的 wizard。插件 snapshot 可以携带 `od.pipeline.stages[].atoms[]`；daemon 解析 snapshot 后，把 active plugin block 与 active stage atom blocks 注入 system prompt，同时发出 stage events，让 agent 按 pipeline 推进。如果用户没有显式选择插件，CapyDesign 也**不是**启动一个通用裸 agent：CapyDesign 基础 designer prompt 与 discovery 规则始终存在。产品入口会在此基础上绑定合理默认值：Home 自由输入走内置隐藏的 `od-default` scenario，按类型创建新 project 时走对应 project kind 的 bundled scenario。`od-default` 是 router / task shaper；它的职责是把请求导回正常设计 pipeline，不应被理解成一个独立的「美化生成器」。
 
 ### 四类产品场景
 
@@ -89,7 +89,7 @@ OD 的核心不是「一次 prompt 一次输出」，而是 **long-running desig
 | `new-generation` | 一句话 brief 或 marketplace 选品 | 流程 + design system 推荐 + craft + starter assets | discovery → direction-picker → generate → critique |
 | `code-migration` | 已有 repo / 本地路径 | 源代码摄取 atom + design tokens 抽取 + 重写策略 + diff preview | code-import → design-extract → rewrite-plan → generate → diff-review |
 | `figma-migration` | Figma file URL / 截图 | figma-extract atom + token 映射 + 高保真 web 实现策略 | figma-extract → token-map → generate → critique |
-| `tune-collab` | 已有 OD project 与 artifact | 在已有 artifact 上做 critique-tune、品牌切换、A/B、stakeholder review | direction-picker → patch-edit → critique → handoff |
+| `tune-collab` | 已有 CapyDesign project 与 artifact | 在已有 artifact 上做 critique-tune、品牌切换、A/B、stakeholder review | direction-picker → patch-edit → critique → handoff |
 
 四类场景共享同一份 ApplyResult、同一 run pipeline、同一 artifact provenance 契约（§11.5）；区别只在 inputs 形态、initial assets 与 pipeline 起点。
 
@@ -116,11 +116,11 @@ OD 的核心不是「一次 prompt 一次输出」，而是 **long-running desig
 16. [分阶段实现计划](#16-分阶段实现计划)
 17. [示例](#17-示例)
 18. [风险与开放问题](#18-风险与开放问题)
-19. [为什么这是 OpenDesign 的重要一步](#19-为什么这是-opendesign-的重要一步)
+19. [为什么这是 CapyDesign 的重要一步](#19-为什么这是-opendesign-的重要一步)
 20. [Post-v1 可扩展性：artifact taxonomy、evaluators 与 production handoff](#20-post-v1-可扩展性artifact-taxonomyevaluators-与-production-handoff)
 21. [场景覆盖矩阵与交付路线图](#21-场景覆盖矩阵与交付路线图)
 22. [作者扩展点：基于 v1 substrate 实现未交付场景](#22-作者扩展点基于-v1-substrate-实现未交付场景)
-23. [自举：把 OD 自己的硬流程做成一方 plugin](#23-自举把-od-自己的硬流程做成一方-plugin)
+23. [自举：把 CapyDesign 自己的硬流程做成一方 plugin](#23-自举把-od-自己的硬流程做成一方-plugin)
 
 ---
 
@@ -133,7 +133,7 @@ OD 的核心不是「一次 prompt 一次输出」，而是 **long-running desig
 
 ## 1. 愿景
 
-OpenDesign 变成一套 **server + CLI + atomic core engine + plugin/marketplace system**。产品表面发生反转：不再是「点一个按钮，填一个表单」，而是用户打开 marketplace，点击某个插件，输入框自动填入 query，并在上方注入类型化 context chips。相同的插件文件夹也同时是 Claude Code、Cursor、Codex、Gemini CLI、OpenClaw、Hermes 可消费的 agent skill，并且可以作为独立 GitHub repo 发布到：
+CapyDesign 变成一套 **server + CLI + atomic core engine + plugin/marketplace system**。产品表面发生反转：不再是「点一个按钮，填一个表单」，而是用户打开 marketplace，点击某个插件，输入框自动填入 query，并在上方注入类型化 context chips。相同的插件文件夹也同时是 Claude Code、Cursor、Codex、Gemini CLI、OpenClaw、Hermes 可消费的 agent skill，并且可以作为独立 GitHub repo 发布到：
 
 - [`anthropics/skills`](https://github.com/anthropics/skills)
 - [`anthropics/claude-code/plugins`](https://github.com/anthropics/claude-code/tree/main/plugins)
@@ -143,39 +143,39 @@ OpenDesign 变成一套 **server + CLI + atomic core engine + plugin/marketplace
 
 不同目录的收录格式不同，但它们都索引 `SKILL.md` 形态的文件夹。只要保持 `SKILL.md` 作为 canonical，`open-design.json` 作为严格 sidecar，一个 repo 就可以不做目标目录专用改写而进入所有生态目录。
 
-同一愿景的第二条轴线：**CLI 是 OpenDesign 面向 agent 的 canonical API。** 代码 agent（Claude Code、Cursor、Codex、OpenClaw、Hermes、企业内部 orchestrator）通过 shell 调用 `capt …` 驱动 OD，而不是直接请求 `/api/*`。CLI 用稳定的子命令 contract 包装所有 server 能力：project 创建、conversation/run 生命周期、plugin apply、project 文件系统操作、design library introspection、daemon control。HTTP server 是 desktop UI 与 CLI 自身的实现细节；agent 如果直接访问 HTTP，就绕过了 contract。
+同一愿景的第二条轴线：**CLI 是 CapyDesign 面向 agent 的 canonical API。** 代码 agent（Claude Code、Cursor、Codex、OpenClaw、Hermes、企业内部 orchestrator）通过 shell 调用 `capt …` 驱动 CapyDesign，而不是直接请求 `/api/*`。CLI 用稳定的子命令 contract 包装所有 server 能力：project 创建、conversation/run 生命周期、plugin apply、project 文件系统操作、design library introspection、daemon control。HTTP server 是 desktop UI 与 CLI 自身的实现细节；agent 如果直接访问 HTTP，就绕过了 contract。
 
-第三条轴线来自第二条：**OD 可以完全 headless 运行；UI 是效率层，而不是运行时依赖。** 用户只有 Claude Code（或 Cursor、Codex、Gemini CLI）和已安装的 `capt`，也能浏览 marketplace、安装插件、创建 project、拉起任务、消费产物，全流程不需要启动 desktop app。OD desktop UI 的价值类似 Cursor IDE 相对于 `cursor-agent` CLI：更快发现、实时 artifact preview、chat/canvas 并排、marketplace 浏览、direction-picker GUI、critique-theater 面板。这些都是同一批 primitives 之上的体验增强。每个 UI 功能都必须先能表达为 CLI 子命令或 streaming event；UI 消费这些 primitives 并添加呈现层。这个解耦由架构规则强制（§11.7）。
+第三条轴线来自第二条：**CapyDesign 可以完全 headless 运行；UI 是效率层，而不是运行时依赖。** 用户只有 Claude Code（或 Cursor、Codex、Gemini CLI）和已安装的 `capt`，也能浏览 marketplace、安装插件、创建 project、拉起任务、消费产物，全流程不需要启动 desktop app。CapyDesign desktop UI 的价值类似 Cursor IDE 相对于 `cursor-agent` CLI：更快发现、实时 artifact preview、chat/canvas 并排、marketplace 浏览、direction-picker GUI、critique-theater 面板。这些都是同一批 primitives 之上的体验增强。每个 UI 功能都必须先能表达为 CLI 子命令或 streaming event；UI 消费这些 primitives 并添加呈现层。这个解耦由架构规则强制（§11.7）。
 
-第四条轴线是生态覆盖与商业价值的基础：**OD 是一个 Docker image，可以部署到任意云。** 因为第三条轴线里的 headless mode 没有 electron、没有 GUI 依赖，一个 multi-arch container image（`linux/amd64` + `linux/arm64`）就能在 AWS、Google Cloud、Azure、阿里云、腾讯云、华为云，或任何自托管 Kubernetes / docker-compose / k3s 环境里启动完整 daemon + CLI + web UI，不需要针对云厂商重写。自托管企业可以运行私有 marketplace；合作伙伴可以把 OD 嵌入自己的 stack；CI pipeline 可以拉起临时 OD container 来完成「为日报生成 slides」这类任务。技术 contract 见 §15。
+第四条轴线是生态覆盖与商业价值的基础：**CapyDesign 是一个 Docker image，可以部署到任意云。** 因为第三条轴线里的 headless mode 没有 electron、没有 GUI 依赖，一个 multi-arch container image（`linux/amd64` + `linux/arm64`）就能在 AWS、Google Cloud、Azure、阿里云、腾讯云、华为云，或任何自托管 Kubernetes / docker-compose / k3s 环境里启动完整 daemon + CLI + web UI，不需要针对云厂商重写。自托管企业可以运行私有 marketplace；合作伙伴可以把 CapyDesign 嵌入自己的 stack；CI pipeline 可以拉起临时 CapyDesign container 来完成「为日报生成 slides」这类任务。技术 contract 见 §15。
 
-第五条轴线是与 agent 共演进的产品形态：**UI 由 agent 请求，但由产品内的受控组件渲染 (Generative UI)，而不是任意 agent-authored frontend code。** 长程 design agent 在跑 pipeline 的过程中，会随时需要向用户索取信息（例：figma OAuth、确认目标受众）、寻求授权（例：批准一次 high-cost media 生成）、收敛方向（例：从 3 个 critique 选项里选一个）、补内容（例：缺失的品牌资产）；这些 UI **不是**预制的 marketplace chip strip，而是 plugin 在 manifest 中**声明**、agent 在 run 中**触发**、daemon 用 OD 原生事件**发布**给前端 / CLI 渲染，并通过 AG-UI adapter 供外部 client 消费的 surface（详见 §10.3）。OD v1 提供 4 类内置 surface（`form` / `choice` / `confirmation` / `oauth-prompt`）作为最小集；plugin 自带 React 组件必须经过 `genui:custom-component` capability gate 与 sandbox。对应这条轴线，project 表多记录一组 GenUI surface 的 **persisted state**：用户做过一次的授权与确认在同一 project 的多轮对话、多次 run 之间复用，不会被反复打扰；这是「插件 = 长程任务封装」与「project = 长期工作产物」的自然落点。
+第五条轴线是与 agent 共演进的产品形态：**UI 由 agent 请求，但由产品内的受控组件渲染 (Generative UI)，而不是任意 agent-authored frontend code。** 长程 design agent 在跑 pipeline 的过程中，会随时需要向用户索取信息（例：figma OAuth、确认目标受众）、寻求授权（例：批准一次 high-cost media 生成）、收敛方向（例：从 3 个 critique 选项里选一个）、补内容（例：缺失的品牌资产）；这些 UI **不是**预制的 marketplace chip strip，而是 plugin 在 manifest 中**声明**、agent 在 run 中**触发**、daemon 用 CapyDesign 原生事件**发布**给前端 / CLI 渲染，并通过 AG-UI adapter 供外部 client 消费的 surface（详见 §10.3）。CapyDesign v1 提供 4 类内置 surface（`form` / `choice` / `confirmation` / `oauth-prompt`）作为最小集；plugin 自带 React 组件必须经过 `genui:custom-component` capability gate 与 sandbox。对应这条轴线，project 表多记录一组 GenUI surface 的 **persisted state**：用户做过一次的授权与确认在同一 project 的多轮对话、多次 run 之间复用，不会被反复打扰；这是「插件 = 长程任务封装」与「project = 长期工作产物」的自然落点。
 
 ## 2. 目标与非目标
 
 **目标**
 
-1. 每个可运行、可分发的 OD 插件都是合法 agent skill（以 `SKILL.md` 或 `.claude-plugin/plugin.json` 为锚点）。不 fork skill spec。
-2. 一个普通 skill 或 claude-plugin repo，只要添加可选 `open-design.json` sidecar，就成为 OD 插件；不改名、不改 body。
+1. 每个可运行、可分发的 CapyDesign 插件都是合法 agent skill（以 `SKILL.md` 或 `.claude-plugin/plugin.json` 为锚点）。不 fork skill spec。
+2. 一个普通 skill 或 claude-plugin repo，只要添加可选 `open-design.json` sidecar，就成为 CapyDesign 插件；不改名、不改 body。
 3. 支持四类安装源：本地文件夹、GitHub repo（可带 ref/subpath）、任意 HTTPS archive，以及联邦 `open-design-marketplace.json` index。
 4. 一键「使用」会自动填充 brief 输入框，并在上方填充 `ContextItem` chips（skills、design-system、craft、assets、MCP、claude-plugin、atom）。
 5. 默认分层信任；能力 scope 是声明式、可选的。
-6. OD core engine、atomic capabilities、plugin runtime 全部可以通过 CLI 访问，因此任何 code agent 都能 headless 地驱动 OpenDesign。
-7. **插件即长程任务封装**：每个插件覆盖四类产品场景之一（new-generation / code-migration / figma-migration / tune-collab），通过 `od.pipeline` 把 OD 一方 atoms 组装成有序 stages + 可选 devloop（§10）。
+6. CapyDesign core engine、atomic capabilities、plugin runtime 全部可以通过 CLI 访问，因此任何 code agent 都能 headless 地驱动 CapyDesign。
+7. **插件即长程任务封装**：每个插件覆盖四类产品场景之一（new-generation / code-migration / figma-migration / tune-collab），通过 `od.pipeline` 把 CapyDesign 一方 atoms 组装成有序 stages + 可选 devloop（§10）。
 8. **可复现 + 可审计**：每次 apply 落一份不可变 `AppliedPluginSnapshot`（§8.2.1），run / artifact 通过 snapshot id 反查 plugin source；插件升级不破坏历史 run 的 prompt 还原。
 9. **同一 artifact 跨协作面流转**：artifact manifest（§11.5.1）记录 plugin provenance + 各下游协作面（cli / 其他 code agent / 云 / 桌面端）的 export 与 deploy 历史，让后续二次调优、迁移、协作围绕同一 artifact 接续。
-10. **Generative UI 是 plugin 一等输出**：插件在 manifest 中声明 `od.genui.surfaces[]`（§10.3），agent 运行时通过 OD 受控事件流发布 form / choice / confirmation / oauth-prompt 请求，产品 renderer 负责视觉样式；用户的回应按 `persist` 等级（run / conversation / project）落到 project metadata，被同 project 后续多轮对话、多次 run 复用。外部 AG-UI client 通过 adapter 消费同一条 run，而不是替换 OD 内部 renderer。
+10. **Generative UI 是 plugin 一等输出**：插件在 manifest 中声明 `od.genui.surfaces[]`（§10.3），agent 运行时通过 CapyDesign 受控事件流发布 form / choice / confirmation / oauth-prompt 请求，产品 renderer 负责视觉样式；用户的回应按 `persist` 等级（run / conversation / project）落到 project metadata，被同 project 后续多轮对话、多次 run 复用。外部 AG-UI client 通过 adapter 消费同一条 run，而不是替换 CapyDesign 内部 renderer。
 
 **非目标（v1）**
 
-- 替代 SKILL.md / claude-plugin spec：OD 永不 fork。
-- 托管插件二进制：OD 指向 GitHub / CDN URL；存储由发布者负责。
+- 替代 SKILL.md / claude-plugin spec：CapyDesign 永不 fork。
+- 托管插件二进制：CapyDesign 指向 GitHub / CDN URL；存储由发布者负责。
 - 签名/PKI 生态：能力 gating 依赖用户授权，而不是签名。
-- 一个由 OpenDesign SaaS 代表用户运行 agent 的 web-hosted marketplace：v1 只做 local-first / self-hostable。
+- 一个由 CapyDesign SaaS 代表用户运行 agent 的 web-hosted marketplace：v1 只做 local-first / self-hostable。
 
 ## 3. 兼容性矩阵：什么样的文件夹对哪些系统是合法插件
 
-| 存在的文件 | OD 可安装 | Claude Code / Cursor / Codex / Gemini CLI | OpenClaw / Hermes | awesome-agent-skills | clawhub | skills.sh |
+| 存在的文件 | CapyDesign 可安装 | Claude Code / Cursor / Codex / Gemini CLI | OpenClaw / Hermes | awesome-agent-skills | clawhub | skills.sh |
 | --- | --- | --- | --- | --- | --- | --- |
 | 仅 `SKILL.md` | yes | yes | yes | yes | yes | yes |
 | 仅 `.claude-plugin/plugin.json` | yes | yes (claude) | partial | listable | listable | listable |
@@ -184,9 +184,9 @@ OpenDesign 变成一套 **server + CLI + atomic core engine + plugin/marketplace
 | `.claude-plugin/...` + `open-design.json` | enriched | yes (claude) | partial | listable | listable | listable |
 | `SKILL.md` + `.claude-plugin/...` + `open-design.json` | fully enriched | yes | yes | yes | yes | yes |
 
-结论：**`SKILL.md` 是最低共同分母**。任何推荐用于分发的插件都应该包含 `SKILL.md`，这样它可以进入所有主流目录；再添加 `open-design.json` 来获得 OD 的产品表面。
+结论：**`SKILL.md` 是最低共同分母**。任何推荐用于分发的插件都应该包含 `SKILL.md`，这样它可以进入所有主流目录；再添加 `open-design.json` 来获得 CapyDesign 的产品表面。
 
-仅包含 `open-design.json` 的文件夹在 v1 中不是可运行插件，而是 **metadata-only preset**：OD 可以读取它来展示市场卡片、聚合远端引用或作为未来 install stub，但它不能触发 agent run，也不能进入跨 agent catalog。`capt plugin doctor` 必须把这种形态标记为 `metadata-only`，并提示作者补充 `SKILL.md` 或 `.claude-plugin/plugin.json` 才能发布为 runnable plugin。
+仅包含 `open-design.json` 的文件夹在 v1 中不是可运行插件，而是 **metadata-only preset**：CapyDesign 可以读取它来展示市场卡片、聚合远端引用或作为未来 install stub，但它不能触发 agent run，也不能进入跨 agent catalog。`capt plugin doctor` 必须把这种形态标记为 `metadata-only`，并提示作者补充 `SKILL.md` 或 `.claude-plugin/plugin.json` 才能发布为 runnable plugin。
 
 ## 4. 插件文件夹形态
 
@@ -195,9 +195,9 @@ my-plugin/
 ├── SKILL.md                          # required for portability; anchors agent behavior
 ├── .claude-plugin/                   # optional: claude-plugin compat (commands/agents/hooks/.mcp.json)
 │   └── plugin.json
-├── open-design.json                  # optional sidecar — unlocks OD product surface
+├── open-design.json                  # optional sidecar — unlocks CapyDesign product surface
 ├── README.md                         # standard catalog readme
-├── preview/                          # OD preview assets
+├── preview/                          # CapyDesign preview assets
 │   ├── index.html
 │   ├── poster.png
 │   └── demo.mp4
@@ -212,16 +212,15 @@ my-plugin/
 
 作者规则：
 
-- `SKILL.md` body 不承载 OD 专属元数据；它保持干净、可移植。
+- `SKILL.md` body 不承载 CapyDesign 专属元数据；它保持干净、可移植。
 - `open-design.json` 只**指向** SKILL.md / DESIGN.md / craft 文件；永不复制它们的正文。
-- 当前 SKILL.md frontmatter 上已有的 OD 专属 `od:` namespace（已在 [`skills-protocol.md`](skills-protocol.md) 中描述，并在 [`design-templates/blog-post/SKILL.md`](../design-templates/blog-post/SKILL.md) 中使用）继续作为没有 `open-design.json` 的插件的 fallback。我们不废弃它，只在其上叠加。
-- v1 的 runnable plugin 必须至少包含 `SKILL.md` 或 `.claude-plugin/plugin.json` 之一。`open-design.json` 本身不定义 agent 行为，只定义 OD 如何展示、解析和应用这些行为。
+- 当前 SKILL.md frontmatter 上已有的 CapyDesign 专属 `od:` namespace（已在 [`skills-protocol.md`](skills-protocol.md) 中描述，并在 [`design-templates/blog-post/SKILL.md`](../design-templates/blog-post/SKILL.md) 中使用）继续作为没有 `open-design.json` 的插件的 fallback。我们不废弃它，只在其上叠加。
+- v1 的 runnable plugin 必须至少包含 `SKILL.md` 或 `.claude-plugin/plugin.json` 之一。`open-design.json` 本身不定义 agent 行为，只定义 CapyDesign 如何展示、解析和应用这些行为。
 
 ## 5. `open-design.json` — schema v1
 
 ```json
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "make-a-deck",
   "title": "Make a deck",
@@ -232,7 +231,7 @@ my-plugin/
     "en": "Generate a 12-slide investor deck from a one-line brief.",
     "zh-CN": "根据一句 brief 生成 12 页投资人 deck。"
   },
-  "author":   { "name": "OpenDesign", "url": "https://open-design.ai" },
+  "author":   { "name": "CapyDesign", "url": "https://example.com" },
   "license":  "MIT",
   "homepage": "https://github.com/open-design/plugins/make-a-deck",
   "icon":     "./icon.svg",
@@ -351,8 +350,8 @@ my-plugin/
 
 ### 5.1 字段说明
 
-- `compat.*`：指向继承格式文件的相对路径。loader 会把它们的内容合并进 [`composeSystemPrompt()`](../apps/daemon/src/prompts/system.ts) 组装出的 OD prompt stack。
-- `specVersion`：解释此 manifest 时使用的 OpenDesign 插件规范版本。它独立于插件 `version`，并会冻结到 apply snapshot，便于 replay。
+- `compat.*`：指向继承格式文件的相对路径。loader 会把它们的内容合并进 [`composeSystemPrompt()`](../apps/daemon/src/prompts/system.ts) 组装出的 CapyDesign prompt stack。
+- `specVersion`：解释此 manifest 时使用的 CapyDesign 插件规范版本。它独立于插件 `version`，并会冻结到 apply snapshot，便于 replay。
 - `version`：插件包自身版本。只要行为、元数据、pipeline、inputs 或随包 assets 出现用户需要审计的变化，就应该 bump。
 - `publishedAt`：可选的 ISO 8601 时间戳，表示插件首次发布到所在目录（catalog）的时间。Community 画廊的"最新"排序对 bundled 目录记录以它为准，这样新装环境也能得到真实的时间序（本地安装时间戳在首次启动整批种子时会全部并列）；用户自行安装的插件不受该字段影响，仍按本地安装/更新时间排序。第一方 bundled 插件必填（由 `e2e/tests/plugin-published-at.test.ts` 保障）；写入创作时间，后续修改不要挪动它。
 - `title_i18n` / `description_i18n`：可选本地化展示元数据。`title` 和 `description` 保持英文 fallback；UI 会按请求 locale、基础语言、英文、首个可用值的顺序解析。
@@ -399,13 +398,13 @@ export type ContextItem =
 
 能力不是孤立字符串，resolver 必须计算 **隐含 capability**：
 
-- 声明 `mcp` 且 MCP command 不是 OD 内置 stdio tool 时，隐含需要 `subprocess`。
+- 声明 `mcp` 且 MCP command 不是 CapyDesign 内置 stdio tool 时，隐含需要 `subprocess`。
 - MCP command 通过 `npx`、`uvx`、`pipx`、remote URL 或 package-manager 下载代码时，隐含需要 `network`。
 - 声明 `.claude-plugin` hooks 时，隐含需要 `subprocess`；hook 如果读取 bundled assets，还需要 `fs:read`。
 - `bash` 与 `subprocess` 是高危能力：一旦授予，插件理论上可以绕过细粒度 `fs:*` / `network` 限制。UI 和 CLI 必须把它们作为 elevated capabilities 单独确认，不得被 "Grant all low-risk" 默认勾选。
 - 声明 `od.connectors.required[]` 时，每个 `required[].id` 隐含需要 `connector:<id>`；resolver 在 apply 阶段把缺失的 `connector:<id>` 加进 `capabilitiesRequired`，并在 `restricted` plugin 上拒绝 run（exit 66 / §9.1）。
 - `connector:<id>` 不隐含 `network`：connector 调用全程经 daemon HTTP，不让 plugin 自己起网络请求。但 `connector` 笼统能力会被审视为 elevated（任意已 connected provider 都可触达），UI 和 CLI 必须显式确认。
-- provider credentials 不是 v1 capability；插件不能直接声明访问 `ANTHROPIC_API_KEY`、media provider keys 或 connector secrets。需要 credentials 的能力必须通过 OD 自己的 first-party atom / tool 间接调用。
+- provider credentials 不是 v1 capability；插件不能直接声明访问 `ANTHROPIC_API_KEY`、media provider keys 或 connector secrets。需要 credentials 的能力必须通过 CapyDesign 自己的 first-party atom / tool 间接调用。
 
 ### 5.4 `SKILL.md` frontmatter 到 `PluginManifest` 的映射
 
@@ -424,7 +423,7 @@ export type ContextItem =
 | `od.outputs` | `projectMetadata` hints | 用于 artifact bookkeeping 和 preview default，不作为用户可编辑 input |
 | `od.capabilities_required` | `od.capabilities` | 只映射能表达的能力；未知 capability 保留为 `compatWarnings[]`，`capt plugin doctor` 必须提示 |
 
-如果 `open-design.json` 与 `SKILL.md` frontmatter 同时存在，`open-design.json` 优先，但 loader 必须保留 adapter 产生的 warnings。这样作者可以渐进迁移：先让旧 skill 原样可用，再逐步增加 OD marketplace 信息。
+如果 `open-design.json` 与 `SKILL.md` frontmatter 同时存在，`open-design.json` 优先，但 loader 必须保留 adapter 产生的 warnings。这样作者可以渐进迁移：先让旧 skill 原样可用，再逐步增加 CapyDesign marketplace 信息。
 
 ## 6. `open-design-marketplace.json` — 联邦目录
 
@@ -432,11 +431,10 @@ export type ContextItem =
 
 ```json
 {
-  "$schema": "https://open-design.ai/schemas/marketplace.v1.json",
   "specVersion": "1.0.0",
   "name": "open-design-official",
   "version": "1.0.0",
-  "owner":    { "name": "OpenDesign", "url": "https://open-design.ai" },
+  "owner":    { "name": "CapyDesign", "url": "https://example.com" },
   "metadata": { "description": "First-party plugins", "version": "1.0.0" },
   "plugins": [
     { "name": "make-a-deck", "version": "1.0.0", "source": "github:open-design/plugins/make-a-deck", "tags": ["deck"] },
@@ -672,7 +670,7 @@ flowchart LR
   P1 & P2 & P3 & P4 & P5 --> R[run agent]
 ```
 
-`restricted` 插件永远不能进入 P3/P4/P5，除非用户授权该能力——通过 `capt plugin trust <id>` 或详情页上的「Grant capabilities」。默认 trusted 的来源只有两类：repo bundled first-party 插件，以及 OD 官方 marketplace。用户添加的第三方 marketplace 只提供 discovery；其中插件默认仍是 `restricted`，除非该 marketplace 本身被显式 trust，或某个插件按 id + version + capability 单独授权。
+`restricted` 插件永远不能进入 P3/P4/P5，除非用户授权该能力——通过 `capt plugin trust <id>` 或详情页上的「Grant capabilities」。默认 trusted 的来源只有两类：repo bundled first-party 插件，以及 CapyDesign 官方 marketplace。用户添加的第三方 marketplace 只提供 discovery；其中插件默认仍是 `restricted`，除非该 marketplace 本身被显式 trust，或某个插件按 id + version + capability 单独授权。
 
 **Connector capability gate：** plugin 调用 connector tool 走 daemon HTTP（`/api/tools/connectors/execute`，由 `apps/daemon/src/tool-tokens.ts` 颁发 scoped token），与 MCP 是两条不同路径。`restricted` plugin 即使获得 `mcp` capability，**也不会**自动获得 connector 调用能力——必须通过 `connector` 笼统能力或具体 `connector:<id>` 显式授权。daemon 在颁发 tool token 时把 `applied_plugin_snapshot_id` + 当前 `capabilitiesGranted` 写入 token；执行 `/api/tools/connectors/execute` 时校验 `connector_id` 在 granted 列表里（trusted plugin 隐含 `connector:*`），否则返回 `403`。这条 gate 的 daemon 实现见 §11.3 的 `apps/daemon/src/plugins/connector-gate.ts`。
 
@@ -738,7 +736,7 @@ UI 上的 capability gate 是 modal + checklist；headless / CI / 第三方 code
 
 ### 9.2 Preview sandbox
 
-插件 preview 可能来自未信任 GitHub / archive，因此不能与 OD app 共用同一执行权限。`od.preview.entry` 的 HTML 预览必须满足以下约束：
+插件 preview 可能来自未信任 GitHub / archive，因此不能与 CapyDesign app 共用同一执行权限。`od.preview.entry` 的 HTML 预览必须满足以下约束：
 
 - preview iframe 使用 `sandbox="allow-scripts"` 起步；默认不允许 `allow-same-origin`、`allow-forms`、`allow-popups`、`allow-downloads`。如果某个 first-party preview 需要额外 flag，必须在 manifest 中声明并通过 `capt plugin doctor` 标记为 elevated preview。
 - preview 通过 daemon 的只读 preview endpoint 服务，不能读取 `/api/*`、不能携带 `Authorization` header、不能访问 provider credentials、不能访问 project 文件系统。
@@ -748,7 +746,7 @@ UI 上的 capability gate 是 modal + checklist；headless / CI / 第三方 code
 
 ## 10. 一方 atoms：可被插件组装的原子管线
 
-把 [`apps/daemon/src/prompts/system.ts`](../apps/daemon/src/prompts/system.ts) 与 daemon-backed bash tools 里已有的能力提升为**具名、可声明、可被插件组装**的 atoms。Atom 不是孤立的 capability tag——它是 OD 长程 design agent pipeline 的一个节点，可以被插件拼接成有序 stages，并通过 devloop 在 stage 内循环。v1 仍然是**声明式**：daemon 已经知道如何为每个 atom 发出 prompt fragment 与必要的 tool gating，插件只是声明 pipeline 拓扑。
+把 [`apps/daemon/src/prompts/system.ts`](../apps/daemon/src/prompts/system.ts) 与 daemon-backed bash tools 里已有的能力提升为**具名、可声明、可被插件组装**的 atoms。Atom 不是孤立的 capability tag——它是 CapyDesign 长程 design agent pipeline 的一个节点，可以被插件拼接成有序 stages，并通过 devloop 在 stage 内循环。v1 仍然是**声明式**：daemon 已经知道如何为每个 atom 发出 prompt fragment 与必要的 tool gating，插件只是声明 pipeline 拓扑。
 
 | Atom id | 当前来源 | 作用 | taskKind 适用 |
 | --- | --- | --- | --- |
@@ -813,13 +811,13 @@ Devloop 的两条硬约束：
 
 每一轮 devloop 都把当轮 artifact diff、critique 输出、消耗 tokens 写入 `runs.devloop_iterations`（§11.4 SQLite 扩展），用于审计与按 iteration 计费的未来商业模型。
 
-`GET /api/atoms` 返回 atoms 与已知 reference pipelines。当前实现已经开始自举：一方 atom plugins 位于 `plugins/_official/atoms/**`，bundled scenario plugins 位于 `plugins/_official/scenarios/**`，`renderActiveStageBlock(stageId, bodies)` 会把 active stage 的 atom bodies 注入 prompt。因此 system prompt 现在已经 pipeline-aware，但还不是完全 data-driven：OpenDesign 基础 designer prompt、discovery philosophy 和部分入口默认逻辑仍在 daemon / product code 中。这足以支撑"插件组装核心管线"这条主张，但不假装所有行为字节都已经迁到插件。
+`GET /api/atoms` 返回 atoms 与已知 reference pipelines。当前实现已经开始自举：一方 atom plugins 位于 `plugins/_official/atoms/**`，bundled scenario plugins 位于 `plugins/_official/scenarios/**`，`renderActiveStageBlock(stageId, bodies)` 会把 active stage 的 atom bodies 注入 prompt。因此 system prompt 现在已经 pipeline-aware，但还不是完全 data-driven：CapyDesign 基础 designer prompt、discovery philosophy 和部分入口默认逻辑仍在 daemon / product code 中。这足以支撑"插件组装核心管线"这条主张，但不假装所有行为字节都已经迁到插件。
 
 ### 10.3 Generative UI：AG-UI–inspired surfaces
 
-OD 接受 [CopilotKit / AG-UI 协议](https://github.com/CopilotKit/CopilotKit) 中有价值的部分：agent 可以在 run 中请求交互 UI。OD **不**允许 agent 在主产品表面自由发明 app UI 或视觉样式。v1 提供自己的 `GenUISurface*` discriminated union，跟现有 `PersistedAgentEvent`、SSE / ND-JSON 流共用通道；`@open-design/agui-adapter` 会把这些事件投影成 AG-UI canonical events 供外部 client 使用。
+CapyDesign 接受 [CopilotKit / AG-UI 协议](https://github.com/CopilotKit/CopilotKit) 中有价值的部分：agent 可以在 run 中请求交互 UI。CapyDesign **不**允许 agent 在主产品表面自由发明 app UI 或视觉样式。v1 提供自己的 `GenUISurface*` discriminated union，跟现有 `PersistedAgentEvent`、SSE / ND-JSON 流共用通道；`@capydesign/agui-adapter` 会把这些事件投影成 AG-UI canonical events 供外部 client 使用。
 
-产品规则是：**agent / plugin 输出的是数据，OD 掌握 renderer。** 插件可以声明 `form`、`choice`、`confirmation`、`oauth-prompt` surface，带 schema 与 prompt data；web / desktop / CLI renderer 决定 layout、typography、controls、validation、accessibility 和 persistence UX。这让插件 UI 能覆盖未来场景，同时保持产品系统一致。任意视觉或代码输出属于生成的 artifact，或者必须走独立 custom-component sandbox 与 `genui:custom-component` capability gate；它不能替换核心协作 UI 的内置 renderer。
+产品规则是：**agent / plugin 输出的是数据，CapyDesign 掌握 renderer。** 插件可以声明 `form`、`choice`、`confirmation`、`oauth-prompt` surface，带 schema 与 prompt data；web / desktop / CLI renderer 决定 layout、typography、controls、validation、accessibility 和 persistence UX。这让插件 UI 能覆盖未来场景，同时保持产品系统一致。任意视觉或代码输出属于生成的 artifact，或者必须走独立 custom-component sandbox 与 `genui:custom-component` capability gate；它不能替换核心协作 UI 的内置 renderer。
 
 #### 10.3.1 4 类内置 surface（v1）
 
@@ -945,14 +943,14 @@ capt ui prefill --project <projectId> --snapshot-id <snapshotId> direction-pick 
 
 #### 10.3.5 与 AG-UI 协议的对齐路线
 
-| 维度 | v1（OD 原生） | AG-UI adapter / 外部兼容 |
+| 维度 | v1（CapyDesign 原生） | AG-UI adapter / 外部兼容 |
 | --- | --- | --- |
-| Wire format | OD 自有 SSE / ND-JSON `PersistedAgentEvent` | 同时输出 AG-UI canonical events（包括 `agent.message`、`tool_call`、`state_update`、`ui.surface_requested`、`ui.surface_responded`） |
-| Surface kinds | 4 类内置 + plugin 在 manifest 中声明 | OD 内置 surface 仍是产品 source of truth；plugin React 组件路径必须经过 `genui:custom-component` gate 与 sandbox |
-| Shared state | `genui_surfaces` 表 + `genui_state_synced` 事件 | 把 OD 持久化状态映射到 AG-UI 的 `state` channel，供外部消费者使用 |
-| Frontend SDK 兼容 | OD desktop / web 自带 renderer | `@open-design/agui-adapter` 让 CopilotKit / 其他 AG-UI client 直接消费 OD run |
+| Wire format | CapyDesign 自有 SSE / ND-JSON `PersistedAgentEvent` | 同时输出 AG-UI canonical events（包括 `agent.message`、`tool_call`、`state_update`、`ui.surface_requested`、`ui.surface_responded`） |
+| Surface kinds | 4 类内置 + plugin 在 manifest 中声明 | CapyDesign 内置 surface 仍是产品 source of truth；plugin React 组件路径必须经过 `genui:custom-component` gate 与 sandbox |
+| Shared state | `genui_surfaces` 表 + `genui_state_synced` 事件 | 把 CapyDesign 持久化状态映射到 AG-UI 的 `state` channel，供外部消费者使用 |
+| Frontend SDK 兼容 | CapyDesign desktop / web 自带 renderer | `@capydesign/agui-adapter` 让 CopilotKit / 其他 AG-UI client 直接消费 CapyDesign run |
 
-Adapter 是互操作表面，不是内部 UI 的 source of truth。除非另有外部 embed / demo / client 明确需要，否则 OD 不应把 CopilotKit 加成主产品依赖。v1 plugin **不需要改**就可以在 AG-UI ecosystem 内被消费，因为 adapter 是 OD 自有事件的一层投影。
+Adapter 是互操作表面，不是内部 UI 的 source of truth。除非另有外部 embed / demo / client 明确需要，否则 CapyDesign 不应把 CopilotKit 加成主产品依赖。v1 plugin **不需要改**就可以在 AG-UI ecosystem 内被消费，因为 adapter 是 CapyDesign 自有事件的一层投影。
 
 ## 11. 架构：现有 repo 要改什么
 
@@ -983,7 +981,7 @@ Adapter 是互操作表面，不是内部 UI 的 source of truth。除非另有�
 | 新 `apps/daemon/src/plugins/pipeline.ts` | 解析 `od.pipeline`（含 `until` expression 求值器）、调度 stages、控制 §10.2 devloop（含 `OD_MAX_DEVLOOP_ITERATIONS` 上限与 break 信号）。 |
 | 新 `apps/daemon/src/genui/{registry,events,store}.ts` | §10.3 GenUI surface 注册（来自 `od.genui.surfaces[]`）、`genui_surface_*` event 发布、cross-conversation persisted state 读写、AG-UI–inspired event union 序列化。 |
 | 新 `apps/daemon/src/plugins/connector-gate.ts` | §9 connector capability gate：(a) `apply.ts` 通过它解析 `od.connectors.required[]` → `connectorService.listAll()`，标记 `connectorsResolved` 与 implicit `oauth-prompt` GenUI surface（§10.3.1）；(b) 在 [`apps/daemon/src/tool-tokens.ts`](../apps/daemon/src/tool-tokens.ts) 颁发 connector tool token 之前注入 plugin trust × `connector:<id>` capability 校验（trusted 隐含 `connector:*`，restricted 必须显式列出）；(c) `/api/tools/connectors/execute` 执行前再校验一次（防止 token 颁发后被替换）。这条 gate 是 §9 中 P5 决策路径的实际落点。 |
-| [`apps/daemon/src/prompts/system.ts`](../apps/daemon/src/prompts/system.ts) `composeSystemPrompt()` | 组装 OD 基础 designer/discovery prompt、可选 design system/craft/skill blocks、snapshot 派生的 `renderPluginBlock(snapshot)`，以及来自 `renderActiveStageBlock(stageId, bodies)` 的 active-stage atom blocks。现有层级顺序保持有意设计；plugin-block renderer 已在 contracts 中，但 plugin-driven fallback mode 仍按 §11.8 拒绝。 |
+| [`apps/daemon/src/prompts/system.ts`](../apps/daemon/src/prompts/system.ts) `composeSystemPrompt()` | 组装 CapyDesign 基础 designer/discovery prompt、可选 design system/craft/skill blocks、snapshot 派生的 `renderPluginBlock(snapshot)`，以及来自 `renderActiveStageBlock(stageId, bodies)` 的 active-stage atom blocks。现有层级顺序保持有意设计；plugin-block renderer 已在 contracts 中，但 plugin-driven fallback mode 仍按 §11.8 拒绝。 |
 | 新 SQLite migration | `installed_plugins`、`plugin_marketplaces`、`applied_plugin_snapshots`、`run_devloop_iterations`，以及 `runs` / `conversations` / `projects` 上的 `applied_plugin_snapshot_id` ALTER（§11.4）。 |
 | [`apps/daemon/src/server.ts`](../apps/daemon/src/server.ts) | 挂载新 endpoints（§11.5）；`POST /api/projects` 与 `POST /api/runs` 接受可选 `pluginId` / `pluginInputs` / `appliedPluginSnapshotId`；新增 `GET /api/applied-plugins/:snapshotId`、`POST /api/runs/:runId/replay`、`GET /api/runs/:runId/devloop-iterations`。 |
 | [`apps/daemon/src/cli.ts`](../apps/daemon/src/cli.ts) | 新增 `plugin`、`marketplace`、`project`、`run`、`files` subcommand routers（Phase 1 含 plugin verbs + headless MVP project/run/files；§16）。 |
@@ -1049,7 +1047,7 @@ CREATE INDEX idx_snapshots_project ON applied_plugin_snapshots(project_id);
 CREATE INDEX idx_snapshots_run     ON applied_plugin_snapshots(run_id);
 CREATE INDEX idx_snapshots_plugin  ON applied_plugin_snapshots(plugin_id, plugin_version);
 
--- runs / conversations / projects 上加可选指针；OD 主键不变，向后兼容
+-- runs / conversations / projects 上加可选指针；CapyDesign 主键不变，向后兼容
 ALTER TABLE runs          ADD COLUMN applied_plugin_snapshot_id TEXT REFERENCES applied_plugin_snapshots(id);
 ALTER TABLE conversations ADD COLUMN applied_plugin_snapshot_id TEXT REFERENCES applied_plugin_snapshots(id);
 ALTER TABLE projects      ADD COLUMN applied_plugin_snapshot_id TEXT REFERENCES applied_plugin_snapshots(id);
@@ -1215,7 +1213,7 @@ Web 表面获得两个共存入口，并由相同 primitives 支撑：
 
 ### 11.7 Headless 与 UI：干净解耦
 
-OD 运行在三种 operating modes，它们共享**同一个** daemon、**同一个** CLI、**同一个** plugin runtime。差异只是呈现方式。这与 Cursor 的形态一致：`cursor-agent`（CLI）自身足够运行；IDE 是增强层。
+CapyDesign 运行在三种 operating modes，它们共享**同一个** daemon、**同一个** CLI、**同一个** plugin runtime。差异只是呈现方式。这与 Cursor 的形态一致：`cursor-agent`（CLI）自身足够运行；IDE 是增强层。
 
 | Mode | 运行内容 | 适用场景 | 入口 |
 | --- | --- | --- | --- |
@@ -1238,16 +1236,16 @@ OD 运行在三种 operating modes，它们共享**同一个** daemon、**同一
 
 解锁的能力：
 
-- 用户只有 **Claude Code**（或任意 code agent）加 `npm i -g @open-design/cli`，再启动一个 headless daemon，就能完成 install plugin → create project → run → consume artifacts 全流程。不需要 OD desktop。
-- OD desktop UI 安装相同 daemon 与相同 CLI；它只是加了一个窗口。用户之后安装 desktop 时，会看到 headless 流程创建的同一批 projects、plugins、history。不存在「headless project format」与「desktop project format」之分。本 spec 绝不能定义 daemon 数据路径；修改或记录共享存储前必须阅读 root `AGENTS.md` → **Daemon data directory contract**。
-- CI 是一等公民：GitHub Action 可以 `npm i -g @open-design/cli && capt daemon start --headless && capt plugin install … && capt run start --project … --follow`。无 display、无 electron、无 UI scripting。
-- 外部产品可以通过启动 headless daemon 并 shell out 嵌入 OD：`capt` 是 public surface，internals 可以自由演进。
+- 用户只有 **Claude Code**（或任意 code agent）加 `npm i -g @capydesign/cli`，再启动一个 headless daemon，就能完成 install plugin → create project → run → consume artifacts 全流程。不需要 CapyDesign desktop。
+- CapyDesign desktop UI 安装相同 daemon 与相同 CLI；它只是加了一个窗口。用户之后安装 desktop 时，会看到 headless 流程创建的同一批 projects、plugins、history。不存在「headless project format」与「desktop project format」之分。本 spec 绝不能定义 daemon 数据路径；修改或记录共享存储前必须阅读 root `AGENTS.md` → **Daemon data directory contract**。
+- CI 是一等公民：GitHub Action 可以 `npm i -g @capydesign/cli && capt daemon start --headless && capt plugin install … && capt run start --project … --follow`。无 display、无 electron、无 UI scripting。
+- 外部产品可以通过启动 headless daemon 并 shell out 嵌入 CapyDesign：`capt` 是 public surface，internals 可以自由演进。
 
 代价：少量 `capt daemon` flags，以及一个新的 lifecycle subcommand（`capt daemon start/stop/status`，带 `--headless` / `--serve-web`）。实现与 Phase 2 的 CLI parity slice 一起落地。
 
 ### 11.8 Prompt composition：v1 plugin runs 走 daemon，避免分叉
 
-OD 当前有**两份** `composeSystemPrompt()` 实现：
+CapyDesign 当前有**两份** `composeSystemPrompt()` 实现：
 
 - [`apps/daemon/src/prompts/system.ts`](../apps/daemon/src/prompts/system.ts)：daemon 模式下生成 system prompt，能读 design library / craft / project metadata。
 - [`packages/contracts/src/prompts/system.ts`](../packages/contracts/src/prompts/system.ts)：web API-fallback 模式下，浏览器直接调 provider 时使用，依赖少，工作在 contracts pure-TS 边界内。
@@ -1258,13 +1256,13 @@ OD 当前有**两份** `composeSystemPrompt()` 实现：
 2. **Phase 2A：把 plugin prompt block renderer 提到 contracts 共享层。** 纯函数 `renderPluginBlock(snapshot: AppliedPluginSnapshot): string` 位于 [`packages/contracts/src/prompts/plugin-block.ts`](../packages/contracts/src/prompts/plugin-block.ts)，并被 `apps/daemon/src/prompts/system.ts` 与 `packages/contracts/src/prompts/system.ts` 同时 import。daemon composer 会调用它；contracts composer 保留 import，但在 v1 fallback rejection 规则 (1) 下不调用它。这样 plugin context 的 prompt 表达只有一处定义，不再需要两边 byte-for-byte fixture 防漂移，同时保留 v1 fallback 拒绝策略。
 3. **Phase 4：打开 fallback plugin support。** renderer 已在 contracts 中后，支持 fallback-mode plugin run 只需要在 contracts composer 里接线并移除 web sidecar 的 409；不再需要 prompt shape 重构或新的 cross-check guard。（最初计划是 Phase 4 才迁出 block，并在 Phase 1-4 之间用 CI fixture 防漂移；实施计划 PB1 已把迁移提前到 Phase 2A，因此 fixture 不再需要。）
 
-由此，§14.2 列出的「skill-only consumption / headless OD / full OD」三种消费模式中，只有后两者拥有 plugin context；这与 §1 中「插件是 long-task design agent 的封装」一致——长程任务必须有 daemon 或 daemon 等价物（headless）才能被组装。
+由此，§14.2 列出的「skill-only consumption / headless CapyDesign / full CapyDesign」三种消费模式中，只有后两者拥有 plugin context；这与 §1 中「插件是 long-task design agent 的封装」一致——长程任务必须有 daemon 或 daemon 等价物（headless）才能被组装。
 
-这也回答「没有选择插件」路径：没有 applied plugin 的 run 仍然会收到 OD 基础 prompt stack（`DISCOVERY_AND_PHILOSOPHY`、official designer instructions、project metadata、存在时的 active design system/craft，以及入口选择的默认 scenario routing）。Plugin context 是增量项。选择插件会追加 snapshot 派生的 `## Active plugin`、`## Plugin inputs` 与 active-stage atom blocks；它不是把一个非设计 agent 从零变成设计 agent 的唯一来源。
+这也回答「没有选择插件」路径：没有 applied plugin 的 run 仍然会收到 CapyDesign 基础 prompt stack（`DISCOVERY_AND_PHILOSOPHY`、official designer instructions、project metadata、存在时的 active design system/craft，以及入口选择的默认 scenario routing）。Plugin context 是增量项。选择插件会追加 snapshot 派生的 `## Active plugin`、`## Plugin inputs` 与 active-stage atom blocks；它不是把一个非设计 agent 从零变成设计 agent 的唯一来源。
 
 ## 12. CLI 表面
 
-CLI（`capt …`）是 **OpenDesign 面向 agent 的 canonical API**。Plugin verbs 只是其中一部分；CLI 的其它部分包装 daemon core capabilities：projects、conversations、runs、file operations、design library introspection、daemon control，因此任何 code agent 都能通过 shell calls 端到端驱动 OD。这是「通过 CLI 用自然语言创建 project + task」的路径：code agent 读取用户请求，然后发出一串 `capt …` 调用，而不是直接说 HTTP。
+CLI（`capt …`）是 **CapyDesign 面向 agent 的 canonical API**。Plugin verbs 只是其中一部分；CLI 的其它部分包装 daemon core capabilities：projects、conversations、runs、file operations、design library introspection、daemon control，因此任何 code agent 都能通过 shell calls 端到端驱动 CapyDesign。这是「通过 CLI 用自然语言创建 project + task」的路径：code agent 读取用户请求，然后发出一串 `capt …` 调用，而不是直接说 HTTP。
 
 ### 12.1 一个逻辑 API 的三种 transports
 
@@ -1336,7 +1334,7 @@ capt files delete <projectId> <relpath>
 capt files diff   <projectId> <relpath>                   # vs. last committed version (when imported from git)
 ```
 
-当目标是 OD-managed projects 时，code agent 通常应该用 `capt files read` / `capt files write`，而不是 native file ops，因为 daemon 负责 artifact bookkeeping（[`packages/contracts/src/api/registry.ts`](../packages/contracts/src/api/registry.ts) 中的 `ArtifactManifest.sourceSkillId` 等）。
+当目标是 CapyDesign-managed projects 时，code agent 通常应该用 `capt files read` / `capt files write`，而不是 native file ops，因为 daemon 负责 artifact bookkeeping（[`packages/contracts/src/api/registry.ts`](../packages/contracts/src/api/registry.ts) 中的 `ArtifactManifest.sourceSkillId` 等）。
 
 #### Plugin verbs
 
@@ -1457,7 +1455,7 @@ capt mcp live-artifacts        # specialized MCP server
 
 ### 12.5 Code agent authoring patterns
 
-一个通过 CLI 驱动 OpenDesign 的 code agent 通常这样做：
+一个通过 CLI 驱动 CapyDesign 的 code agent 通常这样做：
 
 ```bash
 # 1. (Optional) Inspect what's available.
@@ -1490,13 +1488,12 @@ capt files read "$PID" index.html > out.html
 
 > **Implementation rule:** 如果 code agent 能通过 desktop UI 做某件事，它就必须能通过 `capt …` 用相同参数和等价输出完成。不能有 silent UI-only capabilities。
 
-## 13. 公网 Web 表面（open-design.ai/marketplace）
+## 13. 公网 Web 表面（上游设计；CapyDesign 不托管）
 
-产品网站已经是 [open-design.ai](https://open-design.ai)。公网 marketplace 作为同一站点下的路径发布：`open-design.ai/marketplace`（canonical），并把 `open-design.ai/plugins` 作为 alias；不是单独域名。它是一个从官方 `open-design-marketplace.json` index 渲染出的 static-rendered catalog，插件详情页由每个 listed repo 内的同一份 `open-design.json` 支撑。视觉上它类似 [`skills.sh`](https://skills.sh/) 对 skills 的处理，但详情页会渲染 OD 专属 previews（`od.preview.entry` HTML、sample outputs、use-case query、chip preview）。
+上游将产品网站托管在 open-design.ai；**CapyDesign 不提供托管站点** —— 本节记录上游的公网 marketplace 设计，在 CapyDesign 中保持 out-of-scope 状态。在上游设计中，公网 marketplace 作为同一站点下的路径发布：`open-design.ai/marketplace`（canonical），并把 `open-design.ai/plugins` 作为 alias；不是单独域名。它是一个从官方 `open-design-marketplace.json` index 渲染出的 static-rendered catalog，插件详情页由每个 listed repo 内的同一份 `open-design.json` 支撑。视觉上它类似 [`skills.sh`](https://skills.sh/) 对 skills 的处理，但详情页会渲染 CapyDesign 专属 previews（`od.preview.entry` HTML、sample outputs、use-case query、chip preview）。
 
 这个站点与 in-app marketplace 共享一个 source of truth：
 
-- 同一组 JSON Schemas（`https://open-design.ai/schemas/plugin.v1.json`、`https://open-design.ai/schemas/marketplace.v1.json`）。
 - 同一套联邦 listing format（`open-design-marketplace.json`）。
 - 同一份 plugin manifests（每个 repo 内的 `open-design.json`）。
 
@@ -1504,8 +1501,8 @@ capt files read "$PID" index.html > out.html
 
 | Surface | Audience | Primary CTA |
 | --- | --- | --- |
-| In-app marketplace（`/marketplace`，§11.6） | 已登录 OD 用户 | “Use this plugin” → apply in place |
-| Public marketplace（`open-design.ai/marketplace`） | 匿名访客、SEO、分享 | Deep-link `od://plugins/<id>?apply=1`（自动在 desktop app 中安装并 apply），以及 “Copy install command” |
+| In-app marketplace（`/marketplace`，§11.6） | 已登录 CapyDesign 用户 | “Use this plugin” → apply in place |
+| Public marketplace（上游设计；此处不托管） | 匿名访客、SEO、分享 | Deep-link `od://plugins/<id>?apply=1`（自动在 desktop app 中安装并 apply），以及 “Copy install command” |
 
 Deep-link contract（Phase 4 deliverable，但在这里先锁定 schema 支持）：
 
@@ -1513,7 +1510,7 @@ Deep-link contract（Phase 4 deliverable，但在这里先锁定 schema 支持�
 - `od://plugins/<id>?apply=1[&input.k=v...]`：如果缺失则安装，然后用 supplied inputs apply。
 - `od://marketplace/add?url=<urlencoded>`：注册新的联邦 catalog。
 
-desktop app 注册 `od://` URL scheme；点击 `open-design.ai/marketplace` 上的按钮时，如果 desktop 已安装则启动 desktop，否则 fallback 到「How to install OpenDesign」流程。
+desktop app 注册 `od://` URL scheme；点击公网 marketplace 站点上的按钮时，如果 desktop 已安装则启动 desktop，否则 fallback 到「How to install CapyDesign」流程。
 
 **状态：不属于 v1 implementation scope。** 但这里锁定 JSON shapes 和 URL scheme，使 in-app marketplace 与公网站点可以独立开发而不分叉。
 
@@ -1532,32 +1529,32 @@ desktop app 注册 `od://` URL scheme；点击 `open-design.ai/marketplace` 上�
 
 ### 14.1 作者工具
 
-- `capt plugin scaffold`：写入 starter folder，包含 `SKILL.md`（行业标准，带 `od:` frontmatter 以向后兼容）和 `open-design.json`（OD enrichment，`compat.agentSkills` 指向 SKILL.md）。
+- `capt plugin scaffold`：写入 starter folder，包含 `SKILL.md`（行业标准，带 `od:` frontmatter 以向后兼容）和 `open-design.json`（CapyDesign enrichment，`compat.agentSkills` 指向 SKILL.md）。
 - `capt plugin doctor`：运行 JSON Schema、SKILL.md frontmatter parser，以及「它看起来是否能被 awesome-agent-skills / clawhub / skills.sh 收录？」lint，检查 README、license file、frontmatter 完整性。
 - `capt plugin publish --to <catalog>`（Phase 4）：打开浏览器进入 catalog PR template，预填 row。
 
 ### 14.2 Cross-agent consumption
 
-任何通过 `SKILL.md` 消费文件夹的 code agent，都可以在没有 OD 的情况下运行。插件是一个 repo，有三种合法消费模式：
+任何通过 `SKILL.md` 消费文件夹的 code agent，都可以在没有 CapyDesign 的情况下运行。插件是一个 repo，有三种合法消费模式：
 
-1. **Skill-only consumption（完全没有 OD）。** Cursor 用户执行 `npx skills add open-design/make-a-deck`。Cursor 读取 `SKILL.md` 并运行 workflow。没有 OD CLI、没有 OD daemon。插件的 marketplace polish（`open-design.json`）被忽略，Cursor 看到的是普通 skill。
-2. **Headless OD（CLI + code agent，无 OD UI）。** 高阶用户继续使用自己偏好的 code agent：Claude Code、Cursor、Codex 等，但把 OD 作为 side service 加进来，获得 plugin context resolution、project bookkeeping、design library injection、artifact tracking。无 browser、无 electron。具体 pipeline 见 §14.3。
-3. **Full OD（CLI + code agent + OD UI）。** 与 (2) 相同，但加上 desktop 或 web UI，用于 live preview、marketplace browsing、chat/canvas split-view 等。
+1. **Skill-only consumption（完全没有 CapyDesign）。** Cursor 用户执行 `npx skills add open-design/make-a-deck`。Cursor 读取 `SKILL.md` 并运行 workflow。没有 CapyDesign CLI、没有 CapyDesign daemon。插件的 marketplace polish（`open-design.json`）被忽略，Cursor 看到的是普通 skill。
+2. **Headless CapyDesign（CLI + code agent，无 CapyDesign UI）。** 高阶用户继续使用自己偏好的 code agent：Claude Code、Cursor、Codex 等，但把 CapyDesign 作为 side service 加进来，获得 plugin context resolution、project bookkeeping、design library injection、artifact tracking。无 browser、无 electron。具体 pipeline 见 §14.3。
+3. **Full CapyDesign（CLI + code agent + CapyDesign UI）。** 与 (2) 相同，但加上 desktop 或 web UI，用于 live preview、marketplace browsing、chat/canvas split-view 等。
 
 插件作者只写一次 SKILL.md。三种模式都消费它。
 
-### 14.3 具体 headless pipeline（Claude Code + `capt` CLI，无 OD UI）
+### 14.3 具体 headless pipeline（Claude Code + `capt` CLI，无 CapyDesign UI）
 
-这与 cursor-agent + scripts 对 Cursor 的意义相同：code agent 做思考，OD CLI 提供 project / plugin / artifact substrate。
+这与 cursor-agent + scripts 对 Cursor 的意义相同：code agent 做思考，CapyDesign CLI 提供 project / plugin / artifact substrate。
 
 ```bash
-# One-time setup: install the OD CLI as an npm global (publishable as @open-design/cli).
-npm install -g @open-design/cli
+# One-time setup: install the CapyDesign CLI as an npm global (publishable as @capydesign/cli).
+npm install -g @capydesign/cli
 
 # Start the daemon in headless mode — no web bundle, no electron, no browser.
 capt daemon start --headless --port 17456
 
-# Install the OD plugin you want to drive (or an upstream agent skill — both work).
+# Install the CapyDesign plugin you want to drive (or an upstream agent skill — both work).
 capt plugin install github:open-design/plugins/make-a-deck
 
 # Create a project bound to the plugin. Inputs are templated into the brief.
@@ -1572,12 +1569,12 @@ PID=$(capt project create \
 capt run start --project "$PID" --plugin make-a-deck \
              --agent claude --follow
 
-# Path B — drive Claude Code directly inside the project cwd; OD only provides
+# Path B — drive Claude Code directly inside the project cwd; CapyDesign only provides
 # context resolution and artifact bookkeeping. Useful when the user's existing
 # code-agent setup is opinionated.
 CWD=$(capt project info "$PID" --json | jq -r .cwd)
 cd "$CWD"
-# OD has already staged the merged SKILL.md / DESIGN.md / craft / atoms into
+# CapyDesign has already staged the merged SKILL.md / DESIGN.md / craft / atoms into
 # skill staging directory is inside the cwd, exactly as the desktop run would.
 claude code "Read the staged skill context and produce the deliverables the active plugin describes."
 
@@ -1590,25 +1587,25 @@ open slides.html      # or however the user wants to view the file
 这证明：
 
 - 完整 marketplace → plugin → apply → run → artifact pipeline 可以在终端里用不到 10 行触达。
-- OD daemon 不需要渲染任何东西；它作为 project + plugin + artifact server 工作。
-- 同一个 project 之后在 OD desktop UI 中打开时，会显示 headless run 产生的完整 conversation history、files、artifacts。本 spec 绝不能定义 daemon 数据路径；修改或记录共享存储前必须阅读 root `AGENTS.md` → **Daemon data directory contract**。
+- CapyDesign daemon 不需要渲染任何东西；它作为 project + plugin + artifact server 工作。
+- 同一个 project 之后在 CapyDesign desktop UI 中打开时，会显示 headless run 产生的完整 conversation history、files、artifacts。本 spec 绝不能定义 daemon 数据路径；修改或记录共享存储前必须阅读 root `AGENTS.md` → **Daemon data directory contract**。
 
-### 14.4 类比：Cursor vs `cursor-agent`，OD desktop vs `capt` CLI
+### 14.4 类比：Cursor vs `cursor-agent`，CapyDesign desktop vs `capt` CLI
 
 心智模型：
 
-| Layer | Cursor | OpenDesign |
+| Layer | Cursor | CapyDesign |
 | --- | --- | --- |
 | Headless agent CLI | `cursor-agent`（驱动 agent loop） | `capt run start --agent claude --follow` + `capt plugin run` |
-| Local services / db | Cursor 的 background indexing / state | OD daemon-managed state。存储路径只受 root `AGENTS.md` → **Daemon data directory contract** 约束。 |
-| GUI productivity layer | Cursor IDE | OD desktop / web UI（`apps/web` + `apps/desktop`） |
+| Local services / db | Cursor 的 background indexing / state | CapyDesign daemon-managed state。存储路径只受 root `AGENTS.md` → **Daemon data directory contract** 约束。 |
+| GUI productivity layer | Cursor IDE | CapyDesign desktop / web UI（`apps/web` + `apps/desktop`） |
 | Plugin / skill format | `.cursor/rules/`、MCP servers | `SKILL.md` + `open-design.json` + atoms |
 
 两者以相同方式解耦：terminal flow 已经足够；IDE/desktop 是生产力倍增器。**插件作者不需要做选择**：他们写一个 SKILL.md 加可选 sidecar，就能覆盖三种消费模式。
 
 ## 15. 部署与可移植性：Docker，任意云
 
-OD 以单个 multi-arch Docker image 发布，使完整 plugin/marketplace system 可以一条命令启动，并在每个主流云上不经修改地运行。这是生态与商业故事的 substrate：合作伙伴在自己的 VPC 内自托管；企业运行私有 marketplace；CI job 启动 per-job OD daemon。这个 image 是 §11.7 headless mode 的 ops 包装，并在设置 `--serve-web` 时可选择服务 §11.6 的 web UI。
+CapyDesign 以单个 multi-arch Docker image 发布，使完整 plugin/marketplace system 可以一条命令启动，并在每个主流云上不经修改地运行。这是生态与商业故事的 substrate：合作伙伴在自己的 VPC 内自托管；企业运行私有 marketplace；CI job 启动 per-job CapyDesign daemon。这个 image 是 §11.7 headless mode 的 ops 包装，并在设置 `--serve-web` 时可选择服务 §11.6 的 web UI。
 
 ### 15.1 Image shape
 
@@ -1683,7 +1680,7 @@ image 故意保持 cloud-agnostic。一个 container image 可以运行在每个
 | Huawei Cloud | CCE / CCI | SFS, OBS adapter | KMS |
 | Self-hosted | docker-compose, Docker Swarm, k3s, k0s | Bind mounts, NFS, Longhorn | env / SOPS / Vault |
 
-OD 随 image 版本发布两个 reference manifests：
+CapyDesign 随 image 版本发布两个 reference manifests：
 
 - 新 `tools/pack/docker-compose.yml`：daemon + optional reverse proxy + optional Postgres for §15.6。
 - 新 `tools/pack/helm/`：Helm chart，values presets 用于每个云的 volume + secret patterns。chart 保持 generic；cloud-specific bootstrap（CloudFormation / Deployment Manager / ARM / Aliyun ROS / Tencent TIC / Huawei RFS）放在独立 `open-design/deploy` repo 中，允许单独演进。
@@ -1714,10 +1711,10 @@ adapter 之间保持相同 on-disk layout，因此 single-tenant deployment 迁�
 
 ### 15.8 解锁的生态动作
 
-1. **Self-hosted enterprise。** 企业托管私有 OD instance，注册内部 `open-design-marketplace.json`（`capt marketplace add https://internal/...`），限制插件只来自内部审过的集合。设计师和 PM 本地使用 desktop client；CI 使用 `docker exec od capt …`。
-2. **Partner integrations。** 厂商（CMS、设计工具、BI 平台、SaaS dashboards）把 OD 嵌入自己的 stack，增加 design generation。一个 image，无需 per-vendor port。
-3. **Cloud-native CI。** 「为日报生成 slides」变成 GitHub Action / GitLab pipeline / Tekton task：启动 ephemeral OD container，apply plugin，把 artifacts 放到 S3 / OSS / COS / OBS。
-4. **Sovereign-cloud reach。** OD 可以在阿里云 / 腾讯云 / 华为云上不经修改运行，服务受监管区域客户；不需要重写，也不需要单独分发渠道。
+1. **Self-hosted enterprise。** 企业托管私有 CapyDesign instance，注册内部 `open-design-marketplace.json`（`capt marketplace add https://internal/...`），限制插件只来自内部审过的集合。设计师和 PM 本地使用 desktop client；CI 使用 `docker exec od capt …`。
+2. **Partner integrations。** 厂商（CMS、设计工具、BI 平台、SaaS dashboards）把 CapyDesign 嵌入自己的 stack，增加 design generation。一个 image，无需 per-vendor port。
+3. **Cloud-native CI。** 「为日报生成 slides」变成 GitHub Action / GitLab pipeline / Tekton task：启动 ephemeral CapyDesign container，apply plugin，把 artifacts 放到 S3 / OSS / COS / OBS。
+4. **Sovereign-cloud reach。** CapyDesign 可以在阿里云 / 腾讯云 / 华为云上不经修改运行，服务受监管区域客户；不需要重写，也不需要单独分发渠道。
 
 ## 16. 分阶段实现计划
 
@@ -1728,7 +1725,7 @@ adapter 之间保持相同 on-disk layout，因此 single-tenant deployment 迁�
 - Pure-TS contracts：`packages/contracts/src/plugins/{manifest,context,apply,marketplace,installed}.ts`。
 - Migration note：现有 `skills/`、`design-systems/`、`craft/` 100% 向后兼容。SKILL.md frontmatter 不变。
 
-Validation：`pnpm guard`、`pnpm typecheck`、`pnpm --filter @open-design/contracts test`。
+Validation：`pnpm guard`、`pnpm typecheck`、`pnpm --filter @capydesign/contracts test`。
 
 ### Phase 1 — Loader, installer, persistence + headless MVP CLI 闭环（5–7 天）
 
@@ -1746,8 +1743,8 @@ Phase 1 内容（合并原 Phase 1 + Phase 2C 的最小子集）：
 
 Validation：
 
-- `pnpm --filter @open-design/plugin-runtime test`（parser fixtures：pure SKILL.md、pure claude plugin、metadata-only open-design.json、三者组合、SKILL frontmatter mapping）。
-- `pnpm --filter @open-design/daemon test`。`pnpm guard`、`pnpm typecheck`。
+- `pnpm --filter @capydesign/plugin-runtime test`（parser fixtures：pure SKILL.md、pure claude plugin、metadata-only open-design.json、三者组合、SKILL frontmatter mapping）。
+- `pnpm --filter @capydesign/daemon test`。`pnpm guard`、`pnpm typecheck`。
 - **End-to-end headless smoke**（与 §12.5 walkthrough 等价）：`capt plugin install ./fixtures/sample-plugin` → `capt project create --plugin <id> --json` → `capt run start --project <pid> --plugin <id> --follow` → `capt files read <pid> <artifact>`。要求 produced artifact bytes 与同一插件在 Phase 2A UI 流程下产出**完全相同**。
 - **Apply 纯净性 smoke：** 仅 `capt plugin apply <id>` 后取消 send，project cwd 无 staged assets、无 `.mcp.json`、`applied_plugin_snapshots` 行存在但未被任何 run/project 引用。
 
@@ -1783,7 +1780,7 @@ Validation：e2e in `e2e/`：
 
 (c) `capt plugin replay <runId> --snapshot-id <snapshotId>` 即使在源 plugin 已被 `capt plugin upgrade <id>` 升级后，仍返回与原 run **完全一致的不可变 snapshot 与 rerun bundle**；调用方随后显式重新 apply 并 start run。
 
-(d) Web API-fallback mode（OD daemon 关闭、浏览器直连 provider）下，UI 中 inline rail 渲染 plugin 卡片但点击「Use」时弹出 daemon-required 提示；daemon 启动后再点击恢复正常。
+(d) Web API-fallback mode（CapyDesign daemon 关闭、浏览器直连 provider）下，UI 中 inline rail 渲染 plugin 卡片但点击「Use」时弹出 daemon-required 提示；daemon 启动后再点击恢复正常。
 
 (e) Plugin 声明 `oauth-prompt` 与 `confirmation` 两种 surface：在 conversation A 完成后，conversation B 在同 project 内重新 apply 同插件，run 中 `oauth-prompt`（`persist=project`）走 cache；`confirmation`（`persist=run`）重新询问。`capt ui revoke` 后下一次 run 又重新询问 `oauth-prompt`。
 
@@ -1833,8 +1830,8 @@ Validation：从本地 mock marketplace.json 安装 plugin、rotate ref、uninst
 - **剩余 CLI parity：** `capt conversation list/new/info`、`capt skills/design-systems/craft/atoms list/show`、`capt status/doctor/version`、`capt config get/set/list`、`capt marketplace search`。这些基本都是纯 CLI 工作，endpoints 已存在或很轻量。
 - 可选：把 atoms 提取到 `skills/_official/<atom>/SKILL.md`。只在 Phases 1–3 稳定后做。
 - **§10.3.5 AG-UI 完整对齐：**
-  - 新 package `@open-design/agui-adapter`：把 OD 的 `PersistedAgentEvent` + `GenUIEvent` 双向映射到 AG-UI canonical events（`agent.message`、`tool_call`、`state_update`、`ui.surface_requested`、`ui.surface_responded`）。
-  - daemon 增加可选 `/api/runs/:runId/agui` SSE 端点，输出 AG-UI canonical events，使 CopilotKit / 其他 AG-UI client 直接消费 OD run。
+  - 新 package `@capydesign/agui-adapter`：把 CapyDesign 的 `PersistedAgentEvent` + `GenUIEvent` 双向映射到 AG-UI canonical events（`agent.message`、`tool_call`、`state_update`、`ui.surface_requested`、`ui.surface_responded`）。
+  - daemon 增加可选 `/api/runs/:runId/agui` SSE 端点，输出 AG-UI canonical events，使 CopilotKit / 其他 AG-UI client 直接消费 CapyDesign run。
   - Plugin manifest 升级允许 `od.genui.surfaces[].component`：相对路径指向 plugin 内 React 组件（capability gate `genui:custom-component`），由 desktop / web renderer 在 sandbox 中加载。
   - Open-Ended (MCP-Apps / Open-JSON) 模式：让 plugin 通过 MCP server 推送任意 JSON UI tree，desktop / web 以受限 schema 渲染。
 
@@ -1863,7 +1860,7 @@ Validation：
 
 ### 17.1 最小可行插件（只有 SKILL.md）
 
-OD 通过 [`skills-protocol.md`](skills-protocol.md) 中现有 `od:` frontmatter loader 把它当作插件读取。不需要 `open-design.json`：这个插件缺少 marketplace polish，但完全可运行。
+CapyDesign 通过 [`skills-protocol.md`](skills-protocol.md) 中现有 `od:` frontmatter loader 把它当作插件读取。不需要 `open-design.json`：这个插件缺少 marketplace polish，但完全可运行。
 
 ```
 my-plugin/
@@ -1882,7 +1879,7 @@ od:
 Workflow steps...
 ```
 
-### 17.2 Enriched plugin（可跨目录发布，完整 OD 产品表面）
+### 17.2 Enriched plugin（可跨目录发布，完整 CapyDesign 产品表面）
 
 ```
 my-plugin/
@@ -1918,11 +1915,11 @@ installer 会把 nested skills/design-systems/craft fan out 到 registry 的 nam
 
 | Risk | Mitigation |
 | --- | --- |
-| OD plugin schema 与更广义 skill spec 发生 drift | `open-design.json` 仅为 sidecar；永不修改 SKILL.md。CI against public anthropics/skills repo。 |
+| CapyDesign plugin schema 与更广义 skill spec 发生 drift | `open-design.json` 仅为 sidecar；永不修改 SKILL.md。CI against public anthropics/skills repo。 |
 | 任意 GitHub install = supply-chain risk | 默认 `restricted`；bash/hooks/MCP 前必须 capability prompt；记录 pinned-ref。 |
 | `composeSystemPrompt()` 已经超过 200 行 | `## Active plugin` block 追加在现有位置；不重排 layers。 |
 | ExamplesTab 与 Marketplace overlap | Phase 2 保持 ExamplesTab；Phase 3 折叠为 Marketplace 的「Local skills」tab。 |
-| Atoms-as-plugins 范围大 | Entry slice 已落地：bundled atom SKILL.md bodies 与 `renderActiveStageBlock()` 已存在；OD 基础 designer/discovery prompt 仍留在 daemon code，等待 §23 剩余迁移完成。 |
+| Atoms-as-plugins 范围大 | Entry slice 已落地：bundled atom SKILL.md bodies 与 `renderActiveStageBlock()` 已存在；CapyDesign 基础 designer/discovery prompt 仍留在 daemon code，等待 §23 剩余迁移完成。 |
 | Project-local plugins 被提交到用户 repo | 仅发现 `<projectCwd>/.open-design/plugins/`；通过 `capt plugin install --project` opt-in。 |
 | Trust model 让 community plugins 默认半功能 | 详情页提供清晰 capability checklist 与一键「Grant all」；restricted 行为显式，不静默。 |
 | 插件自带 MCP servers 可能无法启动 | `capt plugin doctor` dry-launch declared MCP commands；在「Use」前暴露失败。 |
@@ -1934,7 +1931,7 @@ installer 会把 nested skills/design-systems/craft fan out 到 registry 的 nam
 | Sovereign-cloud customers（阿里云 / 腾讯云 / 华为云）需要 provider-specific secret + storage integrations | S3-compatible adapter 覆盖三者的 blob storage（Phase 5）；env-var secrets 各云都可用；cloud-specific KMS integrations post-v1。 |
 | Multi-cloud testing matrix 太大 | Phase 5 先发布一个 canonical compose smoke（单云），再逐步加云；per-cloud one-click templates 放在 `open-design/deploy` 独立演进（§15.5）。 |
 | 恶意 plugin 通过 GenUI surface 钓鱼用户敏感信息 | `od.genui.surfaces[]` schema 必须列入 manifest 并由 `capt plugin doctor` 校验；运行时拒绝未声明 surface kind / surface id；`oauth-prompt` 与 `confirmation` 的 issuer / capability 信息显示「来自 plugin <id>，由 marketplace <id> 验证」；restricted 插件触发 `oauth-prompt` 前还需要 `network` capability 显式 grant（§9）。 |
-| AG-UI 协议生态可能演进，OD 自有 wire-format 与 AG-UI canonical 漂移 | OD-native `GenUIEvent` 仍是内部 source of truth；`@open-design/agui-adapter` 是外部投影层，因此 upstream 协议升级不绑死 daemon 或 web renderer release cadence。 |
+| AG-UI 协议生态可能演进，CapyDesign 自有 wire-format 与 AG-UI canonical 漂移 | CapyDesign-native `GenUIEvent` 仍是内部 source of truth；`@capydesign/agui-adapter` 是外部投影层，因此 upstream 协议升级不绑死 daemon 或 web renderer release cadence。 |
 | `genui_surfaces` 表 跨 conversation 复用导致用户「忘记自己授过权」 | UI 的 `GenUIInbox`、CLI 的 `capt ui list --project <id>` 必须列出所有 `persist=project` 的 resolved row 与 revoke 入口；hosted mode 提供 `OD_GENUI_PROJECT_TTL_DAYS` 让 operator 设置默认过期；revoke 操作写 audit 日志。 |
 
 落代码前值得确认的开放问题：
@@ -1952,11 +1949,11 @@ installer 会把 nested skills/design-systems/craft fan out 到 registry 的 nam
 - **`od.taskKind` 是否成为 marketplace 一等过滤维度**：现有 `kind` / `mode` / `scenario` 是否需要为新增的 `taskKind` 重排 UI filter？（默认：marketplace 顶部增加 `taskKind` tab；现有 filter 保留为二级。）
 - ~~**`od.genui.surfaces[].component` 是否进 v1**~~：**已作为 gated extension path 解决。** Manifest schema 接受该字段，`capt plugin doctor` 校验 `genui:custom-component` 与 path traversal；内置 `form` / `choice` / `confirmation` / `oauth-prompt` renderer 仍是主产品默认。
 - **GenUI persisted state 与 `AppliedPluginSnapshot` 的耦合**：当 plugin 升级且 `surface.schema` 变了，旧 row 自动 `invalidated`；但是否要同时**强制重新 apply** plugin（生成新 `AppliedPluginSnapshot`），还是允许仅 surface 失效、其余 snapshot 不变？（默认：仅 surface 失效；`capt plugin doctor` 提示 schema drift；replay 仍走旧 snapshot。）
-- ~~**AG-UI 协议引入时机**~~：**已解决。** `@open-design/agui-adapter` 与 `GET /api/runs/:runId/agui` 已作为可选互操作表面交付；OD-native GenUI 仍是内部 renderer，CopilotKit 不是主产品必需依赖。
+- ~~**AG-UI 协议引入时机**~~：**已解决。** `@capydesign/agui-adapter` 与 `GET /api/runs/:runId/agui` 已作为可选互操作表面交付；CapyDesign-native GenUI 仍是内部 renderer，CopilotKit 不是主产品必需依赖。
 
-## 19. 为什么这是 OpenDesign 的重要一步
+## 19. 为什么这是 CapyDesign 的重要一步
 
-- **继承供给。** `anthropics/skills`、`awesome-agent-skills`、`clawhub`、`skills.sh` 上的每个 public agent skill，只需一个可选 `open-design.json` 就能成为 OD 插件；反过来，每个 OD 插件也能不经修改发布到这些 catalog。
+- **继承供给。** `anthropics/skills`、`awesome-agent-skills`、`clawhub`、`skills.sh` 上的每个 public agent skill，只需一个可选 `open-design.json` 就能成为 CapyDesign 插件；反过来，每个 CapyDesign 插件也能不经修改发布到这些 catalog。
 - **边界干净。** 新代码落在两个 pure-TS packages（`packages/plugin-runtime`、`packages/contracts/src/plugins/*`）和一个 daemon module group（`apps/daemon/src/plugins/`）；无跨 app coupling，无 contracts package leaks，无 SKILL.md fork。遵守根 [`AGENTS.md`](../AGENTS.md) 的约束。
 - **可逆重构。** 现有 loaders（[`apps/daemon/src/skills.ts`](../apps/daemon/src/skills.ts) 等）与 `composeSystemPrompt()` 保持 public shape；Phase 1 是 drop-in delegate，Phase 2 只**追加** prompt block。
 - **CLI 从 day 1 存在。** 每个新 endpoint 都有对应 `capt plugin …` subcommand，因此同一 surface 可被任何 code agent 访问，不依赖 desktop app。
@@ -1973,7 +1970,7 @@ installer 会把 nested skills/design-systems/craft fan out 到 registry 的 nam
 | Field | 含义 | 初始取值 |
 | --- | --- | --- |
 | `artifactKind` | 这个 artifact 作为产品对象是什么 | `html-prototype`, `deck`, `interactive-video`, `design-system`, `code-diff`, `production-app`, `asset-pack` |
-| `renderKind` | OD 应该如何 preview 或打开它 | `html`, `jsx`, `pptx`, `markdown`, `video`, `image`, `diff`, `repo` |
+| `renderKind` | CapyDesign 应该如何 preview 或打开它 | `html`, `jsx`, `pptx`, `markdown`, `video`, `image`, `diff`, `repo` |
 | `handoffKind` | 它对下游交付承诺到什么程度 | `design-only`, `implementation-plan`, `patch`, `deployable-app` |
 
 §11.5.1 的 v1 `ArtifactManifest` 扩展已经预留这些 optional 字段。v1 producer 可以保守推断；v1 consumer 必须 preserve 未知值。这样后续阶段不需要依赖文件名 sniffing（`index.html`、`slides.json`、`diff.patch`），也不需要把 export 与 handoff 决策硬塞进 `od.mode`。
@@ -2007,7 +2004,7 @@ runtime 现在只会在 diff review 接受、build 与 tests 都通过、并且�
 
 本节是对 §1 已声明的四个产品场景（"Four product scenarios"：`new-generation` / `code-migration` / `figma-migration` / `tune-collab`）与当前实现之间的**诚实对账**。它保留最初的 v1 baseline，同时记录后来 Phase 6–8 的 entry slice，避免把历史 rollout 文案误读成当前 runtime 状态。
 
-为方便阅读，这里把 OD 产品锁定的"四个核心 agent-native 设计问题"重申一次：
+为方便阅读，这里把 CapyDesign 产品锁定的"四个核心 agent-native 设计问题"重申一次：
 
 1. **存量 Figma → HTML / artifact 迁移**，并基于代码做调优、设计体系一致性、协作。
 2. **存量代码库刷新** —— 让旧仓库变得"更好看"且 patch-safe。
@@ -2033,7 +2030,7 @@ runtime 现在只会在 diff review 接受、build 与 tests 都通过、并且�
 2. **`od.pipeline` + devloop 收敛**（§10.1，§10.2）。`repeat: true` + `until` 是场景 1、2、3 共用的收敛机制：场景 3 收敛在 critique 评分，场景 1 收敛在 token-map 保真度，场景 2 收敛在 `build-test` 通过。同一个 loop primitive 跑三个场景，差异仅在 `until` 信号。
 3. **GenUI 跨对话持久化状态**（§10.3，§11.4 `genui_surfaces` 表）。一次性 Figma OAuth、品牌确认、目标技术栈确认、direction pick 都在 `project` / `conversation` / `run` 层级被记住，并在后续多轮对话中复用。场景 1（Figma OAuth）和场景 2（目标栈确认）依赖这条；没有它，每次新对话都重新追问，体验直接崩塌。
 4. **`AppliedPluginSnapshot` 不可变 + 重放**（§8.2.1）。跨 plugin 升级的可重放性是场景 1、2 半年后仍可审计的关键 —— "哪个 figma 文件 → 哪个 token map → 哪个生成的 diff" 可以从一行 snapshot 完整复现。场景 3 受益较小，但成本为零。
-5. **CLI-first headless 模式**（§11.7，§14.3）。这是场景 4 最初的 v1 fallback，且今天仍受支持：OD 把 SKILL.md / DESIGN.md / craft / 生成 artifact 都 stage 到 project cwd，由 Cursor / Claude Code / Codex 在那个 cwd 内完成 patch。
+5. **CLI-first headless 模式**（§11.7，§14.3）。这是场景 4 最初的 v1 fallback，且今天仍受支持：CapyDesign 把 SKILL.md / DESIGN.md / craft / 生成 artifact 都 stage 到 project cwd，由 Cursor / Claude Code / Codex 在那个 cwd 内完成 patch。
 
 最初 v1 的 gap 与当前状态如下：
 
@@ -2057,7 +2054,7 @@ runtime 现在只会在 diff review 接受、build 与 tests 都通过、并且�
 **v1 后的实现状态：**
 
 - `figma-extract` 现在通过 REST 获取并遍历 Figma file，把 tree、tokens 与 assets 写入 run cwd。
-- `token-map` 现在可以把 Figma 或代码抽取出的 tokens 映射到 active OD design system。
+- `token-map` 现在可以把 Figma 或代码抽取出的 tokens 映射到 active CapyDesign design system。
 - `plugins/_official/scenarios/od-figma-migration/open-design.json` 提供 bundled reference pipeline。
 
 **为什么这是最初三个 gap 里最容易落地的：**
@@ -2088,7 +2085,7 @@ runtime 现在只会在 diff review 接受、build 与 tests 都通过、并且�
 - 输出是带 build evidence 的 repo patch；patch-safety 在关键路径上。
 - build 与 test 收敛已经 native；客观 visual-diff 收敛仍是独立的未来 evaluator。
 
-**最初的 v1 fallback（今天仍受支持，同时见 §21.5）：** OD 可以产出 `html-prototype` 或 `implementation-plan` artifact，再交给 Cursor / Claude Code 在用户 repo cwd 中 apply patch 并跑 build/test。Phase 7 增加了 native reference pipeline，但没有移除这条外部 agent 路径。
+**最初的 v1 fallback（今天仍受支持，同时见 §21.5）：** CapyDesign 可以产出 `html-prototype` 或 `implementation-plan` artifact，再交给 Cursor / Claude Code 在用户 repo cwd 中 apply patch 并跑 build/test。Phase 7 增加了 native reference pipeline，但没有移除这条外部 agent 路径。
 
 #### 21.3.3 场景 3：0→1 设计（`new-generation`）
 
@@ -2114,7 +2111,7 @@ runtime 现在只会在 diff review 接受、build 与 tests 都通过、并且�
 
 **v1 契约（锁定，详见 §21.5）：**
 
-- "设计 → 生产代码" 在 v1 是一个**双产品接力**：OD 拥有 design substrate（SKILL.md / DESIGN.md / craft / 生成 artifact 都被 stage 进 project cwd，加上 `capt files` 管理的 artifact 簿记）；用户原本的 code agent（Cursor / Claude Code / Codex / Gemini CLI）在用户的 repo cwd 内拥有真实 repo patch。
+- "设计 → 生产代码" 在 v1 是一个**双产品接力**：CapyDesign 拥有 design substrate（SKILL.md / DESIGN.md / craft / 生成 artifact 都被 stage 进 project cwd，加上 `capt files` 管理的 artifact 簿记）；用户原本的 code agent（Cursor / Claude Code / Codex / Gemini CLI）在用户的 repo cwd 内拥有真实 repo patch。
 - handoff 表面是 §14.3 的 headless pipeline，外加 `capt files read` / `capt files watch` 让 code agent 内联消费 artifacts。
 
 **entry slice 之外仍缺：**
@@ -2136,22 +2133,22 @@ runtime 现在只会在 diff review 接受、build 与 tests 都通过、并且�
 | 3 | §16 Phase 2B + Phase 3（已计划） | Marketplace 深页 UI + 联邦 trust | 在任何跨产品接力规范化之前先打通三方 plugin 分发 |
 | 4 | 新增 "Phase 6 — Figma 迁移 native 路径" | 实现 `figma-extract` 与 `token-map`，稳定后升级为一方 atom；发布官方 `figma-migration` plugin | 三个缺失场景里最容易；输入输出边界清晰；复用 GenUI OAuth + `parentArtifactId` 链，无需新 primitive |
 | 5 | 新增 "Phase 7 — 生产 handoff 契约（§20.3 §21.3.2）" | 实现 `code-import`、`design-extract`、`rewrite-plan`、`patch-edit`、`diff-review`、`build-test`；冻结目标技术栈契约；冻结 design-token mapping 契约 | 把场景 2 落成 native，并解锁场景 4 的 native 路径 |
-| 6 | 新增 "Phase 8 — 原生生产代码交付" | 在 OD 内部做 repo-aware 多文件 patch 编排；提供 native "review and apply" 表面；把 `handoffKind: 'deployable-app'` 从预留升格为实现 | 闭环场景 4 native 路径；依赖 Phase 7 |
+| 6 | 新增 "Phase 8 — 原生生产代码交付" | 在 CapyDesign 内部做 repo-aware 多文件 patch 编排；提供 native "review and apply" 表面；把 `handoffKind: 'deployable-app'` 从预留升格为实现 | 闭环场景 4 native 路径；依赖 Phase 7 |
 
 Phase 6、7、8 故意排在 §16 既有 Phase 5（云部署）之后，避免与 headless / Docker 稳定线索相互干扰。它们之间的内部顺序固定：7 必须先于 8；6 可与 7 并行，因为两个场景仅共享 `parentArtifactId` 链，不共享 atom 实现。
 
-### 21.5 OD ↔ code-agent 接力作为 v1 的生产代码路径
+### 21.5 CapyDesign ↔ code-agent 接力作为 v1 的生产代码路径
 
 在 Phase 6、7、8 落地之前，生产代码体验对用户而言走的是 §14.3 headless pipeline。本节把这个模式升格为 v1 的契约，使外部 code-agent 集成不需要重读 §14.3 就可以依赖它。
 
 契约锁定四点：
 
-1. **OD 把 design substrate stage 进 project cwd。** 按 §14.3，daemon 把 SKILL.md / DESIGN.md / craft 写入 staged skill-context directory，把生成 artifact 通过 `capt files` 写入 project cwd。cwd 通过 `capt project info <id> --json | jq -r .cwd` 可发现。
-2. **用户的 code agent 在该 cwd 或自己的 repo cwd 内操作。** OD 不在 IDE 里跑；它作为 daemon 与 IDE 并列。Cursor / Claude Code / Codex / Gemini CLI 是 patch-application 的表面。
-3. **簿记留在 OD。** `ArtifactManifest`（§11.5.1）记录 `sourcePluginSnapshotId`、`sourceTaskKind: 'tune-collab'`（Phase 7 落地后还有 `'code-migration'`）、`handoffKind: 'patch'`；`capt files` 记录每一字节的 artifact。哪怕 patch 由 code agent 完成，OD 仍是 audit log 的拥有者。
-4. **重新进入 OD 是 single-step。** 用户随时可以通过 inline rail（§8）或 `capt plugin apply ... --project <id>` 在同一个 project 上重新 apply 任意 plugin（或不同 plugin）。`parentArtifactId` 链（§11.5.1）跨越 OD ↔ code-agent 边界保留 lineage。
+1. **CapyDesign 把 design substrate stage 进 project cwd。** 按 §14.3，daemon 把 SKILL.md / DESIGN.md / craft 写入 staged skill-context directory，把生成 artifact 通过 `capt files` 写入 project cwd。cwd 通过 `capt project info <id> --json | jq -r .cwd` 可发现。
+2. **用户的 code agent 在该 cwd 或自己的 repo cwd 内操作。** CapyDesign 不在 IDE 里跑；它作为 daemon 与 IDE 并列。Cursor / Claude Code / Codex / Gemini CLI 是 patch-application 的表面。
+3. **簿记留在 CapyDesign。** `ArtifactManifest`（§11.5.1）记录 `sourcePluginSnapshotId`、`sourceTaskKind: 'tune-collab'`（Phase 7 落地后还有 `'code-migration'`）、`handoffKind: 'patch'`；`capt files` 记录每一字节的 artifact。哪怕 patch 由 code agent 完成，CapyDesign 仍是 audit log 的拥有者。
+4. **重新进入 CapyDesign 是 single-step。** 用户随时可以通过 inline rail（§8）或 `capt plugin apply ... --project <id>` 在同一个 project 上重新 apply 任意 plugin（或不同 plugin）。`parentArtifactId` 链（§11.5.1）跨越 CapyDesign ↔ code-agent 边界保留 lineage。
 
-这就是用户层面问题"v1 阶段我能不能用这套 plugin 体系交付业务代码？"的回答：**可以，但交付方式是 OD substrate + 外部 code-agent 接力，不是 OD native 一键**。Phase 8（§21.4）才是 native 一键交付的路径。
+这就是用户层面问题"v1 阶段我能不能用这套 plugin 体系交付业务代码？"的回答：**可以，但交付方式是 CapyDesign substrate + 外部 code-agent 接力，不是 CapyDesign native 一键**。Phase 8（§21.4）才是 native 一键交付的路径。
 
 ### 21.6 阅读契约
 
@@ -2159,7 +2156,7 @@ Phase 6、7、8 故意排在 §16 既有 Phase 5（云部署）之后，避免�
 
 ## 22. 作者扩展点：基于 v1 substrate 实现未交付场景
 
-§21 记录的是 v1 native 交付到哪。本节记录的是**开放性的另一半**：即便 v1 只为场景 3（`new-generation`）交付了完整的 native pipeline，第三方 plugin 作者今天就可以在 v1 substrate 上为场景 1、2、4 写出可运行的 plugin，**而不必等 §21.4 的 Phase 6 / 7 / 8 落地**。两半合起来 ——OD 一方交付（§21）+ substrate 给第三方的可达性（§22）—— 才能把"插件系统真的开放吗？"这个问题答成具体的"是"。
+§21 记录的是 v1 native 交付到哪。本节记录的是**开放性的另一半**：即便 v1 只为场景 3（`new-generation`）交付了完整的 native pipeline，第三方 plugin 作者今天就可以在 v1 substrate 上为场景 1、2、4 写出可运行的 plugin，**而不必等 §21.4 的 Phase 6 / 7 / 8 落地**。两半合起来 ——CapyDesign 一方交付（§21）+ substrate 给第三方的可达性（§22）—— 才能把"插件系统真的开放吗？"这个问题答成具体的"是"。
 
 ### 22.1 substrate 与 implementation
 
@@ -2176,9 +2173,9 @@ plugin 作者实际会用到的填补一方缺失的方式：
 
 | plugin 作者的需求 | v1 提供的对应 primitive | spec 出处 |
 | --- | --- | --- |
-| 调一个 OD 没有的工具（Figma REST、AST 解析、SVG 转换…） | 在 `od.context.mcp[]` 里捆绑一个 MCP server | §5 / §5.3（`mcp` + `subprocess` + `network`） |
+| 调一个 CapyDesign 没有的工具（Figma REST、AST 解析、SVG 转换…） | 在 `od.context.mcp[]` 里捆绑一个 MCP server | §5 / §5.3（`mcp` + `subprocess` + `network`） |
 | 调用第三方 API（Slack / Notion / GitHub / Figma / Drive） | `od.connectors.required[]`，借现有 Composio 子系统 | §5 / §9 / §10.3.1 `oauth.route='connector'` |
-| 在用户真实仓库上工作 | `capt project import <path>` 把 repo 装进 OD 的 project model；之后 `capt files` 与 agent 文件操作就地可用 | §12 / §11.7 / §14.3 |
+| 在用户真实仓库上工作 | `capt project import <path>` 把 repo 装进 CapyDesign 的 project model；之后 `capt files` 与 agent 文件操作就地可用 | §12 / §11.7 / §14.3 |
 | 跑任意 build / test / lint / 自定义脚本 | `bash` / `subprocess` capability | §5.3 |
 | 拉起一段第三方 OAuth | GenUI `oauth-prompt` surface，route=`connector` 或 `mcp` | §10.3.1 |
 | 自定义 HITL 表单 / 选项 / 确认 | GenUI `form` / `choice` / `confirmation` surface 声明 | §10.3 |
@@ -2188,7 +2185,7 @@ plugin 作者实际会用到的填补一方缺失的方式：
 | 半年后仍可重放 | `AppliedPluginSnapshot` 不可变 + `capt plugin replay` | §8.2.1 / §12 |
 | 教 agent 一整套领域工作流 | `SKILL.md` body 注入 prompt + `od.context.assets[]` 携带例子 | §11.3 `composeSystemPrompt()` |
 
-总结成一条规则：**OD 一方 atom 缺位 → plugin 作者用 `MCP server + bash + SKILL.md` 三件套替代**。代价是 ergonomics（每个 plugin 各自重新发明命名和 prompt fragment），不是能力。
+总结成一条规则：**CapyDesign 一方 atom 缺位 → plugin 作者用 `MCP server + bash + SKILL.md` 三件套替代**。代价是 ergonomics（每个 plugin 各自重新发明命名和 prompt fragment），不是能力。
 
 ### 22.3 真实例子
 
@@ -2232,7 +2229,7 @@ manifest 草图：
 }
 ```
 
-配套 SKILL.md 教 agent："收到 figma URL → 调 `figma-rest.get_file` → 遍历 node tree → 读 active design system 的 DESIGN.md → 在 cwd 里写 HTML，保留 figma 布局但用 DESIGN.md 的 token → live-artifact 预览 → critique 循环"。**不需要等 OD 实现 `figma-extract` / `token-map`**；它们只是把 SKILL.md 的指令压成可复用的 prompt fragment。
+配套 SKILL.md 教 agent："收到 figma URL → 调 `figma-rest.get_file` → 遍历 node tree → 读 active design system 的 DESIGN.md → 在 cwd 里写 HTML，保留 figma 布局但用 DESIGN.md 的 token → live-artifact 预览 → critique 循环"。**不需要等 CapyDesign 实现 `figma-extract` / `token-map`**；它们只是把 SKILL.md 的指令压成可复用的 prompt fragment。
 
 #### 22.3.2 不依赖一方 `code-import` / `rewrite-plan` / `build-test` 的代码库刷新 plugin
 
@@ -2253,15 +2250,15 @@ manifest 声明 `bash` + `subprocess` + `fs:write`；SKILL.md 引导 agent：
 
 两个 gap 都被 Phase 7 修复 —— 把 `build-test` 与 `diff-review` 升格为一方 atom，附带它们各自的 pipeline 与 surface 语义；同时 §22.4 limit-1 的 patch 让 `until` 接受 atom 自带的命名信号。
 
-#### 22.3.3 通过 OD ↔ code-agent 接力实现 设计→生产代码
+#### 22.3.3 通过 CapyDesign ↔ code-agent 接力实现 设计→生产代码
 
-plugin 作者在 v1 不应该试图把整段 handoff 都在 OD 内部完成。正确的形态是：
+plugin 作者在 v1 不应该试图把整段 handoff 都在 CapyDesign 内部完成。正确的形态是：
 
 - plugin 在 project cwd 里产出 `artifactKind: 'code-diff'` + `handoffKind: 'patch'` 的 artifact。
 - 最后一个 stage 触发一个 `confirmation` GenUI surface："准备 apply 吗？把 project cwd 在 Cursor / Claude Code / Codex 中打开，按附带的指令执行。"
 - `capt files` 留下 audit；`parentArtifactId` 把 patch artifact 接到 design artifact 上。
 
-这就是 §21.5 的契约；plugin 作者写 SKILL.md 引导 agent 产出 handoff 形态的 artifact，到 OD 内部跑 patch 这一步就此打住。
+这就是 §21.5 的契约；plugin 作者写 SKILL.md 引导 agent 产出 handoff 形态的 artifact，到 CapyDesign 内部跑 patch 这一步就此打住。
 
 ### 22.4 substrate 级硬限制（plugin 作者绕不开）
 
@@ -2284,15 +2281,15 @@ plugin 作者在 v1 不应该试图把整段 handoff 都在 OD 内部完成。�
 
 这就是 spec 保持诚实的方式：缺一方 atom 永远不是永久 gap，只是社区工作还没被蒸馏的"晋升前"状态。
 
-## 23. 自举：把 OD 自己的硬流程做成一方 plugin
+## 23. 自举：把 CapyDesign 自己的硬流程做成一方 plugin
 
-§22 确立了**第三方** plugin 在 v1 substrate 上的可扩展性。本节确立对称性质：**OD 自己写死的流程也可以被重新表达为运行在同一份 substrate 上的一方 plugin**，没有任何只有 OD 能用、第三方触不到的特权路径。plugin substrate 是真正的"地板"，OD-the-product 只是它上面的一种配置。
+§22 确立了**第三方** plugin 在 v1 substrate 上的可扩展性。本节确立对称性质：**CapyDesign 自己写死的流程也可以被重新表达为运行在同一份 substrate 上的一方 plugin**，没有任何只有 CapyDesign 能用、第三方触不到的特权路径。plugin substrate 是真正的"地板"，CapyDesign-the-product 只是它上面的一种配置。
 
 §10.2 最初为 atom 暗示了这条路径；当前实现已经落下 entry slice。Bundled atom plugins 位于 `plugins/_official/atoms/**`，bundled scenario plugins 位于 `plugins/_official/scenarios/**`，active stage blocks 已经可以从 atom bodies 渲染。本节继续明确 kernel/userspace 边界，并记录在 prompt 与入口选择完全自举前还剩什么。
 
 ### 23.1 kernel/userspace 边界
 
-OD 今天做的事可以归到三类：
+CapyDesign 今天做的事可以归到三类：
 
 | 类别 | 自举之后住在哪里 | 今天 daemon 里的例子 |
 | --- | --- | --- |
@@ -2313,9 +2310,9 @@ C 类是 v1 已交付的那一半；A 类的第一批也已经移动。截至本
 - 驱动 §1 产品 brief 里"一致性"的 active design system + craft 注入，已经是 plugin substrate 的读：一方 DESIGN.md 没有比第三方 DESIGN.md 多任何特权路径。
 - `plugins/_official/atoms/**` 下的一方 atom plugins 已经携带 atom SKILL.md body 与 manifest metadata；`packages/contracts/src/prompts/atom-block.ts` 可以从这些 bodies 渲染 active stage blocks。
 - `plugins/_official/scenarios/**` 下的 bundled scenario plugins 已经携带默认 pipeline 形态，其中包括用于 Home 自由输入 routing / task shaping 的 `od-default`。`packages/plugin-runtime/src/pipeline-fallback.ts` 会在 plugin 省略 `od.pipeline` 时，通过这些 bundled scenarios 解析 applied pipeline。
-- `@open-design/agui-adapter` 与 `/api/runs/:runId/agui` 提供外部 AG-UI event projection，同时不改变 OD 内部 GenUI renderer。
+- `@capydesign/agui-adapter` 与 `/api/runs/:runId/agui` 提供外部 AG-UI event projection，同时不改变 CapyDesign 内部 GenUI renderer。
 
-这就是 §22 成立的原因：substrate 已经在 plugin artifacts、snapshots、GenUI declarations、pipeline declarations、bundled scenarios 与第一条 atom-body injection path 上自举。剩余硬编码部分更窄，也更偏产品入口：OD 基础 designer/discovery prompt、部分 stage-entry 选择逻辑、Home curated scenario rail，以及 §22.4 中列出的封闭 signal / surface 词汇表。
+这就是 §22 成立的原因：substrate 已经在 plugin artifacts、snapshots、GenUI declarations、pipeline declarations、bundled scenarios 与第一条 atom-body injection path 上自举。剩余硬编码部分更窄，也更偏产品入口：CapyDesign 基础 designer/discovery prompt、部分 stage-entry 选择逻辑、Home curated scenario rail，以及 §22.4 中列出的封闭 signal / surface 词汇表。
 
 ### 23.3 v1 还在硬编码的部分（完成自举要做的工作）
 
@@ -2348,7 +2345,7 @@ Bundled scenario plugins 与 pipeline fallback resolver 现在已经存在。剩
 
 每个 plugin 只 ship 一个 `od.pipeline` 加（可选）一些 scenario 默认的 `od.genui.surfaces[]`。daemon 解析变成："没传 `od.pipeline` + 有 `taskKind` → 查匹配 `taskKind` 的 bundled scenario plugin → 用它的 `od.pipeline`"。
 
-这条 patch 之后，**替换或 fork `od-new-generation`** 是 ship 一个不同 OD 风味产品的标准做法。
+这条 patch 之后，**替换或 fork `od-new-generation`** 是 ship 一个不同 CapyDesign 风味产品的标准做法。
 
 #### 23.3.4 Patch 4 —— 新的 `bundled` trust 等级
 
@@ -2400,9 +2397,9 @@ function composeSystemPrompt(input: PromptInput): string {
 
 3 条具体收益足以证明这套 patch 序列值得做：
 
-1. **审计 surface 收敛**。所有进入 agent 系统 prompt 的字节都从 plugin manifest + SKILL.md 可达。读 `plugins/_official/...` 就能完整回答"OD 今天在指挥 agent 干什么"，不需要 grep 代码。
+1. **审计 surface 收敛**。所有进入 agent 系统 prompt 的字节都从 plugin manifest + SKILL.md 可达。读 `plugins/_official/...` 就能完整回答"CapyDesign 今天在指挥 agent 干什么"，不需要 grep 代码。
 2. **风味可替换**。企业部署、行业版本（地产 / 游戏 / 法律 / 财报）、伙伴集成可以替换自己的 `plugins/_official/scenarios/od-<taskKind>` 而不需要 fork daemon。产品风味（discovery 提问风格、critique 维度、默认 pipeline 形态）从代码关切变成内容关切。
-3. **一方工作走的是和第三方一样的路径**。OD 落 Phase 6 / 7 / 8（§21.4）的时候，那些场景就是住进 `plugins/_official/scenarios/` 的一方 plugin，跑的是任何社区 plugin 都在跑的 loader / resolver / snapshot / GenUI runtime。如果一方撞 ergonomics 墙，第三方撞得只会更狠 —— 这是最强的 dogfooding 压力来源。
+3. **一方工作走的是和第三方一样的路径**。CapyDesign 落 Phase 6 / 7 / 8（§21.4）的时候，那些场景就是住进 `plugins/_official/scenarios/` 的一方 plugin，跑的是任何社区 plugin 都在跑的 loader / resolver / snapshot / GenUI runtime。如果一方撞 ergonomics 墙，第三方撞得只会更狠 —— 这是最强的 dogfooding 压力来源。
 
 ### 23.6 与 §21、§22 的关系
 
@@ -2410,9 +2407,9 @@ function composeSystemPrompt(input: PromptInput): string {
 
 | 章节 | 回答的问题 | 受众 |
 | --- | --- | --- |
-| §21 | OD 在 v1 里 native 交付了什么？哪些场景是 covered / partial / post-v1？ | 计划 §16 分阶段交付的 maintainer |
-| §22 | 不等 OD 多 ship native atom，第三方 plugin 作者在 v1 substrate 上能走多远？ | 评估这套平台的 plugin 作者与集成方 |
-| §23 | OD 自己的硬流程能不能在 plugin substrate 内重新表达？kernel 边界在哪？ | 确保没有特权后门的架构师与 reviewer |
+| §21 | CapyDesign 在 v1 里 native 交付了什么？哪些场景是 covered / partial / post-v1？ | 计划 §16 分阶段交付的 maintainer |
+| §22 | 不等 CapyDesign 多 ship native atom，第三方 plugin 作者在 v1 substrate 上能走多远？ | 评估这套平台的 plugin 作者与集成方 |
+| §23 | CapyDesign 自己的硬流程能不能在 plugin substrate 内重新表达？kernel 边界在哪？ | 确保没有特权后门的架构师与 reviewer |
 
 未来 spec patch 在新增 atoms、evaluators、scenarios 或 kernel 责任时，必须在同一次 patch 中更新对应章节。§21 记录已交付的内容，§22 记录从外部可达的内容，§23 记录从内部可达的内容；三节合起来构成 spec 的 openness contract。
 

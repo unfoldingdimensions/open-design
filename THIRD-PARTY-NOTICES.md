@@ -1,11 +1,11 @@
 # Third-Party Notices
 
-CaptDesign is a derivative work of Open Design
+CapyDesign is a derivative work of Open Design
 (https://github.com/nexu-io/open-design), Copyright 2026 Open Design
 contributors, licensed under the Apache License 2.0. See NOTICE.
 
-CaptDesign's own source is licensed under Apache-2.0 (see LICENSE).
-The components below are bundled with CaptDesign and remain under their own
+CapyDesign's own source is licensed under Apache-2.0 (see LICENSE).
+The components below are bundled with CapyDesign and remain under their own
 licenses; the copyright in each belongs to the holder named. Where a bundled
 `LICENSE` file states the holder, it is quoted verbatim. The machine-readable
 inventory of every bundled license file is
@@ -27,7 +27,7 @@ bundled license directory below stops being named here.
   `apps/web/public/fonts/JiduMonoPro-Regular.otf` was a commercial CoType
   Foundry face (Copyright (c) 2020 CoType Foundry. All Rights Reserved) with
   no redistribution license; it was deleted (workstream WS2, md5
-  `207e55ed70d71a2deb9c6516f75c2d4a`) and must not ship in any CaptDesign
+  `207e55ed70d71a2deb9c6516f75c2d4a`) and must not ship in any CapyDesign
   distribution. The guard check fails if the file reappears, and
   `apps/web/tests/styles/bundled-fonts.test.ts` fences its name-table string
   and source references, so its return cannot regress silently.
@@ -41,7 +41,7 @@ bundled license directory below stops being named here.
   https://remixicon.com). The license notice is retained in the CSS header at
   `apps/web/src/styles/remixicon/remixicon.css:1-9`. Note the license's §3.3
   (icons must not be used as a logo or brand mark) and §4.2 (brand icons carry
-  their owners' trademarks): CaptDesign's own icon and brand marks must not be
+  their owners' trademarks): CapyDesign's own icon and brand marks must not be
   derived from this set.
 
 ## Design templates (MIT unless noted)
@@ -237,7 +237,7 @@ grants nothing):
 ## Design system references
 
 `design-systems/` contains 154 design-reference packages. The `DESIGN.md`
-documents are original analysis written for this project and are CaptDesign's
+documents are original analysis written for this project and are CapyDesign's
 under Apache-2.0 — but 19 of the packages describe real third-party brands
 (`design-systems/airbnb/`, `design-systems/apple/`, `design-systems/nike/`,
 `design-systems/tesla/`, `design-systems/meta/`, `design-systems/ferrari/`,
@@ -249,9 +249,9 @@ under Apache-2.0 — but 19 of the packages describe real third-party brands
 `design-systems/bmw-m/`), and the brand names, logos, and trade dress they
 describe are their owners' trademarks. These packages are design *references*
 for internal use as a starting point: they grant no trademark right, and
-CaptDesign is not affiliated with or endorsed by any of the named brands. For
+CapyDesign is not affiliated with or endorsed by any of the named brands. For
 example `design-systems/airbnb/components.html` renders an `airbnb` wordmark —
-do not lift it into CaptDesign's own brand or UI.
+do not lift it into CapyDesign's own brand or UI.
 
 Two reference docs name proprietary typefaces that are described, not shipped:
 `design-systems/airbnb/DESIGN.md` (Airbnb Cereal VF, with an explicit note

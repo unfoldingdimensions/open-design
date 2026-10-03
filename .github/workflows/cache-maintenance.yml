@@ -47,7 +47,7 @@ jobs:
           save-pnpm-cache: 'true'
 
   clean-closed-pr-buildkit:
-    if: github.event_name == 'pull_request_target' && github.repository == 'nexu-io/open-design'
+    if: github.event_name == 'pull_request_target' && github.repository == 'unfoldingdimensions/open-design'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

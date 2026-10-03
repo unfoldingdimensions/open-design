@@ -9,7 +9,7 @@
 - **Node.js:** `~24`（Node 24.x）。リポジトリは `package.json#engines` を通じてこれを強制しています。
 - **pnpm:** `10.33.x`。リポジトリは `packageManager` を通じて `pnpm@10.33.2` をピン留めしています。Corepack を使用すれば、ピン留めされたバージョンが自動的に選択されます。
 - **OS:** macOS、Linux、WSL2 が主要なパスです。Windows ネイティブはほとんどのフローで動作するはずですが、WSL2 のほうが安全なベースラインです。
-- **オプションのローカルエージェント CLI:** OpenDesign は、Claude Code、Codex、Devin for Terminal、OpenCode、Cursor Agent、Qwen、Qoder CLI、GitHub Copilot CLI などのローカルランタイムをレジストリで管理しています。現在の一覧は [`apps/daemon/src/runtimes/registry.ts`](../../apps/daemon/src/runtimes/registry.ts) にあります。何もインストールされていない場合は、Settings で設定した BYOK ランタイムを使用してください。
+- **オプションのローカルエージェント CLI:** CapyDesign は、Claude Code、Codex、Devin for Terminal、OpenCode、Cursor Agent、Qwen、Qoder CLI、GitHub Copilot CLI などのローカルランタイムをレジストリで管理しています。現在の一覧は [`apps/daemon/src/runtimes/registry.ts`](../../apps/daemon/src/runtimes/registry.ts) にあります。何もインストールされていない場合は、Settings で設定した BYOK ランタイムを使用してください。
 
 `nvm` / `fnm` はオプションの便利なツールであり、必須のプロジェクトセットアップではありません。使用する場合は、pnpm を実行する前に Node 24 をインストール／選択してください。
 
@@ -63,8 +63,8 @@ pnpm tools-dev status          # 管理対象ランタイムを検査
 pnpm tools-dev logs            # daemon/web/desktop のログを表示
 pnpm tools-dev check           # status + 最近のログ + 一般的な診断
 pnpm tools-dev stop            # 管理対象ランタイムを停止
-pnpm --filter @open-design/daemon build  # `capt` 用に apps/daemon/dist/cli.js をビルド
-pnpm --filter @open-design/web build     # 必要に応じて web パッケージをビルド
+pnpm --filter @capydesign/daemon build  # `capt` 用に apps/daemon/dist/cli.js をビルド
+pnpm --filter @capydesign/web build     # 必要に応じて web パッケージをビルド
 pnpm typecheck                 # workspace の typecheck
 ```
 
@@ -74,7 +74,7 @@ pnpm typecheck                 # workspace の typecheck
 
 ## Docker セットアップ
 
-Node.js や pnpm をローカルにインストールせずに、完全にコンテナ化された環境で OpenDesign を実行できます。
+Node.js や pnpm をローカルにインストールせずに、完全にコンテナ化された環境で CapyDesign を実行できます。
 
 ### 必要条件
 
@@ -89,7 +89,7 @@ docker compose version
 
 ---
 
-## OpenDesign を起動
+## CapyDesign を起動
 
 リポジトリルートから：
 
@@ -217,13 +217,13 @@ Image、Video、Audio、HyperFrames スキルは、daemon がエージェント�
 メディア生成が `OD_BIN: parameter not set`、`apps/daemon/dist/cli.js` の欠落、または `failed to reach daemon at http://127.0.0.1:0` で失敗する場合は、daemon CLI を再ビルドして管理対象ランタイムを再起動してください：
 
 ```bash
-pnpm --filter @open-design/daemon build
+pnpm --filter @capydesign/daemon build
 pnpm tools-dev restart --daemon-port 7457 --web-port 5175
 ls -la apps/daemon/dist/cli.js
 curl -s http://127.0.0.1:7457/api/health
 ```
 
-その後、古いターミナルエージェントセッションを再開する代わりに、OpenDesign アプリからプロジェクトを再度開いてください。daemon から起動されたエージェントは、次のような値を確認できるはずです：
+その後、古いターミナルエージェントセッションを再開する代わりに、CapyDesign アプリからプロジェクトを再度開いてください。daemon から起動されたエージェントは、次のような値を確認できるはずです：
 
 ```bash
 echo "OD_BIN=$OD_BIN"
@@ -310,7 +310,7 @@ open-design/
 │   └── desktop/               # Electron ランタイム、tools-dev によって起動／検査される
 ├── packages/
 │   ├── contracts/             # 共有 web/daemon アプリ契約
-│   ├── sidecar-proto/         # OpenDesign sidecar プロトコル契約
+│   ├── sidecar-proto/         # CapyDesign sidecar プロトコル契約
 │   ├── sidecar/               # 汎用 sidecar ランタイムプリミティブ
 │   └── platform/              # 汎用プロセス／プラットフォームプリミティブ
 ├── tools/dev/                 # `pnpm tools-dev` ライフサイクルと inspect CLI
@@ -328,8 +328,8 @@ open-design/
 
 - **「no agents found on PATH」** — [`apps/daemon/src/runtimes/registry.ts`](../../apps/daemon/src/runtimes/registry.ts) に登録されているローカルランタイムのいずれかをインストールし、その実行ファイルが daemon から見えることを確認してから、**Settings → Execution mode** で **Rescan** を実行してください。または、Settings で BYOK ランタイムを設定します。
 - **/api/chat で daemon が 500 を返す** — daemon ターミナルで stderr の末尾を確認してください。通常は CLI が引数を拒否しています。CLI ごとに argv の形式が異なります。調整が必要な場合は `apps/daemon/src/runtimes/defs/` の対応する定義を参照してください。
-- **メディア生成で `OD_BIN` が欠落、または daemon URL が `:0`** — 上記のメディアディスパッチャーチェックを実行してください。古い CLI セッションを再開せず、OpenDesign アプリからプロジェクトを再度開いて、daemon が新しい `OD_*` 変数を注入できるようにしてください。
-- **Codex がプラグインコンテキストを多く読み込みすぎる** — `OD_CODEX_DISABLE_PLUGINS=1 pnpm tools-dev` で OpenDesign を起動すると、daemon から起動された Codex プロセスが `--disable plugins` で実行されます。
+- **メディア生成で `OD_BIN` が欠落、または daemon URL が `:0`** — 上記のメディアディスパッチャーチェックを実行してください。古い CLI セッションを再開せず、CapyDesign アプリからプロジェクトを再度開いて、daemon が新しい `OD_*` 変数を注入できるようにしてください。
+- **Codex がプラグインコンテキストを多く読み込みすぎる** — `OD_CODEX_DISABLE_PLUGINS=1 pnpm tools-dev` で CapyDesign を起動すると、daemon から起動された Codex プロセスが `--disable plugins` で実行されます。
 - **アーティファクトがレンダリングされない** — まず引き渡しプロファイルを確認します。ファイルシステム対応のローカルランタイムでは、プレビュー可能なプロジェクトファイルが作成され、ファイルイベントが daemon に届いたかを確認してください。ソースを `<artifact>` に入れる経路ではありません。plain／テキスト専用または BYOK 実行では、完全な `<artifact>` ブロックが 1 つあることを確認し、daemon ログで最初に失敗した境界を探します。
 
 ## ビジョンへのマッピング

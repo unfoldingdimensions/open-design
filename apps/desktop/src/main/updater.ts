@@ -68,6 +68,10 @@ import {
   readJsonStrict,
   writeJson,
 } from "./updater/support.js";
+
+const UPDATE_NOT_CONFIGURED_CODE = "update-not-configured";
+const UPDATE_NOT_CONFIGURED_MESSAGE =
+  "no update metadata URL is configured; set OD_UPDATE_METADATA_URL to enable update checks";
 import {
   artifactFileName,
   checksumMatchesCandidate,
@@ -460,9 +464,21 @@ export function createDesktopUpdater(
     enabled: config.enabled,
     metadataUrl: config.metadataUrl,
   });
+  if (config.metadataUrl == null) {
+    // Fail closed: with no configured feed there is nothing to check, and we must
+    // never fall back to a hardcoded release origin.
+    logUpdateEvent("update-not-configured", {
+      reason: "OD_UPDATE_METADATA_URL is unset",
+    });
+  }
 
   function supported(): boolean {
-    return config.enabled && config.mode === DESKTOP_UPDATE_MODES.PACKAGE_LAUNCHER && isSupportedPackageLauncherPlatform(config.platform);
+    return (
+      config.enabled &&
+      config.metadataUrl != null &&
+      config.mode === DESKTOP_UPDATE_MODES.PACKAGE_LAUNCHER &&
+      isSupportedPackageLauncherPlatform(config.platform)
+    );
   }
 
   function emit(): void {
@@ -545,6 +561,13 @@ export function createDesktopUpdater(
       );
     }
     return null;
+  }
+
+  function notConfiguredStatus(): DesktopUpdateStatusSnapshot {
+    return setState(
+      DESKTOP_UPDATE_STATES.UNSUPPORTED,
+      createError(UPDATE_NOT_CONFIGURED_CODE, UPDATE_NOT_CONFIGURED_MESSAGE),
+    );
   }
 
   async function openStore(): Promise<
@@ -733,6 +756,9 @@ export function createDesktopUpdater(
   async function checkForCandidate(options: ActionOptions = {}): Promise<DesktopUpdateStatusSnapshot> {
     const unsupported = unsupportedStatus();
     if (unsupported != null) return unsupported;
+    // Fail closed: no configured feed means no check, and therefore no network fetch.
+    const metadataUrl = config.metadataUrl;
+    if (metadataUrl == null) return notConfiguredStatus();
     if (installFrozen || installResult != null) return snapshot();
     if (state === DESKTOP_UPDATE_STATES.IDLE) {
       const restored = await restoreStoreStateOnce();
@@ -742,8 +768,8 @@ export function createDesktopUpdater(
     const keepDownloadedVisible = activeRelease != null;
     if (!keepDownloadedVisible) setState(DESKTOP_UPDATE_STATES.CHECKING);
     try {
-      logUpdateEvent("check-start", { metadataUrl: config.metadataUrl });
-      const body = await fetchJson(fetchImpl, config.metadataUrl);
+      logUpdateEvent("check-start", { metadataUrl });
+      const body = await fetchJson(fetchImpl, metadataUrl);
       lastCheckedAt = now().toISOString();
       metadata = body;
       const root = await writeMetadataPatch((current) => ({
@@ -1349,11 +1375,12 @@ export function createDesktopUpdater(
       }
     },
     installUpdate: () => serialized(installUpdate),
-    shouldAutoCheck: () => config.enabled && config.autoCheck,
+    shouldAutoCheck: () => config.enabled && config.autoCheck && config.metadataUrl != null,
     snapshot,
     async status() {
       const unsupported = unsupportedStatus();
       if (unsupported != null) return unsupported;
+      if (config.metadataUrl == null) return notConfiguredStatus();
       if (state === DESKTOP_UPDATE_STATES.IDLE) {
         const restored = await restoreStoreStateOnce();
         if (restored != null) return restored;

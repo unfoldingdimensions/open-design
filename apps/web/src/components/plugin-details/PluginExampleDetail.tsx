@@ -17,7 +17,6 @@ import {
   type SkillExampleResult,
 } from '../../providers/registry';
 import { PreviewModal, type PreviewSharePopoverItem } from '../PreviewModal';
-import { buildPluginShareUrl } from './PluginShareMenu';
 import { PluginMetaSections } from './PluginMetaSections';
 import { buildPluginUseMenu, pluginUsePrimaryAction } from './pluginUseMenu';
 import type { PluginUseAction } from '../plugins-home/useActions';
@@ -125,7 +124,8 @@ export function PluginExampleDetail({
       shareTarget={{
         title: localizedTitle,
         description: description || undefined,
-        url: buildPluginShareUrl(record),
+        // CapyDesign is local-only: there is no public plugin detail URL.
+        url: null,
       }}
       onClose={onClose}
       sidebar={{

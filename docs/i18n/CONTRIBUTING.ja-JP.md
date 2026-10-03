@@ -1,6 +1,6 @@
-# OpenDesign へのコントリビューション
+# CapyDesign へのコントリビューション
 
-コントリビューションを検討してくださりありがとうございます。OD は意図的に小さく保っています — 価値の大部分はフレームワークコードではなく**ファイル**（Skill、Design System、プロンプトフラグメント）にあります。そのため、最も効果の高いコントリビューションは通常、フォルダ 1 つ、Markdown ファイル 1 つ、または PR サイズの adapter です。
+コントリビューションを検討してくださりありがとうございます。CapyDesign は意図的に小さく保っています — 価値の大部分はフレームワークコードではなく**ファイル**（Skill、Design System、プロンプトフラグメント）にあります。そのため、最も効果の高いコントリビューションは通常、フォルダ 1 つ、Markdown ファイル 1 つ、または PR サイズの adapter です。
 
 このガイドでは、各種コントリビューションの対象場所と、PR がマージされるために満たすべき基準を正確に説明します。
 
@@ -12,9 +12,9 @@
 
 | やりたいこと | 実際に追加するもの | 配置場所 | 規模 |
 |---|---|---|---|
-| OD に新しい種類の artifact をレンダリングさせる（請求書、iOS Settings 画面、ワンページャー…） | **Design template** | [`design-templates/<your-template>/`](../../design-templates/) | `SKILL.md` とレンダリング asset を含むフォルダ 1 つ |
+| CapyDesign に新しい種類の artifact をレンダリングさせる（請求書、iOS Settings 画面、ワンページャー…） | **Design template** | [`design-templates/<your-template>/`](../../design-templates/) | `SKILL.md` とレンダリング asset を含むフォルダ 1 つ |
 | タスク中にエージェントが呼び出す機能を追加する | **Skill** | [`skills/<your-skill>/`](../../skills/) | `SKILL.md` とオプションのリソースを含むフォルダ 1 つ |
-| OD に新しいブランドのビジュアル言語を話させる | **Design System** | [`design-systems/<brand>/`](../../design-systems/) | 1 つのパッケージ：`manifest.json`、`DESIGN.md`、`tokens.css` |
+| CapyDesign に新しいブランドのビジュアル言語を話させる | **Design System** | [`design-systems/<brand>/`](../../design-systems/) | 1 つのパッケージ：`manifest.json`、`DESIGN.md`、`tokens.css` |
 | 新しい coding-agent CLI を接続する | **Agent adapter** | [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/runtimes/defs/) | 定義 1 つと registry entry 1 つ |
 | 機能追加、バグ修正、[`open-codesign`][ocod] から UX パターンを移植 | コード | `apps/web/src/`、`apps/daemon/` | 通常の PR |
 | ドキュメント改善、Français / Deutsch / 中文 への翻訳、タイポ修正 | ドキュメント | `README.md`、`README.fr.md`、`README.de.md`、`README.zh-CN.md`、`docs/`、`QUICKSTART.md` | PR 1 つ |
@@ -34,12 +34,12 @@ corepack enable           # packageManager で指定された pnpm を選択
 pnpm install
 pnpm tools-dev run web    # daemon + web フォアグラウンドループ
 pnpm typecheck            # tsc -b --noEmit
-pnpm --filter @open-design/web build  # 必要に応じて web パッケージをビルド
+pnpm --filter @capydesign/web build  # 必要に応じて web パッケージをビルド
 ```
 
 Node `~24` と pnpm `10.33.x` が必要です。`nvm` / `fnm` はオプション。使用する場合は `nvm install 24 && nvm use 24` または `fnm install 24 && fnm use 24` を実行してください。macOS、Linux、WSL2 が主要プラットフォームです。Windows ネイティブもサポートされています — 一般的なセットアップ時の落とし穴については [`docs/windows-troubleshooting.md`](../../docs/windows-troubleshooting.md) を参照してください。
 
-OD 自体の開発に agent CLI は `PATH` 上に不要です — daemon は「no agents found」と表示し、**Anthropic API · BYOK** パスにフォールバックします。このパスが最も高速な開発ループです。
+CapyDesign 自体の開発に agent CLI は `PATH` 上に不要です — daemon は「no agents found」と表示し、**Anthropic API · BYOK** パスにフォールバックします。このパスが最も高速な開発ループです。
 
 ---
 
@@ -64,7 +64,7 @@ design-templates/your-template/
 
 ### `SKILL.md` frontmatter
 
-最初の 3 キーは Claude Code のベース仕様 — `name`、`description`、`triggers`。`od:` 配下はすべて OD 固有のオプションですが、**`od.mode`** が template の表示グループ（Prototype / Deck / Template / Design system）を決定します。
+最初の 3 キーは Claude Code のベース仕様 — `name`、`description`、`triggers`。`od:` 配下はすべて CapyDesign 固有のオプションですが、**`od.mode`** が template の表示グループ（Prototype / Deck / Template / Design system）を決定します。
 
 ```yaml
 ---
@@ -263,7 +263,7 @@ CLA は求めません。Apache-2.0 でカバーされます。あなたのコ�
 
 プロジェクトの焦点を維持するため、以下のような PR は作成しないでください：
 
-- **モデルランタイムを vendor する。** OD の根幹は「あなたの既存 CLI で十分」です。`pi-ai`、OpenAI キー、モデルローダーは同梱しません。
+- **モデルランタイムを vendor する。** CapyDesign の根幹は「あなたの既存 CLI で十分」です。`pi-ai`、OpenAI キー、モデルローダーは同梱しません。
 - **事前の議論なくフロントエンドを現在のスタックから書き換える。** Next.js 16 App Router + React 18 + TS がラインです。メンテナが明示的にそのマイグレーションを望まない限り、Astro、Solid、Svelte、その他のフレームワークへの書き換えは不可。
 - **daemon をサーバーレス関数に置き換える。** daemon の存在意義は実際の `cwd` を所有し、実際の CLI を spawn することです。SPA の Vercel デプロイは OK。daemon は daemon のまま。
 - **プライバシー契約の外側でテレメトリや外部向けデータ収集を追加する。** プロダクト分析とマスク済みセッションリプレイは同意制で、構成済みビルドではスクラブ済みの安全性・信頼性テレメトリが常時有効です。新しいイベント、フィールド、送信先は [`PRIVACY.md`](../../PRIVACY.md) の同意・最小化・スクラブ境界を守る必要があります。
@@ -283,10 +283,9 @@ CLA は求めません。Apache-2.0 でカバーされます。あなたのコ�
 - **クォータ、SLAs、固定任期はありません。** ステップダウンは容易かつ可逆的です（Emeritus → 生活が落ち着いたら復帰）。
 - すべての閾値、推薦フロー、ステップダウンルール、初期プロジェクトの免除規定は [`MAINTAINERS.md`](../../MAINTAINERS.md) に記載されています。上記のいずれかに興味があれば、そのドキュメントを読んでください。
 
-tl;dr：良い PR を出し、丁寧にレビューし、[Discussions][discussions] / [Discord][discord] に顔を出していれば、あとは自然と道が開けます。
+tl;dr：良い PR を出し、丁寧にレビューし、[Discussions][discussions] に顔を出していれば、あとは自然と道が開けます。
 
 [discussions]: https://github.com/nexu-io/open-design/discussions
-[discord]: https://discord.gg/mHAjSMV6gz
 
 ---
 

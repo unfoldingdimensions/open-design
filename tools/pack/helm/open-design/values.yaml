@@ -14,7 +14,7 @@
 # persistence and secret-backend choices.
 
 image:
-  repository: ghcr.io/nexu-io/od
+  repository: ghcr.io/unfoldingdimensions/od
   tag: edge
   pullPolicy: IfNotPresent
 

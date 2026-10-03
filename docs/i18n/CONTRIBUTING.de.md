@@ -1,6 +1,6 @@
-# Zu OpenDesign beitragen
+# Zu CapyDesign beitragen
 
-Danke, dass Sie über einen Beitrag nachdenken. OD ist bewusst klein gehalten — der größte Teil des Werts steckt in **Dateien** (Skills, Designsysteme, Prompt-Fragmente) statt in Framework-Code. Die wirkungsvollsten Beiträge sind deshalb oft ein Ordner, eine Markdown-Datei oder ein PR-großer Adapter.
+Danke, dass Sie über einen Beitrag nachdenken. CapyDesign ist bewusst klein gehalten — der größte Teil des Werts steckt in **Dateien** (Skills, Designsysteme, Prompt-Fragmente) statt in Framework-Code. Die wirkungsvollsten Beiträge sind deshalb oft ein Ordner, eine Markdown-Datei oder ein PR-großer Adapter.
 
 Dieser Leitfaden zeigt, wo Sie für welche Art Beitrag suchen sollten und welche Messlatte ein PR vor dem Merge erfüllen muss.
 
@@ -12,9 +12,9 @@ Dieser Leitfaden zeigt, wo Sie für welche Art Beitrag suchen sollten und welche
 
 | Wenn Sie möchten… | Fügen Sie eigentlich hinzu | Ort | Umfang |
 |---|---|---|---|
-| OD eine neue Artifact-Art rendern lassen (Rechnung, iOS Settings Screen, One-Pager…) | ein **Design-Template** | [`design-templates/<your-template>/`](../../design-templates/) | ein Ordner mit `SKILL.md` und Render-Assets |
+| CapyDesign eine neue Artifact-Art rendern lassen (Rechnung, iOS Settings Screen, One-Pager…) | ein **Design-Template** | [`design-templates/<your-template>/`](../../design-templates/) | ein Ordner mit `SKILL.md` und Render-Assets |
 | Eine funktionale Fähigkeit ergänzen, die Agents während einer Aufgabe aufrufen | einen **Skill** | [`skills/<your-skill>/`](../../skills/) | ein Ordner mit `SKILL.md` und optionalen Ressourcen |
-| OD die visuelle Sprache einer neuen Marke sprechen lassen | ein **Design System** | [`design-systems/<brand>/`](../../design-systems/) | ein Paket: `manifest.json`, `DESIGN.md` und `tokens.css` |
+| CapyDesign die visuelle Sprache einer neuen Marke sprechen lassen | ein **Design System** | [`design-systems/<brand>/`](../../design-systems/) | ein Paket: `manifest.json`, `DESIGN.md` und `tokens.css` |
 | Eine neue coding-agent CLI anbinden | einen **Agent adapter** | [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/runtimes/defs/) | eine Definition plus Registry-Eintrag |
 | Feature ergänzen, Bug fixen, UX-Pattern aus [`open-codesign`][ocod] übernehmen | Code | `apps/web/src/`, `apps/daemon/` | normaler PR |
 | Dokumentation verbessern, Französisch / Deutsch / 中文 ergänzen, Tippfehler fixen | Dokumentation | `README.md`, `README.fr.md`, `README.de.md`, `README.zh-CN.md`, `docs/`, `QUICKSTART.md` | ein PR |
@@ -34,12 +34,12 @@ corepack enable           # wählt das gepinnte pnpm aus packageManager
 pnpm install
 pnpm tools-dev run web    # daemon + web foreground loop
 pnpm typecheck            # tsc -b --noEmit
-pnpm --filter @open-design/web build  # Web-Paket bei Bedarf bauen
+pnpm --filter @capydesign/web build  # Web-Paket bei Bedarf bauen
 ```
 
 Node `~24` und pnpm `10.33.x` sind erforderlich. `nvm` / `fnm` sind optional; nutzen Sie `nvm install 24 && nvm use 24` oder `fnm install 24 && fnm use 24`, wenn Sie Node so verwalten. macOS, Linux und WSL2 sind die primären Pfade. Windows nativ wird unterstützt; siehe [`docs/windows-troubleshooting.md`](../../docs/windows-troubleshooting.md) für die häufigsten Setup-Stolpersteine.
 
-Sie brauchen keine Agent-CLI im `PATH`, um OD selbst zu entwickeln. Der daemon meldet dann "no agents found" und fällt auf den **Anthropic API · BYOK** Pfad zurück, der oft die schnellste Dev-Schleife ist.
+Sie brauchen keine Agent-CLI im `PATH`, um CapyDesign selbst zu entwickeln. Der daemon meldet dann "no agents found" und fällt auf den **Anthropic API · BYOK** Pfad zurück, der oft die schnellste Dev-Schleife ist.
 
 ---
 
@@ -64,7 +64,7 @@ design-templates/your-template/
 
 ### `SKILL.md` Frontmatter
 
-Die ersten drei Keys sind die Claude Code Basis-Spec: `name`, `description`, `triggers`. Alles unter `od:` ist OD-spezifisch und optional, aber **`od.mode`** bestimmt, in welcher Gruppe das Template erscheint.
+Die ersten drei Keys sind die Claude Code Basis-Spec: `name`, `description`, `triggers`. Alles unter `od:` ist CapyDesign-spezifisch und optional, aber **`od.mode`** bestimmt, in welcher Gruppe das Template erscheint.
 
 ```yaml
 ---
@@ -170,7 +170,7 @@ Es gibt kein festes Neun-Abschnitte-Schema. Der Paketqualitäts-Guard verlangt m
 4. **Echte Evidenz und klare Provenienz verwenden.** Direkt vom Quellprodukt oder der Website sampeln und die Quelle im Manifest beziehungsweise in der Paketevidenz festhalten.
 5. **Nützliche Katalogtexte schreiben.** `manifest.name`, `category` und `description` sind die primären Picker-Metadaten; Marketing-Fluff gehört nicht hinein.
 
-Die upstream-abgeleiteten Produktsysteme werden aus [`VoltAgent/awesome-design-md`][acd2] über [`scripts/sync-design-systems.ts`](../../scripts/sync-design-systems.ts) importiert. Wenn Ihre Marke upstream passt, schicken Sie den PR zuerst dorthin; OD übernimmt ihn beim nächsten Sync. `design-systems/` enthält außerdem projekt-eigene Ergänzungen, die nicht upstream passen.
+Die upstream-abgeleiteten Produktsysteme werden aus [`VoltAgent/awesome-design-md`][acd2] über [`scripts/sync-design-systems.ts`](../../scripts/sync-design-systems.ts) importiert. Wenn Ihre Marke upstream passt, schicken Sie den PR zuerst dorthin; CapyDesign übernimmt ihn beim nächsten Sync. `design-systems/` enthält außerdem projekt-eigene Ergänzungen, die nicht upstream passen.
 
 ---
 
@@ -204,7 +204,7 @@ Merge-Bar:
 
 ## Wartung von Lokalisierungen
 
-Deutsch verwendet das formelle `Sie`, weil OD eine gemischte Zielgruppe aus Solo-Creators, Agenturen und Engineering-Teams anspricht; solange Projektfeedback keine informelle `du`-Stimme nahelegt, ist formelles Deutsch die am wenigsten überraschende Vorgabe. Locale-PRs sollen UI-Chrome, zentrale Dokumentation und display-only Gallery-Metadaten in `apps/web/src/i18n/content.ts` übersetzen, aber nicht `skills/`, `design-systems/` oder Prompt-Bodies, die Agents ausführen. Diese Quell-Prompts sind Workflow-Eingaben; eine gemeinsame Quellsprache vermeidet multiplizierte Prompt-QA über alle Locales. Wenn ein Skill, Designsystem oder Prompt Template ergänzt oder umbenannt wird, aktualisieren Sie die deutschen Display-Metadaten und führen `pnpm --filter @open-design/web test` aus; `content.test.ts` schlägt fehl, wenn die deutsche Display-Coverage driftet. Daemon-Fehler, Export-Dateinamen und agent-generierte Artifact-Texte sind bekannte Grenzen, sofern ein PR sie nicht ausdrücklich umfasst.
+Deutsch verwendet das formelle `Sie`, weil CapyDesign eine gemischte Zielgruppe aus Solo-Creators, Agenturen und Engineering-Teams anspricht; solange Projektfeedback keine informelle `du`-Stimme nahelegt, ist formelles Deutsch die am wenigsten überraschende Vorgabe. Locale-PRs sollen UI-Chrome, zentrale Dokumentation und display-only Gallery-Metadaten in `apps/web/src/i18n/content.ts` übersetzen, aber nicht `skills/`, `design-systems/` oder Prompt-Bodies, die Agents ausführen. Diese Quell-Prompts sind Workflow-Eingaben; eine gemeinsame Quellsprache vermeidet multiplizierte Prompt-QA über alle Locales. Wenn ein Skill, Designsystem oder Prompt Template ergänzt oder umbenannt wird, aktualisieren Sie die deutschen Display-Metadaten und führen `pnpm --filter @capydesign/web test` aus; `content.test.ts` schlägt fehl, wenn die deutsche Display-Coverage driftet. Daemon-Fehler, Export-Dateinamen und agent-generierte Artifact-Texte sind bekannte Grenzen, sofern ein PR sie nicht ausdrücklich umfasst.
 
 ---
 
@@ -268,7 +268,7 @@ Für Prompt-Stack-Bugs fügen Sie die **vollständige Assistant Message** bei, d
 
 Um das Projekt fokussiert zu halten, öffnen Sie bitte keine PRs, die:
 
-- **Eine Model Runtime vendoren.** OD setzt darauf, dass Ihre vorhandene CLI reicht.
+- **Eine Model Runtime vendoren.** CapyDesign setzt darauf, dass Ihre vorhandene CLI reicht.
 - **Das Frontend ohne vorherige Abstimmung aus dem aktuellen Stack reißen.** Next.js 16 App Router + React 18 + TS ist gesetzt.
 - **Den daemon durch eine Serverless Function ersetzen.** Der daemon besitzt ein echtes `cwd` und startet echte CLIs.
 - **Telemetry oder externe Datenerfassung außerhalb des Datenschutzvertrags hinzufügen.** Produktanalysen und maskierte Session-Replays sind einwilligungspflichtig; bereinigte Sicherheits-/Zuverlässigkeitstelemetrie ist in entsprechend konfigurierten Builds stets aktiv. Neue Events, Felder oder Ziele müssen die in [`PRIVACY.md`](../../PRIVACY.md) dokumentierten Einwilligungs-, Minimierungs- und Bereinigungsgrenzen einhalten.
@@ -288,10 +288,9 @@ Wenn Sie kontinuierlich beigetragen haben und wissen möchten, wie der Weg zum M
 - Es gibt **keine Quoten, keine SLAs und keine feste Amtszeit.** Ein Rücktritt ist einfach und reversibel (Emeritus → Rückkehr, sobald sich das Leben wieder beruhigt).
 - Alle Schwellenwerte, der Nominierungsablauf, die Regeln zum Rücktritt und die Ausnahmeregelung für die frühe Projektphase stehen in [`MAINTAINERS.md`](../../MAINTAINERS.md). Lesen Sie dieses Dokument, falls Sie etwas davon interessiert.
 
-Das tl;dr: Liefern Sie gute PRs, prüfen Sie sorgfältig, halten Sie sich in [Discussions][discussions] / [Discord][discord] auf — und der Rest ergibt sich von selbst.
+Das tl;dr: Liefern Sie gute PRs, prüfen Sie sorgfältig, halten Sie sich in [Discussions][discussions] auf — und der Rest ergibt sich von selbst.
 
 [discussions]: https://github.com/nexu-io/open-design/discussions
-[discord]: https://discord.gg/mHAjSMV6gz
 
 ---
 

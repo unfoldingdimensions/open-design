@@ -383,7 +383,7 @@ jobs:
       - name: Setup Node.js for the fallback notifier
         if: >-
           ${{
-            always() && github.repository == 'nexu-io/open-design' &&
+            always() && github.repository == 'unfoldingdimensions/open-design' &&
             steps.checkout.outcome == 'success'
           }}
         uses: actions/setup-node@v6
@@ -393,7 +393,7 @@ jobs:
         id: notice
         if: >-
           ${{
-            always() && github.repository == 'nexu-io/open-design' &&
+            always() && github.repository == 'unfoldingdimensions/open-design' &&
             steps.checkout.outcome == 'success'
           }}
         env:

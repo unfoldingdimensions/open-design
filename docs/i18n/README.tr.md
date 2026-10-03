@@ -1,27 +1,8 @@
-<h1 align="center">OpenDesign: Açık kaynaklı Claude Design alternatifi</h1>
-
-> ⚡ **[OpenDesign Cloud — resmî model servisi.](https://open-design.ai/zh/pricing/)** Tek bir yüklemeyle OpenDesign içinde hem agent hem de görsel modelleri kullanın: agent'lar için GPT, Claude ve DeepSeek; görseller için GPT Image 2.0, Seedream 5.0 Pro ve Nano Banana 2.0.
->
-> 🚀 **[DeepSeek V4 Flash ve V4 Pro artık kullanılabilir.](https://open-design.ai/zh/pricing/)** Prototipler, sunumlar, tasarım sistemleri ve günlük agent görevlerinde üst düzey zekâyı kullanın. OpenDesign üyeleri her iki modeli de uygulama içinde iki hafta boyunca sınırsız kullanabilir.
->
-> 🧩 **[DeepSeek Harness artık destekleniyor.](https://open-design.ai/zh/agents/deepseek-harness-design/)** DeepSeek'in resmî `dsh` Agent Harness'ini yapılandırılmış düşünme, araç çağrıları, model keşfi, iptal ve oturum devam ettirme özellikleriyle OpenDesign'a yerel bir runtime olarak bağlayın. Üretilen dosyalar canlı önizleme ve teslimat için OpenDesign iş akışında kalır.
+<h1 align="center">CapyDesign: Açık kaynaklı Claude Design alternatifi</h1>
 
 <p align="center">
-  <img src="https://repo-assets.open-design.ai/resources/images/hero.png" alt="OpenDesign hero banner" width="100%" />
-</p>
-
-<p align="center">
-  <a href="https://open-design.ai/">Web Sitesi</a> ·
-  <a href="https://open-design.ai/">İndir</a> ·
-  <a href="https://open-design.ai/cloud/">OpenDesign Cloud</a> ·
-  <a href="https://discord.gg/mHAjSMV6gz">Discord</a> ·
-  <a href="https://x.com/OpenDesignHQ">@OpenDesignHQ'yu takip et</a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/nexu-io/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/nexu-io/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
+  <a href="https://github.com/unfoldingdimensions/open-design/releases"><img alt="release" src="https://img.shields.io/github/v/release/unfoldingdimensions/open-design?style=flat&color=blueviolet&label=release&include_prereleases&display_name=tag" /></a>
   <a href="../../LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat" /></a>
-  <a href="https://discord.gg/mHAjSMV6gz"><img alt="discord" src="https://img.shields.io/discord/1479002485040480266?style=flat&logo=discord&logoColor=white&label=discord&color=5865F2&cacheSeconds=3600" /></a>
   <a href="../../QUICKSTART.md"><img alt="quickstart" src="https://img.shields.io/badge/quickstart-3%20commands-green?style=flat" /></a>
 </p>
 
@@ -29,20 +10,19 @@
 
 ---
 
-## OpenDesign nedir
+## CapyDesign nedir
 
 🎨 **Yerel öncelikli, açık kaynaklı Claude Design alternatifi.** &nbsp;🖥️ **macOS ve Windows için yerel masaüstü uygulaması.** &nbsp;⚡ **100+ işlevsel beceri + ayrı render şablonu kataloğu** · ✨ **151 tasarım sistemi paketi** · 📦 **277 kullanıma hazır eklenti.** &nbsp;🖼️ **web · masaüstü · mobil prototipler**, **canlı panolar / artifact'ler**, **sunum desteleri**, **görseller**, **video** ve ayrıca **HyperFrames** hareket grafikleri üretir. 🔒 Yalıtılmış iframe önizlemesi · HTML / PDF / PPTX / MP4 dışa aktarımı. &nbsp;🤖 **Claude Code · OpenClaw · Codex · Cursor · OpenCode · Qwen · Copilot · Hermes · Kimi · Antigravity ve 25 ayrı yerel CLI yürütülebilir dosyası üzerinde** veya BYOK ile herhangi bir OpenAI uyumlu uç noktada çalışır.
 
-OpenDesign bu döngüyü ajanların okuyup yazabildiği bir **işlevsel beceriler, render tasarım şablonları, tasarım sistemleri ve eklentiler dosya sistemine** dönüştürür.
+CapyDesign bu döngüyü ajanların okuyup yazabildiği bir **işlevsel beceriler, render tasarım şablonları, tasarım sistemleri ve eklentiler dosya sistemine** dönüştürür.
 
 Aynı zamanda **ajan çağı için Figma alternatifidir** — bir tuval üzerinde piksel itmek yerine, gerçek CSS, gerçek yazı tipleri, gerçek bileşenlerle tek sayfalık artifact'ler sunar, doğrudan HTML / PDF / PPTX / MP4 olarak dışa aktarılır — tasarım sisteminiz tarafından zaten şekillendirilmiş, her gün kullandığınız ajanın içinde zaten çalıştırılabilir halde.
-
 
 ---
 
 ## Ürün turu
 
-OpenDesign'ın temel iş akışına hızlı bir bakış. **Home** üzerinde bir brief ile başlayın, **Plugins** içinde yeniden kullanılabilir becerileri keşfedin ve marka referanslarını bir **Design System** haline getirin. Ardından prototipleri, sunumları, mobil uygulamaları, görselleri, belgeleri ve HyperFrame'leri tek yerde oluşturmak ve geliştirmek için bir projenin **Studio** alanına girin.
+CapyDesign'ın temel iş akışına hızlı bir bakış. **Home** üzerinde bir brief ile başlayın, **Plugins** içinde yeniden kullanılabilir becerileri keşfedin ve marka referanslarını bir **Design System** haline getirin. Ardından prototipleri, sunumları, mobil uygulamaları, görselleri, belgeleri ve HyperFrame'leri tek yerde oluşturmak ve geliştirmek için bir projenin **Studio** alanına girin.
 
 ### Temel sayfalar
 
@@ -108,7 +88,7 @@ Bir projenin Studio alanında konuşma, üretilen dosyalar ve canlı önizleme a
 
 ## Platform Uyumluluğu
 
-> OpenDesign, ana akım kodlama ajanlarının yerel olarak tükettiği **beceriler, bir CLI ve bir MCP sunucusu** olarak sunulur. OD kurulduktan sonra, tek bir `capt mcp install <agent>` komutu MCP sunucusunu o ajanın yapılandırmasına bağlar ve aynı araçları herhangi bir ajanın içinden çağırırsınız.
+> CapyDesign, ana akım kodlama ajanlarının yerel olarak tükettiği **beceriler, bir CLI ve bir MCP sunucusu** olarak sunulur. CapyDesign kurulduktan sonra, tek bir `capt mcp install <agent>` komutu MCP sunucusunu o ajanın yapılandırmasına bağlar ve aynı araçları herhangi bir ajanın içinden çağırırsınız.
 
 | Kodlama ajanı / platform &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Durum &nbsp;&nbsp; | Tek satırlık MCP sunucusu kurulumu &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 |---|:---:|---|
@@ -131,10 +111,6 @@ Bir projenin Studio alanında konuşma, üretilen dosyalar ve canlı önizleme a
 | [Hermes Agent](https://github.com/nousresearch/hermes-agent) | ✅ Destekleniyor | `capt mcp install hermes` |
 
 Kuru çalıştırma önizlemesi için `capt mcp install <agent> --print` · kaldırmak için `--uninstall` · tam liste için `capt mcp install --help`.
-
-<p align="center">
-  <img src="https://repo-assets.open-design.ai/resources/images/coding-agents.png" alt="The 25 coding-agent CLIs OpenDesign supports — Claude Code · Codex · OpenCode · Hermes · Antigravity · Vela · Grok Build · Kimi · Cursor Agent · Qwen · Qoder · GitHub Copilot · Pi · Kiro · Kilo · Mistral Vibe · DeepSeek · Reasonix · Aider · Amp · CodeBuddy · Mimo · AtomCode · Devin · Trae" width="100%" />
-</p>
 
 **Kurulu CLI yok mu?** `POST /api/proxy/{anthropic,openai,azure,google,ollama,senseaudio}/stream` adresindeki BYOK proxy size aynı döngüyü verir (süreç başlatma yok) — `baseUrl` + `apiKey` + `model` yapıştırın; OpenAI, Anthropic, Azure OpenAI, Google Gemini, Ollama, LM Studio, vLLM veya herhangi bir OpenAI uyumlu uç nokta desteğiyle. Hedef bazlı SSRF koruması, daemon kenarında dahili IP'leri / link-local / CGNAT adreslerini engeller.
 
@@ -223,7 +199,7 @@ Her deste **HTML** (tek dosya, gömülü varlıklar), **PDF** (tarayıcı yazdı
 
 ### 5 · Video ve HyperFrames — ajan-yerel hareket grafikleri
 
-**[HyperFrames][hyperframes]**, HeyGen'in açık kaynaklı, ajan-yerel video çerçevesidir ve OpenDesign'da birinci sınıf bir vatandaş olarak entegre edilmiştir. Ajan HTML + CSS + GSAP yazar ve HyperFrames bunu başsız Chrome + FFmpeg aracılığıyla deterministik bir MP4'e işler. Sinematik t2v / i2v için **Seedance 2.0**, yönlendirilen model varyantları için **Veo 3 / Sora 2 / Kling 2** ve ses katmanı için **Suno v5 / Lyria 2** ile eşleştirin.
+**[HyperFrames][hyperframes]**, HeyGen'in açık kaynaklı, ajan-yerel video çerçevesidir ve CapyDesign'da birinci sınıf bir vatandaş olarak entegre edilmiştir. Ajan HTML + CSS + GSAP yazar ve HyperFrames bunu başsız Chrome + FFmpeg aracılığıyla deterministik bir MP4'e işler. Sinematik t2v / i2v için **Seedance 2.0**, yönlendirilen model varyantları için **Veo 3 / Sora 2 / Kling 2** ve ses katmanı için **Suno v5 / Lyria 2** ile eşleştirin.
 
 <table>
 <tr>
@@ -240,17 +216,17 @@ Her deste **HTML** (tek dosya, gömülü varlıklar), **PDF** (tarayıcı yazdı
 </tr>
 </table>
 
-11 HyperFrames şablonu + 39 Seedance komutu depoyla birlikte gelir. Katalog küçük resimleri © HeyGen; çerçeve Apache-2.0'dır. OD'ye özgü işleme iş akışı (kompozisyon önbelleği, sandbox-exec geçici çözümü, çip olarak MP4) [`design-templates/hyperframes/`](../../design-templates/hyperframes/) içinde ayrıntılı olarak açıklanmıştır.
+11 HyperFrames şablonu + 39 Seedance komutu depoyla birlikte gelir. Katalog küçük resimleri © HeyGen; çerçeve Apache-2.0'dır. CapyDesign'ye özgü işleme iş akışı (kompozisyon önbelleği, sandbox-exec geçici çözümü, çip olarak MP4) [`design-templates/hyperframes/`](../../design-templates/hyperframes/) içinde ayrıntılı olarak açıklanmıştır.
 
 [hyperframes]: https://github.com/heygen-com/hyperframes
 
 ---
 
-## Neden OpenDesign
+## Neden CapyDesign
 
 > **Nisan 2026'da Anthropic Claude Design'ı yayınladı — bir LLM'in ilk kez düz metin yazmayı bırakıp doğrudan tasarım artifact'leri sunduğu an.** Viral oldu. Ama kapalı kaynaklı, yalnızca ücretli, yalnızca bulut tabanlı kaldı; Anthropic'in modeline, Anthropic'in becerilerine, Anthropic'in yüzeyine kilitliydi. Ödeme yok, kendi sunucunda barındırma yok, Vercel dağıtımı yok, kendi ajanını takma yok.
 
-OpenDesign (OD) açık kaynaklı alternatiftir. Aynı döngü, aynı artifact öncelikli zihinsel model, hiçbir bağımlılık kilidi olmadan:
+CapyDesign (CapyDesign) açık kaynaklı alternatiftir. Aynı döngü, aynı artifact öncelikli zihinsel model, hiçbir bağımlılık kilidi olmadan:
 
 - 🤖 **Ajan-yerel, modelden bağımsız.** Bir ajan sunmuyoruz. `PATH`'inizde zaten bulunan `claude` / `codex` / `cursor-agent` / `copilot` / `hermes` / `kimi` tasarım motorudur. Tek tıkla değiştirin.
 - 🧠 **Varsayılan olarak marka düzeyinde.** Her render etkin paketin `DESIGN.md` dosyasını temel marka sözleşmesi olarak okur. Depoda 151 tasarım sistemi paketi bulunur; eski paketler yalnızca `DESIGN.md` içerebilir, yenileri `manifest.json`, `tokens.css`, bileşenler, varlıklar ve provenance ekleyebilir. Bir klasör bırakın, seçici onu bulur.
@@ -261,7 +237,7 @@ OpenDesign (OD) açık kaynaklı alternatiftir. Aynı döngü, aynı artifact ö
 
 ### Karşılaştırma
 
-| | Claude Design | Figma | Lovable / v0 / Bolt | **OpenDesign** |
+| | Claude Design | Figma | Lovable / v0 / Bolt | **CapyDesign** |
 |---|---|---|---|---|
 | Açık kaynak | ❌ | ❌ | ❌ | **✅ Apache-2.0** |
 | Kendi sunucunda barındırma / masaüstü | ❌ | ❌ | ❌ | **✅ macOS + Windows + Docker** |
@@ -278,17 +254,13 @@ OpenDesign (OD) açık kaynaklı alternatiftir. Aynı döngü, aynı artifact ö
 
 ### 🖥️ Masaüstü uygulamasını indirin (önerilir — sıfır yapılandırma)
 
-OpenDesign'ı kullanmanın en hızlı yolu. Node yok, pnpm yok, klonlama yok.
-
-- **macOS** (Apple Silicon · Intel x64) → [**open-design.ai**](https://open-design.ai/) veya [GitHub Releases](https://github.com/nexu-io/open-design/releases)
-- **Windows** (x64) → [**open-design.ai**](https://open-design.ai/) veya [GitHub Releases](https://github.com/nexu-io/open-design/releases)
-- **Linux** (AppImage, isteğe bağlı hat) → [GitHub Releases](https://github.com/nexu-io/open-design/releases)
+CapyDesign'ı kullanmanın en hızlı yolu. Node yok, pnpm yok, klonlama yok.
 
 Kurulumdan sonra: uygulama `PATH`'inizdeki her kodlama ajanı CLI'sini otomatik algılar, 100+ işlevsel beceriyi, ayrı render şablonu kataloğunu ve 151 tasarım sistemi paketini yükler ve giriş görünümünde bir özet yazmanıza olanak tanır.
 
 ### 🤖 Kodlama ajanınıza kurun (UI yok)
 
-OpenDesign'ı GUI'yi hiç açmadan kullanabilirsiniz — Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi ve daha fazlasının içinde bir beceri, eklenti veya MCP sunucusu olarak çağırın.
+CapyDesign'ı GUI'yi hiç açmadan kullanabilirsiniz — Claude Code, Codex, Cursor, Copilot, OpenClaw, Antigravity, Hermes, Kimi ve daha fazlasının içinde bir beceri, eklenti veya MCP sunucusu olarak çağırın.
 
 ```bash
 # One-line install into the agent you're using:
@@ -303,12 +275,12 @@ Ardından, ajanın içinde:
 > Use open-design to generate a landing page with the Linear design system
 ```
 
-Filesystem destekli yerel CLI çalıştırmasında ajan seçilen işlevsel beceri veya tasarım şablonunu `DESIGN.md` ile birleştirir, kanonik proje dosyalarını yazar ve OpenDesign bunları önizler. Dosya araçları olmayan BYOK/API çalıştırması bunun yerine tek bir eksiksiz `<artifact>` bloğu döndürür.
+Filesystem destekli yerel CLI çalıştırmasında ajan seçilen işlevsel beceri veya tasarım şablonunu `DESIGN.md` ile birleştirir, kanonik proje dosyalarını yazar ve CapyDesign bunları önizler. Dosya araçları olmayan BYOK/API çalıştırması bunun yerine tek bir eksiksiz `<artifact>` bloğu döndürür.
 
 ### 🐳 Docker ile çalıştırın
 
 ```bash
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design/deploy
 cp .env.example .env
 echo "OD_API_TOKEN=$(openssl rand -hex 32)" >> .env
@@ -320,12 +292,12 @@ docker compose up -d
 
 [![Deploy on Sealos](https://sealos.io/Deploy-on-Sealos.svg)](https://sealos.io/products/app-store/open-design/)
 
-Sealos App Store şablonu, yayımlanmış OpenDesign Docker imajını kalıcı çalışma alanı depolaması ve herkese açık proxy üzerinde Basic Auth ile çalıştırır. Özel herkese açık veya paylaşılan Docker dağıtımları için [`deploy/README.md`](../../deploy/README.md#local-compose) içindeki ters proxy ve `OPEN_DESIGN_ALLOWED_ORIGINS` rehberini izleyin.
+Sealos App Store şablonu, yayımlanmış CapyDesign Docker imajını kalıcı çalışma alanı depolaması ve herkese açık proxy üzerinde Basic Auth ile çalıştırır. Özel herkese açık veya paylaşılan Docker dağıtımları için [`deploy/README.md`](../../deploy/README.md#local-compose) içindeki ters proxy ve `OPEN_DESIGN_ALLOWED_ORIGINS` rehberini izleyin.
 
 ### 🧑‍💻 Kaynaktan çalıştırın
 
 ```bash
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design
 corepack enable && pnpm install
 pnpm tools-dev run web
@@ -343,13 +315,13 @@ Node `~24`, pnpm `10.33.x`. Windows kullanıcıları, bkz. [`docs/windows-troubl
 2. **Bir tasarımcı (veya ajan) yönü kilitler.** Marka yok mu? 5 seçilmiş yönden birini seçin. Markanız var mı? Bir ekran görüntüsü / URL bırakın → ajan GitHub'a bağlanır, Figma'yı içe aktarır ve yeniden kullanılabilir bir `DESIGN.md` dosyasına kodlar.
 3. **Ajan ilk teslimatı oluşturur.** Filesystem destekli CLI çalıştırmaları kanonik dosyaları yazar; dosya araçsız BYOK/API çalıştırmaları eksiksiz bir `<artifact>` bloğu döndürür.
 4. **Mühendisliğe devredin.** Artifact gerçek HTML/CSS'tir — kod olarak inşa etmeye devam etmek için Cursor, Codex veya Claude Code'a bırakın. Veya doğrudan pazarlamaya PPTX / PDF / MP4 olarak dışa aktarın.
-5. **OpenDesign kullandıkça akıllanır.** Ekran görüntüleriniz, yazı tipleriniz, paletleriniz ve onaylanmış artifact'leriniz bir sonraki oturum için varsayılan olarak birikir. Daha az yeniden çalışma, daha az sapma.
+5. **CapyDesign kullandıkça akıllanır.** Ekran görüntüleriniz, yazı tipleriniz, paletleriniz ve onaylanmış artifact'leriniz bir sonraki oturum için varsayılan olarak birikir. Daha az yeniden çalışma, daha az sapma.
 
 ---
 
-## OpenDesign'ı kodlama ajanınızdan kullanın
+## CapyDesign'ı kodlama ajanınızdan kullanın
 
-OpenDesign bir **stdio MCP sunucusu** ve ajan başına **kurulum betikleri** sunar. Başka bir depodaki herhangi bir MCP uyumlu ajan, yerel OpenDesign projelerinizdeki dosyaları doğrudan okuyabilir — token CSS'i, JSX bileşenleri, giriş HTML'i — ada göre sorgulanabilir yapılandırılmış bir API olarak. Ajan her zaman bayatlamış bir dışa aktarımı değil, canlı dosyayı görür.
+CapyDesign bir **stdio MCP sunucusu** ve ajan başına **kurulum betikleri** sunar. Başka bir depodaki herhangi bir MCP uyumlu ajan, yerel CapyDesign projelerinizdeki dosyaları doğrudan okuyabilir — token CSS'i, JSX bileşenleri, giriş HTML'i — ada göre sorgulanabilir yapılandırılmış bir API olarak. Ajan her zaman bayatlamış bir dışa aktarımı değil, canlı dosyayı görür.
 
 ```bash
 # One-line install (16+ CLIs supported):
@@ -481,7 +453,7 @@ Her komut `--json` destekler, böylece onu `jq` / `xargs` aracılığıyla otoma
 
 ### Bir eklenti oluşturma
 
-Bir OpenDesign eklentisi `open-design.json` ve türünün payload'unu gerektirir. Beceriler ve senaryolar ayrıca `SKILL.md` içerir; diğer türler kendi payload'unu kullanır:
+Bir CapyDesign eklentisi `open-design.json` ve türünün payload'unu gerektirir. Beceriler ve senaryolar ayrıca `SKILL.md` içerir; diğer türler kendi payload'unu kullanır:
 
 ```
 my-plugin/
@@ -499,15 +471,15 @@ Yerel olarak iskeletle + doğrula:
 ```bash
 capt plugin scaffold --id my-plugin --title "My Plugin"   # generate the skeleton
 capt plugin validate ./my-plugin                          # check manifest / file layout
-pnpm guard && pnpm --filter @open-design/plugin-runtime typecheck
+pnpm guard && pnpm --filter @capydesign/plugin-runtime typecheck
 ```
 
 Tam alan kümesi ve çalışma zamanı sözleşmesi → [`plugins/spec/SPEC.md`](../../plugins/spec/SPEC.md); bir kodlama ajanıyla eklenti geliştirme → [`plugins/spec/AGENT-DEVELOPMENT.md`](../../plugins/spec/AGENT-DEVELOPMENT.md); kopyala-yapıştır minimal şablonlar → [`plugins/spec/examples/`](../../plugins/spec/examples/).
 
 ### Bir eklentiye katkıda bulunma
 
-1. Eklenti klasörünü [`plugins/community/`](../../plugins/community/) içine (üçüncü taraf eklentiler) veya — onu OpenDesign ile birlikte paketlenmiş olarak sunmak için — [`plugins/_official/`](../../plugins/_official/) içindeki eşleşen katmana bırakın.
-2. Doğrulamayı geçin: `capt plugin validate`, `pnpm guard`, `pnpm --filter @open-design/plugin-runtime typecheck`.
+1. Eklenti klasörünü [`plugins/community/`](../../plugins/community/) içine (üçüncü taraf eklentiler) veya — onu CapyDesign ile birlikte paketlenmiş olarak sunmak için — [`plugins/_official/`](../../plugins/_official/) içindeki eşleşen katmana bırakın.
+2. Doğrulamayı geçin: `capt plugin validate`, `pnpm guard`, `pnpm --filter @capydesign/plugin-runtime typecheck`.
 3. PR'ı [`plugins/spec/CONTRIBUTING.md`](../../plugins/spec/CONTRIBUTING.md) içindeki şablonu kullanarak doldurun (kimlik, sürüm, hat, mod, yetenekler, tetikleme örnekleri; görsel eklentiler için bir ekran görüntüsü / önizleme ekleyin).
 4. Harici bir kayda yayınlamak için (skills.sh / ClawHub / bağımsız GitHub) → [`plugins/spec/PUBLISHING-REGISTRIES.md`](../../plugins/spec/PUBLISHING-REGISTRIES.md).
 
@@ -569,7 +541,7 @@ Tam mimari → [`docs/architecture.md`](../../docs/architecture.md). Beceri prot
 - [x] Sidecar protokolü + Electron masaüstü + IPC otomasyonu
 - [x] Artifact lint API'si + 5 boyutlu öz-eleştiri ön-yayın kapısı
 - [x] **0.8.0** — eklenti pazar yeri altyapısı (261 resmî eklenti, manifest spesifikasyonu, ajan başına kurulum betikleri)
-- [x] **0.9.0** — OpenDesign Cloud (uygulamaya gömülü resmî Model Router: sıfır yapılandırma, tek tıkla oturum açma)
+- [x] **0.9.0** — OpenDesign Cloud (uygulamaya gömülü resmî Model Router: sıfır yapılandırma, tek tıkla oturum açma) — removed in CapyDesign, this fork is local-only
 - [x] Paketlenmiş Electron derlemeleri — macOS (Apple Silicon + Intel) + Windows (x64) + Linux AppImage (isteğe bağlı hat)
 - [ ] Yorum modu cerrahi düzenlemeler — kısmen sunuldu; güvenilir hedefli yamalama devam ediyor
 - [ ] AI tarafından yayılan ayar paneli UX'i — henüz uygulanmadı
@@ -586,18 +558,16 @@ Aşamalı teslimat → [`docs/roadmap.md`](../../docs/roadmap.md).
 
 Her kanalın arkasında gerçek insanlar var.
 
-- 💬 **Discord** — günlük sohbet, eklenti paylaşımı, sorular → [**discord.gg/mHAjSMV6gz**](https://discord.gg/mHAjSMV6gz)
-- 🐦 **X / Twitter** — sürüm notları, kilometre taşları, perde arkası → [**@OpenDesignHQ**](https://x.com/OpenDesignHQ)
-- 🗣️ **GitHub Discussions** — derinlemesine soru-cevap, RFC'ler, "çalışmanı göster" → [**Discussions**](https://github.com/nexu-io/open-design/discussions)
-- 🐛 **GitHub Issues** — hata raporları, özellik istekleri → [**Issues**](https://github.com/nexu-io/open-design/issues)
+- 🗣️ **GitHub Discussions** — derinlemesine soru-cevap, RFC'ler, "çalışmanı göster" → [**Discussions**](https://github.com/unfoldingdimensions/open-design/discussions)
+- 🐛 **GitHub Issues** — hata raporları, özellik istekleri → [**Issues**](https://github.com/unfoldingdimensions/open-design/issues)
 
-[`good-first-issue`](https://github.com/nexu-io/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) ve [`help-wanted`](https://github.com/nexu-io/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) etiketleri başlamanın en kolay yoludur.
+[`good-first-issue`](https://github.com/unfoldingdimensions/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) ve [`help-wanted`](https://github.com/unfoldingdimensions/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) etiketleri başlamanın en kolay yoludur.
 
 ---
 
 ## Katkıda bulunma
 
-OpenDesign, katkıda bulunanlar — tasarımcılar, mühendisler, komut yazarları — gelmeye devam ettiği için hareket etmeye devam ediyor. En çok kullanılan becerilerin, tasarım sistemlerinin ve eklentilerin çoğu çekirdek ekip dışındaki kişiler tarafından yazılmıştır.
+CapyDesign, katkıda bulunanlar — tasarımcılar, mühendisler, komut yazarları — gelmeye devam ettiği için hareket etmeye devam ediyor. En çok kullanılan becerilerin, tasarım sistemlerinin ve eklentilerin çoğu çekirdek ekip dışındaki kişiler tarafından yazılmıştır.
 
 ### 🎯 Nereden başlamalı (maksimum kaldıraç, minimum değişiklik)
 
@@ -607,7 +577,7 @@ OpenDesign, katkıda bulunanlar — tasarımcılar, mühendisler, komut yazarlar
 | Yeni bir **tasarım sistemi** | Merkezinde `DESIGN.md` bulunan bir paket bırakın; gerektiğinde `manifest.json`, `tokens.css`, bileşenler, varlıklar veya provenance ekleyin | [`design-systems/<brand>/`](../../design-systems/) |
 | Yeni bir **eklenti** | Bir kategori klasörü altına `open-design.json` + türe özgü payload bırakın | [`plugins/community/`](../../plugins/community/) · spesifikasyon [`plugins/spec/SPEC.md`](../../plugins/spec/SPEC.md) içinde · ajan geliştirme kılavuzu [`plugins/spec/AGENT-DEVELOPMENT.md`](../../plugins/spec/AGENT-DEVELOPMENT.md) içinde |
 | Yeni bir **kodlama ajanı CLI'si** destekleyin | Runtime tanımı + registry girdisi; parser yalnızca yeni format için | [`apps/daemon/src/runtimes/defs/`](../../apps/daemon/src/runtimes/defs/) |
-| Bir hatayı düzeltin veya UI'yi cilalayın | [`good-first-issue`](https://github.com/nexu-io/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) etiketine göz atın | [Issues →](https://github.com/nexu-io/open-design/issues) |
+| Bir hatayı düzeltin veya UI'yi cilalayın | [`good-first-issue`](https://github.com/unfoldingdimensions/open-design/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) etiketine göz atın | [Issues →](https://github.com/unfoldingdimensions/open-design/issues) |
 | Belgeleri çevirin | `README.<lang>.md` dosyalarını güncelleyin | [`TRANSLATIONS.md`](../../TRANSLATIONS.md) |
 
 ### 🤖 Bir ajan olarak katkıda bulunma
@@ -616,7 +586,7 @@ OpenDesign, katkıda bulunanlar — tasarımcılar, mühendisler, komut yazarlar
 
 ```bash
 # 1. Boot locally
-git clone https://github.com/nexu-io/open-design.git
+git clone https://github.com/unfoldingdimensions/open-design.git
 cd open-design && corepack enable && pnpm install
 pnpm tools-dev run web
 
@@ -626,7 +596,7 @@ gh issue develop <number>   # create a branch and worktree
 
 # 3. Make the change, run the checks
 pnpm guard && pnpm typecheck
-pnpm --filter @open-design/<package> test
+pnpm --filter @capydesign/<package> test
 
 # 4. Open the PR
 gh pr create --fill
@@ -634,9 +604,7 @@ gh pr create --fill
 
 Tam ajan dostu katkı akışı, kod stili ve PR çıtası → [`CONTRIBUTING.md`](../../CONTRIBUTING.md) ([Deutsch](CONTRIBUTING.de.md) · [Français](CONTRIBUTING.fr.md) · [简体中文](CONTRIBUTING.zh-CN.md) · [日本語](CONTRIBUTING.ja-JP.md) · [Português](CONTRIBUTING.pt-BR.md)).
 
-### 🏅 OpenDesign Fellow programı
-
-Dünya çapında **OpenDesign Fellow'ları** alıyoruz — Fellow'lar ürünü çekirdek ekiple birlikte şekillendirir, kendi bölgelerinde OpenDesign'ı resmî olarak temsil eder ve topluluğu yerel olarak büyütür; fonlu destek ($1,000 / MR), ücretsiz LLM kredileri ve doğrudan inceleme hattıyla desteklenir. Ayrıntılar → [`MAINTAINERS.md`](../../MAINTAINERS.md) ve [Discord](https://discord.gg/mHAjSMV6gz) üzerindeki duyuru.
+### 🏅 CapyDesign Fellow programı
 
 ---
 
@@ -669,17 +637,13 @@ Bakımcı kuralları, terfi kriterleri ve çıkış protokolü → [`MAINTAINERS
 
 Katılan herkese teşekkürler — kod, belge, geri bildirim, keskin bir issue, yeni bir beceri, yeni bir tasarım sistemi.
 
-<a href="https://github.com/nexu-io/open-design/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=nexu-io/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="OpenDesign contributors" />
+<a href="https://github.com/unfoldingdimensions/open-design/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=unfoldingdimensions/open-design&max=500&columns=20&anon=1&cache_bust=2026-08-04" alt="CapyDesign contributors" />
 </a>
 
 ---
 
 ## Depo etkinliği
-
-<picture>
-  <img alt="OpenDesign — repository metrics" src="https://repo-assets.open-design.ai/resources/images/github-metrics.svg" />
-</picture>
 
 Yukarıdaki SVG, [`lowlighter/metrics`](https://github.com/lowlighter/metrics) kullanılarak [`.github/workflows/metrics.yml`](../../.github/workflows/metrics.yml) tarafından günlük olarak yeniden oluşturulur.
 
@@ -687,19 +651,7 @@ Yukarıdaki SVG, [`lowlighter/metrics`](https://github.com/lowlighter/metrics) k
 
 ## Bize yıldız verin
 
-<p align="center">
-  <a href="https://github.com/nexu-io/open-design"><img src="https://repo-assets.open-design.ai/resources/images/star-us.png" alt="Star OpenDesign on GitHub — github.com/nexu-io/open-design" width="100%" /></a>
-</p>
-
 Bu size otuz dakika kazandırdıysa, bir ★ verin. Yıldızlar kira ödemez — ama bir sonraki tasarımcıya, ajana ve katkıda bulunana bu deneyin dikkatlerine değer olduğunu söyler. Tek tıkla, üç saniyede, gerçek bir sinyal.
-
-<a href="https://star-history.dera.page/#nexu-io/open-design&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=nexu-io/open-design&type=Date&theme=dark&cache_bust=2026-08-04" />
-    <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=nexu-io/open-design&type=Date&cache_bust=2026-08-04" />
-    <img alt="OpenDesign star history" src="https://star-history.dera.page/svg?repos=nexu-io/open-design&type=Date&cache_bust=2026-08-04" />
-  </picture>
-</a>
 
 ---
 
@@ -715,7 +667,7 @@ Bu size otuz dakika kazandırdıysa, bir ★ verin. Yıldızlar kira ödemez —
 | [`multica-ai/multica`](https://github.com/multica-ai/multica) | Daemon + adaptör mimarisi — PATH-tarama ajan algılama, tek ayrıcalıklı süreç olarak yerel daemon. |
 | [`VoltAgent/awesome-design-md`](https://github.com/VoltAgent/awesome-design-md) | İlk 9 bölümlük `DESIGN.md` şemasının ve upstream'den türetilen 70 sistemin tarihsel kaynağı; güncel paketler bu temeli genişletebilir. |
 | [`bergside/awesome-design-skills`](https://github.com/bergside/awesome-design-skills) | `design-systems/` altına eklenen 57 tasarım becerisinin kaynağı. |
-| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | HTML→MP4 hareket grafikleri çerçevesi, OpenDesign'da birinci sınıf `hyperframes-html` olarak entegre edilmiştir. |
+| [`heygen-com/hyperframes`](https://github.com/heygen-com/hyperframes) | HTML→MP4 hareket grafikleri çerçevesi, CapyDesign'da birinci sınıf `hyperframes-html` olarak entegre edilmiştir. |
 | [Claude Code skills][skill] | Birebir benimsediğimiz `SKILL.md` kuralı. |
 
 Ayrıntılı köken → [`docs/references.md`](../../docs/references.md).

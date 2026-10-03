@@ -1,5 +1,4 @@
 {
-  "$schema": "https://open-design.ai/schemas/plugin.v1.json",
   "specVersion": "1.0.0",
   "name": "rewrite-plan",
   "title": "Rewrite plan",
@@ -8,10 +7,10 @@
   "description": "Long-running multi-file rewrite plan with ownership boundaries and patch-safety guarantees.",
   "license": "MIT",
   "author": {
-    "name": "OpenDesign",
+    "name": "CapyDesign",
     "url": "https://github.com/nexu-io"
   },
-  "homepage": "https://github.com/nexu-io/open-design/tree/main/plugins/_official/atoms/rewrite-plan",
+  "homepage": "https://github.com/unfoldingdimensions/open-design/tree/main/plugins/_official/atoms/rewrite-plan",
   "tags": [
     "atom",
     "first-party",

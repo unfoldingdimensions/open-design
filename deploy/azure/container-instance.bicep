@@ -10,7 +10,7 @@ param containerGroupName string = 'open-design'
 param dnsNameLabel string = toLower('open-design-${uniqueString(resourceGroup().id, location)}')
 
 @description('OpenDesign container image.')
-param image string = 'ghcr.io/nexu-io/od:latest'
+param image string = 'ghcr.io/unfoldingdimensions/od:latest'
 
 @secure()
 @description('Required OpenDesign API token. Generate with: openssl rand -hex 32')

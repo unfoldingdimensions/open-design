@@ -136,11 +136,11 @@ describe('derivePluginSourceLinks · url + local + bundled sources', () => {
         source:     'plugins/_official/scenarios/od-code-migration',
       }),
     );
-    expect(out.sourceUrl).toBe('https://github.com/nexu-io/open-design');
+    expect(out.sourceUrl).toBe('https://github.com/unfoldingdimensions/open-design');
     expect(out.sourceKindLabel).toBe('Official');
-    expect(out.sourceLabel).toBe('nexu-io/open-design');
-    expect(out.authorProfileUrl).toBe('https://github.com/nexu-io/open-design');
-    expect(out.homepageUrl).toBe('https://github.com/nexu-io/open-design');
+    expect(out.sourceLabel).toBe('unfoldingdimensions/open-design');
+    expect(out.authorProfileUrl).toBe('https://github.com/unfoldingdimensions/open-design');
+    expect(out.homepageUrl).toBe('https://github.com/unfoldingdimensions/open-design');
   });
 });
 
@@ -199,9 +199,9 @@ describe('derivePluginSourceLinks · author + contribute', () => {
         } as InstalledPluginRecord['manifest'],
       }),
     );
-    expect(out.contributeUrl).toBe('https://github.com/nexu-io/open-design/issues/new');
+    expect(out.contributeUrl).toBe('https://github.com/unfoldingdimensions/open-design/issues/new');
     expect(out.contributeOnGithub).toBe(true);
-    expect(out.homepageUrl).toBe('https://github.com/nexu-io/open-design');
+    expect(out.homepageUrl).toBe('https://github.com/unfoldingdimensions/open-design');
   });
 
   it('drops malformed homepage values', () => {

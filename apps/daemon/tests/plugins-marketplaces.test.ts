@@ -138,10 +138,11 @@ describe('marketplaces', () => {
     }
   });
 
-  it('normalizes public marketplace urls to the canonical raw registry', async () => {
+  it('accepts the canonical raw registry url unchanged', async () => {
     const seenUrls: string[] = [];
+    const canonical = marketplaceManifestUrlForRegistry('community');
     const result = await addMarketplace(db, {
-      url: 'https://open-design.ai/marketplace/community/open-design-marketplace.json',
+      url: canonical,
       fetcher: async (url) => {
         seenUrls.push(url);
         return {
@@ -153,14 +154,13 @@ describe('marketplaces', () => {
     });
 
     if (!result.ok) throw new Error('add failed');
-    const expectedUrl = marketplaceManifestUrlForRegistry('community');
-    expect(seenUrls).toEqual([expectedUrl]);
-    expect(result.row.url).toBe(expectedUrl);
+    expect(seenUrls).toEqual([canonical]);
+    expect(result.row.url).toBe(canonical);
   });
 
   it('normalizes legacy branch raw urls to the canonical raw registry', () => {
     expect(resolveMarketplaceFetchUrl(
-      'https://raw.githubusercontent.com/nexu-io/open-design/garnet-hemisphere/plugins/registry/community/open-design-marketplace.json',
+      'https://raw.githubusercontent.com/unfoldingdimensions/open-design/garnet-hemisphere/plugins/registry/community/open-design-marketplace.json',
     )).toBe(marketplaceManifestUrlForRegistry('community'));
   });
 
@@ -201,10 +201,10 @@ describe('marketplaces', () => {
     expect(refreshed.row.refreshedAt).toBeGreaterThanOrEqual(added.row.refreshedAt);
   });
 
-  it('refresh normalizes legacy public urls before fetching', async () => {
+  it('refresh normalizes legacy raw urls before fetching', async () => {
     const seeded = ensureMarketplaceManifest(db, {
       id: 'community',
-      url: 'https://open-design.ai/marketplace/community/open-design-marketplace.json',
+      url: 'https://raw.githubusercontent.com/unfoldingdimensions/open-design/garnet-hemisphere/plugins/registry/community/open-design-marketplace.json',
       trust: 'restricted',
       manifestText: VALID_MANIFEST,
     });

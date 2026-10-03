@@ -1,6 +1,6 @@
-# NotebookLM: export issues/PRs from OpenDesign
+# NotebookLM: export issues/PRs from CapyDesign
 
-OpenDesign gets a lot of feedback via GitHub Issues + PRs. If you want NotebookLM to help with:
+CapyDesign gets a lot of feedback via GitHub Issues + PRs. If you want NotebookLM to help with:
 
 - support answers (with citations)
 - clustering + taxonomy of user scenarios

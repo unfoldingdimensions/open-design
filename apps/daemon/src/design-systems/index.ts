@@ -1992,7 +1992,7 @@ export function buildDesignSystemSkillsMarkdown(input: {
       'coding agent.',
   );
   lines.push('');
-  lines.push('https://github.com/nexu-io/open-design');
+  lines.push('https://github.com/unfoldingdimensions/open-design');
   lines.push('');
 
   return lines.join('\n');

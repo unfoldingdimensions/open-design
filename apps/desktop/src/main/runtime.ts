@@ -1095,29 +1095,15 @@ interface RendererCrashScreenContext {
   exitCode: number | null;
 }
 
-const CRASH_REPORT_ISSUES_URL = "https://github.com/nexu-io/open-design/issues/new";
-const SUPPORT_EMAIL = "support@open-design.ai";
-// Every address the app is allowed to hand to the OS mail client. Keep this in
-// sync with the renderer's own contact affordances (`CONTACT_EMAIL_URL` in
-// `apps/web/src/components/EntryNavRail.tsx`); an address that is not listed
-// here silently does nothing when clicked in the packaged shell.
-const FIRST_PARTY_EMAILS = new Set([SUPPORT_EMAIL, "contact@open.design"]);
+const CRASH_REPORT_ISSUES_URL = "https://github.com/unfoldingdimensions/open-design/issues/new";
+// CapyDesign is local-only: the product ships no support mailbox and no first-
+// party email addresses at all. The mailto allowlist below is kept (empty) so
+// the renderer bridge stays hard-bounded — a compromised renderer must not be
+// able to launch the OS mail client with arbitrary recipients, and an empty
+// allowlist rejects every mailto.
+const FIRST_PARTY_EMAILS: ReadonlySet<string> = new Set<string>();
 
-// Narrow allowlist for the crash screen's "Email us" action: only a mailto
-// addressed to our own support address, carrying nothing but the crash-screen's
-// own `subject`/`body`, opens. Validating just protocol+pathname is not enough —
-// `mailto:support@open-design.ai?bcc=attacker@example.com` (or `?to=`/`?cc=`)
-// keeps `pathname === "support@open-design.ai"` yet smuggles extra recipients
-// and headers through to `shell.openExternal`. Because this predicate widens the
-// renderer-exposed `shell:open-external` bridge past http, a compromised
-// renderer could otherwise launch the mail client with arbitrary recipients, so
-// reject any `to`/`cc`/`bcc`/unknown query key.
-export function isSupportMailtoUrl(url: string): boolean {
-  return isMailtoUrlAddressedTo(url, (address) => address === SUPPORT_EMAIL);
-}
-
-// Same allowlist discipline as `isSupportMailtoUrl`, widened to every address
-// this app owns. A `mailto:` the user clicks in the UI never reaches the OS on
+// A `mailto:` the user clicks in the UI never reaches the OS on
 // its own: Electron raises `will-navigate` for it, and a handler that only
 // recognises http(s) leaves the navigation to be dropped, so the click reads as
 // dead. Routing first-party mailtos through `shell.openExternal` is what
@@ -1184,25 +1170,8 @@ function buildCrashReportUrl(ctx: RendererCrashScreenContext): string {
   return `${CRASH_REPORT_ISSUES_URL}?${new URLSearchParams({ title, body }).toString()}`;
 }
 
-// Prefilled mailto for the "Email us" action — same auto-filled diagnostics as
-// the issue, for users who'd rather email than open a GitHub account.
-function buildCrashMailtoUrl(ctx: RendererCrashScreenContext): string {
-  const subject = `CapyDesign keeps crashing (renderer ${ctx.reason})`;
-  const body = [
-    "The CapyDesign desktop app crashed several times in a row on my device.",
-    "",
-    "(If possible, attach the diagnostics file you saved with the “Save logs…” button.)",
-    "",
-    `App version: ${ctx.appVersion}`,
-    `OS: ${osLabelForReport(ctx.platform)} ${ctx.osVersion}`,
-    `Renderer exit: ${ctx.reason}, code ${formatRendererExitCode(ctx.exitCode)}`,
-  ].join("\n");
-  return `mailto:${SUPPORT_EMAIL}?${new URLSearchParams({ subject, body }).toString()}`;
-}
-
 function createRendererCrashHtml(ctx: RendererCrashScreenContext): string {
   const issueUrl = buildCrashReportUrl(ctx);
-  const mailtoUrl = buildCrashMailtoUrl(ctx);
   return `data:text/html;charset=utf-8,${encodeURIComponent(`<!doctype html>
 <html>
   <head>
@@ -1297,7 +1266,6 @@ function createRendererCrashHtml(ctx: RendererCrashScreenContext): string {
         .primary:hover { background: #f2ede4; }
         .secondary { color: #e8e4dc; border-color: rgba(232, 228, 220, 0.28); }
         .secondary:hover { border-color: rgba(232, 228, 220, 0.5); }
-        .email a { color: #e8e4dc; }
       }
     </style>
   </head>
@@ -1312,19 +1280,15 @@ function createRendererCrashHtml(ctx: RendererCrashScreenContext): string {
       </div>
       <p class="hint" id="diag-note">Saved logs include a crash memory snapshot so we can find the cause. Nothing is sent unless you choose to share it.</p>
       <p class="status" id="status" aria-live="polite"></p>
-      <p class="email" id="email-line">Prefer email? <a href="#" id="email">Contact ${SUPPORT_EMAIL}</a></p>
       <p class="hint">If this keeps happening, quitting and reinstalling CapyDesign usually resolves it.</p>
     </div>
     <script>
       (function () {
         var issueUrl = ${JSON.stringify(issueUrl)};
-        var mailtoUrl = ${JSON.stringify(mailtoUrl)};
         var host = window.__od__;
         var diag = window.openDesignDesktop;
         var report = document.getElementById("report");
         var logs = document.getElementById("logs");
-        var emailLine = document.getElementById("email-line");
-        var email = document.getElementById("email");
         var status = document.getElementById("status");
         function say(t) { if (status) status.textContent = t; }
         var canOpen = host && typeof host.openExternal === "function";
@@ -1335,11 +1299,6 @@ function createRendererCrashHtml(ctx: RendererCrashScreenContext): string {
           if (canOpen) {
             report.addEventListener("click", function () { host.openExternal(issueUrl); });
           } else { report.style.display = "none"; }
-        }
-        if (email) {
-          if (canOpen) {
-            email.addEventListener("click", function (e) { e.preventDefault(); host.openExternal(mailtoUrl); });
-          } else if (emailLine) { emailLine.style.display = "none"; }
         }
         if (logs) {
           if (diag && typeof diag.exportDiagnostics === "function") {
@@ -2052,9 +2011,8 @@ export async function createDesktopRuntime(options: DesktopRuntimeOptions): Prom
     ipcMain.removeHandler(channel);
   }
   ipcMain.handle("shell:open-external", async (_event, url: string) => {
-    // http(s) as before, plus a mailto strictly to our support address (the
-    // crash screen's "Email us"); no other scheme opens.
-    if (isSupportMailtoUrl(url)) return openFirstPartyMailto(url);
+    // http(s) only: a local-only build has no first-party mail address, so no
+    // mailto ever qualifies for the OS mail client from this bridge.
     if (!isHttpUrl(url)) return false;
     try {
       await shell.openExternal(url);

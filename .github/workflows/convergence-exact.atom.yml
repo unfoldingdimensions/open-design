@@ -20,7 +20,7 @@ jobs:
     name: Publish reusable exact scene results
     if: >-
       ${{
-        github.repository == 'nexu-io/open-design'
+        github.repository == 'unfoldingdimensions/open-design'
         && github.event.workflow_run.name == 'release-exact'
         && github.event.workflow_run.conclusion == 'success'
         && github.event.workflow_run.head_repository.full_name == github.repository

@@ -30,7 +30,7 @@ import {
   type PreviewSharePopoverItem,
   type PreviewView,
 } from '../PreviewModal';
-import { buildPluginShareUrl, PluginShareMenu } from './PluginShareMenu';
+import { PluginShareMenu } from './PluginShareMenu';
 import { PluginMetaSections } from './PluginMetaSections';
 import { buildPluginUseMenu, pluginUsePrimaryAction } from './pluginUseMenu';
 import type { PluginUseAction } from '../plugins-home/useActions';
@@ -155,7 +155,8 @@ export function PluginDesignSystemDetail({
       shareTarget={{
         title: localizedTitle,
         description: localizedDescription || dsRef || undefined,
-        url: buildPluginShareUrl(record),
+        // CapyDesign is local-only: there is no public plugin detail URL.
+        url: null,
       }}
       onClose={onClose}
       sidebar={{

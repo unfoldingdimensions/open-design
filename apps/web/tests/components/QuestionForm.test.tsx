@@ -1101,24 +1101,10 @@ describe('QuestionFormView', () => {
     expect(screen.getByText('Editorial narrative')).toBeTruthy();
     expect(screen.getByText('Product keynote')).toBeTruthy();
     expect(screen.getByText('Bold storytelling')).toBeTruthy();
-    expect(
-      (screen.getByAltText(
-        'Editorial narrative deck style preview.',
-      ) as HTMLImageElement).getAttribute('src'),
-    ).toBe(
-      visualStyleCardsForContext('deck').find(
-        (style) => style.value === 'deck-editorial-narrative',
-      )?.preview.thumbnailSrc,
-    );
-    expect(
-      (screen.getByAltText(
-        'Product keynote deck style preview.',
-      ) as HTMLImageElement).getAttribute('src'),
-    ).toBe(
-      visualStyleCardsForContext('deck').find(
-        (style) => style.value === 'deck-product-keynote',
-      )?.preview.thumbnailSrc,
-    );
+    // Local-only build: no hosted preview assets exist, so the picker renders
+    // the drawn per-variant preview instead of a remote image.
+    expect(screen.queryByAltText('Editorial narrative deck style preview.')).toBeNull();
+    expect(screen.queryByAltText('Product keynote deck style preview.')).toBeNull();
     expect(document.querySelector('[data-artifact-type="deck"]')).toBeTruthy();
 
     fireEvent.click(card('Editorial narrative'));
@@ -1225,12 +1211,9 @@ describe('QuestionFormView', () => {
     );
 
     expect(screen.getByText('Expressive consumer')).toBeTruthy();
-    expect(
-      screen.getByRole('img', { name: 'Visual direction: Expressive consumer' }),
-    ).toHaveAttribute(
-      'src',
-      'https://repo-assets.open-design.ai/style-catalog/v1/prototype-expressive-consumer-v1.webp',
-    );
+    // Local-only build: no hosted preview asset, so the summary keeps the
+    // title row without an <img>.
+    expect(screen.queryByRole('img', { name: 'Visual direction: Expressive consumer' })).toBeNull();
     expect(screen.queryByText('prototype-expressive-consumer')).toBeNull();
   });
 
@@ -1331,8 +1314,8 @@ describe('QuestionFormView', () => {
     // 每一张都是目录里真实的一张,且都带真预览图
     const catalogTitles = visualStyleCardsForContext('deck').map((c) => c.title);
     expect(visibleLabels().every((label) => catalogTitles.includes(label!))).toBe(true);
-    expect(container.querySelectorAll('img.qf-visual-preview-image'))
-      .toHaveLength(VISUAL_STYLE_BATCH_SIZE);
+    // Local-only build: the drawn preview replaces the remote thumbnail image.
+    expect(container.querySelectorAll('img.qf-visual-preview-image')).toHaveLength(0);
     fireEvent.click(container.querySelector('[data-action="toggle-view"]')!);
 
   });
@@ -1663,20 +1646,11 @@ describe('QuestionFormView', () => {
     expect(documentCards).toHaveLength(11);
     expect(imageCards).toHaveLength(22);
     expect(videoCards).toHaveLength(12);
-    expect(deckCards.find((card) => card.value === 'deck-academic-research')?.preview.src).toBe(
-      'https://repo-assets.open-design.ai/style-catalog/v1/deck-academic-research-v1.webp',
-    );
-    expect(
-      prototypeCards.find((card) => card.value === 'prototype-y2k-chrome')?.preview.src,
-    ).toBe('https://repo-assets.open-design.ai/style-catalog/v1/prototype-y2k-chrome-v1.webp');
-    expect(
-      documentCards.find((card) => card.value === 'document-academic-paper')?.preview.src,
-    ).toBe('https://repo-assets.open-design.ai/style-catalog/v1/document-academic-paper-v1.webp');
-    expect(
-      imageCards.find((card) => card.value === 'image-chrome-3d')?.preview.src,
-    ).toBe('https://repo-assets.open-design.ai/style-catalog/v1/image-chrome-3d-v1.webp');
-    expect(
-      videoCards.find((card) => card.value === 'video-kinetic-type')?.preview.src,
-    ).toBe('https://repo-assets.open-design.ai/style-catalog/v1/video-kinetic-type-v1.webp');
+    // No remote asset origin: cards carry no hosted preview in a local-only build.
+    expect(deckCards.every((card) => card.preview === undefined)).toBe(true);
+    expect(prototypeCards.every((card) => card.preview === undefined)).toBe(true);
+    expect(documentCards.every((card) => card.preview === undefined)).toBe(true);
+    expect(imageCards.every((card) => card.preview === undefined)).toBe(true);
+    expect(videoCards.every((card) => card.preview === undefined)).toBe(true);
   });
 });
