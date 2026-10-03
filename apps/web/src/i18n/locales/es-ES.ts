@@ -2928,7 +2928,7 @@ export const esES: Dict = {
   'designFiles.usefulInfoTip5': '¿Sin ideas? Prueba una plantilla de plugin en Comunidad, en la página de inicio.',
   'designFiles.usefulInfoTip6': '¿Dudas o sugerencias? Únete a nuestro Discord.',
   'designFiles.usefulInfoTip7': '¿Te gusta CapyDesign? Danos una estrella en GitHub.',
-  'designFiles.usefulInfoTip8': 'Sigue a @OpenDesignHQ en X para conocer las novedades.',
+  'designFiles.usefulInfoTip8': 'Sigue a @CapyDesignHQ en X para conocer las novedades.',
   'designFiles.usefulInfoTip9': 'Arrastra imágenes, documentos o carpetas enteras a este panel: el agente los usará como contexto.',
   'designFiles.usefulInfoTip10': 'Haz clic en «Nuevo boceto», dibuja un layout y deja que el agente lo genere.',
   'designFiles.usefulInfoTip11': 'Selecciona cualquier elemento en la vista previa para comentarlo: el agente hará cambios concretos.',

@@ -2942,7 +2942,7 @@ export const en: Dict = {
   'designFiles.usefulInfoTip5': 'Out of ideas? Try a plugin template from Community on the Home page.',
   'designFiles.usefulInfoTip6': 'Questions or feedback? Join us on Discord.',
   'designFiles.usefulInfoTip7': 'Enjoying CapyDesign? Star us on GitHub.',
-  'designFiles.usefulInfoTip8': 'Follow @OpenDesignHQ on X for the latest updates.',
+  'designFiles.usefulInfoTip8': 'Follow @CapyDesignHQ on X for the latest updates.',
   'designFiles.usefulInfoTip9': 'Drag images, docs, or whole folders into this panel — the agent uses them as context.',
   'designFiles.usefulInfoTip10': 'Click New sketch to draw a rough layout and let the agent build from it.',
   'designFiles.usefulInfoTip11': 'Select any element in the preview to comment — the agent makes targeted edits.',

@@ -18,7 +18,6 @@ export const SKILLS_DIR = path.join(REPO_ROOT, 'skills');
 export const DESIGN_SYSTEMS_DIR = path.join(REPO_ROOT, 'design-systems');
 export const PROMPT_TEMPLATES_DIR = path.join(REPO_ROOT, 'prompt-templates');
 
-export const PLUGIN_SCHEMA = 'https://open-design.ai/schemas/plugin.v1.json';
 export const PLUGIN_VERSION = '0.1.0';
 
 // Generated plugin tiers; each maps to a subfolder under PLUGINS_ROOT.
@@ -275,7 +274,8 @@ export interface PluginManifestSeed {
 
 export function buildManifest(seed: PluginManifestSeed): Record<string, unknown> {
   const base: Record<string, unknown> = {
-    $schema: PLUGIN_SCHEMA,
+    // No `$schema` key: CapyDesign hosts no schema endpoint (WS7 dropped the
+    // key from generated manifests; `PLUGIN_VERSION` still pins the shape).
     version: PLUGIN_VERSION,
     ...seed,
   };

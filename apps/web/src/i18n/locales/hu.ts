@@ -2928,7 +2928,7 @@ export const hu: Dict = {
   'designFiles.usefulInfoTip5': 'Nincs ötleted? Próbálj ki egy plugin sablont a kezdőlap Közösség részében.',
   'designFiles.usefulInfoTip6': 'Kérdésed vagy javaslatod van? Csatlakozz hozzánk Discordon.',
   'designFiles.usefulInfoTip7': 'Tetszik az CapyDesign? Adj egy csillagot GitHubon.',
-  'designFiles.usefulInfoTip8': 'Kövesd a @OpenDesignHQ fiókot X-en a friss hírekért.',
+  'designFiles.usefulInfoTip8': 'Kövesd a @CapyDesignHQ fiókot X-en a friss hírekért.',
   'designFiles.usefulInfoTip9': 'Húzz képeket, dokumentumokat vagy egész mappákat erre a panelre — az ügynök kontextusként használja őket.',
   'designFiles.usefulInfoTip10': 'Kattints az „Új vázlat” gombra, rajzolj egy elrendezést, és az ügynök elkészíti.',
   'designFiles.usefulInfoTip11': 'Jelölj ki bármilyen elemet az előnézetben és írj megjegyzést — az ügynök célzottan módosít.',

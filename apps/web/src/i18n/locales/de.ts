@@ -2928,7 +2928,7 @@ export const de: Dict = {
   'designFiles.usefulInfoTip5': 'Keine Idee? Probiere eine Plugin-Vorlage aus der Community auf der Startseite.',
   'designFiles.usefulInfoTip6': 'Fragen oder Feedback? Komm zu uns auf Discord.',
   'designFiles.usefulInfoTip7': 'Gefällt dir CapyDesign? Gib uns einen Stern auf GitHub.',
-  'designFiles.usefulInfoTip8': 'Folge @OpenDesignHQ auf X für Neuigkeiten.',
+  'designFiles.usefulInfoTip8': 'Folge @CapyDesignHQ auf X für Neuigkeiten.',
   'designFiles.usefulInfoTip9': 'Ziehe Bilder, Dokumente oder ganze Ordner in dieses Panel — der Agent nutzt sie als Kontext.',
   'designFiles.usefulInfoTip10': 'Klicke auf „Neue Skizze“ und zeichne ein Layout — der Agent setzt es um.',
   'designFiles.usefulInfoTip11': 'Wähle ein Element in der Vorschau aus und kommentiere es — der Agent ändert gezielt.',

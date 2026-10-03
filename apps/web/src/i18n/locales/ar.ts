@@ -2928,7 +2928,7 @@ export const ar: Dict = {
   'designFiles.usefulInfoTip5': 'لا توجد أفكار؟ جرّب قالب إضافة من قسم المجتمع في الصفحة الرئيسية.',
   'designFiles.usefulInfoTip6': 'لديك سؤال أو اقتراح؟ انضم إلينا على Discord.',
   'designFiles.usefulInfoTip7': 'أعجبك CapyDesign؟ امنحنا نجمة على GitHub.',
-  'designFiles.usefulInfoTip8': 'تابع @OpenDesignHQ على X لمعرفة آخر المستجدات.',
+  'designFiles.usefulInfoTip8': 'تابع @CapyDesignHQ على X لمعرفة آخر المستجدات.',
   'designFiles.usefulInfoTip9': 'اسحب الصور أو المستندات أو مجلدات كاملة إلى هذه اللوحة — سيستخدمها الوكيل كسياق.',
   'designFiles.usefulInfoTip10': 'انقر على «رسم جديد» وارسم تخطيطًا تقريبيًا ليولّد الوكيل التصميم منه.',
   'designFiles.usefulInfoTip11': 'حدد أي عنصر في المعاينة للتعليق عليه — سيجري الوكيل تعديلات موجهة.',

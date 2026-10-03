@@ -2928,7 +2928,7 @@ export const ru: Dict = {
   'designFiles.usefulInfoTip5': 'Нет идей? Попробуйте шаблон плагина в разделе «Сообщество» на главной.',
   'designFiles.usefulInfoTip6': 'Вопросы или идеи? Присоединяйтесь к нам в Discord.',
   'designFiles.usefulInfoTip7': 'Нравится CapyDesign? Поставьте звезду на GitHub.',
-  'designFiles.usefulInfoTip8': 'Подписывайтесь на @OpenDesignHQ в X, чтобы не пропустить новинки.',
+  'designFiles.usefulInfoTip8': 'Подписывайтесь на @CapyDesignHQ в X, чтобы не пропустить новинки.',
   'designFiles.usefulInfoTip9': 'Перетащите изображения, документы или целые папки в эту панель — агент использует их как контекст.',
   'designFiles.usefulInfoTip10': 'Нажмите «Новый эскиз», нарисуйте макет — агент сгенерирует дизайн по нему.',
   'designFiles.usefulInfoTip11': 'Выделите любой элемент в предпросмотре и оставьте комментарий — агент внесёт точечные правки.',

@@ -3,10 +3,6 @@ import { ensureRailOpen, openNewProjectModal } from '@/playwright/rail';
 import { settingsSurface } from '@/playwright/amr';
 import { expectStableCount } from '@/playwright/assertions';
 import { openHomeTemplateMenu } from '@/playwright/home-hero';
-import type {
-  WorkspaceCollabContext,
-  WorkspaceDirectoryItem,
-} from '@capydesign/contracts';
 import type { Page, Request } from '@playwright/test';
 import {
   applyStandardMocks,
@@ -16,6 +12,38 @@ import {
   STORAGE_KEY,
 } from '@/playwright/mock-factory';
 import { T } from '@/timeouts';
+
+/**
+ * Local structural shape of the workspace directory item the entry UI still
+ * accepts; the shared contracts type was removed with the Cloud identity layer
+ * (WS6) while the local-scope switcher UI survived.
+ */
+type WorkspaceDirectoryItem = {
+  workspaceId: string;
+  workspaceName: string;
+  workspaceType: string;
+  workspaceMemberId: string;
+  role: string;
+  memberStatus: string;
+  lifecycleState: string;
+};
+
+type WorkspaceCollabContext = WorkspaceDirectoryItem & {
+  billingState: string;
+  planId: string | null;
+  providerMode: string;
+  seatSummary: { seatLimit: number; usedSeats: number; availableSeats: number; isSeatFull: boolean };
+  permissions: {
+    canManageMembers: boolean;
+    canManageBilling: boolean;
+    canInviteMembers: boolean;
+    canManageAutoRecharge: boolean;
+    canShareProjects: boolean;
+    canWriteSyncedFiles: boolean;
+    canViewWorkspaceSettings: boolean;
+    canManageSharedResources: boolean;
+  };
+};
 const LOCAL_CLI_LABEL = /Local CLI|Local coding agent|本机 CLI|本地 CLI/i;
 const STARTER_PLUGIN = makeStarterPlugin({
   id: 'localized-plugin',

@@ -110,14 +110,16 @@ function assetOf(metadata: VersionMetadata, target: ReleaseTarget): { name: stri
  * resolveMacPaths().dmgPath and resolveWinPaths().setupPath.
  */
 function artifactDestination(target: ReleaseTarget, toolsPackDir: string, namespace: string): string {
+  // Names must match tools-pack's builder output (PRODUCT_NAME = "CapyDesign");
+  // a drift here surfaces only as "no artifact found at ..." mid-smoke.
   const token = sanitizeNamespace(namespace);
   if (target === "win_x64") {
-    return join(toolsPackDir, "out", "win", "namespaces", namespace, "builder", `Open Design-${token}-setup.exe`);
+    return join(toolsPackDir, "out", "win", "namespaces", namespace, "builder", `CapyDesign-${token}-setup.exe`);
   }
   if (target === "linux_x64") {
-    return join(toolsPackDir, "out", "linux", "namespaces", namespace, "builder", `Open Design-${token}.AppImage`);
+    return join(toolsPackDir, "out", "linux", "namespaces", namespace, "builder", `CapyDesign-${token}.AppImage`);
   }
-  return join(toolsPackDir, "out", "mac", "namespaces", namespace, "dmg", `Open Design-${token}.dmg`);
+  return join(toolsPackDir, "out", "mac", "namespaces", namespace, "dmg", `CapyDesign-${token}.dmg`);
 }
 
 async function download(url: string, destination: string): Promise<{ bytes: number; sha256: string }> {

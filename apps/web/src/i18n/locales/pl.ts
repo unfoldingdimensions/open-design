@@ -2928,7 +2928,7 @@ export const pl: Dict = {
   'designFiles.usefulInfoTip5': 'Brak pomysłów? Wypróbuj szablon wtyczki w sekcji Społeczność na stronie głównej.',
   'designFiles.usefulInfoTip6': 'Pytania lub sugestie? Dołącz do nas na Discordzie.',
   'designFiles.usefulInfoTip7': 'Podoba Ci się CapyDesign? Zostaw gwiazdkę na GitHubie.',
-  'designFiles.usefulInfoTip8': 'Obserwuj @OpenDesignHQ na X, by śledzić nowości.',
+  'designFiles.usefulInfoTip8': 'Obserwuj @CapyDesignHQ na X, by śledzić nowości.',
   'designFiles.usefulInfoTip9': 'Przeciągnij obrazy, dokumenty lub całe foldery do tego panelu — agent użyje ich jako kontekstu.',
   'designFiles.usefulInfoTip10': 'Kliknij „Nowy szkic”, narysuj układ, a agent wygeneruje go za Ciebie.',
   'designFiles.usefulInfoTip11': 'Zaznacz dowolny element w podglądzie i dodaj komentarz — agent wprowadzi punktowe zmiany.',

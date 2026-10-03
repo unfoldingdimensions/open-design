@@ -2928,7 +2928,7 @@ export const ja: Dict = {
   'designFiles.usefulInfoTip5': 'アイデアに迷ったら、ホームのコミュニティにあるプラグインテンプレートをお試しください。',
   'designFiles.usefulInfoTip6': '質問やご意見は、Discord でお気軽にどうぞ。',
   'designFiles.usefulInfoTip7': '気に入ったら、GitHub でスターをお願いします。',
-  'designFiles.usefulInfoTip8': 'X で @OpenDesignHQ をフォローして最新情報をチェック。',
+  'designFiles.usefulInfoTip8': 'X で @CapyDesignHQ をフォローして最新情報をチェック。',
   'designFiles.usefulInfoTip9': '画像やドキュメント、フォルダーごとこのパネルにドラッグすると、エージェントがコンテキストとして使用します。',
   'designFiles.usefulInfoTip10': 'スケッチ機能でラフなレイアウトを描くと、エージェントがそれを元に生成します。',
   'designFiles.usefulInfoTip11': 'プレビューで要素を選択してコメントすると、エージェントがその箇所を修正します。',

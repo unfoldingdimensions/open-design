@@ -1,7 +1,7 @@
 {
   "name": "@capydesign/dsh-runtime",
   "version": "0.1.0",
-  "description": "DeepSeek Harness profile runtime for OpenDesign",
+  "description": "DeepSeek Harness profile runtime for CapyDesign",
   "license": "Apache-2.0",
   "type": "module",
   "main": "dist/index.js",

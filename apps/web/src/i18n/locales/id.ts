@@ -2928,7 +2928,7 @@ export const id: Dict = {
   'designFiles.usefulInfoTip5': 'Belum ada ide? Coba template plugin di Komunitas pada halaman Beranda.',
   'designFiles.usefulInfoTip6': 'Ada pertanyaan atau saran? Gabung Discord kami.',
   'designFiles.usefulInfoTip7': 'Suka CapyDesign? Beri kami bintang di GitHub.',
-  'designFiles.usefulInfoTip8': 'Ikuti @OpenDesignHQ di X untuk kabar terbaru.',
+  'designFiles.usefulInfoTip8': 'Ikuti @CapyDesignHQ di X untuk kabar terbaru.',
   'designFiles.usefulInfoTip9': 'Seret gambar, dokumen, atau seluruh folder ke panel ini — agen akan memakainya sebagai konteks.',
   'designFiles.usefulInfoTip10': 'Klik Sketsa baru, gambar tata letak kasar, dan biarkan agen membuatnya.',
   'designFiles.usefulInfoTip11': 'Pilih elemen apa pun di pratinjau untuk berkomentar — agen akan mengubahnya secara terarah.',

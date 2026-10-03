@@ -166,7 +166,7 @@ describe('marketplaces', () => {
 
   it('requires a raw open-design-marketplace.json document, not a GitHub tree page', async () => {
     const result = await addMarketplace(db, {
-      url: 'https://github.com/nexu-io/open-design/tree/garnet-hemisphere/plugins/registry/community',
+      url: 'https://github.com/unfoldingdimensions/open-design/tree/garnet-hemisphere/plugins/registry/community',
       fetcher: fixtureFetcher('<!doctype html><html><body>GitHub tree page</body></html>'),
     });
 
@@ -297,7 +297,7 @@ describe('marketplaces', () => {
     expect(resolved?.marketplaceId).toBe('community');
     expect(resolved?.marketplaceTrust).toBe('restricted');
     expect(resolved?.source).toMatch(
-      /^github:nexu-io\/open-design(?:@[^/]+)?\/plugins\/community\/registry-starter$/,
+      /^github:unfoldingdimensions\/open-design(?:@[^/]+)?\/plugins\/community\/registry-starter$/,
     );
   });
 
@@ -319,7 +319,7 @@ describe('marketplaces', () => {
     );
     expect(officialManifest.plugins?.some((plugin) => plugin.name === 'open-design/build-test')).toBe(true);
     expect(officialManifest.plugins?.every((plugin) =>
-      /^github:nexu-io\/open-design(?:@[^/]+)?\/plugins\/_official\//.test(plugin.source ?? ''),
+      /^github:unfoldingdimensions\/open-design(?:@[^/]+)?\/plugins\/_official\//.test(plugin.source ?? ''),
     )).toBe(true);
 
     const seeded = ensureMarketplaceManifest(db, {
@@ -363,7 +363,7 @@ describe('marketplaces', () => {
     const entry = communityManifest.plugins?.find((plugin) => plugin.name === 'community/registry-starter');
     expect(entry?.source).toBeTruthy();
 
-    const sourceSubpath = entry!.source!.replace(/^github:nexu-io\/open-design(?:@[^/]+)?\//, '');
+    const sourceSubpath = entry!.source!.replace(/^github:unfoldingdimensions\/open-design(?:@[^/]+)?\//, '');
     expect(sourceSubpath).toBe('plugins/community/registry-starter');
 
     const sourceManifest = await readFile(
@@ -373,7 +373,7 @@ describe('marketplaces', () => {
     expect(JSON.parse(sourceManifest)).toMatchObject({
       name: 'community-registry-starter',
       plugin: {
-        repo: expect.stringContaining('github.com/nexu-io/open-design'),
+        repo: expect.stringContaining('github.com/unfoldingdimensions/open-design'),
       },
     });
   });

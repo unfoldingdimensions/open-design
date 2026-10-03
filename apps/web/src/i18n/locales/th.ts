@@ -2928,7 +2928,7 @@ export const th: Dict = {
   'designFiles.usefulInfoTip5': 'ยังไม่มีไอเดีย? ลองเทมเพลตปลั๊กอินในคอมมูนิตี้บนหน้าแรก',
   'designFiles.usefulInfoTip6': 'มีคำถามหรือข้อเสนอแนะ? เข้าร่วม Discord ของเรา',
   'designFiles.usefulInfoTip7': 'ถ้าชอบ CapyDesign ฝากกดดาวให้เราบน GitHub',
-  'designFiles.usefulInfoTip8': 'ติดตาม @OpenDesignHQ บน X เพื่อรับข่าวสารล่าสุด',
+  'designFiles.usefulInfoTip8': 'ติดตาม @CapyDesignHQ บน X เพื่อรับข่าวสารล่าสุด',
   'designFiles.usefulInfoTip9': 'ลากรูป เอกสาร หรือทั้งโฟลเดอร์มาที่แผงนี้ เอเจนต์จะใช้เป็นบริบท',
   'designFiles.usefulInfoTip10': 'กด สเก็ตช์ใหม่ วาดเลย์เอาต์คร่าว ๆ แล้วให้เอเจนต์สร้างตาม',
   'designFiles.usefulInfoTip11': 'เลือกองค์ประกอบใดก็ได้ในพรีวิวเพื่อคอมเมนต์ เอเจนต์จะแก้ไขเฉพาะจุด',

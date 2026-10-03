@@ -3146,7 +3146,7 @@ export const zhCN: Dict = {
   "designFiles.usefulInfoTip6": "遇到问题或有建议？加入 Discord 和我们聊聊。",
   "designFiles.usefulInfoTip7": "觉得好用？在 GitHub 给我们点个 Star。",
   "designFiles.usefulInfoTip8":
-    "在 X 上关注 @OpenDesignHQ，第一时间了解新功能。",
+    "在 X 上关注 @CapyDesignHQ，第一时间了解新功能。",
   "designFiles.usefulInfoTip9":
     "把图片、文档甚至整个文件夹拖到当前面板，智能体都会用作上下文。",
   "designFiles.usefulInfoTip10":
