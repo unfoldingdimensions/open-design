@@ -2928,7 +2928,7 @@ export const fa: Dict = {
   'designFiles.usefulInfoTip5': 'ایده‌ای ندارید؟ قالب‌های افزونه در بخش انجمن صفحهٔ اصلی را امتحان کنید.',
   'designFiles.usefulInfoTip6': 'سؤال یا پیشنهادی دارید؟ به Discord ما بپیوندید.',
   'designFiles.usefulInfoTip7': 'از CapyDesign راضی هستید؟ در GitHub به ما ستاره بدهید.',
-  'designFiles.usefulInfoTip8': 'برای آخرین خبرها @OpenDesignHQ را در X دنبال کنید.',
+  'designFiles.usefulInfoTip8': 'برای آخرین خبرها @CapyDesignHQ را در X دنبال کنید.',
   'designFiles.usefulInfoTip9': 'تصاویر، اسناد یا حتی کل پوشه‌ها را به این پنل بکشید — عامل از آن‌ها به عنوان زمینه استفاده می‌کند.',
   'designFiles.usefulInfoTip10': 'روی «طرح جدید» کلیک کنید و یک چیدمان بکشید تا عامل بر اساس آن بسازد.',
   'designFiles.usefulInfoTip11': 'هر عنصری را در پیش‌نمایش انتخاب و نظر بدهید — عامل همان بخش را اصلاح می‌کند.',

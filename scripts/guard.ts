@@ -23,6 +23,7 @@ import {
 import { checkCraftReferences } from "./lint-craft-references.ts";
 import { checkSkillModes } from "./check-skill-modes.ts";
 import { checkAttributionNotices } from "./check-attribution-notices.ts";
+import { checkRebrandResidue } from "./lib/guard/check-rebrand-residue.ts";
 import { checkWhatsNewPublishWorkflow } from "./check-whats-new-publish-workflow.ts";
 import { collectCssHardcodedColorMatches, cssWideAndSpecialColorKeywords, realNamedColors } from "./style-policy.ts";
 import { checkScriptsLibraryArchitecture } from "./lib/guard/architecture.ts";
@@ -1543,6 +1544,7 @@ const checks: GuardCheck[] = [
   { name: "craft references", run: checkCraftReferences },
   { name: "skill modes", run: checkSkillModes },
   { name: "attribution notices", run: checkAttributionNotices },
+  { name: "rebrand residue", run: checkRebrandResidue },
   { name: "what's new publish workflow", run: ({ repoRoot: root }) => checkWhatsNewPublishWorkflow(root) },
   { name: "HTML plugin preview contracts", run: ({ repoRoot: root }) => checkHtmlPluginPreviewContracts(root) },
   { name: "plugin preview manifest", run: checkPluginPreviewManifest },

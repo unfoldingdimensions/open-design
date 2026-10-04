@@ -1,11 +1,40 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
-import type {
-  WorkspaceCollabContext,
-  WorkspaceDirectoryItem,
-} from '@capydesign/contracts';
 import { ensureRailOpen } from './rail.js';
 import { T } from '@/timeouts';
+
+/**
+ * Local structural shapes of the workspace directory item and collab context
+ * the entry UI still accepts. The shared contracts types were removed with the
+ * Cloud identity layer (WS6) while this local-scope UI survived, so the
+ * Playwright mocks declare their own field shapes instead of importing them.
+ */
+type WorkspaceDirectoryItem = {
+  workspaceId: string;
+  workspaceName: string;
+  workspaceType: string;
+  workspaceMemberId: string;
+  role: string;
+  memberStatus: string;
+  lifecycleState: string;
+};
+
+type WorkspaceCollabContext = WorkspaceDirectoryItem & {
+  billingState: string;
+  planId: string | null;
+  providerMode: string;
+  seatSummary: { seatLimit: number; usedSeats: number; availableSeats: number; isSeatFull: boolean };
+  permissions: {
+    canManageMembers: boolean;
+    canManageBilling: boolean;
+    canInviteMembers: boolean;
+    canManageAutoRecharge: boolean;
+    canShareProjects: boolean;
+    canWriteSyncedFiles: boolean;
+    canViewWorkspaceSettings: boolean;
+    canManageSharedResources: boolean;
+  };
+};
 
 export const STORAGE_KEY = 'open-design:config';
 export const OPEN_SETTINGS_LABEL = /Open settings|打开设置|開啟設定|Account & settings/i;

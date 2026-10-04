@@ -21,10 +21,6 @@ import {
 } from '@/tools-dev/cli';
 import type { ToolsDevSuiteSpec } from '@/tools-dev/types';
 import { resolveAppVersionInfo } from '../../../apps/daemon/src/app-version.ts';
-import {
-  DEFAULT_WHATS_NEW_URL,
-  whatsNewSourceUrl,
-} from '../../../apps/daemon/src/services/whats-new.ts';
 
 /**
  * Where GitHub's hosted Linux runners install the Node toolchain. The daemon's
@@ -55,10 +51,13 @@ function resolveCiShapedChannel(env: NodeJS.ProcessEnv): string {
 }
 
 describe('e2e tools-dev release channel', () => {
-  test('a CI-shaped runtime without the harness default fetches the live release card', () => {
-    // The red half of this file. If the daemon ever stops mistaking a hosted
-    // runner for a packaged install, this expectation fails and the harness
-    // default below becomes belt without suspenders — which is worth knowing.
+  test('a CI-shaped runtime is detected as a packaged install', () => {
+    // The red half of the original file. If the daemon ever stops mistaking a
+    // hosted runner for a packaged install, this expectation fails and the
+    // harness default becomes belt without suspenders — which is worth
+    // knowing. The release-card URL resolution that used to share this file
+    // was removed with the daemon whats-new service (WS6/WS7): the updater is
+    // fail-closed with no default feed.
     const ciShaped = resolveAppVersionInfo({
       arch: 'x64',
       env: {},
@@ -69,40 +68,25 @@ describe('e2e tools-dev release channel', () => {
     });
 
     expect(ciShaped.packaged).toBe(true);
-    expect(whatsNewSourceUrl({}, ciShaped.channel)).toBe(DEFAULT_WHATS_NEW_URL);
   });
 
-  test('the harness environment resolves that same runtime to no release card', () => {
+  test('the harness environment resolves that same runtime to the development channel', () => {
     const env = composeToolsDevEnv(SUITE, {}, {});
 
     expect(env.OD_RELEASE_CHANNEL).toBe(E2E_TOOLS_DEV_RELEASE_CHANNEL);
     expect(resolveCiShapedChannel(env)).toBe('development');
-    expect(whatsNewSourceUrl(env, resolveCiShapedChannel(env))).toBeNull();
   });
 
-  test('an ambient shell channel cannot pull the card back into a test run', () => {
+  test('an ambient shell channel cannot override the harness channel', () => {
     const env = composeToolsDevEnv(SUITE, {}, { OD_RELEASE_CHANNEL: 'stable' });
 
     expect(resolveCiShapedChannel(env)).toBe('development');
-    expect(whatsNewSourceUrl(env, resolveCiShapedChannel(env))).toBeNull();
   });
 
   test('a spec that means to exercise a release channel can still opt back in', () => {
     const env = composeToolsDevEnv(SUITE, { OD_RELEASE_CHANNEL: 'beta' }, {});
 
     expect(resolveCiShapedChannel(env)).toBe('beta');
-    expect(whatsNewSourceUrl(env, resolveCiShapedChannel(env))).toBe(DEFAULT_WHATS_NEW_URL);
-  });
-
-  test('an explicit document URL still overrides the channel, which is what the page route covers', () => {
-    // The channel default and the Playwright `suppressWhatsNew` route defend
-    // different things. This env reaches `development` and still resolves to a
-    // document, so a machine carrying `OD_WHATS_NEW_URL` would serve a card that
-    // only the page-level route can stop.
-    const env = composeToolsDevEnv(SUITE, {}, { OD_WHATS_NEW_URL: 'https://example.test/card.json' });
-
-    expect(resolveCiShapedChannel(env)).toBe('development');
-    expect(whatsNewSourceUrl(env, resolveCiShapedChannel(env))).toBe('https://example.test/card.json');
   });
 
   test('per-suite runtime identity stays below every override', () => {

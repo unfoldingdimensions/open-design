@@ -32,12 +32,71 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { parseWhatsNewDocument } from "../apps/daemon/src/services/whats-new.ts";
-
 const repoRoot = path.resolve(import.meta.dirname, "..");
 
 /** Kept in sync with the workflow's `WHATS_NEW_DOCUMENT` input. */
 export const WHATS_NEW_DOCUMENT_PATH = "docs/whats-new.json";
+
+// ─── Inlined document parser ──────────────────────────────────────────────
+// `parseWhatsNewDocument` used to live in the daemon's whats-new service and
+// was removed with it (WS6/WS7 made the card opt-in with no default feed).
+// The publish pipeline and this guard still need the exact same field rules,
+// so the parser is inlined here rather than left dangling on a deleted
+// module. Keep these rules in sync with the card renderer's expectations.
+
+type WhatsNewContent = {
+  id: string;
+  title: string;
+  body: string;
+  imageUrl?: string;
+  linkUrl?: string;
+  ctaLabel?: string;
+  locales?: Record<string, { title?: string; body?: string; linkUrl?: string; ctaLabel?: string }>;
+};
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function isHttpsUrl(value: unknown): value is string {
+  return typeof value === "string" && value.startsWith("https://");
+}
+
+function parseLocaleOverride(value: unknown): NonNullable<WhatsNewContent["locales"]>[string] | undefined {
+  if (!isObject(value)) return undefined;
+  const override: NonNullable<WhatsNewContent["locales"]>[string] = {};
+  if (isNonEmptyString(value.title)) override.title = value.title;
+  if (isNonEmptyString(value.body)) override.body = value.body;
+  if (isHttpsUrl(value.linkUrl)) override.linkUrl = value.linkUrl;
+  if (isNonEmptyString(value.ctaLabel)) override.ctaLabel = value.ctaLabel;
+  return override;
+}
+
+export function parseWhatsNewDocument(payload: unknown): {
+  id: string | null;
+  content: WhatsNewContent | null;
+} {
+  if (!isObject(payload)) return { id: null, content: null };
+  const id = isNonEmptyString(payload.id) ? payload.id : null;
+  const title = isNonEmptyString(payload.title) ? payload.title : null;
+  const body = isNonEmptyString(payload.body) ? payload.body : null;
+  if (id == null || title == null || body == null) return { id, content: null };
+
+  const content: WhatsNewContent = { id, title, body };
+  if (isHttpsUrl(payload.imageUrl)) content.imageUrl = payload.imageUrl;
+  if (isHttpsUrl(payload.linkUrl)) content.linkUrl = payload.linkUrl;
+  if (isNonEmptyString(payload.ctaLabel)) content.ctaLabel = payload.ctaLabel;
+
+  if (payload.locales !== undefined && isObject(payload.locales)) {
+    const locales: NonNullable<WhatsNewContent["locales"]> = {};
+    for (const [locale, entry] of Object.entries(payload.locales)) {
+      const override = parseLocaleOverride(entry);
+      if (override != null) locales[locale] = override;
+    }
+    content.locales = locales;
+  }
+  return { id, content };
+}
 
 // Field names the daemon parser reads. Anything else in the document is a
 // typo (`imageURL`, `link_url`, `locale`) that the parser would drop without

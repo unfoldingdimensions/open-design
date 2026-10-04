@@ -2928,7 +2928,7 @@ export const fr: Dict = {
   'designFiles.usefulInfoTip5': 'En panne d’idées ? Essayez un modèle de plugin dans Communauté, sur l’accueil.',
   'designFiles.usefulInfoTip6': 'Questions ou suggestions ? Rejoignez-nous sur Discord.',
   'designFiles.usefulInfoTip7': 'CapyDesign vous plaît ? Donnez-nous une étoile sur GitHub.',
-  'designFiles.usefulInfoTip8': 'Suivez @OpenDesignHQ sur X pour suivre les nouveautés.',
+  'designFiles.usefulInfoTip8': 'Suivez @CapyDesignHQ sur X pour suivre les nouveautés.',
   'designFiles.usefulInfoTip9': 'Glissez images, documents ou dossiers entiers dans ce panneau — l’agent les utilisera comme contexte.',
   'designFiles.usefulInfoTip10': 'Cliquez sur « Nouveau croquis », dessinez une mise en page et laissez l’agent la générer.',
   'designFiles.usefulInfoTip11': 'Sélectionnez un élément dans l’aperçu pour le commenter — l’agent fera des retouches ciblées.',

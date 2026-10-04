@@ -3154,7 +3154,7 @@ export const zhTW: Dict = {
   "designFiles.usefulInfoTip6": "遇到問題或有建議？加入 Discord 和我們聊聊。",
   "designFiles.usefulInfoTip7": "覺得好用？在 GitHub 給我們點個 Star。",
   "designFiles.usefulInfoTip8":
-    "在 X 上關注 @OpenDesignHQ，第一時間了解新功能。",
+    "在 X 上關注 @CapyDesignHQ，第一時間了解新功能。",
   "designFiles.usefulInfoTip9":
     "把圖片、文件甚至整個資料夾拖到目前面板，智慧體都會用作上下文。",
   "designFiles.usefulInfoTip10":

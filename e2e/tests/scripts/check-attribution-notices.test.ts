@@ -101,15 +101,15 @@ test("a clean fabricated tree passes", async () => {
 });
 
 test("the real repository fails only on the known pre-WS2 blockers", async () => {
-  // WS2 (font swap) has not removed JiduMonoPro and no human has cleared the
-  // two "Original X post" prompt templates, so the check is red on the real
-  // tree by design. This test pins the failure set: any NEW violation means
-  // the ledger drifted and the test must be updated with it, not weakened.
+  // WS2 removed JiduMonoPro, so the font violation is gone; no human has
+  // cleared the two "Original X post" prompt templates yet, so the check is
+  // red on the real tree by design. This test pins the failure set: any NEW
+  // violation means the ledger drifted and the test must be updated with it,
+  // not weakened.
   const repoRoot = path.resolve(import.meta.dirname, "../../..");
   const violations = await collectAttributionViolations(repoRoot);
   const paths = violations.map((violation) => violation.path).sort();
   assert.deepEqual(paths, [
-    "apps/web/public/fonts/JiduMonoPro-Regular.otf",
     "prompt-templates/image/profile-avatar-seedream-high-fashion-dreamy-portrait.json",
     "prompt-templates/image/social-media-post-seedream-squishcraft-kids-clay-ad.json",
   ]);
