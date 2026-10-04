@@ -1,11 +1,23 @@
 # WS12 — test-suite rebaseline and residue audit
 
-Status: **complete** (all suites run against the post-rebrand tree; every
-failure classified against WS0's baseline; typecheck green; residue guard
-landed; both hard requirements proven; **one continuation pass enumerated** —
-the removed-capability test deletion sweep across 27 daemon files + 7 e2e
-collab files, with per-file dispositions decided below).
-Branch: `rebrand/ws12-test-suite-rebaseline` off post-WS10 `main`.
+Status: **core complete + deletion sweep in progress.** Landed in PR #5:
+typecheck green, residue guard, both hard requirements, four daemon files
+fixed. This sweep branch deletes the removed-capability tests with audit.
+**Swept so far: 7 e2e-collab files (whole) + 6 daemon files trimmed to green
+(`balance-vs-rate-limit-snapshot`, `agent-args`, `chat-run-inactivity-timeout`,
+`acp.test`, `od-next-capability-gate` incl. the dead vela tuple/fixture rows
+in source, `version-route`/`mcp-runs`/`project-design-system-routes` in PR #5).**
+**Remaining enumerated (~21 daemon files, dispositions unchanged)**: the
+AMR/telemetry/workspace clusters listed in the daemon-delta section below —
+each a block-level deletion of tests asserting a capability WS6 removed.
+**Escalated (do not delete): `routes/live-artifacts.test.ts` > 'emits project
+SSE live artifact events for patch delete and refresh' — a local_file-source
+create through the tool-token authority path returns 500; sibling creates pass,
+`emitLiveArtifactEvent` is throw-guarded, so the fault is inside
+`authorizeProjectToolRequest`/`createLiveArtifact` (WS6's
+`local/project-request-authority` rewrite is the suspect). Possible product
+regression in a surviving surface.**
+Branch: `rebrand/ws12-deletion-sweep` off post-WS12 `main`.
 Baseline: `.captdesign-rebrand/baseline/failing-tests.md` (clean HEAD
 `12c25777d`, 2026-09-12 — before any rebrand workstream landed).
 
