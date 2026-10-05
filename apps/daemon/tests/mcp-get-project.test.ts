@@ -52,7 +52,9 @@ describe('public MCP get_project', () => {
       project: projectId,
     });
 
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    // WS6 removed the workspace-directory lookup, so get_project now makes
+    // exactly two calls: MCP install-info and the project fetch.
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(firstJson(result)).toMatchObject({
       id: projectId,
       name: 'Demo',
