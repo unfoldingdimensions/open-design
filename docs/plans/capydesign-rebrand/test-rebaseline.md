@@ -10,10 +10,16 @@ in source, `version-route`/`mcp-runs`/`project-design-system-routes` in PR #5).*
 **Remaining enumerated (~14 daemon files, dispositions unchanged)**: the
 AMR/telemetry/workspace clusters listed in the daemon-delta section below —
 each a block-level deletion of tests asserting a capability WS6 removed:
-`acp-service-failure` (6 — E1/E3/A6 rows), `brand-routes` (2 — team
-binding), `routine-routes` (5 — workspace scope), `plugins-duplicate-project`
-(5 — workspace binding + rollback), `project-cli` (2 — #6679 workspace
-resolution), `media/tasks-routes` (1 — workspace authority query),
+`acp-service-failure` — **DONE** (A6 row deleted, E1/E3 re-recorded to their
+post-gateway reality: E1 moved to auth/missing_api_key, E3's bridge never
+moved off AGENT_EXECUTION_FAILED; 192/192 green), `media/models` — **DONE**,
+`update-apply-observations` — **DONE**, `service-failure-classification` —
+**DONE**, `mcp-get-project` — **DONE** (fetch count 3→2),
+`telemetry-fatal-handler-lifecycle` — **DONE** (file deleted).
+Still open: `brand-routes` (2 — team binding), `routine-routes` (5 —
+workspace scope), `plugins-duplicate-project` (5 — workspace binding +
+rollback), `project-cli` (2 — #6679 workspace resolution),
+`media/tasks-routes` (1 — workspace authority query),
 `media/failure-next-step-record` (2 — Vela media failure subjects),
 `design-systems/generation-jobs` (1 — Team revision),
 `project-file-version-readonly-mirror` (4 — shared mirror),
@@ -24,6 +30,15 @@ commands), `observability/task-observation-rollout` (20) +
 `observability/main-run-observation` (4) — send-path delivery assertions
 against the nulled sinks. Also `runtimes/tool-vs-agent-auth-snapshot` (a
 baseline file whose amr rows now fail — trim its amr verdict rows).
+**Method note:** these blocks sit inside fixture-heavy `it()` bodies where
+line-range deletion corrupted brace balance on first attempt (reverted);
+each needs its block read and removed with the Edit tool, not ranged
+deletion.
+**Second real-regression suspect (escalate, do not delete):
+`artifacts/successful-run-deliverable-finalization` > 'records an internal
+error at the delivery boundary' — the mocked `decideDeliverableSyntaxRepair`
+shape no longer reaches the finalizer ({} vs 3 fields) on a surface no
+rebrand workstream plausibly touched.**
 **Second real-regression suspect (escalate, do not delete):
 `artifacts/successful-run-deliverable-finalization` > 'records an internal
 error at the delivery boundary' — the mocked `decideDeliverableSyntaxRepair`
