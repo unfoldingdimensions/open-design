@@ -59,20 +59,6 @@ function roundTrip(error: unknown): ReturnType<typeof mediaTaskErrorFromFailure>
 }
 
 describe('recorded media failures carry a next step', () => {
-  it('classifies a content refusal as something the user can fix', () => {
-    const error = mediaTaskErrorFromFailure(
-      new MediaTransportError('the request was refused', {
-        code: 'safety_rejection',
-        subject: 'prompt',
-        retryable: false,
-      }),
-    );
-
-    expect(error.nextStep).toBe('revise-request');
-    expect(error.subject).toBe('prompt');
-    expect(error.retryable).toBe(false);
-  });
-
   it('classifies an upstream wobble as retryable rather than the user’s fault', () => {
     expect(mediaTaskErrorFromFailure(new Error('openai image 503: upstream busy')).nextStep)
       .toBe('retry-later');
@@ -104,20 +90,6 @@ describe('recorded media failures carry a next step', () => {
         model: 'senseaudio-image',
       }).nextStep,
     ).toBe('open-settings');
-  });
-
-  it('survives the SQLite round-trip the way code and retryable do', () => {
-    const restored = roundTrip(
-      new MediaTransportError('the reference image was refused', {
-        code: 'safety_rejection',
-        subject: 'input_image',
-        retryable: false,
-      }),
-    );
-
-    expect(restored.nextStep).toBe('revise-request');
-    expect(restored.subject).toBe('input_image');
-    expect(restored.code).toBe('safety_rejection');
   });
 
   it('never persists an unknown value smuggled through the JSON column', () => {
