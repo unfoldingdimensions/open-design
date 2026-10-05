@@ -7,9 +7,28 @@ fixed. This sweep branch deletes the removed-capability tests with audit.
 (`balance-vs-rate-limit-snapshot`, `agent-args`, `chat-run-inactivity-timeout`,
 `acp.test`, `od-next-capability-gate` incl. the dead vela tuple/fixture rows
 in source, `version-route`/`mcp-runs`/`project-design-system-routes` in PR #5).**
-**Remaining enumerated (~21 daemon files, dispositions unchanged)**: the
+**Remaining enumerated (~14 daemon files, dispositions unchanged)**: the
 AMR/telemetry/workspace clusters listed in the daemon-delta section below —
-each a block-level deletion of tests asserting a capability WS6 removed.
+each a block-level deletion of tests asserting a capability WS6 removed:
+`acp-service-failure` (6 — E1/E3/A6 rows), `brand-routes` (2 — team
+binding), `routine-routes` (5 — workspace scope), `plugins-duplicate-project`
+(5 — workspace binding + rollback), `project-cli` (2 — #6679 workspace
+resolution), `media/tasks-routes` (1 — workspace authority query),
+`media/failure-next-step-record` (2 — Vela media failure subjects),
+`design-systems/generation-jobs` (1 — Team revision),
+`project-file-version-readonly-mirror` (4 — shared mirror),
+`prompts/system-prompt-matrix` (1 — golden snapshot to regenerate against
+WS7/WS8 prompt text with `vitest -u` after review), `diagnostics-export`
+(1 — AMR session row), `runtimes/agent-runtime-env` (1 — Vela wrapper media
+commands), `observability/task-observation-rollout` (20) +
+`observability/main-run-observation` (4) — send-path delivery assertions
+against the nulled sinks. Also `runtimes/tool-vs-agent-auth-snapshot` (a
+baseline file whose amr rows now fail — trim its amr verdict rows).
+**Second real-regression suspect (escalate, do not delete):
+`artifacts/successful-run-deliverable-finalization` > 'records an internal
+error at the delivery boundary' — the mocked `decideDeliverableSyntaxRepair`
+shape no longer reaches the finalizer ({} vs 3 fields) on a surface no
+rebrand workstream plausibly touched.**
 **Escalated (do not delete): `routes/live-artifacts.test.ts` > 'emits project
 SSE live artifact events for patch delete and refresh' — a local_file-source
 create through the tool-token authority path returns 500; sibling creates pass,
