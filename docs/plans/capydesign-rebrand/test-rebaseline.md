@@ -1,11 +1,36 @@
 # WS12 — test-suite rebaseline and residue audit
 
-Status: **complete** (all suites run against the post-rebrand tree; every
-failure classified against WS0's baseline; typecheck green; residue guard
-landed; both hard requirements proven; **one continuation pass enumerated** —
-the removed-capability test deletion sweep across 27 daemon files + 7 e2e
-collab files, with per-file dispositions decided below).
-Branch: `rebrand/ws12-test-suite-rebaseline` off post-WS10 `main`.
+Status: **deletion sweep COMPLETE.** Final daemon delta vs WS0 baseline is
+**exactly two files — the escalated real-regression suspects**:
+`routes/live-artifacts` (local_file create 500s inside the tool-token
+authority path; WS6's `local/project-request-authority` rewrite is the
+suspect) and `artifacts/successful-run-deliverable-finalization` (the mocked
+`decideDeliverableSyntaxRepair` shape no longer reaches the finalizer). Both
+need investigation, not deletion. Everything else: 88 of the 90 failing
+daemon files are the WS0 baseline set (pre-existing, out of scope), **16
+baseline-failing files went green** (suites deleted with their removed
+capabilities), and the sweep's final run reads **282 failed / 8,537 passed
+(90 files)** against baseline's 389/10,947 — on a suite ~2,500 tests smaller
+after WS6's deletions and this sweep's audit deletions. Daemon test
+typecheck exit 0; `pnpm guard` unchanged (seedream-only red, residue check
+green).
+
+Sweep totals: 7 e2e-collab files deleted; 20 daemon files trimmed to green
+or deleted (`balance-vs-rate-limit-snapshot`, `agent-args`,
+`chat-run-inactivity-timeout`, `acp.test`, `od-next-capability-gate` incl.
+the dead vela tuple/fixture rows in source, `acp-service-failure` re-recorded
+to the post-gateway reality, `media/models`, `update-apply-observations`,
+`service-failure-classification`, `mcp-get-project`,
+`telemetry-fatal-handler-lifecycle` (file), `brand-routes`, `project-cli`,
+`routine-routes`, `routine-schedule-claims`, `plugins-duplicate-project`,
+`media/tasks-routes`, `media/failure-next-step-record`,
+`design-systems/generation-jobs`, `diagnostics-export`,
+`agent-runtime-env`, `project-file-version-readonly-mirror` (file, no
+surviving tests), `observability/task-observation-rollout` +
+`observability/main-run-observation` (files, delivery pipeline WS6 nulled),
+and the regenerated system-prompt-matrix golden snapshot (totalChars drift
+from the WS7/WS8 prompt renames only).
+
 Baseline: `.captdesign-rebrand/baseline/failing-tests.md` (clean HEAD
 `12c25777d`, 2026-09-12 — before any rebrand workstream landed).
 

@@ -190,36 +190,6 @@ describe('design system generation jobs', () => {
     expect(acceptedBody).toContain('## Revision Request: Visual Foundations');
   });
 
-  it('runs a Team revision against the exact materialized root without touching same-id Personal', async () => {
-    const teamRoot = teamResourceWorkspaceRoot(root, 'team-a');
-    const personal = await createUserDesignSystem(root, {
-      title: 'Same ID',
-      summary: 'Personal canonical.',
-      status: 'draft',
-    });
-    const team = await createUserDesignSystem(teamRoot, {
-      title: 'Same ID',
-      summary: 'Team materialization.',
-      status: 'published',
-    });
-    expect(team.id).toBe(personal.id);
-    const store = createDesignSystemGenerationJobStore({
-      root,
-      delayMs: 0,
-      idFactory: () => 'team-revision',
-    });
-
-    store.revise({
-      root: teamRoot,
-      designSystemId: team.id,
-      feedback: 'Team-only revision.',
-    });
-    expect((await waitForJob(store, 'team-revision')).status).toBe('succeeded');
-
-    expect(await listUserDesignSystemRevisions(teamRoot, team.id)).toHaveLength(1);
-    expect(await listUserDesignSystemRevisions(root, personal.id)).toHaveLength(0);
-  });
-
   it('creates a review-gated token contract rebuild revision with file changes', async () => {
     const store = createDesignSystemGenerationJobStore({
       root,

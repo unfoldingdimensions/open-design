@@ -22,7 +22,6 @@ import {
   resolveChatRunFirstOutputTimeoutMs,
   resolveChatRunInactivityTimeoutMs,
 } from '../../src/server.js';
-import { amrAgentDef } from '../../src/local/legacy-bridge.js';
 import { copilotAgentDef } from '../../src/runtimes/defs/copilot.js';
 
 const ENV_KEY = 'OD_CHAT_RUN_INACTIVITY_TIMEOUT_MS';
@@ -217,15 +216,8 @@ describe('copilotAgentDef.inactivityTimeoutMs', () => {
   });
 });
 
-describe('amrAgentDef.inactivityTimeoutMs', () => {
-  it('ships a 30-minute inactivity hint so the outer chat watchdog matches ACP stage timeouts for slow upstream providers', () => {
-    expect(amrAgentDef.inactivityTimeoutMs).toBe(THIRTY_MINUTES_MS);
-  });
-
-  it('ships a two-minute absolute first-output deadline', () => {
-    expect(amrAgentDef.firstOutputTimeoutMs).toBe(120_000);
-  });
-});
+// The amrAgentDef.inactivityTimeoutMs describe was deleted with the AMR
+// runtime def (WS6 removed the Cloud model-provider runtime).
 
 describe('assertValidRuntimeDefInactivityTimeoutMs (#2579 fast-fail at def-select time)', () => {
   // Reviewer-correctness fix (#2579 non-blocking, round 3): the

@@ -997,17 +997,8 @@ test('antigravity persists model selection to agy settings.json', () => {
   }
 });
 
-// AMR routes model selection through ACP `session/set_model` and only
-// accepts ids that survive the live `vela models` preflight, so a free
-// text id silently fails at spawn. Same custom-model opt-out shape as
-// antigravity — the declarative `supportsCustomModel: false` on the
-// def is the single source of truth the settings UI consults, and the
-// fallback "Custom" item should not appear in the model picker.
-test('amr opts out of the Custom-model picker option', () => {
-  const amr = AGENT_DEFS.find((a) => a.id === 'amr');
-  assert.ok(amr, 'amr def must remain registered');
-  assert.equal(amr.supportsCustomModel, false);
-});
+// The 'amr opts out of the Custom-model picker option' test was deleted with
+// the AMR runtime def (WS6 removed the Cloud model-provider runtime).
 
 test('kiro fetchModels falls back to fallbackModels when detection fails', async () => {
   // fetchModels rejects when the binary doesn't exist; the daemon's

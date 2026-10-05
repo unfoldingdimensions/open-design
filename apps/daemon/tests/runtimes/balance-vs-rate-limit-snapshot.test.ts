@@ -168,15 +168,12 @@ describe('balance vs rate-limit landing table', () => {
     expect(bridgeCode(row.text)).toBe(row.acpCode);
   });
 
-  it.each(ROWS)('$id lands on the recorded analysis verdict', (row) => {
-    expect(verdict(row.text, row.acpCode, 'kimi')).toBe(row.verdictByok);
-  });
-
-  it.each(ROWS)('$id lands identically for the hosted agent', (row) => {
-    // The classifier is agent-agnostic. If this ever diverges, the family stopped
-    // being one problem and the rest of this table's reasoning no longer holds.
-    expect(verdict(row.text, row.acpCode, 'amr')).toBe(row.verdictAmr);
-  });
+  // The two per-row verdict tables ('lands on the recorded analysis verdict'
+  // and 'lands identically for the hosted agent') were deleted with their
+  // capability: the AMR balance analysis that distinguished
+  // insufficient_balance verdicts was removed by WS6, so balance texts now
+  // land on the generic rate_limit family by design. The surviving guards
+  // below still pin the throttle family and the contradiction bookkeeping.
 
   it('names exactly the rows whose two axes contradict each other', () => {
     const contradicting = ROWS.filter((row) => {
